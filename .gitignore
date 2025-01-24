@@ -1,0 +1,47 @@
+# See https://help.github.com/articles/ignoring-files-and-folders/ for more about ignoring files.
+
+# dependencies
+node_modules/
+.pnp.js
+.pnp.cjs
+
+# testing
+coverage/
+.nyc_output/
+.cache/
+
+# next.js specific
+.next/
+out/
+build/
+
+# production
+.env*.local
+.env*.development
+.env*.test
+
+# misc
+.DS_Store
+*.swp
+.vscode/
+.idea
+.history
+yarn-error.log
+
+# optional for specific editors or IDEs
+*.log
+*.lock
+*.sqlite
+*.DS_Store
+Thumbs.db
+.cache
+.project
+.settings
+*.esproj
+*.user
+*.bak
+*.orig
+*~
+*.swp
+*.swo
+.env.local # if you don't want to track your local environment variables
