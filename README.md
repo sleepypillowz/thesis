@@ -1,5 +1,4 @@
 # Initial Setup
-1. clone github repo
 ```bash
 npm install
 ```
