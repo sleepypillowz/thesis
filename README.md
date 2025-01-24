@@ -1,8 +1,10 @@
-# Setup
+# Initial Setup
 1. clone github repo
-2. execute `npm install`
+```bash
+npm install
+```
 
-# Run
+# Run Development Server
 ```bash
 npm run dev
 ```
