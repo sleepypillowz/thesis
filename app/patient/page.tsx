@@ -3,7 +3,7 @@ import { FaPenToSquare, FaFile } from "react-icons/fa6";
 
 export default function Home() {
   return (
-    <main className="ml-32 flex-1 px-8 py-8 pt-24">
+    <main className="flex-1 px-8 py-8 pt-24">
       <div className="flex justify-center">
         <div className="mx-auto max-w-7xl rounded-lg">
           <div className="grid grid-cols-2 gap-4">
