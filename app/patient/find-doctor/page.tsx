@@ -1,6 +1,6 @@
 export default function Page() {
   return (
-    <main className="flex-1 px-8 py-8 pt-24">
+    <div className="flex-1 px-8 py-8 pt-24">
 
       <section className="px-4 py-16 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-lg text-center">
@@ -47,6 +47,6 @@ export default function Page() {
         </div>
       </section>
 
-    </main>
+    </div>
   );
 }

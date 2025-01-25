@@ -1,6 +1,6 @@
 export default function Page() {
   return (
-    <main className="ml-64 flex-1 px-4 pt-32 sm:px-6 lg:px-8">
+    <div className="ml-64 flex-1 px-4 pt-32 sm:px-6 lg:px-8">
       <form className="mx-auto max-w-4xl rounded-lg bg-white p-6 shadow-lg">
 
         <div className="mb-6 grid gap-6 md:grid-cols-2">
@@ -47,6 +47,6 @@ export default function Page() {
         <button type="submit"
           className="w-full rounded-lg bg-sky-700 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-sky-800 focus:outline-none focus:ring-4 focus:ring-sky-300">Submit</button>
       </form>
-    </main>
+    </div>
   );
 }

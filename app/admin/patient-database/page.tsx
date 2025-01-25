@@ -1,6 +1,6 @@
 export default function Page() {
   return (
-    <main className="ml-64 flex-1 px-4 pt-16 sm:px-6 lg:px-8">
+    <div className="ml-64 flex-1 px-4 pt-16 sm:px-6 lg:px-8">
       <div
         className="mx-auto w-full max-w-7xl rounded-lg border border-gray-200 bg-white p-6 shadow-md dark:border-gray-700 dark:bg-gray-800">
         <h1 className="mb-4 text-3xl font-semibold text-gray-900 dark:text-white">Patients</h1>
@@ -27,6 +27,6 @@ export default function Page() {
           </tbody>
         </table>
       </div>
-    </main>
+    </div>
   );
 }

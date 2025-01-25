@@ -1,9 +1,9 @@
 export default function Page() {
   return (
-    <main className="flex-1 px-8 py-8 pt-24">
+    <div className="flex-1 px-8 py-8 pt-24">
       <div className="mx-auto w-full max-w-7xl space-y-4">
         <h1 className="mb-4 text-3xl font-semibold text-gray-900 dark:text-white">View Results</h1>
-        <div className="flex items-center justify-between rounded-lg border-2 border-solid border-gray-300 p-4 bg-white">
+        <div className="flex items-center justify-between rounded-lg border-2 border-solid border-gray-300 bg-white p-4">
           <div className="flex items-center">
             <i className="fa-solid fa-file me-3 text-gray-600 dark:text-gray-300"></i>
             <p className="text-left text-sm text-gray-700 dark:text-gray-400">Juan Dela Cruz Lab Result</p>
@@ -20,7 +20,7 @@ export default function Page() {
             </a>
           </div>
         </div>
-        <div className="flex items-center justify-between rounded-lg border-2 border-solid border-gray-300 p-4 bg-white">
+        <div className="flex items-center justify-between rounded-lg border-2 border-solid border-gray-300 bg-white p-4">
           <div className="flex items-center">
             <i className="fa-solid fa-file me-3 text-gray-600 dark:text-gray-300"></i>
             <p className="text-left text-sm text-gray-700 dark:text-gray-400">Juan Dela Cruz Lab Result</p>
@@ -38,6 +38,6 @@ export default function Page() {
           </div>
         </div>
       </div>
-    </main>
+    </div>
   );
 }
