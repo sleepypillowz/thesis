@@ -9,7 +9,7 @@
 
 **[Short, compelling project description.]**
 
-![Project Screenshot](path/to/screenshot.png)
+![Project Screenshot](public/admin.png)
 
 ## Table of Contents
 
