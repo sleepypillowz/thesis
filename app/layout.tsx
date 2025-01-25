@@ -3,7 +3,6 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
-import Header from "./components/header";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar"
 
@@ -37,7 +36,6 @@ export default function RootLayout({
           <SidebarInset className="flex-1">
             <main className="flex-1">
               <SidebarTrigger />
-              <Header />
               {children}
             </main>
           </SidebarInset>
