@@ -1,36 +1,65 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# MediTrakk
+
+[![Build Status](https://img.shields.io/your-build-status-badge.svg)](Your Build Status URL)
+[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![GitHub Stars](https://img.shields.io/github/stars/sleepypillowz/thesis.svg?style=social)](https://github.com/sleepypillowz/thesis)
+[![GitHub Forks](https://img.shields.io/github/forks/sleepypillowz/thesis.svg?style=social)](https://github.com/sleepypillowz/thesis)
+[![GitHub Issues](https://img.shields.io/github/issues/sleepypillowz/thesis)](https://github.com/sleepypillowz/thesis/issues)
+[![GitHub Pull Requests](https://img.shields.io/github/pulls/sleepypillowz/thesis)](https://github.com/sleepypillowz/thesis/pulls)
+
+**[Short, compelling project description.]**
+
+![Project Screenshot](public/admin.png)
+
+## Table of Contents
+
+-   [About](#about)
+-   [Features](#features)
+-   [Getting Started](#getting-started)
+    -   [Installation](#installation)
+    -   [Usage](#usage)
+-   [Examples](#examples)
+-   [API Reference](#api-reference)
+-   [Contributing](#contributing)
+-   [License](#license)
+-   [Contact](#contact)
+
+## About
+
+[Detailed project explanation.]
+
+## Features
+
+*   [Feature 1]
+*   [Feature 2]
+*   [Feature 3]
 
 ## Getting Started
 
-First, run the development server:
+### Installation
 
 ```bash
+git clone https://github.com/sleepypillowz/thesis.git
+cd thesis
+npm install
+```
+## Usage
+```
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Examples
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+[More detailed examples.]
+## API Reference
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+[Link to API docs or brief description.]
+## Contributing
 
-## Learn More
+Please read CONTRIBUTING.md.
+## License
 
-To learn more about Next.js, take a look at the following resources:
+MIT License - see LICENSE for details.
+## Contact
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+[Your Name/Organization] - [Your Contact Info]
