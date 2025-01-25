@@ -2,10 +2,10 @@
 
 [![Build Status](https://img.shields.io/your-build-status-badge.svg)](Your Build Status URL)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![GitHub Stars](https://img.shields.io/github/stars/your-username/your-repo.svg?style=social)](https://github.com/your-username/your-repo)
-[![GitHub Forks](https://img.shields.io/github/forks/your-username/your-repo.svg?style=social)](https://github.com/your-username/your-repo)
-[![GitHub Issues](https://img.shields.io/github/issues/your-username/your-repo)](https://github.com/your-username/your-repo/issues)
-[![GitHub Pull Requests](https://img.shields.io/github/pulls/your-username/your-repo)](https://github.com/your-username/your-repo/pulls)
+[![GitHub Stars](https://img.shields.io/github/stars/sleepypillowz/thesis.svg?style=social)](https://github.com/sleepypillowz/thesis)
+[![GitHub Forks](https://img.shields.io/github/forks/sleepypillowz/thesis.svg?style=social)](https://github.com/sleepypillowz/thesis)
+[![GitHub Issues](https://img.shields.io/github/issues/sleepypillowz/thesis)](https://github.com/sleepypillowz/thesis/issues)
+[![GitHub Pull Requests](https://img.shields.io/github/pulls/sleepypillowz/thesis)](https://github.com/sleepypillowz/thesis/pulls)
 
 **[Short, compelling project description.]**
 
@@ -39,15 +39,9 @@
 ### Installation
 
 ```bash
-npm install your-package-name
-
-
-```
-or
-```bash
-
-git clone [https://github.com/your-username/your-repo.git](https://github.com/your-username/your-repo.git)
-cd your-repo
+https://github.com/sleepypillowz/thesis
+git clone https://github.com/sleepypillowz/thesis.git
+cd thesis
 npm install
 ```
 ## Usage
