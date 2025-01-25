@@ -45,12 +45,9 @@ cd thesis
 npm install
 ```
 ## Usage
-JavaScript
-
-// Example usage
-const yourLibrary = require('your-package-name');
-const result = yourLibrary.someFunction(someData);
-console.log(result);
+```
+npm run dev
+```
 
 ## Examples
 
