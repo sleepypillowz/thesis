@@ -1,4 +1,4 @@
-# [Project Name]
+# MediTrakk
 
 [![Build Status](https://img.shields.io/your-build-status-badge.svg)](Your Build Status URL)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
