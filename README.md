@@ -39,7 +39,6 @@
 ### Installation
 
 ```bash
-https://github.com/sleepypillowz/thesis
 git clone https://github.com/sleepypillowz/thesis.git
 cd thesis
 npm install
