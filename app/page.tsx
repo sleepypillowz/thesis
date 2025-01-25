@@ -7,7 +7,7 @@ export default function Home() {
       <div className="flex justify-center">
 
         <Link className={buttonVariants({ variant: "outline" })} href="/patient">Patient</Link>
-        <Link className={buttonVariants({ variant: "outline" })} href="/doctor">Doctor</Link>
+        <Link className={buttonVariants({ variant: "outline" })} href="/admin">Admin</Link>
 
       </div>
     </main>

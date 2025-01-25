@@ -8,7 +8,7 @@ export default function Home() {
         <div className="mx-auto max-w-7xl rounded-lg">
           <div className="grid grid-cols-2 gap-4">
 
-            <nav className="col-span-2 rounded-lg border-2 border-solid border-gray-300 p-3 bg-white">
+            <nav className="col-span-2 rounded-lg border-2 border-solid border-gray-300 bg-white p-3">
               <ul className="flex justify-between">
                 <li>
                   <Link href="/"
@@ -72,7 +72,7 @@ export default function Home() {
             <section className="col-span-2">
               <h1 className="mb-4 text-3xl font-semibold text-gray-900 dark:text-white">Profile</h1>
               <div
-                className="grid grid-cols-1 items-center justify-center gap-12 rounded-lg border-2 border-solid border-gray-300 py-4 sm:grid-cols-2 bg-white">
+                className="grid grid-cols-1 items-center justify-center gap-12 rounded-lg border-2 border-solid border-gray-300 bg-white py-4 sm:grid-cols-2">
 
                 <div className="text-center">
                   <div className="mb-4">
@@ -120,7 +120,7 @@ export default function Home() {
 
             <section className="col-span-2">
               <h1 className="text-3xl font-semibold text-gray-900 dark:text-white">Appointments</h1>
-              <div className="flex justify-center bg-white">
+              <div className="flex justify-center">
                 <button type="button"
                   className="mb-2 me-2 rounded-full border border-gray-200 bg-white px-5 py-2.5 text-sm font-medium text-gray-900 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:outline-none focus:ring-4 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700">DOCTORS
                   APPOINTMENT</button>
@@ -198,7 +198,7 @@ export default function Home() {
               </Link>
             </section>
 
-            <section className="block w-full rounded-lg border-2 border-solid border-gray-300 p-6 bg-white">
+            <section className="block w-full rounded-lg border-2 border-solid border-gray-300 bg-white p-6">
               <h1 className="mb-4 text-3xl font-semibold text-gray-900 dark:text-white">View Results</h1>
 
               <div className="space-y-2">
@@ -241,12 +241,12 @@ export default function Home() {
               </div>
             </section>
 
-            <section className="block w-full rounded-lg border-2 border-solid border-gray-300 p-6 bg-white">
+            <section className="block w-full rounded-lg border-2 border-solid border-gray-300 bg-white p-6">
               <div className="flex-col justify-between">
                 <h1 className="mb-4 text-3xl font-semibold text-gray-900 dark:text-white">Notes</h1>
-                <p className="pt-4 text-lg font-semibold text-gray-500">Diagnosis: Type 2 Diabetes</p>
+                <p className="text-lg font-semibold text-gray-500">Diagnosis: Type 2 Diabetes</p>
                 <ul className="list-disc space-y-4 text-wrap break-words pl-5">
-                  <li className="mt-4 ">Diet and excercise counseling recommended.</li>
+                  <li className="mt-4">Diet and excercise counseling recommended.</li>
                   <li>Follow up in 2 weeks for blood glucose monitoring and medication
                     adjustment</li>
                 </ul>

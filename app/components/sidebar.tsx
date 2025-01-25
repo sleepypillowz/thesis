@@ -20,7 +20,7 @@ const Sidebar = () => {
             </Link>
           </li>
           <li>
-            <Link href="/doctor/patient-database" legacyBehavior>
+            <Link href="/admin/patient-database" legacyBehavior>
               <a className="group flex items-center rounded-lg p-2 text-gray-900 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">
                 <FaDatabase className="text-yellow-600" />
                 <span className="ms-3">Database</span>
@@ -28,18 +28,18 @@ const Sidebar = () => {
             </Link>
           </li>
           <li>
-            <Link href="/doctor/patient-registration" legacyBehavior>
+            <Link href="/admin/patient-registration" legacyBehavior>
               <a className="group flex items-center rounded-lg p-2 text-gray-900 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">
                 <FaUserPlus className="text-green-700" />
-                <span className="ms-3 ">Registration</span>
+                <span className="ms-3">Registration</span>
               </a>
             </Link>
           </li>
           <li>
-            <Link href="/doctor/patient-assessment" legacyBehavior>
+            <Link href="/admin/patient-assessment" legacyBehavior>
               <a className="group flex items-center rounded-lg p-2 text-gray-900 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">
                 <FaNotesMedical className="text-red-800" />
-                <span className="ms-3 ">Assessment</span>
+                <span className="ms-3">Assessment</span>
               </a>
             </Link>
           </li>

@@ -4,7 +4,7 @@ export default function Page() {
       <div className="mx-auto max-w-7xl">
         <h1 className="mb-4 text-3xl font-semibold text-gray-900 dark:text-white">Profile</h1>
         <div
-          className="grid grid-cols-1 items-center justify-center gap-12 rounded-lg border-2 border-solid border-gray-300 p-2 sm:grid-cols-2 bg-white">
+          className="grid grid-cols-1 items-center justify-center gap-12 rounded-lg border-2 border-solid border-gray-300 bg-white p-2 sm:grid-cols-2">
 
           <div className="text-center">
             <div className="mb-4">
@@ -22,27 +22,29 @@ export default function Page() {
           <div>
             <div>
               <p className="text-lg font-semibold text-gray-700 dark:text-gray-300">Date of Last Consultation</p>
-              <p className="text-gray-600 dark:text-gray-400">-</p>
+              <p className="text-gray-600 dark:text-gray-400">12/31/2002</p>
             </div>
 
             <div>
               <p className="text-lg font-semibold text-gray-700 dark:text-gray-300">Current Diagnosis</p>
-              <p className="text-gray-600 dark:text-gray-400">-</p>
+              <p className="text-gray-600 dark:text-gray-400">Diabetes</p>
             </div>
 
             <div>
               <p className="text-lg font-semibold text-gray-700 dark:text-gray-300">Allergies</p>
-              <p className="text-gray-600 dark:text-gray-400">-</p>
+              <p className="text-gray-600 dark:text-gray-400">Penicillin, Pollen</p>
             </div>
 
             <div>
               <p className="text-lg font-semibold text-gray-700 dark:text-gray-300">Medical History</p>
-              <p className="text-gray-600 dark:text-gray-400">-</p>
+              <p className="text-gray-600 dark:text-gray-400">Hypertension (diagnosed 1998), Hyperlipidemia (diagnosed
+                2000), Appendectomy (1985)</p>
             </div>
 
             <div>
               <p className="text-lg font-semibold text-gray-700 dark:text-gray-300">Family History</p>
-              <p className="text-gray-600 dark:text-gray-400">-</p>
+              <p className="text-gray-600 dark:text-gray-400">Father with history of heart disease, Mother with Type 2
+                Diabetes</p>
             </div>
           </div>
         </div>
