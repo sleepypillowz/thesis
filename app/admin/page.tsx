@@ -7,16 +7,16 @@ import { CommonDiseasesChart } from "@/components/common-diseases-chart";
 export default function Page() {
   return (
     <div className="text-center md:text-left">
-      <div className="px-6 py-4 lg:ml-4">
+      <div className="border-2 border-gray-300 px-6 py-4">
         <p className="text-2xl font-bold">
           Good Day, Test
         </p>
         <p className="text-sm">Check out the latest updates from the past 7 days!</p>
       </div>
 
-      <div className="grid grid-cols-1 place-items-center gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="mx-4 mt-4 grid grid-cols-1 place-items-center gap-4 md:grid-cols-2 lg:grid-cols-4">
 
-        <div className="flex w-full max-w-sm flex-col justify-items-center space-y-2 border-b-2 border-blue-500 p-6 pr-0">
+        <div className="block w-full max-w-sm flex-col justify-items-center space-y-2 rounded-xl border-2 border-gray-300 p-6 pr-0">
           <div className="flex items-center justify-between">
             <div className="flex items-center">
               <FaUser className="me-2 text-blue-500" />
@@ -34,7 +34,7 @@ export default function Page() {
           </p>
         </div>
 
-        <div className="block w-full max-w-sm space-y-2 border-b-2 border-green-500 p-6 pr-0">
+        <div className="block w-full max-w-sm space-y-2 rounded-xl border-2 border-b-2 border-gray-300 p-6 pr-0">
           <div className="flex items-center justify-between">
             <div className="flex items-center">
               <FaUserClock className="fa-solid fa-user-clock me-2 text-blue-500" />
@@ -48,7 +48,7 @@ export default function Page() {
           </p>
         </div>
 
-        <div className="block w-full max-w-sm space-y-2 border-b-2 border-blue-500 p-6 pr-0">
+        <div className="block w-full max-w-sm space-y-2 rounded-xl border-2 border-b-2 border-gray-300 p-6 pr-0">
           <div className="flex items-center justify-between">
             <div className="flex items-center">
               <FaCodePullRequest className="fa-solid fa-code-pull-request me-2 text-blue-500" />
@@ -62,7 +62,7 @@ export default function Page() {
           </p>
         </div>
 
-        <div className="block w-full max-w-sm space-y-2 border-b-2 border-red-500 p-6 pr-0">
+        <div className="block w-full max-w-sm space-y-2 rounded-xl border-2 border-b-2 border-gray-300 p-6 pr-0">
           <div className="flex items-center justify-between">
             <div className="flex items-center">
               <FaClockRotateLeft className="fa-solid fa-clock-rotate-left me-2 text-blue-500" />
@@ -74,8 +74,8 @@ export default function Page() {
           <p className="text-red-500">Low stock items</p>
         </div>
       </div>
-      <div className="lg:mx-16 lg:flex lg:justify-center lg:space-x-16 lg:pt-16">
-        <div className="lg:w-full lg:max-w-3xl">
+      <div className="lg:mx-4 lg:flex lg:justify-center lg:space-x-4 lg:pt-4">
+        <div className="lg:w-full">
           <VisitorsChart />
         </div>
 

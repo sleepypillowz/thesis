@@ -7,14 +7,17 @@ export default function DoctorLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <SidebarProvider>
-      <AppSidebar />
-      <SidebarInset className="flex-1">
-        <main className="flex-1">
-          <SidebarTrigger />
-          {children}
-        </main>
-      </SidebarInset>
-    </SidebarProvider>
+    <>
+      <SidebarProvider>
+        <AppSidebar />
+        <SidebarInset className="flex-1">
+          <main className="flex-1">
+            <SidebarTrigger />
+            {children}
+          </main>
+        </SidebarInset>
+      </SidebarProvider>
+    </>
+
   );
 }

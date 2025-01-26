@@ -51,7 +51,7 @@ export function AppSidebar() {
     <Sidebar>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Malibiran Medical Clinic</SidebarGroupLabel>
+          <SidebarGroupLabel>Main Menu</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {items.map((item) => (
