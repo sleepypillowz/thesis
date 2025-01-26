@@ -12,7 +12,7 @@ export default function DoctorLayout({
       <Header />
       <main className="flex-1 px-8 py-8 pt-24">
         <div className="flex justify-center">
-          <div className="mx-auto max-w-7xl rounded-lg">
+          <div className="mx-auto max-w-5xl rounded-lg">
             <Navbar />
             {children}
           </div>

@@ -1,6 +1,6 @@
 export default function Page() {
   return (
-    <div className="flex-1 px-8 py-8 pt-24">
+    <div className="flex-1 px-8 py-8">
       <div className="mx-auto w-full max-w-7xl space-y-4">
         <h1 className="mb-4 text-3xl font-semibold text-gray-900 dark:text-white">View Results</h1>
         <div className="flex items-center justify-between rounded-lg border-2 border-solid border-gray-300 bg-white p-4">

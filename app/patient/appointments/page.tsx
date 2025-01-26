@@ -1,7 +1,7 @@
 export default function Page() {
 
   return (
-    <div className="flex-1 px-8 py-8 pt-24">
+    <div className="flex-1 px-8 py-8">
       <div className="mx-auto max-w-7xl rounded-lg">
         <h1 className="mb-4 text-3xl font-semibold text-gray-900 dark:text-white">Appointments</h1>
 

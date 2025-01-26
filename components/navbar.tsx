@@ -21,7 +21,7 @@ const menuItems = [
   { name: "Make a Booking", href: "/patient/booking" },
   { name: "Queue", href: "/patient/queue" },
   { name: "Find a Doctor", href: "/patient/find-doctor" },
-  { name: "Contact Us", href: "/patient/contact" },
+  { name: "Contact", href: "/patient/contact" },
 ]
 export default function Navbar() {
   return (

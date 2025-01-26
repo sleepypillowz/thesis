@@ -7,9 +7,9 @@ export default function Home() {
       <section className="col-span-2">
         <h1 className="mb-4 text-3xl font-semibold text-gray-900 dark:text-white">Profile</h1>
         <div
-          className="grid grid-cols-1 items-center justify-center gap-12 rounded-lg border-2 border-solid border-gray-300 bg-white py-4 text-center sm:grid-cols-2 md:grid-cols-2 md:text-left">
+          className="grid grid-cols-1 items-center justify-center gap-12 rounded-lg border-2 border-solid border-gray-300 bg-white py-4 text-center sm:grid-cols-2 md:grid-cols-2">
 
-          <div className="text-center">
+          <div>
             <div className="mb-4">
               <p className="text-lg font-bold text-blue-700">JUAN DELA CRUZ</p>
               <p className="text-sm text-gray-600 dark:text-gray-300">Male | 12/31/1975</p>
@@ -22,7 +22,7 @@ export default function Home() {
             </div>
           </div>
 
-          <div>
+          <div className="space-y-4 sm:text-left">
             <div>
               <p className="text-lg font-semibold text-gray-700 dark:text-gray-300">Date of Last Consultation</p>
               <p className="text-gray-600 dark:text-gray-400">12/31/2002</p>

@@ -1,6 +1,6 @@
 export default function Page() {
   return (
-    <div className="flex-1 px-4 pt-32 sm:px-6 lg:px-8">
+    <div className="flex-1 px-4 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-4xl rounded-lg bg-white p-6 shadow-lg">
         <h2 className="mb-6 text-2xl font-semibold text-gray-700">Patient Preliminary Assessment</h2>
 

@@ -58,7 +58,7 @@ const Navbar = () => {
         <li>
           <Link href="/patient/contact"
             className="group flex items-center rounded-lg p-2 text-gray-900 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">
-            <span>Contact Us</span>
+            <span>Contact</span>
           </Link>
         </li>
       </ul>

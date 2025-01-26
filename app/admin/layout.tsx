@@ -1,7 +1,6 @@
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar"
 
-
 export default function DoctorLayout({
   children,
 }: Readonly<{
