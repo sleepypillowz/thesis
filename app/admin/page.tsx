@@ -7,7 +7,7 @@ import { CommonDiseasesChart } from "@/components/common-diseases-chart";
 export default function Page() {
   return (
     <>
-      <div className="mt-16 text-center md:text-left">
+      <div className="text-center md:text-left">
         <div className="px-6 py-4 lg:ml-4">
           <p className="text-2xl font-bold">
             Good Day, Test
