@@ -7,7 +7,7 @@ import { CommonDiseasesChart } from "@/components/common-diseases-chart";
 export default function Page() {
   return (
     <div className="space-y-4 text-center md:text-left lg:m-0">
-      <div className="border-2 border-gray-300 px-6 py-4">
+      <div className="border-y-2 border-gray-300 px-6 py-4">
         <p className="text-2xl font-bold">
           Good Day, Test
         </p>
@@ -34,7 +34,7 @@ export default function Page() {
           </p>
         </div>
 
-        <div className="block w-full max-w-sm space-y-2 rounded-xl border-2 border-b-2 border-gray-300 p-6 pr-0">
+        <div className="block w-full max-w-sm space-y-2 rounded-xl border-2 border-b-2 border-gray-300 p-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center">
               <FaUserClock className="fa-solid fa-user-clock me-2 text-blue-500" />
@@ -48,7 +48,7 @@ export default function Page() {
           </p>
         </div>
 
-        <div className="block w-full max-w-sm space-y-2 rounded-xl border-2 border-b-2 border-gray-300 p-6 pr-0">
+        <div className="block w-full max-w-sm space-y-2 rounded-xl border-2 border-b-2 border-gray-300 p-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center">
               <FaCodePullRequest className="fa-solid fa-code-pull-request me-2 text-blue-500" />
@@ -62,7 +62,7 @@ export default function Page() {
           </p>
         </div>
 
-        <div className="block w-full max-w-sm space-y-2 rounded-xl border-2 border-b-2 border-gray-300 p-6 pr-0">
+        <div className="block w-full max-w-sm space-y-2 rounded-xl border-2 border-b-2 border-gray-300 p-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center">
               <FaClockRotateLeft className="fa-solid fa-clock-rotate-left me-2 text-blue-500" />
