@@ -1,5 +1,4 @@
-import { RiPieChart2Fill } from "react-icons/ri";
-import { FaDatabase, FaUserPlus, FaHeart } from "react-icons/fa";
+import { LayoutDashboard, Users, ClipboardPlus, Calendar, Clock, ClipboardPenLine, Bandage, ChartArea, HelpCircle, Settings, Database } from "lucide-react"
 
 import {
   Sidebar,
@@ -20,22 +19,62 @@ const items = [
   {
     title: "Dashboard",
     url: "/admin",
-    icon: RiPieChart2Fill,
+    icon: LayoutDashboard,
   },
   {
-    title: "Database",
-    url: "/admin/patient-database",
-    icon: FaDatabase,
+    title: "Patients",
+    url: "#",
+    icon: Users,
   },
   {
-    title: "Registration",
-    url: "/admin/patient-registration",
-    icon: FaUserPlus,
+    title: "Medical Records",
+    url: "/admin/medical-records",
+    icon: ClipboardPlus,
+  },
+  {
+    title: "Appointments",
+    url: "/admin/appointments",
+    icon: Calendar,
+  },
+  {
+    title: "Queueing",
+    url: "/admin/queue",
+    icon: Clock,
   },
   {
     title: "Assessment",
-    url: "/admin/patient-assessment",
-    icon: FaHeart,
+    url: "/admin/assessment",
+    icon: ClipboardPenLine,
+  },
+  {
+    title: "Treatment",
+    url: "/admin/treatment",
+    icon: Bandage,
+  },
+  {
+    title: "Patient Portal",
+    url: "/admin/patient-portal",
+    icon: LayoutDashboard,
+  },
+  {
+    title: "Medicine Inventory",
+    url: "/admin/medicine-inventory",
+    icon: Database,
+  },
+  {
+    title: "Reports",
+    url: "/admin/reports",
+    icon: ChartArea,
+  },
+  {
+    title: "Help",
+    url: "/admin/help",
+    icon: HelpCircle,
+  },
+  {
+    title: "Settings",
+    url: "/admin/settings",
+    icon: Settings,
   },
 ]
 
@@ -52,7 +91,7 @@ export function AppSidebar() {
     <Sidebar>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Main Menu</SidebarGroupLabel>
+          <SidebarGroupLabel>Malibiran Medical Clinic</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {items.map((item) => (

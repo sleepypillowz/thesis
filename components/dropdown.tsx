@@ -6,11 +6,12 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { buttonVariants } from "./ui/button";
 
 const Dropdown = () => {
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger>User</DropdownMenuTrigger>
+      <DropdownMenuTrigger className={buttonVariants({ variant: "default" })}>User</DropdownMenuTrigger>
       <DropdownMenuContent>
         <DropdownMenuLabel>My Account</DropdownMenuLabel>
         <DropdownMenuSeparator />

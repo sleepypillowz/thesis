@@ -12,7 +12,7 @@ export default function Home() {
               <p className="">Elevate your projects</p>
               {/* Title */}
               <div className="mt-5 max-w-2xl">
-                <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
+                <h1 className="flex scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
                   Malibiran Medical Clinic
                 </h1>
               </div>
