@@ -13,7 +13,7 @@ import {
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 
 const menuItems = [
-  { name: "Home", href: "/" },
+  { name: "Home", href: "/patient" },
   { name: "Profile", href: "/patient/profile" },
   { name: "Appointments", href: "/patient/appointments" },
   { name: "Prescriptions", href: "/patient/prescriptions" },

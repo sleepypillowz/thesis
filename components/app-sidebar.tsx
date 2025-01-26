@@ -1,4 +1,4 @@
-import { Calendar, Home, Inbox, Search, Settings } from "lucide-react"
+import { Home, Database, UserPlus, ScanHeart } from "lucide-react"
 
 import {
   Sidebar,
@@ -18,28 +18,23 @@ import { NavUser } from "./nav-user"
 const items = [
   {
     title: "Home",
-    url: "/",
+    url: "/admin",
     icon: Home,
   },
   {
-    title: "Inbox",
-    url: "#",
-    icon: Inbox,
+    title: "Database",
+    url: "/admin/patient-database",
+    icon: Database,
   },
   {
-    title: "Calendar",
-    url: "#",
-    icon: Calendar,
+    title: "Registration",
+    url: "/admin/patient-registration",
+    icon: UserPlus,
   },
   {
-    title: "Search",
-    url: "#",
-    icon: Search,
-  },
-  {
-    title: "Settings",
-    url: "#",
-    icon: Settings,
+    title: "Assessment",
+    url: "/admin/patient-assessment",
+    icon: ScanHeart,
   },
 ]
 

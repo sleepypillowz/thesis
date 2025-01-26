@@ -1,6 +1,6 @@
 export default function Page() {
   return (
-    <div className="flex-1 px-8 py-8 pt-24">
+    <div className="mx-8 my-8 flex-1">
       <h1 className="mb-4 text-3xl font-semibold text-gray-900 dark:text-white">Profile</h1>
       <div
         className="grid grid-cols-1 items-center justify-center gap-12 rounded-lg border-2 border-solid border-gray-300 bg-white p-2 sm:grid-cols-2">

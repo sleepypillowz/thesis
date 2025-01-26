@@ -1,4 +1,5 @@
 import Navbar from "@/components/navbar";
+import Header from "../components/header";
 
 
 export default function DoctorLayout({
@@ -7,13 +8,16 @@ export default function DoctorLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <main className="flex-1 px-8 py-8 pt-24">
-      <div className="flex justify-center">
-        <div className="mx-auto max-w-7xl rounded-lg">
-          <Navbar />
-          {children}
+    <>
+      <Header />
+      <main className="flex-1 px-8 py-8 pt-24">
+        <div className="flex justify-center">
+          <div className="mx-auto max-w-7xl rounded-lg">
+            <Navbar />
+            {children}
+          </div>
         </div>
-      </div>
-    </main>
+      </main>
+    </>
   );
 }

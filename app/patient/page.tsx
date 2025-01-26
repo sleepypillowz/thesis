@@ -3,7 +3,7 @@ import { FaPenToSquare, FaFile } from "react-icons/fa6";
 
 export default function Home() {
   return (
-    <div className="grid grid-cols-2 gap-4">
+    <div className="mx-8 my-8 grid grid-cols-2 gap-4">
       <section className="col-span-2">
         <h1 className="mb-4 text-3xl font-semibold text-gray-900 dark:text-white">Profile</h1>
         <div
@@ -81,7 +81,7 @@ export default function Home() {
             </tr>
           </tbody>
         </table>
-        <Link href="/patient{% url 'appointments' %}"
+        <Link href="/patient/appointments"
           className="flex items-center justify-end space-x-2 text-blue-500 hover:text-blue-700">
           <span>View all Appointments</span>
           <FaPenToSquare />
@@ -126,7 +126,7 @@ export default function Home() {
             </tr>
           </tbody>
         </table>
-        <Link href="/patient{% url 'prescriptions' %}"
+        <Link href="/patient/prescriptions"
           className="flex items-center justify-end space-x-2 text-blue-500 hover:text-blue-700">
           <span>View all Prescriptions</span>
           <FaPenToSquare />

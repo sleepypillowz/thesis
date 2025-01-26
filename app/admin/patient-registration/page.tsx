@@ -1,6 +1,6 @@
 export default function Page() {
   return (
-    <div className="ml-64 flex-1 px-4 pt-32 sm:px-6 lg:px-8">
+    <div className="flex-1 px-4 pt-32 sm:px-6 lg:px-8">
       <form className="mx-auto max-w-4xl rounded-lg bg-white p-6 shadow-lg">
 
         <div className="mb-6 grid gap-6 md:grid-cols-2">
