@@ -1,4 +1,5 @@
-import { Home, Database, UserPlus, ScanHeart } from "lucide-react"
+import { RiPieChart2Fill } from "react-icons/ri";
+import { FaDatabase, FaUserPlus, FaHeart } from "react-icons/fa";
 
 import {
   Sidebar,
@@ -17,24 +18,24 @@ import { NavUser } from "./nav-user"
 // Menu items.
 const items = [
   {
-    title: "Home",
+    title: "Dashboard",
     url: "/admin",
-    icon: Home,
+    icon: RiPieChart2Fill,
   },
   {
     title: "Database",
     url: "/admin/patient-database",
-    icon: Database,
+    icon: FaDatabase,
   },
   {
     title: "Registration",
     url: "/admin/patient-registration",
-    icon: UserPlus,
+    icon: FaUserPlus,
   },
   {
     title: "Assessment",
     url: "/admin/patient-assessment",
-    icon: ScanHeart,
+    icon: FaHeart,
   },
 ]
 
