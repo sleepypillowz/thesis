@@ -1,3 +1,4 @@
+import Navbar from "@/components/navbar";
 import Link from "next/link"
 import { FaPenToSquare, FaFile } from "react-icons/fa6";
 
@@ -7,6 +8,8 @@ export default function Home() {
       <div className="flex justify-center">
         <div className="mx-auto max-w-7xl rounded-lg">
           <div className="grid grid-cols-2 gap-4">
+
+            <Navbar />
 
             <nav className="col-span-2 rounded-lg border-2 border-solid border-gray-300 bg-white p-3">
               <ul className="flex justify-between">
@@ -72,7 +75,7 @@ export default function Home() {
             <section className="col-span-2">
               <h1 className="mb-4 text-3xl font-semibold text-gray-900 dark:text-white">Profile</h1>
               <div
-                className="grid grid-cols-1 items-center justify-center gap-12 rounded-lg border-2 border-solid border-gray-300 bg-white py-4 sm:grid-cols-2">
+                className="grid grid-cols-1 items-center justify-center gap-12 rounded-lg border-2 border-solid border-gray-300 bg-white py-4 text-center sm:grid-cols-2 md:grid-cols-2 md:text-left">
 
                 <div className="text-center">
                   <div className="mb-4">
