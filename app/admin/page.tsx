@@ -6,7 +6,7 @@ import { CommonDiseasesChart } from "@/components/common-diseases-chart";
 
 export default function Page() {
   return (
-    <div className="space-y-4 text-center md:text-left lg:m-0">
+    <div className="space-y-4 text-center md:text-left lg:m-0 mb-4">
       <div className="border-y-2 border-gray-300 px-6 py-4">
         <p className="text-2xl font-bold">
           Good Day, Test
@@ -74,7 +74,7 @@ export default function Page() {
           <p className="text-red-500">Low stock items</p>
         </div>
       </div>
-      <div className="m-4 lg:mx-4 lg:flex lg:justify-center lg:space-x-4">
+      <div className="m-4 lg:mx-4 lg:flex lg:justify-center lg:space-x-4 space-y-4">
         <div className="lg:w-full">
           <VisitorsChart />
         </div>
