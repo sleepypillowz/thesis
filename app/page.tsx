@@ -3,16 +3,16 @@ import Link from "next/link";
 
 export default function Home() {
   return (
-    <main className="mt-64">
+    <main className="mt-64 text-center">
       <div className="flex justify-center">
 
         <div className="relative z-10">
           <div className="container py-10 lg:py-16">
-            <div className="mx-auto max-w-2xl text-center">
+            <div className="mx-auto max-w-2xl">
               <p className="">Elevate your projects</p>
               {/* Title */}
               <div className="mt-5 max-w-2xl">
-                <h1 className="flex scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
+                <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
                   Malibiran Medical Clinic
                 </h1>
               </div>
