@@ -3,7 +3,7 @@ import Link from "next/link";
 
 export default function Home() {
   return (
-    <main className="mt-64 text-center">
+    <main className="mt-64 h-dvh text-center">
       <div className="flex justify-center">
 
         <div className="relative z-10">
