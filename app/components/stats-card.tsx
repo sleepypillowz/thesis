@@ -98,7 +98,7 @@ function StatsCard({ icon: Icon, title, value, footer }: StatsCardProps) {
 
 export default function StatsCards() {
   return (
-    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    <div className="m-4 grid grid-cols-1 place-items-center gap-4 md:grid-cols-2 lg:grid-cols-4">
       {statsData.map((stat, index) => (
         <StatsCard key={index} {...stat} />
       ))}
