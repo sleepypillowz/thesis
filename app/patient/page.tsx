@@ -7,7 +7,7 @@ export default function Home() {
       <section className="col-span-2">
         <h1 className="mb-4 text-3xl font-semibold text-gray-900 dark:text-white">Profile</h1>
         <div
-          className="grid grid-cols-1 items-center justify-center gap-12 rounded-lg border-2 border-solid border-gray-300 bg-white py-4 text-center sm:grid-cols-2 md:grid-cols-2">
+          className="grid grid-cols-1 items-center justify-center gap-12 rounded-lg border-2 border-solid border-gray-300 bg-card py-4 text-center sm:grid-cols-2 md:grid-cols-2">
 
           <div>
             <div className="mb-4">
@@ -57,16 +57,16 @@ export default function Home() {
         <h1 className="text-3xl font-semibold text-gray-900 dark:text-white">Appointments</h1>
         <div className="flex justify-center">
           <button type="button"
-            className="mb-2 me-2 rounded-full border border-gray-200 bg-white px-5 py-2.5 text-sm font-medium text-gray-900 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:outline-none focus:ring-4 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700">DOCTORS
+            className="hover:accent mb-2 me-2 rounded-full bg-card px-5 py-2.5 text-sm font-medium text-gray-900 shadow-sm hover:text-blue-700 focus:z-10 focus:outline-none focus:ring-4 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700">DOCTORS
             APPOINTMENT</button>
           <button type="button"
-            className="mb-2 me-2 rounded-full border border-gray-200 bg-white px-5 py-2.5 text-sm font-medium text-gray-900 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:outline-none focus:ring-4 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700">PATIENT
+            className="mb-2 me-2 rounded-full bg-card px-5 py-2.5 text-sm font-medium text-gray-900 shadow-sm hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:outline-none focus:ring-4 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700">PATIENT
             APPOINTMENT REQUEST</button>
         </div>
 
         <table
           className="w-full border-2 border-solid border-gray-300 text-left text-sm text-gray-500 dark:text-gray-400 rtl:text-right">
-          <thead className="bg-gray-50 text-xs uppercase text-gray-700 dark:bg-gray-700 dark:text-gray-400">
+          <thead className="text-xs uppercase text-gray-700 text-muted-foreground dark:bg-gray-700 dark:text-gray-400">
             <tr>
               <th scope="col" className="px-4 py-4">Type</th>
               <th scope="col" className="px-4 py-4">Date</th>
@@ -74,7 +74,7 @@ export default function Home() {
             </tr>
           </thead>
           <tbody>
-            <tr className="border-b bg-white dark:border-gray-700 dark:bg-gray-800">
+            <tr className="border-b bg-card dark:border-gray-700 dark:bg-gray-800">
               <td className="px-4 py-4">Chest X-Ray</td>
               <td className="px-4 py-4">December 06 2024</td>
               <td className="px-4 py-4">Dr. Johnny</td>
@@ -93,7 +93,7 @@ export default function Home() {
         <h1 className="mb-4 text-3xl font-semibold text-gray-900 dark:text-white">Prescriptions</h1>
         <table
           className="w-full border-2 border-solid border-gray-300 text-left text-sm text-gray-500 dark:text-gray-400 rtl:text-right">
-          <thead className="bg-gray-50 text-xs uppercase text-gray-700 dark:bg-gray-700 dark:text-gray-400">
+          <thead className="text-xs uppercase text-gray-700 text-muted-foreground dark:bg-gray-700 dark:text-gray-400">
             <tr>
               <th scope="col" className="px-4 py-4">Drug Name</th>
               <th scope="col" className="px-4 py-4">No. of Units</th>
@@ -103,21 +103,21 @@ export default function Home() {
             </tr>
           </thead>
           <tbody>
-            <tr className="border-b bg-white dark:border-gray-700 dark:bg-gray-800">
+            <tr className="border-b bg-card dark:border-gray-700 dark:bg-gray-800">
               <td className="px-4 py-4">Paracetamol Biogesic</td>
               <td className="px-4 py-4">2</td>
               <td className="px-4 py-4">Twice</td>
               <td className="px-4 py-4">7</td>
               <td className="px-4 py-4">10:30</td>
             </tr>
-            <tr className="border-b bg-white dark:border-gray-700 dark:bg-gray-800">
+            <tr className="border-b bg-card dark:border-gray-700 dark:bg-gray-800">
               <td className="px-4 py-4">Paracetamol Biogesic</td>
               <td className="px-4 py-4">2</td>
               <td className="px-4 py-4">Twice</td>
               <td className="px-4 py-4">7</td>
               <td className="px-4 py-4">10:30</td>
             </tr>
-            <tr className="bg-white dark:bg-gray-800">
+            <tr className="bg-card dark:bg-gray-800">
               <td className="px-4 py-4">Paracetamol Biogesic</td>
               <td className="px-4 py-4">2</td>
               <td className="px-4 py-4">Twice</td>
@@ -133,7 +133,7 @@ export default function Home() {
         </Link>
       </section>
 
-      <section className="block w-full rounded-lg border-2 border-solid border-gray-300 bg-white p-6">
+      <section className="block w-full rounded-lg border-2 border-solid border-gray-300 bg-card p-6">
         <h1 className="mb-4 text-3xl font-semibold text-gray-900 dark:text-white">View Results</h1>
 
         <div className="space-y-2">
@@ -176,7 +176,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="block w-full rounded-lg border-2 border-solid border-gray-300 bg-white p-6">
+      <section className="block w-full rounded-lg border-2 border-solid border-gray-300 bg-card p-6">
         <div className="flex-col justify-between">
           <h1 className="mb-4 text-3xl font-semibold text-gray-900 dark:text-white">Notes</h1>
           <p className="text-lg font-semibold text-gray-500">Diagnosis: Type 2 Diabetes</p>

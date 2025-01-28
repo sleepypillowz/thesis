@@ -3,7 +3,7 @@ import Dropdown from "@/components/dropdown";
 
 const Header = () => {
   return (
-    <div className="w-full border-b border-gray-200 bg-white">
+    <div className="w-full border-b border-gray-200 bg-background">
       <div className="px-3 py-3 lg:px-5 lg:pl-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center justify-start rtl:justify-end">

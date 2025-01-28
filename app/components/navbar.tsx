@@ -4,7 +4,7 @@ import Link from "next/link";
 const Navbar = () => {
 
   return (
-    <nav className="col-span-2 rounded-lg border-2 border-solid border-gray-300 bg-white p-3">
+    <nav className="col-span-2 rounded-lg border-2 border-solid border-gray-300 bg-card p-3">
       <ul className="flex justify-between">
         <li>
           <Link href="/"

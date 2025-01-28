@@ -65,15 +65,15 @@ const statsData = [
 
 function StatsCard({ icon: Icon, title, value, footer }: StatsCardProps) {
   return (
-    <div className="block w-full max-w-sm space-y-2 rounded-xl border-2 border-gray-300 p-4">
+    <div className="block w-full max-w-sm space-y-2 rounded-xl border-2 bg-card p-4 shadow-sm">
       <div className="flex items-center justify-between">
         <div className="flex items-center">
           <Icon className="me-2 text-blue-500" />
-          <p className="text-lg tracking-tight text-gray-900">{title}</p>
+          <p className="text-lg tracking-tight">{title}</p>
         </div>
-        <FaEllipsis className="me-2 text-gray-500 opacity-0 lg:opacity-100" />
+        <FaEllipsis className="me-2 opacity-0 lg:opacity-100" />
       </div>
-      <p className="text-3xl font-bold text-gray-700">{value}</p>
+      <p className="text-3xl font-bold">{value}</p>
       <p className="flex items-center justify-center md:justify-normal">
         {footer.trend ? (
           <>
@@ -98,7 +98,7 @@ function StatsCard({ icon: Icon, title, value, footer }: StatsCardProps) {
 
 export default function StatsCards() {
   return (
-    <div className="m-4 grid grid-cols-1 place-items-center gap-4 md:grid-cols-2 lg:grid-cols-4">
+    <div className="m-4 grid grid-cols-1 place-items-center gap-4 text-card-foreground md:grid-cols-2 lg:grid-cols-4">
       {statsData.map((stat, index) => (
         <StatsCard key={index} {...stat} />
       ))}

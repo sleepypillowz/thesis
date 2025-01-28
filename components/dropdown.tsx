@@ -11,7 +11,7 @@ import { buttonVariants } from "./ui/button";
 const Dropdown = () => {
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger className={buttonVariants({ variant: "default" })}>User</DropdownMenuTrigger>
+      <DropdownMenuTrigger className={buttonVariants({ variant: "outline" })}>User</DropdownMenuTrigger>
       <DropdownMenuContent>
         <DropdownMenuLabel>My Account</DropdownMenuLabel>
         <DropdownMenuSeparator />
