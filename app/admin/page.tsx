@@ -20,7 +20,7 @@ export default function Page() {
           <div className="flex items-center justify-between">
             <div className="flex items-center">
               <FaUser className="me-2 text-blue-500" />
-              <p className="text-lg tracking-tight text-gray-900">Total Patient</p>
+              <p className="text-lg tracking-tight text-gray-900 text-left">Total Patient</p>
             </div>
             <FaEllipsis className="me-2 text-gray-500 opacity-0 lg:opacity-100" />
           </div>
