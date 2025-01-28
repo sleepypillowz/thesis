@@ -15,7 +15,7 @@ export default function Page() {
 
       <StatsCard />
 
-      <div className="m-4 space-y-4 lg:mx-4 lg:flex lg:justify-center lg:space-x-4">
+      <div className="space-y-4 lg:mx-4 lg:flex lg:justify-center lg:space-x-4 lg:space-y-0">
         <div className="lg:w-full">
           <VisitorsChart />
         </div>
