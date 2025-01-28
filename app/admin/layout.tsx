@@ -14,7 +14,7 @@ export default function DoctorLayout({
         <AppSidebar />
         <SidebarInset className="flex-1">
           <main className="flex-1">
-            <SidebarTrigger className="fixed md:hidden" />
+            <SidebarTrigger className="fixed" />
             <Header />
             {children}
           </main>

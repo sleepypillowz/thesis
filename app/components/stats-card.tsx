@@ -65,10 +65,10 @@ const statsData = [
 
 function StatsCard({ icon: Icon, title, value, footer }: StatsCardProps) {
   return (
-    <div className="block w-full max-w-sm space-y-2 rounded-xl border-2 bg-card p-4 shadow-sm">
+    <div className="card block w-full max-w-sm space-y-2 rounded-xl">
       <div className="flex items-center justify-between">
         <div className="flex items-center">
-          <Icon className="me-2 text-blue-500" />
+          <Icon className="me-2 text-primary" />
           <p className="text-lg tracking-tight">{title}</p>
         </div>
         <FaEllipsis className="me-2 opacity-0 lg:opacity-100" />

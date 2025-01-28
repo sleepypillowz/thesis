@@ -27,7 +27,7 @@ export default function Home() {
                 <Link className={buttonVariants({ variant: "default" })} href="/patient">
                   Patient
                 </Link>
-                <Link className={buttonVariants({ variant: "default" })} href="/admin">
+                <Link className={buttonVariants({ variant: "secondary" })} href="/admin">
                   Admin
                 </Link>
               </div>

@@ -13,7 +13,7 @@ export default function Page() {
           </p>
         </div>
 
-        <div className="mx-auto mt-12 max-w-lg rounded-xl bg-white p-8 shadow-lg">
+        <div className="card mx-auto mt-12 max-w-lg rounded-xl">
           <form action="#" method="GET">
             <div className="grid grid-cols-1 gap-y-6 sm:grid-cols-2 sm:gap-x-6 sm:gap-y-0">
 

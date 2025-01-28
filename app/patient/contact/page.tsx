@@ -2,7 +2,7 @@ export default function Page() {
   return (
     <div className="flex-1 px-8 py-8">
 
-      <section className="px-4 sm:px-6 lg:px-8">
+      <section className="card px-4 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-lg text-center">
           <h2 className="text-3xl font-medium text-gray-900 sm:text-4xl">
             Contact Us

@@ -25,7 +25,7 @@ const menuItems = [
 ]
 export default function Navbar() {
   return (
-    <div className="flex justify-between p-4 pl-0 lg:justify-center lg:rounded-lg lg:border-2 lg:border-solid lg:border-gray-300 lg:bg-card lg:pl-4">
+    <div className="flex justify-between p-4 pl-0 lg:justify-center lg:border-2 lg:bg-card lg:pl-4 lg:shadow-sm">
       {/* Mobile Navigation */}
       <Sheet>
         <SheetTrigger asChild className="lg:hidden">
