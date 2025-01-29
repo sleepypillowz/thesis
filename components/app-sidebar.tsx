@@ -81,8 +81,7 @@ const items = [
 const data = {
   user: {
     name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
+    email: "m@example.com"
   },
 }
 
