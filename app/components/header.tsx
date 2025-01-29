@@ -1,5 +1,6 @@
 import Link from "next/link";
-import Dropdown from "@/components/dropdown";
+import Profile from "@/components/profile";
+import { ModeToggle } from "@/components/mode-toggle";
 
 const Header = () => {
   return (
@@ -13,7 +14,8 @@ const Header = () => {
             </Link>
           </div>
           <div className="relative">
-            <Dropdown />
+            <Profile />
+            <ModeToggle />
           </div>
         </div>
       </div>

@@ -6,12 +6,18 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { buttonVariants } from "./ui/button";
+import { Button } from "./ui/button";
+import { User } from "lucide-react";
 
-const Dropdown = () => {
+const Profile = () => {
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger className={buttonVariants({ variant: "outline" })}>User</DropdownMenuTrigger>
+      <DropdownMenuTrigger asChild>
+        <Button variant="outline" size="icon">
+          <User />
+          <span className="sr-only">Profile</span>
+        </Button>
+      </DropdownMenuTrigger>
       <DropdownMenuContent>
         <DropdownMenuLabel>My Account</DropdownMenuLabel>
         <DropdownMenuSeparator />
@@ -24,4 +30,4 @@ const Dropdown = () => {
   );
 }
 
-export default Dropdown;
+export default Profile;
