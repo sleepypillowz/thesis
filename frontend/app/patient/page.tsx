@@ -137,7 +137,7 @@ export default function Home() {
             <FaPenToSquare />
           </Link>
 
-        </div>``
+        </div>
       </section>
 
       <section className="card block w-full">
