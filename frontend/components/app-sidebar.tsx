@@ -7,11 +7,13 @@ import {
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
+  SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 import { NavUser } from "./nav-user"
+import Image from "next/image";
 
 
 // Menu items.
@@ -88,6 +90,15 @@ const data = {
 export function AppSidebar() {
   return (
     <Sidebar>
+      <SidebarHeader>
+        <div className="flex">
+          <span className="relative flex h-8 w-8 shrink-0 overflow-hidden rounded-full">
+            <Image className="aspect-square h-full w-full" src="/logo.png" alt="logo" width={64} height={64} />
+          </span>
+          <h1 className="ms-2 text-2xl">MediTrakk</h1>
+        </div>
+
+      </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel>Main Menu</SidebarGroupLabel>

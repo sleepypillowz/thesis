@@ -27,7 +27,7 @@ export default function Page() {
 
   return (
     <div className="container mx-auto px-10 py-10">
-      <h1 className="text-2xl">Medical Records</h1>
+      <h1 className="text-2xl">Patients</h1>
       <DataTable
         columns={columns}
         data={patients} // Use the patients fetched from the API or Supabase
