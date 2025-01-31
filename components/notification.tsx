@@ -7,24 +7,24 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Button } from "./ui/button";
-import { User } from "lucide-react";
+import { Bell } from "lucide-react";
 
 const Dropdown = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="outline" size="icon">
-          <User />
-          <span className="sr-only">Profile</span>
+          <Bell />
+          <span className="sr-only">Notification</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent>
-        <DropdownMenuLabel>My Account</DropdownMenuLabel>
+        <DropdownMenuLabel>Notification</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>Profile</DropdownMenuItem>
-        <DropdownMenuItem>Billing</DropdownMenuItem>
-        <DropdownMenuItem>Team</DropdownMenuItem>
-        <DropdownMenuItem>Subscription</DropdownMenuItem>
+        <DropdownMenuItem>Notification 1</DropdownMenuItem>
+        <DropdownMenuItem>Notification 2</DropdownMenuItem>
+        <DropdownMenuItem>Notification 3</DropdownMenuItem>
+        <DropdownMenuItem>Notification 4</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );

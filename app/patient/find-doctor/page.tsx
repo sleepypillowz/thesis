@@ -8,7 +8,7 @@ export default function Page() {
             Find a Doctor
           </h2>
           <p className="mt-4 text-lg">
-            Search htmlFor doctors by name or specialty. Let us help you find the best healthcare professional htmlFor
+            Search for doctors by name or specialty. Let us help you find the best healthcare professional for
             your needs.
           </p>
         </div>

@@ -1,10 +1,11 @@
 import Link from "next/link";
+import Notification from "@/components/notification";
 import Profile from "@/components/profile";
 import { ModeToggle } from "@/components/mode-toggle";
 
 const Header = () => {
   return (
-    <div className="w-full border-b border-gray-200 bg-background">
+    <div className="w-full bg-background">
       <div className="px-3 py-3 lg:px-5 lg:pl-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center justify-start rtl:justify-end">
@@ -14,6 +15,7 @@ const Header = () => {
             </Link>
           </div>
           <div className="relative">
+            <Notification />
             <Profile />
             <ModeToggle />
           </div>
