@@ -4,10 +4,10 @@ export default function Page() {
 
       <section className="px-4 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-lg text-center">
-          <h2 className="text-3xl font-extrabold text-gray-900 sm:text-4xl">
+          <h2 className="text-3xl font-extrabold sm:text-4xl">
             Find a Doctor
           </h2>
-          <p className="mt-4 text-lg text-gray-600">
+          <p className="mt-4 text-lg">
             Search htmlFor doctors by name or specialty. Let us help you find the best healthcare professional htmlFor
             your needs.
           </p>
@@ -18,13 +18,13 @@ export default function Page() {
             <div className="grid grid-cols-1 gap-y-6 sm:grid-cols-2 sm:gap-x-6 sm:gap-y-0">
 
               <div className="sm:col-span-1">
-                <label htmlFor="doctor-name" className="block text-sm font-medium text-gray-700">Doctor Name</label>
+                <label htmlFor="doctor-name" className="block text-sm font-medium">Doctor Name</label>
                 <input type="text" id="doctor-name" name="doctor_name" placeholder="Search by name"
                   className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" />
               </div>
 
               <div className="sm:col-span-1">
-                <label htmlFor="specialty" className="block text-sm font-medium text-gray-700">Specialty</label>
+                <label htmlFor="specialty" className="block text-sm font-medium">Specialty</label>
                 <select id="specialty" name="specialty"
                   className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
                   <option value="">Select a specialty</option>
