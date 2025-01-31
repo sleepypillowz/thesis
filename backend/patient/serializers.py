@@ -15,7 +15,7 @@ class PatientSerializer(serializers.Serializer):
     complaint = serializers.ChoiceField(choices=[
         ('General', 'General Illness'),
         ('Injury', 'Injury'),
-        ('Check', 'Check-up'),
+        ('Check-up', 'Check-up'),
         ('Other', 'Other'),
     ], allow_blank=True, required=False)
     street_address = serializers.CharField(max_length=100, allow_blank=True, required=False)
@@ -54,3 +54,20 @@ class PatientSerializer(serializers.Serializer):
            except ValueError:
                 return None
         return None
+class PatientRegistrationSerializer(serializers.Serializer):
+    patient_id = serializers.CharField(max_length=8)
+    first_name = serializers.CharField(max_length=200, allow_blank=True, required=False)
+    middle_name = serializers.CharField(max_length=100, allow_blank=True, required=False)
+    last_name = serializers.CharField(max_length=200)
+    email = serializers.EmailField()
+    phone_number = serializers.CharField(max_length=11)
+    date_of_birth = serializers.DateField(allow_null=True, required=False)
+    complaint = serializers.ChoiceField(choices=[
+        ('General', 'General Illness'),
+        ('Injury', 'Injury'),
+        ('Check-up', 'Check-up'),
+        ('Other', 'Other'),
+    ], allow_blank=True, required=False)
+    street_address = serializers.CharField(max_length=100, allow_blank=True, required=False)
+    barangay = serializers.CharField(max_length=100, allow_blank=True, required=False)
+    municipal_city = serializers.CharField(max_length=100, allow_blank=True, required=False)
