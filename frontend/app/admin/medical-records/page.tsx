@@ -1,31 +1,22 @@
 "use client"
-import { createClient } from "@supabase/supabase-js";
-import { useEffect, useState } from "react";
+
+import { useEffect, useState } from "react"; // Importing useState and useEffect
 import { Patient, columns } from "@/app/components/patient-columns";
 import { DataTable } from "@/components/ui/data-table";
-
-// Initialize Supabase client using the environment variables
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
 
 export default function Page() {
   const [patients, setPatients] = useState<Patient[]>([]);
 
   useEffect(() => {
-    // Fetch patient data from Supabase
+    // Fetch patient data from the Django API or Supabase
     const fetchPatients = async () => {
       try {
-        const { data, error } = await supabase
-          .from("patient_patient") // Replace with your actual table name
-          .select("*");
-
-        if (error) {
-          throw new Error(error.message);
+        const response = await fetch("http://127.0.0.1:8000/patients/");
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
         }
-
-        setPatients(data || []); // Set the fetched patient data
+        const data: Patient[] = await response.json();
+        setPatients(data); // Set the fetched patient data
       } catch (error) {
         console.error("Error fetching patients:", error);
       }
@@ -39,7 +30,7 @@ export default function Page() {
       <h1 className="text-2xl">Medical Records</h1>
       <DataTable
         columns={columns}
-        data={patients} // Use the patients fetched from Supabase
+        data={patients} // Use the patients fetched from the API or Supabase
         filterColumn="patient_id"
         filterPlaceholder="Search patient name..."
       />
