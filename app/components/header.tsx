@@ -1,7 +1,6 @@
 import Link from "next/link";
 import Notification from "@/components/notification";
 import Profile from "@/components/profile";
-import { ModeToggle } from "@/components/mode-toggle";
 
 const Header = () => {
   return (
@@ -17,7 +16,6 @@ const Header = () => {
           <div className="relative">
             <Notification />
             <Profile />
-            <ModeToggle />
           </div>
         </div>
       </div>

@@ -6,7 +6,7 @@ import StatsCard from "../components/stats-card"
 export default function Page() {
   return (
     <div className="mb-4 space-y-4 text-center md:text-left lg:m-0">
-      <div className="card border-x-0 px-6 py-4">
+      <div className="card rounded-none border-x-0 px-6 py-4">
         <p className="text-2xl font-bold">
           Good Day, Test
         </p>

@@ -1,3 +1,5 @@
+"use client"
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -8,8 +10,10 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Button } from "./ui/button";
 import { User } from "lucide-react";
+import { useTheme } from "next-themes";
 
 const Profile = () => {
+  const { theme, setTheme } = useTheme()
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -22,9 +26,9 @@ const Profile = () => {
         <DropdownMenuLabel>My Account</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem>Profile</DropdownMenuItem>
-        <DropdownMenuItem>Billing</DropdownMenuItem>
-        <DropdownMenuItem>Team</DropdownMenuItem>
-        <DropdownMenuItem>Subscription</DropdownMenuItem>
+        <DropdownMenuItem onClick={() => setTheme(theme === "light" ? "dark" : "light")}>
+          Toggle Theme
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );
