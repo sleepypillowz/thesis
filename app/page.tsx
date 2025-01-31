@@ -30,6 +30,9 @@ export default function Home() {
                 <Link className={buttonVariants({ variant: "secondary" })} href="/admin">
                   Admin
                 </Link>
+                <Link className={buttonVariants({ variant: "secondary" })} href="/payments">
+                  Table
+                </Link>
               </div>
               {/* End Buttons */}
             </div>
