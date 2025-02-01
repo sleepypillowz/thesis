@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link"
 import { FaPenToSquare, FaFile } from "react-icons/fa6";
 
-export default function Home() {
+export default function Page() {
   return (
     <div className="mx-8 my-8 grid grid-cols-2 gap-4 space-y-4">
       <section className="col-span-2">
@@ -56,8 +56,8 @@ export default function Home() {
 
       <section className="col-span-2">
         <h1 className="mb-4 text-3xl font-semibold">Appointments</h1>
-        <div className="card">
-          <div className="my-4 flex flex-wrap justify-start space-x-4">
+        <div className="card overflow-x-auto">
+          <div className="my-4 flex flex-wrap justify-start space-y-4 sm:space-x-4 sm:space-y-0">
             <Button variant="outline" className="rounded-full">Doctors Appointment</Button>
             <Button variant="outline" className="rounded-full">Patient Appointment Request</Button>
           </div>
@@ -94,7 +94,7 @@ export default function Home() {
 
       <section className="col-span-2">
         <h1 className="mb-4 text-3xl font-semibold">Prescriptions</h1>
-        <div className="card">
+        <div className="card overflow-x-auto">
           <table
             className="card w-full text-left text-sm rtl:text-right">
             <thead className="text-xs uppercase text-muted-foreground">
@@ -140,7 +140,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="card block w-full">
+      <section className="card block w-full overflow-x-auto">
         <h1 className="mb-4 text-3xl font-semibold">View Results</h1>
 
         <div className="space-y-2">

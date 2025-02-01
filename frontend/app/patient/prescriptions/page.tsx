@@ -4,7 +4,7 @@ export default function Page() {
       <div className="mx-auto max-w-7xl rounded-lg">
         <h1 className="mb-4 text-3xl font-semibold">Prescriptions</h1>
 
-        <div className="card">
+        <div className="card overflow-x-auto">
           <table
             className="card w-full text-left text-sm rtl:text-right">
             <thead className="text-xs uppercase text-muted-foreground">
