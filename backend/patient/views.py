@@ -30,18 +30,24 @@ class PatientListView(APIView):
 
 class PatientRegister(APIView):
     def post(self, request):
+        print("📥 Received Data:", request.data)  # ✅ Log raw request data
         # Deserialize the data with the PatientRegistrationSerializer
         patient = PatientRegistrationSerializer(data=request.data)
         
         if patient.is_valid():
             validated_data = patient.validated_data
+            print("🔄 Validated Data:", validated_data)
 
             # Convert date_of_birth to string (YYYY-MM-DD) if it's not None
             if validated_data.get("date_of_birth"):
                 validated_data["date_of_birth"] = validated_data["date_of_birth"].strftime("%Y-%m-%d")
 
             try:
+                priority_level = validated_data.get('priority_level', 'Regular')
+                print("🔥 Extracted Priority Level:", priority_level) 
                 # Insert data into Patient table using Django ORM
+                if priority_level not in ['Regular', 'Priority']:
+                    priority_level = 'Regular'  # Default fallback
                 patient = Patient.objects.create(
                     first_name=validated_data.get('first_name', ''),
                     middle_name=validated_data.get('middle_name', ''),
@@ -54,14 +60,7 @@ class PatientRegister(APIView):
                     barangay=validated_data.get('barangay', ''),
                     municipal_city=validated_data.get('municipal_city', '')
                 )
-
-                # After inserting, you can also create the TemporaryStorageQueue entry
-                priority_level = validated_data.get('priority', 'Regular')  # Default to 'Regular' if missing
-                print("Extracted Priority:", priority_level)  # Debugging
-
-                # Ensure the value is within the defined choices
-                if priority_level not in ['Regular', 'Priority']:
-                    priority_level = 'Regular'  # Default to 'Regular' if unexpected input is received
+                    
 
                 TemporaryStorageQueue.objects.create(
                     patient=patient,

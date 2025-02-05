@@ -13,7 +13,7 @@ export default function Page() {
     email: "",
     date_of_birth: "",
     complaint: "general_illness",
-    priority: "Regular", // Move this directly to formData
+    priority_level: "Regular", // Move this directly to formData
     street_address: "",
     barangay: "",
     municipal_city: "",
@@ -55,21 +55,20 @@ export default function Page() {
       console.log("Response Body:", responseBody);
       
       if (response.ok) {
-        // Reset form data including priority and complaint directly
-        // setFormData({
-        //   first_name: "",
-        //   middle_name: "",
-        //   last_name: "",
-        //   phone_number: "",
-        //   email: "",
-        //   date_of_birth: "",
-        //   complaint: "general_illness",
-        //   priority: "Regular", // Reset priority here directly
-        //   street_address: "",
-        //   barangay: "",
-        //   municipal_city: "",
-        //   agree_terms: false,
-        // });
+        setFormData({
+          first_name: "",
+          middle_name: "",
+          last_name: "",
+          phone_number: "",
+          email: "",
+          date_of_birth: "",
+          complaint: "general_illness",
+          priority_level: "Regular", // Reset priority here directly
+          street_address: "",
+          barangay: "",
+          municipal_city: "",
+          agree_terms: false,
+        });
         setShowModal(true);  // Show the popup
       }
   
@@ -240,8 +239,8 @@ export default function Page() {
             Priority
           </label>
           <select
-            id="priority"
-            value={formData.priority}
+            id="priority_level"
+            value={formData.priority_level}
             onChange={handleChange}
             className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
             required

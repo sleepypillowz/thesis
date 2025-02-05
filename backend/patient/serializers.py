@@ -57,7 +57,7 @@ class PatientSerializer(serializers.Serializer):
         return None
 
 class PatientRegistrationSerializer(serializers.ModelSerializer):
-    priority = serializers.ChoiceField(choices=[('Regular', 'Regular'), ('Priority', 'Priority')], default='Regular')  # Add priority field
+    priority_level = serializers.ChoiceField(choices=[('Regular', 'Regular'), ('Priority', 'Priority')], default='Regular')  # Add priority field
 
     class Meta:
         model = Patient
