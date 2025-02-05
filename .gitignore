@@ -45,3 +45,14 @@ Thumbs.db
 *.swp
 *.swo
 .env.local # if you don't want to track your local environment variables
+
+# Python virtual environment
+venv/
+.env/
+*.pyc
+__pycache__/
+*.pyo
+*.pyd
+.Python
+pip-log.txt
+pip-delete-this-directory.txt
