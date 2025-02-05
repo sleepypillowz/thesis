@@ -1,13 +1,14 @@
 import { VisitorsChart } from "@/components/visitors-chart";
 import { CommonDiseasesChart } from "@/components/common-diseases-chart";
-import StatsCard from "../components/stats-card";
+
+import StatsCard from "../components/stats-card"
 
 export default function Page() {
   return (
     <div className="mb-4 space-y-4 text-center md:text-left lg:m-0">
       <div className="px-6 py-4">
         <p className="text-2xl font-bold">
-          Good Day, <span className="text-blue-500">JUAN</span>
+          Good Day, Test
         </p>
         <p className="text-sm">Check out the latest updates from the past 7 days!</p>
       </div>

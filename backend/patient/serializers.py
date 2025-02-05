@@ -1,6 +1,7 @@
 
 from datetime import datetime, date
 from rest_framework import serializers
+from .models import Patient
 
 class PatientSerializer(serializers.Serializer):
     patient_id = serializers.CharField(max_length=8)
@@ -54,20 +55,22 @@ class PatientSerializer(serializers.Serializer):
            except ValueError:
                 return None
         return None
-class PatientRegistrationSerializer(serializers.Serializer):
-    patient_id = serializers.CharField(max_length=8)
-    first_name = serializers.CharField(max_length=200, allow_blank=True, required=False)
-    middle_name = serializers.CharField(max_length=100, allow_blank=True, required=False)
-    last_name = serializers.CharField(max_length=200)
-    email = serializers.EmailField()
-    phone_number = serializers.CharField(max_length=11)
-    date_of_birth = serializers.DateField(allow_null=True, required=False)
-    complaint = serializers.ChoiceField(choices=[
-        ('General', 'General Illness'),
-        ('Injury', 'Injury'),
-        ('Check-up', 'Check-up'),
-        ('Other', 'Other'),
-    ], allow_blank=True, required=False)
-    street_address = serializers.CharField(max_length=100, allow_blank=True, required=False)
-    barangay = serializers.CharField(max_length=100, allow_blank=True, required=False)
-    municipal_city = serializers.CharField(max_length=100, allow_blank=True, required=False)
+
+class PatientRegistrationSerializer(serializers.ModelSerializer):
+    priority = serializers.ChoiceField(choices=[('Regular', 'Regular'), ('Priority', 'Priority')], default='Regular')  # Add priority field
+
+    class Meta:
+        model = Patient
+        fields = ['first_name', 'middle_name', 'last_name', 'email', 'phone_number', 'date_of_birth', 'complaint', 'street_address', 'barangay', 'municipal_city', 'priority_level']  # Add priority field here
+
+    def get_queue_data(self, obj):
+        """Fetch queue data for the patient."""
+        queue_info = obj.temporarystoragequeue_set.filter(status='Waiting').first()  # Adjust as per your model relations
+        if queue_info:
+            return {
+                'id': queue_info.id,
+                'priority_level': queue_info.priority_level,
+                'status': queue_info.status,
+                'created_at': queue_info.created_at,
+            }
+        return None

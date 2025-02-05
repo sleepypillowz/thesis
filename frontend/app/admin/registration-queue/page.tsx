@@ -1,0 +1,148 @@
+"use client"
+import { buttonVariants } from "@/components/ui/button";
+import Link from "next/link";
+import { useEffect, useState } from "react"; 
+
+
+export default function Page() {
+  const [priorityQueue, setPriorityQueue] = useState([]);
+  const [regularQueue, setRegularQueue] = useState([]);
+
+  useEffect(() => {
+    fetch("http://127.0.0.1:8000/queueing/registration_queueing/")
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("API Response:", data); 
+        setPriorityQueue(data.priority_queue);
+        setRegularQueue(data.regular_queue);
+      })
+      .catch((error) => console.error("Error fetching queue:", error));
+  }, []);
+
+  return (
+    <div className="flex-1 px-8 py-8">
+      <div className="flex flex-row justify-center gap-4">
+        <div
+          className="card flex h-96 w-80 max-w-sm flex-col items-center justify-center">
+          <p className="text-6xl font-bold">#01</p>
+          <span>Queing Number</span>
+        </div>
+
+        <div
+          className="card flex h-96 w-80 max-w-sm flex-col items-center justify-center">
+          <p className="text-6xl font-bold">#02</p>
+          <span>Queing Number</span>
+        </div>
+
+        <div
+          className="card flex h-96 w-80 max-w-sm flex-col items-center justify-center">
+          <div>
+            <p className="text-6xl font-bold">#01</p>
+            <span>Queing Number</span>
+          </div>
+        </div>
+
+        <div className="flex justify-center pt-8">
+          <div className="card flex w-96 max-w-sm flex-col rounded-lg">
+            <p className="mb-2 text-lg font-semibold tracking-tight">Patient Information</p>
+            <div className="flex">
+
+              <p>
+                <span>Name: </span>Juan Dela Cruz
+              </p>
+              <p className="pl-8">
+                <span>Age: </span>20
+              </p>
+            </div>
+
+            <hr className="mt-2"></hr>
+
+            <p className="my-2 text-lg font-semibold tracking-tight">Additional </p>
+            <p>
+              <span>Phone number: </span>Checkup
+            </p>
+            <p>
+              <span>Reason: </span>Checkup
+            </p>
+            <div className="flex flex-col pt-6">
+              <div className="flex justify-between">
+                <Link className={buttonVariants({ variant: "outline" })} href="/payments">
+                  Accept
+                </Link>
+                <Link className={buttonVariants({ variant: "outline" })} href="/payments">
+                  Edit
+                </Link>
+              </div>
+
+              <Link className={buttonVariants({ variant: "outline" })} href="/payments">
+                Cancel
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="flex flex-row justify-center gap-4">
+        <div
+          className="card flex h-96 w-80 max-w-sm flex-col items-center justify-center">
+          <p className="text-6xl font-bold">#01</p>
+          <span>Queing Number</span>
+        </div>
+
+        <div
+          className="card flex h-96 w-80 max-w-sm flex-col items-center justify-center">
+          <p className="text-6xl font-bold">#02</p>
+          <span>Queing Number</span>
+        </div>
+
+        <div
+          className="card flex h-96 w-80 max-w-sm flex-col items-center justify-center">
+          <div>
+            <p className="text-6xl font-bold">#01</p>
+            <span>Queing Number</span>
+          </div>
+        </div>
+
+        <div className="flex justify-center pt-8">
+          <div className="card flex w-96 max-w-sm flex-col rounded-lg">
+            <p className="mb-2 text-lg font-semibold tracking-tight">Patient Information</p>
+            <div className="flex">
+
+              <p>
+                <span>Name: </span>Juan Dela Cruz
+              </p>
+              <p className="pl-8">
+                <span>Age: </span>20
+              </p>
+            </div>
+
+            <hr className="mt-2"></hr>
+
+            <p className="my-2 text-lg font-semibold tracking-tight">Additional Information</p>
+            <p>
+              <span>Phone number: </span>Checkup
+            </p>
+            <p>
+              <span>Reason: </span>Checkup
+            </p>
+            <div className="flex flex-col pt-6">
+              <div className="flex justify-between">
+                <Link className={buttonVariants({ variant: "outline" })} href="/payments">
+                  Accept
+                </Link>
+                <Link className={buttonVariants({ variant: "outline" })} href="/payments">
+                  Edit
+                </Link>
+              </div>
+
+              <Link className={buttonVariants({ variant: "outline" })} href="/payments">
+                Cancel
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+  );
+}

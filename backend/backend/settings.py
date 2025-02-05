@@ -53,7 +53,8 @@ INSTALLED_APPS = [
 
     # installed apps
     'api.apps.ApiConfig',
-    'patient.apps.PatientConfig'
+    'patient.apps.PatientConfig',
+    'queueing.apps.QueueingConfig'
 ]
 
 MIDDLEWARE = [

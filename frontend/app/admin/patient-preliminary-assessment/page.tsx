@@ -2,7 +2,7 @@ export default function Page() {
   return (
     <div className="flex-1 px-4 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-4xl rounded-lg bg-white p-6 shadow-lg">
-        <h2 className="mb-6 text-2xl font-semibold text-gray-700">Patient Preliminary Assessment</h2>
+        <h2 className="mb-6 text-2xl font-semibold text-gray-700">Preliminary Assessment for Juan Dela Cruz</h2>
 
         <form action="#" method="POST">
           <div className="mb-6 grid grid-cols-1 gap-6 md:grid-cols-3">
