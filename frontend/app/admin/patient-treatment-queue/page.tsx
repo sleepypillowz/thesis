@@ -29,7 +29,6 @@ export default function Page() {
           <div className="card flex w-96 max-w-sm flex-col rounded-lg">
             <p className="mb-2 text-lg font-semibold tracking-tight">Patient Information</p>
             <div className="flex">
-
               <p>
                 <span>Name: </span>Juan Dela Cruz
               </p>

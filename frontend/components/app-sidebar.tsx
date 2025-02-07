@@ -1,4 +1,4 @@
-import { LayoutDashboard, Users, ClipboardPlus, Calendar, Clock, ClipboardPenLine, Bandage, ChartArea, HelpCircle, Settings, Database } from "lucide-react"
+import { LayoutDashboard, Users, ClipboardPlus, Calendar, Clock, ClipboardPenLine, Bandage, ChartArea, HelpCircle, Settings, Database,UserPlus } from "lucide-react"
 
 import {
   Sidebar,
@@ -25,8 +25,13 @@ const items = [
   },
   {
     title: "Patients",
-    url: "/admin/patient-database",
+    url: "#",
     icon: Users,
+  },
+  {
+    title: "Registration",
+    url: "/admin/patient-registration",
+    icon: UserPlus,
   },
   {
     title: "Medical Records",
