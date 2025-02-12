@@ -44,6 +44,7 @@ class PatientRegister(APIView):
 
             try:
                 priority_level = validated_data.get('priority_level', 'Regular')
+                queue_number = validated_data.get('queue_number', '')
                 print("🔥 Extracted Priority Level:", priority_level) 
                 # Insert data into Patient table using Django ORM
                 if priority_level not in ['Regular', 'Priority']:
@@ -65,6 +66,7 @@ class PatientRegister(APIView):
                 TemporaryStorageQueue.objects.create(
                     patient=patient,
                     priority_level=priority_level,  # Should be 'Regular' or 'Priority'
+                    queue_number = queue_number,
                     status='Waiting'
                 )
 
