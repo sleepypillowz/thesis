@@ -47,33 +47,50 @@ export default function Page() {
     return (
       <div className="flex justify-center pt-8">
         <div className="card flex w-96 max-w-sm flex-col rounded-lg">
-          <p className="mb-2 text-lg font-semibold tracking-tight">Patient Information</p>
+          <p className="mb-2 text-lg font-semibold tracking-tight">
+            Patient Information
+          </p>
           <div className="flex">
             <p>
-              <span>Name: </span>{queueItem.first_name} {queueItem.last_name}
+              <span>Name: </span>
+              {queueItem.first_name} {queueItem.last_name}
             </p>
             <p className="pl-8">
-              <span>Age: </span>{queueItem.age}
+              <span>Age: </span>
+              {queueItem.age}
             </p>
           </div>
           <hr className="mt-2" />
-          <p className="my-2 text-lg font-semibold tracking-tight">Additional Information</p>
-          <p>
-            <span>Phone number: </span>{queueItem.phone_number || "N/A"}
+          <p className="my-2 text-lg font-semibold tracking-tight">
+            Additional Information
           </p>
           <p>
-            <span>Reason: </span>{queueItem.complaint || "N/A"}
+            <span>Phone number: </span>
+            {queueItem.phone_number || "N/A"}
+          </p>
+          <p>
+            <span>Reason: </span>
+            {queueItem.complaint || "N/A"}
           </p>
           <div className="flex flex-col pt-6">
             <div className="flex justify-between">
-              <Link className={buttonVariants({ variant: "outline" })} href="/payments">
+              <Link
+                className={buttonVariants({ variant: "outline" })}
+                href="/payments"
+              >
                 Accept
               </Link>
-              <Link className={buttonVariants({ variant: "outline" })} href="/payments">
+              <Link
+                className={buttonVariants({ variant: "outline" })}
+                href="/payments"
+              >
                 Edit
               </Link>
             </div>
-            <Link className={buttonVariants({ variant: "outline" })} href="/payments">
+            <Link
+              className={buttonVariants({ variant: "outline" })}
+              href="/payments"
+            >
               Cancel
             </Link>
           </div>
@@ -83,24 +100,31 @@ export default function Page() {
   };
 
   return (
-    <div className="flex-1 px-8 py-8">
-      <h1>Priority Queue</h1>
+    <div className="flex-1 space-y-8 px-8 py-8">
+      <h1 className="text-2xl font-bold">Registration Queue</h1>
+      <h2 className="text-xl font-semibold">Priority Queue</h2>
       <div className="flex flex-row justify-center gap-4">
         {/* Priority Queue Cards */}
         <div className="card flex h-96 w-80 max-w-sm flex-col items-center justify-center">
-          <p className="text-6xl font-bold">#{priorityQueue.current ? 1 : "N/A"}</p>
+          <p className="text-6xl font-bold">
+            #{priorityQueue.current ? 1 : "N/A"}
+          </p>
           <span>Queuing Number</span>
           <span>Current</span>
         </div>
 
         <div className="card flex h-96 w-80 max-w-sm flex-col items-center justify-center">
-          <p className="text-6xl font-bold">#{priorityQueue.next1 ? 2 : "N/A"}</p>
+          <p className="text-6xl font-bold">
+            #{priorityQueue.next1 ? 2 : "N/A"}
+          </p>
           <span>Queuing Number</span>
           <span>Next</span>
         </div>
 
         <div className="card flex h-96 w-80 max-w-sm flex-col items-center justify-center">
-          <p className="text-6xl font-bold">#{priorityQueue.next2 ? 3 : "N/A"}</p>
+          <p className="text-6xl font-bold">
+            #{priorityQueue.next2 ? 3 : "N/A"}
+          </p>
           <span>Queuing Number</span>
           <span>Next</span>
         </div>
@@ -108,23 +132,29 @@ export default function Page() {
         {renderPatientInfo(priorityQueue.current)}
       </div>
 
-      <h1>Regular Queue</h1>
+      <h2 className="text-xl font-semibold">Regular Queue</h2>
       <div className="flex flex-row justify-center gap-4">
         {/* Regular Queue Cards */}
         <div className="card flex h-96 w-80 max-w-sm flex-col items-center justify-center">
-          <p className="text-6xl font-bold">#{regularQueue.current ? 1 : "N/A"}</p>
+          <p className="text-6xl font-bold">
+            #{regularQueue.current ? 1 : "N/A"}
+          </p>
           <span>Queuing Number</span>
           <span>Current</span>
         </div>
 
         <div className="card flex h-96 w-80 max-w-sm flex-col items-center justify-center">
-          <p className="text-6xl font-bold">#{regularQueue.next1 ? 2 : "N/A"}</p>
+          <p className="text-6xl font-bold">
+            #{regularQueue.next1 ? 2 : "N/A"}
+          </p>
           <span>Queuing Number</span>
           <span>Next</span>
         </div>
 
         <div className="card flex h-96 w-80 max-w-sm flex-col items-center justify-center">
-          <p className="text-6xl font-bold">#{regularQueue.next2 ? 3 : "N/A"}</p>
+          <p className="text-6xl font-bold">
+            #{regularQueue.next2 ? 3 : "N/A"}
+          </p>
           <span>Queuing Number</span>
           <span>Next</span>
         </div>

@@ -28,13 +28,15 @@ export default function Page() {
 
   // Filter patients based on the search term
   const filteredPatients = patients.filter((patient) => {
-    const fullName = `${patient.first_name} ${patient.middle_name || ""} ${patient.last_name}`.toLowerCase();
+    const fullName = `${patient.first_name} ${patient.middle_name || ""} ${
+      patient.last_name
+    }`.toLowerCase();
     return fullName.includes(searchTerm.toLowerCase());
   });
 
   return (
     <div className="container mx-auto px-10 py-10">
-      <h1 className="mb-4 text-2xl">Patients</h1>
+      <h1 className="mb-4 text-2xl">Medical Records</h1>
       {/* Search Input */}
       <input
         type="text"

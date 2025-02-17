@@ -138,12 +138,13 @@ export const columns: ColumnDef<Patient>[] = [
             <Link href="/admin/patient-information">
               <DropdownMenuItem>View</DropdownMenuItem>
             </Link>
-            <Link href="/admin/medical-records">
+            <Link href="/admin/patient-information">
               <DropdownMenuItem>Edit</DropdownMenuItem>
             </Link>
-            <Link href="/admin/medical-records">
+            <Link href="/admin/patient-information">
               <DropdownMenuItem>Delete</DropdownMenuItem>
             </Link>
+            <DropdownMenuItem>View payment details</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );
