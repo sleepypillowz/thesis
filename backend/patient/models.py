@@ -13,6 +13,11 @@ class Patient(models.Model):
         ('injury', 'Injury'),
         ('checkup', 'Check-up'),
         ('other', 'Other'),
+
+        # ('General Illness', 'General Illness'),
+        # ('Injury', 'Injury'),
+        # ('Checkup', 'Check-up'),
+        # ('Other', 'Other'),
     ]
     patient_id = models.CharField(max_length=8, unique=True, primary_key=True, editable=False)
     first_name = models.CharField(max_length=200, blank=True, null=True)
