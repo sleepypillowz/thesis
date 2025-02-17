@@ -58,23 +58,11 @@ class PatientSerializer(serializers.Serializer):
 
 class PatientRegistrationSerializer(serializers.ModelSerializer):
     priority_level = serializers.ChoiceField(choices=[('Regular', 'Regular'), ('Priority', 'Priority')], default='Regular')  # Add priority field
-<<<<<<< HEAD
-    agree_terms = serializers.BooleanField(write_only=True, required=True)  # Serializer-only field
-
-    class Meta:
-        model = Patient
-        fields = [
-            "first_name", "middle_name", "last_name", "email", "phone_number",
-            "date_of_birth", "complaint", "street_address", "barangay",
-            "municipal_city", "priority_level", "agree_terms"
-        ]
-=======
 
     class Meta:
         model = Patient
         fields = ['first_name', 'middle_name', 'last_name', 'email', 'phone_number', 'date_of_birth', 'complaint', 'street_address', 'barangay', 'municipal_city', 'priority_level']  # Add priority field here
 
->>>>>>> main
     def get_queue_data(self, obj):
         """Fetch queue data for the patient."""
         queue_info = obj.temporarystoragequeue_set.filter(status='Waiting').first()  # Adjust as per your model relations
