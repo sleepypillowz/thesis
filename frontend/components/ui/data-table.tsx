@@ -75,7 +75,9 @@ export function DataTable<TData, TValue>({
             <Input
               placeholder={filterPlaceholder}
               value={(table.getColumn(filterColumn)?.getFilterValue() as string) ?? ""}
-              onChange={(event) => table.getColumn(filterColumn)?.setFilterValue(event.target.value)}
+              onChange={(event) =>
+                table.getColumn(filterColumn)?.setFilterValue(event.target.value.trim().toLowerCase())
+              }
               className="max-w-sm"
             />
           )}
@@ -160,4 +162,3 @@ export function DataTable<TData, TValue>({
     </div>
   )
 }
-

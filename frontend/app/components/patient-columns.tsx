@@ -9,6 +9,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,
 import { MoreHorizontal } from "lucide-react"
 import { format } from 'date-fns';
 import { enGB } from 'date-fns/locale'
+import Link from "next/link"
 
 export type Patient = {
   patient_id: string;
@@ -113,10 +114,18 @@ export const columns: ColumnDef<Patient>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem onClick={() => navigator.clipboard.writeText(payment.patient_id)}>
-              Copy payment ID
+              Copy patient ID
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>View customer</DropdownMenuItem>
+            <Link href="/admin/patient-information">
+            <DropdownMenuItem>View</DropdownMenuItem>
+            </Link>
+            <Link href="/admin/patient-information">
+            <DropdownMenuItem>Edit</DropdownMenuItem>
+            </Link>
+            <Link href="/admin/patient-information">
+            <DropdownMenuItem>Delete</DropdownMenuItem>
+            </Link>
             <DropdownMenuItem>View payment details</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
