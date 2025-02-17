@@ -33,40 +33,34 @@ export default function Page() {
       .then((response) => response.json())
       .then((data) => {
         console.log("API Response:", data);
-
-        // Extract priority patients and sort by timestamp
+  
         const priorityPatients = [
           data.priority_current,
           data.priority_next1,
           data.priority_next2,
-        ].filter((p) => p !== null); // Remove null values
-
-        // Extract regular patients and sort by timestamp
+        ].filter((p) => p !== null);
+  
         const regularPatients = [
           data.regular_current,
           data.regular_next1,
           data.regular_next2,
-        ].filter((p) => p !== null); // Remove null values
-
-        // Update priority queue state
+        ].filter((p) => p !== null);
+  
         setPriorityQueue({
           current: priorityPatients[0] || null,
           next1: priorityPatients[1] || null,
           next2: priorityPatients[2] || null,
         });
-
-        // Update regular queue state
+  
         setRegularQueue({
           current: regularPatients[0] || null,
           next1: regularPatients[1] || null,
           next2: regularPatients[2] || null,
         });
-
-        console.log("Priority Queue:", priorityQueue);
-        console.log("Regular Queue:", regularQueue);
       })
       .catch((error) => console.error("Error fetching queue:", error));
-  }, []);
+  }, []); // Empty dependency array ensures the hook runs only once on mount
+  
 
   const router = useRouter();
   const renderPatientInfo = (queueItem: PatientQueueItem | null) => {
