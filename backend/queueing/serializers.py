@@ -1,6 +1,10 @@
 from rest_framework import serializers
+<<<<<<< HEAD
 from .models import TemporaryStorageQueue, PreliminaryAssessment
 from patient.models import Patient
+=======
+from .models import TemporaryStorageQueue
+>>>>>>> main
 
 class TemporaryStorageQueueSerializer(serializers.ModelSerializer):
     queueing_number = serializers.SerializerMethodField()
@@ -14,6 +18,7 @@ class TemporaryStorageQueueSerializer(serializers.ModelSerializer):
         queue_list = list(queue)
 
         return f'#{queue_list.index(obj) + 1}' if obj in queue_list else 'N/A'
+<<<<<<< HEAD
 class PreliminaryAssessmentSerializer(serializers.ModelSerializer):
     queue_number = TemporaryStorageQueueSerializer(source='patient.temporarystoragequeue', read_only=True)
 
@@ -42,3 +47,5 @@ class PreliminaryAssessmentSerializer(serializers.ModelSerializer):
         return f"{obj.patient.first_name} {obj.patient.last_name}"
 
 
+=======
+>>>>>>> main

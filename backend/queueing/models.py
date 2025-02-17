@@ -1,7 +1,15 @@
+<<<<<<< HEAD
 from datetime import date
 from django.db import models
 from patient.models import Patient
 from  django.utils.timezone import now
+=======
+
+
+# Create your models here.
+from django.db import models
+from patient.models import Patient
+>>>>>>> main
 # Create your models here.
 class TemporaryStorageQueue(models.Model):
     PRIORITY_CHOICES = [
@@ -13,6 +21,7 @@ class TemporaryStorageQueue(models.Model):
     patient = models.OneToOneField(Patient, on_delete=models.CASCADE, to_field='patient_id', related_name='temporarystoragequeue' )
     priority_level = models.CharField(max_length=10, choices=PRIORITY_CHOICES, default='Regular')
     created_at = models.DateTimeField(auto_now_add=True)
+<<<<<<< HEAD
     status = models.CharField(
         max_length=50, 
         choices = [
@@ -45,6 +54,14 @@ def save(self, *args, **kwargs):
     def __str__(self):
         return f"Patient {self.patient_id} - Queue {self.queue_number} ({self.priority_level})"
 
+=======
+    status = models.CharField(max_length=50, choices = [
+        ('Waiting', 'Waiting'), 
+        ('Being Assessed', 'Being Assessed'), 
+        ('Queued for Treatment', 'Queued for Treatment'),
+        ('Completed', 'Completed'),
+        ], default='Waiting')
+>>>>>>> main
     
 class PreliminaryAssessment(models.Model):
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE, to_field='patient_id' )
@@ -53,6 +70,7 @@ class PreliminaryAssessment(models.Model):
     heart_rate = models.CharField(max_length=200, blank=True, null=True)
     respiratory_rate = models.CharField(max_length=200, blank=True, null=True)
     pulse_rate = models.CharField(max_length=200, blank=True, null=True)
+<<<<<<< HEAD
     allergies = models.TextField(max_length=500, blank=True, null=True)
     medical_history = models.TextField(max_length=500, blank=True, null=True)
     symptoms = models.TextField(max_length=200)
@@ -62,6 +80,9 @@ class PreliminaryAssessment(models.Model):
     pain_location = models.CharField(max_length=200, blank=True, null=True)
     smoking_status = models.CharField(max_length=200, blank=True, null=True)
     alcohol_use = models.CharField(max_length=200, blank=True, null=True)
+=======
+    symptoms = models.TextField(max_length=200)
+>>>>>>> main
     assessment = models.TextField(max_length=200, default='No assessment provided yet')
     assessment_date = models.DateTimeField(auto_now_add=True)
 

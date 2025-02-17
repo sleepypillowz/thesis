@@ -1,4 +1,5 @@
 "use client";
+<<<<<<< HEAD
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
@@ -7,12 +8,22 @@ import { buttonVariants } from "@/components/ui/button";
 // PatientQueueItem interface
 export interface PatientQueueItem {
   patient_id: string;
+=======
+import { buttonVariants } from "@/components/ui/button";
+import Link from "next/link";
+import { useEffect, useState } from "react";
+
+interface PatientQueueItem {
+>>>>>>> main
   first_name: string;
   last_name: string;
   age: number;
   complaint: string;
   phone_number?: string;
+<<<<<<< HEAD
   queue_number: number;
+=======
+>>>>>>> main
 }
 
 export default function Page() {
@@ -21,7 +32,10 @@ export default function Page() {
     next1: null as PatientQueueItem | null,
     next2: null as PatientQueueItem | null,
   });
+<<<<<<< HEAD
 
+=======
+>>>>>>> main
   const [regularQueue, setRegularQueue] = useState({
     current: null as PatientQueueItem | null,
     next1: null as PatientQueueItem | null,
@@ -33,6 +47,7 @@ export default function Page() {
       .then((response) => response.json())
       .then((data) => {
         console.log("API Response:", data);
+<<<<<<< HEAD
 
         // Extract priority patients and sort by timestamp
         const priorityPatients = [
@@ -64,11 +79,26 @@ export default function Page() {
 
         console.log("Priority Queue:", priorityQueue);
         console.log("Regular Queue:", regularQueue);
+=======
+        setPriorityQueue({
+          current: data.priority_current,
+          next1: data.priority_next1,
+          next2: data.priority_next2,
+        });
+        setRegularQueue({
+          current: data.regular_current,
+          next1: data.regular_next1,
+          next2: data.regular_next2,
+        });
+>>>>>>> main
       })
       .catch((error) => console.error("Error fetching queue:", error));
   }, []);
 
+<<<<<<< HEAD
   const router = useRouter();
+=======
+>>>>>>> main
   const renderPatientInfo = (queueItem: PatientQueueItem | null) => {
     if (!queueItem) return null;
     return (
@@ -93,6 +123,7 @@ export default function Page() {
           </p>
           <div className="flex flex-col pt-6">
             <div className="flex justify-between">
+<<<<<<< HEAD
               <button
                 onClick={() => {
                   if (!queueItem?.patient_id || !queueItem?.queue_number) {
@@ -113,6 +144,18 @@ export default function Page() {
             <button className={buttonVariants({ variant: "outline" })} onClick={() => router.push("/payments")}>
               Cancel
             </button>
+=======
+              <Link className={buttonVariants({ variant: "outline" })} href="/payments">
+                Accept
+              </Link>
+              <Link className={buttonVariants({ variant: "outline" })} href="/payments">
+                Edit
+              </Link>
+            </div>
+            <Link className={buttonVariants({ variant: "outline" })} href="/payments">
+              Cancel
+            </Link>
+>>>>>>> main
           </div>
         </div>
       </div>
@@ -125,19 +168,31 @@ export default function Page() {
       <div className="flex flex-row justify-center gap-4">
         {/* Priority Queue Cards */}
         <div className="card flex h-96 w-80 max-w-sm flex-col items-center justify-center">
+<<<<<<< HEAD
           <p className="text-6xl font-bold">{priorityQueue.current ? `#${priorityQueue.current.queue_number}` : "N/A"}</p>
+=======
+          <p className="text-6xl font-bold">#{priorityQueue.current ? 1 : "N/A"}</p>
+>>>>>>> main
           <span>Queuing Number</span>
           <span>Current</span>
         </div>
 
         <div className="card flex h-96 w-80 max-w-sm flex-col items-center justify-center">
+<<<<<<< HEAD
           <p className="text-6xl font-bold">{priorityQueue.next1 ? `#${priorityQueue.next1.queue_number}` : "N/A"}</p>
+=======
+          <p className="text-6xl font-bold">#{priorityQueue.next1 ? 2 : "N/A"}</p>
+>>>>>>> main
           <span>Queuing Number</span>
           <span>Next</span>
         </div>
 
         <div className="card flex h-96 w-80 max-w-sm flex-col items-center justify-center">
+<<<<<<< HEAD
           <p className="text-6xl font-bold">{priorityQueue.next2 ? `#${priorityQueue.next2.queue_number}` : "N/A"}</p>
+=======
+          <p className="text-6xl font-bold">#{priorityQueue.next2 ? 3 : "N/A"}</p>
+>>>>>>> main
           <span>Queuing Number</span>
           <span>Next</span>
         </div>
@@ -149,19 +204,31 @@ export default function Page() {
       <div className="flex flex-row justify-center gap-4">
         {/* Regular Queue Cards */}
         <div className="card flex h-96 w-80 max-w-sm flex-col items-center justify-center">
+<<<<<<< HEAD
           <p className="text-6xl font-bold">{regularQueue.current ? `#${regularQueue.current.queue_number}` : "N/A"}</p>
+=======
+          <p className="text-6xl font-bold">#{regularQueue.current ? 1 : "N/A"}</p>
+>>>>>>> main
           <span>Queuing Number</span>
           <span>Current</span>
         </div>
 
         <div className="card flex h-96 w-80 max-w-sm flex-col items-center justify-center">
+<<<<<<< HEAD
           <p className="text-6xl font-bold"> {regularQueue.next1 ? `#${regularQueue.next1.queue_number}` : "N/A"}</p>
+=======
+          <p className="text-6xl font-bold">#{regularQueue.next1 ? 2 : "N/A"}</p>
+>>>>>>> main
           <span>Queuing Number</span>
           <span>Next</span>
         </div>
 
         <div className="card flex h-96 w-80 max-w-sm flex-col items-center justify-center">
+<<<<<<< HEAD
           <p className="text-6xl font-bold"> {regularQueue.next2 ? `#${regularQueue.next2.queue_number}` : "N/A"}</p>
+=======
+          <p className="text-6xl font-bold">#{regularQueue.next2 ? 3 : "N/A"}</p>
+>>>>>>> main
           <span>Queuing Number</span>
           <span>Next</span>
         </div>

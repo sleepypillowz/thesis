@@ -1,9 +1,20 @@
+<<<<<<< HEAD
 from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.response import Response
 from .models import Patient, TemporaryStorageQueue
 from .serializers import PreliminaryAssessmentSerializer
 from api.views import supabase
+=======
+from rest_framework.decorators import api_view
+from rest_framework.views import APIView
+from rest_framework import status
+from rest_framework.response import Response
+from .models import TemporaryStorageQueue, Patient
+from .serializers import TemporaryStorageQueueSerializer
+from api.views import supabase
+from django.db import connection  # To ensure transactions are committed
+>>>>>>> main
 
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -16,12 +27,20 @@ class PatientQueue(APIView):
         try:
             # Fetch Priority Queue
             priority_response = supabase.table(table_name).select(
+<<<<<<< HEAD
                 "id, patient_id, status, created_at, priority_level", 'queue_number', 'queue_date'
+=======
+                "id, patient_id, status, created_at, priority_level"
+>>>>>>> main
             ).eq('status', 'Waiting').eq('priority_level', 'Priority').order('created_at').execute()
 
             # Fetch Regular Queue
             regular_response = supabase.table(table_name).select(
+<<<<<<< HEAD
                 "id, patient_id, status, created_at, priority_level",  'queue_number', 'queue_date'
+=======
+                "id, patient_id, status, created_at, priority_level"
+>>>>>>> main
             ).eq('status', 'Waiting').eq('priority_level', 'Regular').order('created_at').execute()
 
             # Access the data attribute directly
@@ -97,6 +116,7 @@ class PatientQueue(APIView):
         except Exception as e:
             # In case of errors, return a 500 error
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+<<<<<<< HEAD
 class PreliminaryAssessmentQueue(APIView):
     def get(self, request):
         table_name = 'queueing_temporarystoragequeue'
@@ -227,3 +247,24 @@ class PreliminaryAssessmentForm(APIView):
             return Response({'message': 'Assessment created successfully', 'queue_number': queue_number}, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+=======
+
+
+# @api_view(['GET'])
+# def registration_queueing(request):
+#     # Ensure all Django ORM transactions are committed
+#     connection.commit()
+
+#     # Fetch from Django ORM
+#     regular_queue = TemporaryStorageQueue.objects.filter(status='Waiting', priority_level='Regular').order_by('created_at')
+#     priority_queue = TemporaryStorageQueue.objects.filter(status='Waiting', priority_level='Priority').order_by('created_at')
+
+#     # Serialize queue data
+#     regular_data = TemporaryStorageQueueSerializer(regular_queue, many=True).data
+#     priority_data = TemporaryStorageQueueSerializer(priority_queue, many=True).data
+
+#     return Response({
+#         "regular_queue": regular_data,
+#         "priority_queue": priority_data
+#     })
+>>>>>>> main
