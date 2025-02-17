@@ -25,7 +25,7 @@ const items = [
   },
   {
     title: "Patients",
-    url: "/admin/patient-database",
+    url: "/admin",
     icon: Users,
   },
   {
