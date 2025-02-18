@@ -139,7 +139,7 @@ export default function Page() {
     <div className="flex-1 px-8 py-8">
       {/* Top Label */}
       <div className="mb-8">
-        <h1 className="text-2xl font-bold">Registration Queue</h1>
+        <h1 className="text-2xl font-bold">Patient Registration Queue</h1>
       </div>
 
       <h2 className="text-xl font-semibold">Priority Queue</h2>
