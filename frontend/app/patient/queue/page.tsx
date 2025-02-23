@@ -52,13 +52,13 @@ export default function Page() {
               <div className="flex justify-between">
                 <Link
                   className={buttonVariants({ variant: "outline" })}
-                  href="/payments"
+                  href="/patient/queue"
                 >
                   Accept
                 </Link>
                 <Link
                   className={buttonVariants({ variant: "outline" })}
-                  href="/payments"
+                  href="/patient/queue"
                 >
                   Edit
                 </Link>
@@ -66,7 +66,7 @@ export default function Page() {
 
               <Link
                 className={buttonVariants({ variant: "outline" })}
-                href="/payments"
+                href="/patient/queue"
               >
                 Cancel
               </Link>
@@ -122,13 +122,13 @@ export default function Page() {
               <div className="flex justify-between">
                 <Link
                   className={buttonVariants({ variant: "outline" })}
-                  href="/payments"
+                  href="/patient/queue"
                 >
                   Accept
                 </Link>
                 <Link
                   className={buttonVariants({ variant: "outline" })}
-                  href="/payments"
+                  href="/patient/queue"
                 >
                   Edit
                 </Link>
@@ -136,7 +136,7 @@ export default function Page() {
 
               <Link
                 className={buttonVariants({ variant: "outline" })}
-                href="/payments"
+                href="/patient/queue"
               >
                 Cancel
               </Link>

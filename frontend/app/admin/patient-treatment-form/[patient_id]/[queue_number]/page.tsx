@@ -1,6 +1,6 @@
 "use client";
 
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Plus, Trash } from "lucide-react";
 
@@ -25,9 +25,11 @@ interface Prescription {
 
 export default function TreatmentForm() {
   const params = useParams();
-  const { patient_id, queue_number } = params as { patient_id: string; queue_number: string };
+  const { patient_id, queue_number } = params as {
+    patient_id: string;
+    queue_number: string;
+  };
   const [patient, setPatient] = useState<Patient | null>(null);
-  const router = useRouter();
 
   const [diagnoses, setDiagnoses] = useState<Diagnosis[]>([
     { diagnosis_code: "", diagnosis_description: "", diagnosis_date: "" },
@@ -60,14 +62,21 @@ export default function TreatmentForm() {
 
   // Diagnosis handlers
   const addDiagnosis = () => {
-    setDiagnoses([...diagnoses, { diagnosis_code: "", diagnosis_description: "", diagnosis_date: "" }]);
+    setDiagnoses([
+      ...diagnoses,
+      { diagnosis_code: "", diagnosis_description: "", diagnosis_date: "" },
+    ]);
   };
 
   const removeDiagnosis = (index: number) => {
     setDiagnoses(diagnoses.filter((_, i) => i !== index));
   };
 
-  const handleDiagnosisChange = (index: number, field: keyof Diagnosis, value: string) => {
+  const handleDiagnosisChange = (
+    index: number,
+    field: keyof Diagnosis,
+    value: string
+  ) => {
     const updatedDiagnoses = diagnoses.map((d, i) =>
       i === index ? { ...d, [field]: value } : d
     );
@@ -78,7 +87,13 @@ export default function TreatmentForm() {
   const addPrescription = () => {
     setPrescriptions([
       ...prescriptions,
-      { medication: "", dosage: "", frequency: "", start_date: "", end_date: "" },
+      {
+        medication: "",
+        dosage: "",
+        frequency: "",
+        start_date: "",
+        end_date: "",
+      },
     ]);
   };
 
@@ -86,7 +101,11 @@ export default function TreatmentForm() {
     setPrescriptions(prescriptions.filter((_, i) => i !== index));
   };
 
-  const handlePrescriptionChange = (index: number, field: keyof Prescription, value: string) => {
+  const handlePrescriptionChange = (
+    index: number,
+    field: keyof Prescription,
+    value: string
+  ) => {
     const updatedPrescriptions = prescriptions.map((p, i) =>
       i === index ? { ...p, [field]: value } : p
     );
@@ -124,8 +143,8 @@ export default function TreatmentForm() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-8 bg-white/80 backdrop-blur-lg shadow-lg rounded-2xl border border-gray-200">
-      <h2 className="text-3xl font-semibold text-gray-800 mb-6">
+    <div className="mx-auto max-w-4xl rounded-2xl border border-gray-200 bg-white/80 p-8 shadow-lg backdrop-blur-lg">
+      <h2 className="mb-6 text-3xl font-semibold text-gray-800">
         Patient Treatment Form {patient?.first_name} {patient?.last_name}
       </h2>
       <h4>Queueing Number: {queue_number}</h4>
@@ -133,9 +152,11 @@ export default function TreatmentForm() {
       <form onSubmit={handleSubmit}>
         {/* Diagnoses Section */}
         <div className="mb-8">
-          <h3 className="text-xl font-semibold text-gray-800 mb-2">Diagnoses</h3>
+          <h3 className="mb-2 text-xl font-semibold text-gray-800">
+            Diagnoses
+          </h3>
           {diagnoses.map((diag, index) => (
-            <div key={index} className="mb-4 p-4 bg-gray-50 border rounded-lg">
+            <div key={index} className="mb-4 rounded-lg border bg-gray-50 p-4">
               <input
                 type="text"
                 value={diag.diagnosis_code}
@@ -143,15 +164,19 @@ export default function TreatmentForm() {
                   handleDiagnosisChange(index, "diagnosis_code", e.target.value)
                 }
                 placeholder="Diagnosis Code"
-                className="w-full p-2 border rounded-md mb-2"
+                className="mb-2 w-full rounded-md border p-2"
               />
               <textarea
                 value={diag.diagnosis_description}
                 onChange={(e) =>
-                  handleDiagnosisChange(index, "diagnosis_description", e.target.value)
+                  handleDiagnosisChange(
+                    index,
+                    "diagnosis_description",
+                    e.target.value
+                  )
                 }
                 placeholder="Diagnosis Description"
-                className="w-full p-2 border rounded-md mb-2"
+                className="mb-2 w-full rounded-md border p-2"
                 rows={3}
               />
               <input
@@ -160,13 +185,13 @@ export default function TreatmentForm() {
                 onChange={(e) =>
                   handleDiagnosisChange(index, "diagnosis_date", e.target.value)
                 }
-                className="w-full p-2 border rounded-md"
+                className="w-full rounded-md border p-2"
               />
               {index > 0 && (
                 <button
                   type="button"
                   onClick={() => removeDiagnosis(index)}
-                  className="mt-2 text-red-500 hover:text-red-700 flex items-center"
+                  className="mt-2 flex items-center text-red-500 hover:text-red-700"
                 >
                   <Trash size={18} className="mr-1" /> Remove Diagnosis
                 </button>
@@ -176,7 +201,7 @@ export default function TreatmentForm() {
           <button
             type="button"
             onClick={addDiagnosis}
-            className="mt-2 text-blue-600 hover:text-blue-800 flex items-center"
+            className="mt-2 flex items-center text-blue-600 hover:text-blue-800"
           >
             <Plus size={18} className="mr-1" /> Add Diagnosis
           </button>
@@ -184,18 +209,27 @@ export default function TreatmentForm() {
 
         {/* Prescriptions Section */}
         <div className="mb-8">
-          <h3 className="text-xl font-semibold text-gray-800 mb-4">Prescriptions</h3>
+          <h3 className="mb-4 text-xl font-semibold text-gray-800">
+            Prescriptions
+          </h3>
           {prescriptions.map((prescription, index) => (
-            <div key={index} className="p-4 bg-gray-50 border rounded-lg shadow-sm mb-2">
-              <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+            <div
+              key={index}
+              className="mb-2 rounded-lg border bg-gray-50 p-4 shadow-sm"
+            >
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 lg:grid-cols-5">
                 <input
                   type="text"
                   placeholder="Medication Name"
                   value={prescription.medication}
                   onChange={(e) =>
-                    handlePrescriptionChange(index, "medication", e.target.value)
+                    handlePrescriptionChange(
+                      index,
+                      "medication",
+                      e.target.value
+                    )
                   }
-                  className="w-full p-2 border rounded-md"
+                  className="w-full rounded-md border p-2"
                 />
                 <input
                   type="text"
@@ -204,7 +238,7 @@ export default function TreatmentForm() {
                   onChange={(e) =>
                     handlePrescriptionChange(index, "dosage", e.target.value)
                   }
-                  className="w-full p-2 border rounded-md"
+                  className="w-full rounded-md border p-2"
                 />
                 <input
                   type="text"
@@ -213,16 +247,20 @@ export default function TreatmentForm() {
                   onChange={(e) =>
                     handlePrescriptionChange(index, "frequency", e.target.value)
                   }
-                  className="w-full p-2 border rounded-md"
+                  className="w-full rounded-md border p-2"
                 />
                 <input
                   type="date"
                   placeholder="Start Date"
                   value={prescription.start_date}
                   onChange={(e) =>
-                    handlePrescriptionChange(index, "start_date", e.target.value)
+                    handlePrescriptionChange(
+                      index,
+                      "start_date",
+                      e.target.value
+                    )
                   }
-                  className="w-full p-2 border rounded-md"
+                  className="w-full rounded-md border p-2"
                 />
                 <input
                   type="date"
@@ -231,7 +269,7 @@ export default function TreatmentForm() {
                   onChange={(e) =>
                     handlePrescriptionChange(index, "end_date", e.target.value)
                   }
-                  className="w-full p-2 border rounded-md"
+                  className="w-full rounded-md border p-2"
                 />
               </div>
               {index > 0 && (
@@ -248,7 +286,7 @@ export default function TreatmentForm() {
           <button
             type="button"
             onClick={addPrescription}
-            className="mt-4 flex items-center text-blue-600 font-medium hover:text-blue-800"
+            className="mt-4 flex items-center font-medium text-blue-600 hover:text-blue-800"
           >
             <Plus size={18} className="mr-1" /> Add more prescription
           </button>
@@ -256,11 +294,11 @@ export default function TreatmentForm() {
 
         {/* Treatment Notes */}
         <div className="mb-8">
-          <label className="block text-gray-700 font-medium">Notes</label>
+          <label className="block font-medium text-gray-700">Notes</label>
           <textarea
             value={treatmentNotes}
             onChange={(e) => setTreatmentNotes(e.target.value)}
-            className="w-full p-3 border border-gray-300 rounded-xl focus:ring focus:ring-blue-400 transition"
+            className="w-full rounded-xl border border-gray-300 p-3 transition focus:ring focus:ring-blue-400"
             rows={4}
             placeholder="Add any treatment notes here..."
           />
@@ -269,7 +307,7 @@ export default function TreatmentForm() {
         {/* Submit Button */}
         <button
           type="submit"
-          className="w-full bg-blue-600 text-white py-3 rounded-xl text-lg font-medium hover:bg-blue-700 transition"
+          className="w-full rounded-xl bg-blue-600 py-3 text-lg font-medium text-white transition hover:bg-blue-700"
         >
           Submit Treatment
         </button>
