@@ -1,7 +1,7 @@
 
 from datetime import datetime, date
 from rest_framework import serializers
-from .models import Patient
+from .models import Patient, Diagnosis, Prescription
 
 class PatientSerializer(serializers.Serializer):
     patient_id = serializers.CharField(max_length=8)
@@ -14,7 +14,7 @@ class PatientSerializer(serializers.Serializer):
     phone_number = serializers.CharField(max_length=11)
     date_of_birth = serializers.DateField(allow_null=True, required=False)
     complaint = serializers.ChoiceField(choices=[
-        ('General', 'General Illness'),
+        ('General Illness', 'General Illness'),
         ('Injury', 'Injury'),
         ('Check-up', 'Check-up'),
         ('Other', 'Other'),
@@ -34,6 +34,7 @@ class PatientSerializer(serializers.Serializer):
                 'priority_level': queue_info.get('priority_level'),
                 'status': queue_info.get('status'),
                 'created_at': queue_info.get('created_at'),
+                'queue_number': queue_info.get('queue_number'),
             }
         return None
 
@@ -78,3 +79,12 @@ class PatientRegistrationSerializer(serializers.ModelSerializer):
                 'created_at': queue_info.created_at,
             }
         return None
+class DiagnosisSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Diagnosis
+        fields = ['id', 'diagnosis_code', 'diagnosis_description', 'diagnosis_date']
+
+class PrescriptionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Prescription
+        fields = ['id', 'medication', 'dosage', 'frequency', 'start_date', 'end_date']
