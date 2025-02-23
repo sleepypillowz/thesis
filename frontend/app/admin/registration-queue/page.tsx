@@ -31,6 +31,7 @@ export default function Page() {
   const [selectedPatient, setSelectedPatient] =
     useState<PatientQueueItem | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     fetch("http://127.0.0.1:8000/queueing/registration_queueing/")
@@ -71,13 +72,33 @@ export default function Page() {
       })
       .catch((error) => console.error("Error fetching queue:", error));
   }, [priorityQueue, regularQueue]);
+  const handleAccept = (queueItem: PatientQueueItem) => {
+    setSelectedPatient(queueItem);
+    setIsModalOpen(true);
+  };
 
-  const router = useRouter();
+  const confirmAccept = async (patient_id: string) => {
+    try {
+      const response = await fetch(
+        "http://127.0.0.1:8000/patient/update-status/",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            patient_id: patient_id, // ✅ Ensure you're sending the correct ID
+          }),
+        }
+      );
 
-  const confirmAccept = (patientId: string) => {
-    console.log(`Patient with ID ${patientId} accepted`);
-    setIsModalOpen(false);
-    // Add API call or state update logic here
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      router.push("/admin/patient-assessment-queue");
+    } catch (error) {
+      console.error("❌ Error updating queue:", error);
+    }
   };
 
   const renderPatientInfo = (queueItem: PatientQueueItem | null) => {
@@ -113,10 +134,7 @@ export default function Page() {
           <div className="flex flex-col pt-6">
             <div className="flex justify-between">
               <button
-                onClick={() => {
-                  setSelectedPatient(queueItem);
-                  setIsModalOpen(true);
-                }}
+                onClick={() => handleAccept(queueItem)}
                 className={buttonVariants({ variant: "outline" })}
               >
                 Accept
@@ -143,21 +161,76 @@ export default function Page() {
 
   return (
     <div className="flex-1 px-8 py-8">
-      {/* Top Label */}
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold">Patient Registration Queue</h1>
-      </div>
-
+      <h1 className="text-2xl font-bold">Patient Registration Queue</h1>
       <h2 className="text-xl font-semibold">Priority Queue</h2>
       <div className="flex flex-row justify-center gap-4">
+        {/* Priority Queue Cards */}
+        <div className="card flex h-96 w-80 max-w-sm flex-col items-center justify-center">
+          <p className="text-6xl font-bold">
+            {priorityQueue.current
+              ? `#${priorityQueue.current.queue_number}`
+              : "N/A"}
+          </p>
+          <span>Queuing Number</span>
+          <span>Current</span>
+        </div>
+
+        <div className="card flex h-96 w-80 max-w-sm flex-col items-center justify-center">
+          <p className="text-6xl font-bold">
+            {priorityQueue.next1
+              ? `#${priorityQueue.next1.queue_number}`
+              : "N/A"}
+          </p>
+          <span>Queuing Number</span>
+          <span>Next</span>
+        </div>
+
+        <div className="card flex h-96 w-80 max-w-sm flex-col items-center justify-center">
+          <p className="text-6xl font-bold">
+            {priorityQueue.next2
+              ? `#${priorityQueue.next2.queue_number}`
+              : "N/A"}
+          </p>
+          <span>Queuing Number</span>
+          <span>Next</span>
+        </div>
+
         {renderPatientInfo(priorityQueue.current)}
       </div>
 
       <h2 className="text-xl font-semibold">Regular Queue</h2>
       <div className="flex flex-row justify-center gap-4">
+        {/* Regular Queue Cards */}
+        <div className="card flex h-96 w-80 max-w-sm flex-col items-center justify-center">
+          <p className="text-6xl font-bold">
+            {regularQueue.current
+              ? `#${regularQueue.current.queue_number}`
+              : "N/A"}
+          </p>
+          <span>Queuing Number</span>
+          <span>Current</span>
+        </div>
+
+        <div className="card flex h-96 w-80 max-w-sm flex-col items-center justify-center">
+          <p className="text-6xl font-bold">
+            {" "}
+            {regularQueue.next1 ? `#${regularQueue.next1.queue_number}` : "N/A"}
+          </p>
+          <span>Queuing Number</span>
+          <span>Next</span>
+        </div>
+
+        <div className="card flex h-96 w-80 max-w-sm flex-col items-center justify-center">
+          <p className="text-6xl font-bold">
+            {" "}
+            {regularQueue.next2 ? `#${regularQueue.next2.queue_number}` : "N/A"}
+          </p>
+          <span>Queuing Number</span>
+          <span>Next</span>
+        </div>
+
         {renderPatientInfo(regularQueue.current)}
       </div>
-
       {isModalOpen && selectedPatient && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="rounded-lg bg-white p-6 shadow-lg">
