@@ -1,6 +1,80 @@
+"use client";
 import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { useEffect, useState } from "react";
+
+// Update interfaces to match API response structure
+interface QueueData {
+  id: number;
+  priority_level: string;
+  status: string;
+  created_at: string;
+  queue_number: number;
+}
+
+interface Patient {
+  patient_id: string;
+  first_name: string;
+  middle_name: string;
+  last_name: string;
+  age: number;
+  email: string;
+  phone_number: string;
+  date_of_birth: string;
+  complaint: string;  // Complaint is in patient object
+  street_address: string;
+  barangay: string;
+  municipal_city: string;
+  queue_data: QueueData;
+}
+
+interface Diagnosis {
+  diagnosis_code: string;
+  diagnosis_description: string;
+  diagnosis_date: string;
+}
+
+interface Prescription {
+  medication: string;
+  dosage: string;
+  frequency: string;
+  start_date: string;
+  end_date: string;
+}
+
+interface Treatment {
+  id: number;
+  treatment_notes: string;
+  created_at: string;
+  updated_at: string;
+  patient: Patient;
+  diagnoses: Diagnosis[];
+  prescriptions: Prescription[];
+}
 
 export default function TreatmentManagement() {
+  const [treatments, setTreatments] = useState<Treatment[]>([]);
+  const router = useRouter();
+
+  useEffect(() => {
+    async function fetchTreatments() {
+      try {
+        const res = await fetch("http://localhost:8000/patient/patient-treatment-list");
+        if (!res.ok) throw new Error("Failed to fetch treatments");
+        const data = await res.json();
+        setTreatments(data);
+      } catch (error) {
+        console.error("Error fetching treatments:", error);
+      }
+    }
+    fetchTreatments();
+  }, []);
+
+  const handleViewDetails = (id: number) => {
+    router.push(`/admin/treatment-details/${id}/`);
+  };
+
   return (
     <div className="space-y-6 p-6">
       <h1 className="text-2xl font-bold">Treatment Management</h1>
@@ -8,6 +82,10 @@ export default function TreatmentManagement() {
         Manage patient treatments, add new treatments, and track ongoing
         treatments for each patient.
       </p>
+
+      <Button className="bg-blue-500 text-white hover:bg-blue-600">
+        <Link href="/admin/patient-treatment-queue">View Treatment Queueing</Link>
+      </Button>
 
       {/* Ongoing Treatments Section */}
       <div className="rounded-lg bg-white p-4 shadow-md">
@@ -17,33 +95,38 @@ export default function TreatmentManagement() {
             <tr className="bg-gray-100">
               <th className="px-4 py-2 text-left">Treatment ID</th>
               <th className="px-4 py-2 text-left">Patient Name</th>
-              <th className="px-4 py-2 text-left">Diagnosis</th>
-              <th className="px-4 py-2 text-left">Treatment Start</th>
-              <th className="px-4 py-2 text-left">Doctor</th>
+              <th className="px-4 py-2 text-left">Complaint</th>
+              <th className="px-4 py-2 text-left">Queue Number</th>
+              <th className="px-4 py-2 text-left">Status</th>
               <th className="px-4 py-2 text-left">Actions</th>
             </tr>
           </thead>
           <tbody>
-            {/* Example row, you can populate it with dynamic data */}
-            <tr>
-              <td className="px-4 py-2">TREAT001</td>
-              <td className="px-4 py-2">Jane Doe</td>
-              <td className="px-4 py-2">Hypertension</td>
-              <td className="px-4 py-2">Feb 15, 2025</td>
-              <td className="px-4 py-2">Dr. Brown</td>
-              <td className="px-4 py-2">
-                <Button className="bg-blue-500 text-white hover:bg-blue-600">
-                  View Details
-                </Button>
-                <Button className="ml-2 bg-yellow-500 text-white hover:bg-yellow-600">
-                  Update
-                </Button>
-                <Button className="ml-2 bg-red-500 text-white hover:bg-red-600">
-                  Cancel
-                </Button>
-              </td>
-            </tr>
-            {/* More rows for other treatments */}
+            {treatments.map((treatment) => (
+              <tr key={treatment.id} className="hover:bg-gray-50">
+                <td className="px-4 py-2">{treatment.id}</td>
+                <td className="px-4 py-2">
+                  {treatment.patient.first_name} {treatment.patient.middle_name} {treatment.patient.last_name}
+                </td>
+                <td className="px-4 py-2">{treatment.patient.complaint}</td>
+                <td className="px-4 py-2">{treatment.patient.queue_data.queue_number}</td>
+                <td className="px-4 py-2">{treatment.patient.queue_data.status}</td>
+                <td className="px-4 py-2 space-x-2">
+                  <Button
+                    onClick={() => handleViewDetails(treatment.id)}
+                    className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
+                  >
+                    View Details
+                  </Button>
+                  <Button className="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600">
+                    Update
+                  </Button>
+                  <Button className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">
+                    Cancel
+                  </Button>
+                </td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>

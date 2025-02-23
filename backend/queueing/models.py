@@ -1,6 +1,6 @@
 from datetime import date
 from django.db import models
-from patient.models import Patient
+from patient.models import Patient, Diagnosis, Prescription
 from  django.utils.timezone import now
 # Create your models here.
 class TemporaryStorageQueue(models.Model):
@@ -10,14 +10,14 @@ class TemporaryStorageQueue(models.Model):
     ]
 
 
-    patient = models.OneToOneField(Patient, on_delete=models.CASCADE, to_field='patient_id', related_name='temporarystoragequeue' )
+    patient = models.OneToOneField(Patient, on_delete=models.CASCADE, to_field='patient_id', related_name='temporarystoragequeue')
     priority_level = models.CharField(max_length=10, choices=PRIORITY_CHOICES, default='Regular')
     created_at = models.DateTimeField(auto_now_add=True)
     status = models.CharField(
         max_length=50, 
         choices = [
             ('Waiting', 'Waiting'), 
-            ('Being Assessed', 'Being Assessed'), 
+            ('Queued for Assessment', 'Queued for Assessment'), 
             ('Queued for Treatment', 'Queued for Treatment'),
             ('Completed', 'Completed'),
         ], 
@@ -47,7 +47,7 @@ def save(self, *args, **kwargs):
 
     
 class PreliminaryAssessment(models.Model):
-    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, to_field='patient_id' )
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, to_field='patient_id', related_name='preliminaryassessment' )
     blood_pressure = models.CharField(max_length=200, blank=True, null=True)
     temperature = models.CharField(max_length=200, blank=True, null=True)
     heart_rate = models.CharField(max_length=200, blank=True, null=True)
@@ -57,13 +57,22 @@ class PreliminaryAssessment(models.Model):
     medical_history = models.TextField(max_length=500, blank=True, null=True)
     symptoms = models.TextField(max_length=200)
     current_medications = models.TextField(max_length=500, blank=True, null=True)
-    current_symptoms = models.TextField(max_length=500, blank=True, null=True)
     pain_scale = models.CharField(max_length=200, blank=True, null=True)
     pain_location = models.CharField(max_length=200, blank=True, null=True)
     smoking_status = models.CharField(max_length=200, blank=True, null=True)
     alcohol_use = models.CharField(max_length=200, blank=True, null=True)
-    assessment = models.TextField(max_length=200, default='No assessment provided yet')
+    assessment = models.TextField(max_length=200,blank=True, null=True)
     assessment_date = models.DateTimeField(auto_now_add=True)
+    
+
+class Treatment(models.Model):
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name="treatments")
+    # doctor= 
+    diagnoses = models.ManyToManyField(Diagnosis, related_name="treatments")
+    prescriptions = models.ManyToManyField(Prescription, related_name="treatments")
+    treatment_notes = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)  
+    updated_at = models.DateTimeField(auto_now=True)  
 
     def __str__(self):
         patient = Patient.objects.get(patient_id=self.patient_id) #Get patient from patient_id

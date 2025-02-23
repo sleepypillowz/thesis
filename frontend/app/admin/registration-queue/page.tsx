@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { buttonVariants } from "@/components/ui/button";
+import { Patient } from "@/app/components/medicine-columns";
 
 // PatientQueueItem interface
 export interface PatientQueueItem {
@@ -13,6 +14,7 @@ export interface PatientQueueItem {
   complaint: string;
   phone_number?: string;
   queue_number: number;
+  status?: string; 
 }
 
 export default function Page() {
@@ -27,6 +29,9 @@ export default function Page() {
     next1: null as PatientQueueItem | null,
     next2: null as PatientQueueItem | null,
   });
+  const [selectedPatient, setSelectedPatient] = useState<PatientQueueItem | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     fetch("http://127.0.0.1:8000/queueing/registration_queueing/")
@@ -67,8 +72,32 @@ export default function Page() {
       })
       .catch((error) => console.error("Error fetching queue:", error));
   }, []);
-
-  const router = useRouter();
+  const handleAccept = (queueItem: PatientQueueItem) => {
+    setSelectedPatient(queueItem);
+    setIsModalOpen(true);
+  };
+  
+  const confirmAccept = async (patient_id: string) => {
+    try {
+      const response = await fetch("http://127.0.0.1:8000/patient/update-status/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          patient_id: patient_id, // ✅ Ensure you're sending the correct ID
+        }),
+      });
+  
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      router.push("/admin/patient-assessment-queue");
+    } catch (error) {
+      console.error("❌ Error updating queue:", error);
+    }
+  };
+  
   const renderPatientInfo = (queueItem: PatientQueueItem | null) => {
     if (!queueItem) return null;
     return (
@@ -93,18 +122,13 @@ export default function Page() {
           </p>
           <div className="flex flex-col pt-6">
             <div className="flex justify-between">
-              <button
-                onClick={() => {
-                  if (!queueItem?.patient_id || !queueItem?.queue_number) {
-                    console.error("Missing patient_id or queue_number");
-                    return;
-                  }
-                  router.push(`/admin/patient-preliminary-assessment/${queueItem.patient_id}/${queueItem.queue_number}/`);
-                }}
-                className={buttonVariants({ variant: "outline" })}
-              >
-                Accept
-              </button>
+            <button
+              onClick={() => handleAccept(queueItem)}
+              className={buttonVariants({ variant: "outline" })}
+            >
+              Accept
+            </button>
+
 
               <button className={buttonVariants({ variant: "outline" })} onClick={() => router.push("/payments")}>
                 Edit
@@ -168,6 +192,28 @@ export default function Page() {
 
         {renderPatientInfo(regularQueue.current)}
       </div>
+      {isModalOpen && selectedPatient && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg">
+            <p className="text-lg font-semibold">Are you sure you want to accept this patient?</p>
+            <div className="mt-4 flex justify-end gap-4">
+              <button
+                className="px-4 py-2 bg-gray-300 rounded-md"
+                onClick={() => setIsModalOpen(false)}
+              >
+                Cancel
+              </button>
+              <button
+                className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-700"
+                onClick={() => selectedPatient && confirmAccept(selectedPatient.patient_id)}
+
+              >
+                Yes, Accept
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

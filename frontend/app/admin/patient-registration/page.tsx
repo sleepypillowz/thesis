@@ -12,7 +12,7 @@ export default function Page() {
     phone_number: "",
     email: "",
     date_of_birth: "",
-    complaint: "general_illness",
+    complaint: "General Illness",
     priority_level: "Regular", // Move this directly to formData
     street_address: "",
     barangay: "",
@@ -67,7 +67,7 @@ export default function Page() {
           phone_number: "",
           email: "",
           date_of_birth: "",
-          complaint: "general_illness",
+          complaint: "General Illness",
           priority_level: "Regular", // Reset priority here directly
           street_address: "",
           barangay: "",
@@ -264,10 +264,10 @@ export default function Page() {
             className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
             required
           >
-            <option value="general_illness">General Illness</option>
-            <option value="injury">Injury</option>
-            <option value="checkup">Check-up</option>
-            <option value="other">Other</option>
+            <option value="General Illness">General Illness</option>
+            <option value="Injury">Injury</option>
+            <option value="Check-up">Check-up</option>
+            <option value="Other">Other</option>
           </select>
         </div>
 

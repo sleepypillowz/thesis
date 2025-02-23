@@ -1,6 +1,6 @@
 "use client";
 
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 // Define the expected structure for patient data.
@@ -21,11 +21,11 @@ interface FormData {
   medical_history: string;
   symptoms: string;
   current_medications: string;
-  current_symptoms: string;
   pain_scale: string;
   pain_location: string;
   smoking_status: string;
   alcohol_use: string;
+  assessment: string;
 }
 
 export default function PreliminaryAssessmentPage() {
@@ -35,7 +35,9 @@ export default function PreliminaryAssessmentPage() {
 
   // State to hold fetched patient data.
   const [patient, setPatient] = useState<Patient | null>(null);
-
+ // Modal
+  const [showModal, setShowModal] = useState(false);
+  const router = useRouter();
   // State for the form data.
   const [formData, setFormData] = useState<FormData>({
     temperature: "",
@@ -47,11 +49,11 @@ export default function PreliminaryAssessmentPage() {
     medical_history: "",
     symptoms: "",
     current_medications: "",
-    current_symptoms: "",
     pain_scale: "",
     pain_location: "",
     smoking_status: "non-smoker",
     alcohol_use: "none",
+    assessment: "",
   });
 
   useEffect(() => {
@@ -96,7 +98,7 @@ export default function PreliminaryAssessmentPage() {
       if (!response.ok) {
         throw new Error(`Submission failed: ${response.statusText}`);
       }
-      alert("Assessment submitted successfully!");
+      setShowModal(true);
     } catch (error) {
       console.error("Error submitting assessment:", error);
     }
@@ -114,7 +116,7 @@ export default function PreliminaryAssessmentPage() {
         </h2>
         <p className="text-gray-600"><strong>Patient ID:</strong> {patient_id}</p>
         <p className="text-gray-600 mb-4"><strong>Queue Number:</strong> {queue_number}</p>
-
+  
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Vital Signs */}
           <fieldset className="border border-gray-300 rounded-lg p-4">
@@ -122,40 +124,68 @@ export default function PreliminaryAssessmentPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-gray-600">Temperature (°C)</label>
-                <input type="number" name="temperature" step="0.1" required className="w-full rounded-md border-gray-300 p-2" onChange={handleChange} />
+                <input type="number" name="temperature" step="0.1" required className="w-full rounded-md border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" onChange={handleChange} />
               </div>
               <div>
                 <label className="block text-gray-600">Heart Rate (bpm)</label>
-                <input type="number" name="heart_rate" required className="w-full rounded-md border-gray-300 p-2" onChange={handleChange} />
+                <input type="number" name="heart_rate" required className="w-full rounded-md border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" onChange={handleChange} />
               </div>
               <div>
                 <label className="block text-gray-600">Blood Pressure (mmHg)</label>
-                <input type="text" name="blood_pressure" placeholder="e.g., 120/80" required className="w-full rounded-md border-gray-300 p-2" onChange={handleChange} />
+                <input type="text" name="blood_pressure" placeholder="e.g., 120/80" required className="w-full rounded-md border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" onChange={handleChange} />
               </div>
               <div>
                 <label className="block text-gray-600">Respiratory Rate (breaths/min)</label>
-                <input type="number" name="respiratory_rate" required className="w-full rounded-md border-gray-300 p-2" onChange={handleChange} />
+                <input type="number" name="respiratory_rate" required className="w-full rounded-md border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" onChange={handleChange} />
               </div>
             </div>
           </fieldset>
-
+  
           {/* Medical Information */}
-          <fieldset className="border border-gray-300 rounded-lg p-4">
+          <fieldset className="border border-gray-300 rounded-lg p-4 relative">
             <legend className="text-lg font-semibold text-gray-700">Medical Information</legend>
             <div className="grid grid-cols-1 gap-4">
-              <textarea name="allergies" placeholder="Allergies" className="w-full rounded-md border-gray-300 p-2" onChange={handleChange} />
-              <textarea name="medical_history" placeholder="Medical History" className="w-full rounded-md border-gray-300 p-2" onChange={handleChange} />
-              <textarea name="symptoms" placeholder="Symptoms" className="w-full rounded-md border-gray-300 p-2" onChange={handleChange} />
+              {/* Allergies */}
+              <div className="relative">
+                <textarea name="allergies" id="allergies" className="peer w-full rounded-md border border-gray-300 p-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none" placeholder=" " onChange={handleChange} />
+                <label htmlFor="allergies" className="absolute left-3 top-3 bg-white px-1 text-gray-500 text-sm transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-focus:-top-3 peer-focus:text-sm peer-focus:text-blue-600 peer-focus:px-1">
+                  Allergies
+                </label>
+              </div>
+  
+              {/* Medical History */}
+              <div className="relative">
+                <textarea name="medical_history" id="medical_history" className="peer w-full rounded-md border border-gray-300 p-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none" placeholder=" " onChange={handleChange} />
+                <label htmlFor="medical_history" className="absolute left-3 top-3 bg-white px-1 text-gray-500 text-sm transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-focus:-top-3 peer-focus:text-sm peer-focus:text-blue-600 peer-focus:px-1">
+                  Medical History
+                </label>
+              </div>
+  
+              {/* Current Medications */}
+              <div className="relative">
+                <textarea name="current_medications" id="current_medications" className="peer w-full rounded-md border border-gray-300 p-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none" placeholder=" " onChange={handleChange} />
+                <label htmlFor="current_medications" className="absolute left-3 top-3 bg-white px-1 text-gray-500 text-sm transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-focus:-top-3 peer-focus:text-sm peer-focus:text-blue-600 peer-focus:px-1">
+                  Current Medications
+                </label>
+              </div>
+  
+              {/* Symptoms */}
+              <div className="relative">
+                <textarea name="symptoms" id="symptoms" className="peer w-full rounded-md border border-gray-300 p-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none" placeholder=" " onChange={handleChange} />
+                <label htmlFor="symptoms" className="absolute left-3 top-3 bg-white px-1 text-gray-500 text-sm transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-focus:-top-3 peer-focus:text-sm peer-focus:text-blue-600 peer-focus:px-1">
+                  Symptoms
+                </label>
+              </div>
             </div>
           </fieldset>
-
+  
           {/* Lifestyle Information */}
           <fieldset className="border border-gray-300 rounded-lg p-4">
             <legend className="text-lg font-semibold text-gray-700">Lifestyle</legend>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-gray-600">Smoking Status</label>
-                <select name="smoking_status" className="w-full rounded-md border-gray-300 p-2" onChange={handleChange}>
+                <select name="smoking_status" className="w-full rounded-md border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" onChange={handleChange}>
                   <option value="non-smoker">Non-smoker</option>
                   <option value="smoker">Smoker</option>
                   <option value="former-smoker">Former Smoker</option>
@@ -163,7 +193,7 @@ export default function PreliminaryAssessmentPage() {
               </div>
               <div>
                 <label className="block text-gray-600">Alcohol Use</label>
-                <select name="alcohol_use" className="w-full rounded-md border-gray-300 p-2" onChange={handleChange}>
+                <select name="alcohol_use" className="w-full rounded-md border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" onChange={handleChange}>
                   <option value="none">None</option>
                   <option value="occasionally">Occasionally</option>
                   <option value="frequently">Frequently</option>
@@ -171,15 +201,59 @@ export default function PreliminaryAssessmentPage() {
               </div>
             </div>
           </fieldset>
-
+  
+          {/* Assessment */}
+          <fieldset className="border border-gray-300 rounded-lg p-4">
+            <legend className="text-lg font-semibold text-gray-700">Assessment</legend>
+            <textarea name="assessment" id="assessment" className="w-full rounded-md border border-gray-300 p-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none" placeholder="Enter the assessment here" onChange={handleChange} />
+            
+            {/* Pain Scale */}
+            <div>
+              <label className="block text-gray-600">Pain Scale (1-10)</label>
+              <input type="number" name="pain_scale" min="1" max="10" className="w-full rounded-md border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" onChange={handleChange} />
+            </div>
+  
+            {/* Pain Location */}
+            <div>
+              <label className="block text-gray-600">Pain Location</label>
+              <input type="text" name="pain_location" className="w-full rounded-md border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" onChange={handleChange} />
+            </div>
+          </fieldset>
+  
           <div className="flex justify-end">
-            <button type="submit" className="rounded-md bg-blue-600 px-6 py-2 text-white shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-              Submit
-            </button>
+            <button type="submit" className="rounded-md bg-blue-600 px-6 py-2 text-white shadow-md hover:bg-blue-700">Submit</button>
           </div>
         </form>
+        {/* Modal */}
+      {showModal && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="w-1/3 rounded-lg bg-white p-4">
+            <h2 className="text-xl font-semibold">
+              Patient Registered Successfully!
+            </h2>
+            <div className="mt-4 flex justify-around">
+              <button
+                className="text-blue-500"
+                onClick={() => {
+                  setShowModal(false);
+                  //setFormData({ ...formData, priority: "Regular" });  // reset priority explicitly
+                }}
+              >
+                Create New Assessment
+              </button>
+              <button
+                className="text-blue-500"
+                onClick={() => router.push("/admin/patient-treatment-queue")}
+              >
+                Go to Treatment Queue
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       </div>
     </div>
   );
+  
 };
 

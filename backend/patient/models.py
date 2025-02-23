@@ -9,10 +9,10 @@ from django.dispatch import receiver
 class Patient(models.Model):
 
     COMPLAINT_CHOICES = [
-        ('general_illness', 'General Illness'),
-        ('injury', 'Injury'),
-        ('checkup', 'Check-up'),
-        ('other', 'Other'),
+        ('General Illness', 'General Illness'),
+        ('Injury', 'Injury'),
+        ('Check-up', 'Check-up'),
+        ('Other', 'Other'),
 
         # ('General Illness', 'General Illness'),
         # ('Injury', 'Injury'),
@@ -42,21 +42,19 @@ class Patient(models.Model):
         return f'{self.first_name} {self.last_name}'
     
 class Diagnosis(models.Model):
-    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='diagnoses')
-    #diagnosis_name = 
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='diagnosis')
     diagnosis_code = models.CharField(max_length=10, blank=True, null=True)  # ICD code, etc.
     diagnosis_description = models.TextField()
     diagnosis_date = models.DateField()
 
 class Prescription(models.Model):
-    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='prescriptions')
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='prescription')
     medication = models.CharField(max_length=100)
     dosage = models.CharField(max_length=50)
     frequency = models.CharField(max_length=50)
-    note = models.TextField()
     start_date = models.DateField()
     end_date = models.DateField(null=True, blank=True)
-
+    
 @receiver(pre_save, sender = Patient)
 def create_patient_id(sender, instance, **kwargs):
     if not instance.patient_id:
