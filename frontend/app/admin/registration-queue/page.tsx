@@ -145,7 +145,8 @@ export default function Page() {
 
   return (
     <div className="flex-1 px-8 py-8">
-      <h1>Priority Queue</h1>
+      <h1 className="text-2xl font-bold">Patient Registration Queue</h1>
+      <h2 className="text-xl font-semibold">Priority Queue</h2>
       <div className="flex flex-row justify-center gap-4">
         {/* Priority Queue Cards */}
         <div className="card flex h-96 w-80 max-w-sm flex-col items-center justify-center">
@@ -169,7 +170,7 @@ export default function Page() {
         {renderPatientInfo(priorityQueue.current)}
       </div>
 
-      <h1>Regular Queue</h1>
+      <h2 className="text-xl font-semibold">Regular Queue</h2>
       <div className="flex flex-row justify-center gap-4">
         {/* Regular Queue Cards */}
         <div className="card flex h-96 w-80 max-w-sm flex-col items-center justify-center">
