@@ -1,3 +1,4 @@
+from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.response import Response
@@ -331,19 +332,14 @@ class PreliminaryAssessmentForm(APIView):
             return Response({'message': 'Assessment created successfully', 'queue_number': queue_number}, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-# get patient and submit patient treatment
 class PatientTreatmentForm(APIView):
     def get(self, request, patient_id, queue_number):
         try:
-            response = supabase.table("patient_patient").select(
-                "patient_id, first_name, last_name, date_of_birth, phone_number, complaint"
-            ).eq("patient_id", patient_id).execute()
-
-            print("Supabase Response:", response.data)  # Debugging
-
+            response = supabase.table("patient_patient").select("*").eq("patient_id", patient_id).execute()
             patient_data = response.data[0] if response.data else None
+
             if not patient_data:
-                return Response({"error": "Patient not found"}, status=status.HTTP_404_NOT_FOUND)
+                return Response({"error": "Patient not found in Supabase"}, status=status.HTTP_404_NOT_FOUND)
                         
             return Response(patient_data, status=status.HTTP_200_OK)
         except Exception as e:
@@ -351,50 +347,52 @@ class PatientTreatmentForm(APIView):
             
     def post(self, request, patient_id, queue_number):
         try:
-            # 1️⃣ Retrieve Patient and Queue Entry
-            patient = Patient.objects.get(patient_id=patient_id)
-            queue_entry = TemporaryStorageQueue.objects.get(patient=patient, queue_number=queue_number)
+            # Fetch patient from Supabase
+            response = supabase.table("patient_patient").select("*").eq("patient_id", patient_id).execute()
+            patient_data = response.data[0] if response.data else None
 
-            # 2️⃣ Update Queue Status
+            if not patient_data:
+                return Response({'error': 'Patient not found in Supabase'}, status=status.HTTP_404_NOT_FOUND)
+
+            # Get queue entry from Django
+            queue_entry = get_object_or_404(TemporaryStorageQueue, patient_id=patient_id, queue_number=queue_number)
+
+            # Update Queue Status
             queue_entry.status = "Completed"
             queue_entry.save()
 
-            # 3️⃣ Extract nested data and remove from the main payload
+            # Extract nested data from request
             diagnoses_data = request.data.pop('diagnoses', [])
             prescriptions_data = request.data.pop('prescriptions', [])
 
-            # 4️⃣ Validate and save the Treatment data
-            serializer = TreatmentSerializer(data=request.data)
-            if serializer.is_valid():
-                treatment = serializer.save(patient=patient)
+            # Prepare data for the serializer.
+            # Here, we force the "patient" field to be the patient_id (a simple string)
+            data_to_serialize = {
+                **request.data,
+                "patient": patient_id,
+                "diagnoses": diagnoses_data,
+                "prescriptions": prescriptions_data
+            }
 
-                # 5️⃣ Create and attach Diagnoses
-                diagnosis_objects = []
-                for diagnosis_data in diagnoses_data:
-                    # Ensure 'diagnosis_date' is present
-                    if not diagnosis_data.get('diagnosis_date'):
-                        diagnosis_data['diagnosis_date'] = date.today().isoformat()
-                    diagnosis = Diagnosis.objects.create(patient=patient, **diagnosis_data)
-                    diagnosis_objects.append(diagnosis)
+            serializer = TreatmentSerializer(data=data_to_serialize)
+            if serializer.is_valid():
+                treatment = serializer.save()  # The create() method uses patient_id
+
+                # Create and attach Diagnoses
+                diagnosis_objects = [
+                    Diagnosis.objects.create(patient_id=patient_id, **diag) for diag in diagnoses_data
+                ]
                 treatment.diagnoses.set(diagnosis_objects)
 
-                # 6️⃣ Create and attach Prescriptions
-                prescription_objects = []
-                for prescription_data in prescriptions_data:
-                    prescription = Prescription.objects.create(patient=patient, **prescription_data)
-                    prescription_objects.append(prescription)
+                # Create and attach Prescriptions
+                prescription_objects = [
+                    Prescription.objects.create(patient_id=patient_id, **presc) for presc in prescriptions_data
+                ]
                 treatment.prescriptions.set(prescription_objects)
 
-                # 7️⃣ Re-serialize the treatment to include nested objects
-                treatment_serializer = TreatmentSerializer(treatment)
-                return Response(treatment_serializer.data, status=status.HTTP_201_CREATED)
+                return Response(TreatmentSerializer(treatment).data, status=status.HTTP_201_CREATED)
+
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        except Patient.DoesNotExist:
-            return Response({'error': 'Patient not found'}, status=status.HTTP_404_NOT_FOUND)
-        except TemporaryStorageQueue.DoesNotExist:
-            return Response({'error': 'Queue entry not found'}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
-

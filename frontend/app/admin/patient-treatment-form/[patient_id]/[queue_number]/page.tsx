@@ -87,13 +87,7 @@ export default function TreatmentForm() {
   const addPrescription = () => {
     setPrescriptions([
       ...prescriptions,
-      {
-        medication: "",
-        dosage: "",
-        frequency: "",
-        start_date: "",
-        end_date: "",
-      },
+      { medication: "", dosage: "", frequency: "", start_date: "", end_date: "" },
     ]);
   };
 
@@ -116,8 +110,10 @@ export default function TreatmentForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    // IMPORTANT: Send "patient_id" (write-only field) instead of "patient"
     const treatmentData = {
       treatment_notes: treatmentNotes,
+      patient_id: patient_id,  // Updated key here
       diagnoses: diagnoses,
       prescriptions: prescriptions,
     };
@@ -134,7 +130,10 @@ export default function TreatmentForm() {
         }
       );
 
-      if (!response.ok) throw new Error("Failed to submit treatment data.");
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(`Failed to submit: ${JSON.stringify(errorData)}`);
+      }
 
       alert("Treatment submitted successfully!");
     } catch (error) {
@@ -152,9 +151,7 @@ export default function TreatmentForm() {
       <form onSubmit={handleSubmit}>
         {/* Diagnoses Section */}
         <div className="mb-8">
-          <h3 className="mb-2 text-xl font-semibold text-gray-800">
-            Diagnoses
-          </h3>
+          <h3 className="mb-2 text-xl font-semibold text-gray-800">Diagnoses</h3>
           {diagnoses.map((diag, index) => (
             <div key={index} className="mb-4 rounded-lg border bg-gray-50 p-4">
               <input
@@ -169,11 +166,7 @@ export default function TreatmentForm() {
               <textarea
                 value={diag.diagnosis_description}
                 onChange={(e) =>
-                  handleDiagnosisChange(
-                    index,
-                    "diagnosis_description",
-                    e.target.value
-                  )
+                  handleDiagnosisChange(index, "diagnosis_description", e.target.value)
                 }
                 placeholder="Diagnosis Description"
                 className="mb-2 w-full rounded-md border p-2"
@@ -209,25 +202,16 @@ export default function TreatmentForm() {
 
         {/* Prescriptions Section */}
         <div className="mb-8">
-          <h3 className="mb-4 text-xl font-semibold text-gray-800">
-            Prescriptions
-          </h3>
+          <h3 className="mb-4 text-xl font-semibold text-gray-800">Prescriptions</h3>
           {prescriptions.map((prescription, index) => (
-            <div
-              key={index}
-              className="mb-2 rounded-lg border bg-gray-50 p-4 shadow-sm"
-            >
+            <div key={index} className="mb-2 rounded-lg border bg-gray-50 p-4 shadow-sm">
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 lg:grid-cols-5">
                 <input
                   type="text"
                   placeholder="Medication Name"
                   value={prescription.medication}
                   onChange={(e) =>
-                    handlePrescriptionChange(
-                      index,
-                      "medication",
-                      e.target.value
-                    )
+                    handlePrescriptionChange(index, "medication", e.target.value)
                   }
                   className="w-full rounded-md border p-2"
                 />
@@ -254,11 +238,7 @@ export default function TreatmentForm() {
                   placeholder="Start Date"
                   value={prescription.start_date}
                   onChange={(e) =>
-                    handlePrescriptionChange(
-                      index,
-                      "start_date",
-                      e.target.value
-                    )
+                    handlePrescriptionChange(index, "start_date", e.target.value)
                   }
                   className="w-full rounded-md border p-2"
                 />

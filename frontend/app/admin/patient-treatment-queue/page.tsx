@@ -130,7 +130,7 @@ export default function Page() {
 
   return (
     <div className="flex-1 space-y-8 px-8 py-8">
-      <h1 className="text-2xl font-bold">Patient Assessment Queue</h1>
+      <h1 className="text-2xl font-bold">Patient Treatment Queue</h1>
       <h2 className="text-xl font-semibold">Priority Queue</h2>
       <div className="flex flex-row justify-center gap-4">
         {/* Priority Queue Cards */}

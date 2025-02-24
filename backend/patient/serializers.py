@@ -3,13 +3,15 @@ from datetime import datetime, date
 from rest_framework import serializers
 from .models import Patient, Diagnosis, Prescription
 
+from datetime import datetime, date
+from rest_framework import serializers
+from .models import Patient  # Your Patient model
+
 class PatientSerializer(serializers.Serializer):
     patient_id = serializers.CharField(max_length=8)
     first_name = serializers.CharField(max_length=200, allow_blank=True, required=False)
     middle_name = serializers.CharField(max_length=100, allow_blank=True, required=False)
     last_name = serializers.CharField(max_length=200)
-    age = serializers.SerializerMethodField() # Add this line
-
     email = serializers.EmailField()
     phone_number = serializers.CharField(max_length=11)
     date_of_birth = serializers.DateField(allow_null=True, required=False)
@@ -22,40 +24,59 @@ class PatientSerializer(serializers.Serializer):
     street_address = serializers.CharField(max_length=100, allow_blank=True, required=False)
     barangay = serializers.CharField(max_length=100, allow_blank=True, required=False)
     municipal_city = serializers.CharField(max_length=100, allow_blank=True, required=False)
-
+    age = serializers.SerializerMethodField()
     queue_data = serializers.SerializerMethodField()
 
-    def get_queue_data(self, obj):
-        queue_info = obj.get('queueing_temporarystoragequeue')  # Match Supabase table name
-
-        if queue_info:
-            return {
-                'id': queue_info.get('id'),
-                'priority_level': queue_info.get('priority_level'),
-                'status': queue_info.get('status'),
-                'created_at': queue_info.get('created_at'),
-                'queue_number': queue_info.get('queue_number'),
-            }
-        return None
-
-    # Custom Methods
-    def get_complaint_display(self, obj):
-        """Returns human-readable complaint type."""
-        choices = dict(self.fields['complaint'].choices)
-        return choices.get(obj['complaint'], 'Unknown')
-
     def get_age(self, obj):
-        if isinstance(obj['date_of_birth'], str):
-           try:
-                birth_date = datetime.strptime(obj['date_of_birth'], "%Y-%m-%d").date()
-                today = date.today()
-                age = today.year - birth_date.year - (
-                    (today.month, today.day) < (birth_date.month, birth_date.day)
-                )
-                return age
-           except ValueError:
+        # Support both dicts and model instances
+        if isinstance(obj, dict):
+            dob = obj.get('date_of_birth')
+        else:
+            dob = getattr(obj, 'date_of_birth', None)
+        if not dob:
+            return None
+        if isinstance(dob, str):
+            try:
+                dob = datetime.strptime(dob, "%Y-%m-%d").date()
+            except ValueError:
                 return None
+        today = date.today()
+        return today.year - dob.year - ((today.month, today.day) < (dob.month, dob.day))
+
+    def get_queue_data(self, obj):
+        # Support both dicts and model instances
+        if isinstance(obj, dict):
+            queue_info = obj.get('queue_data')  # we are sending queue_data in transformed data
+        else:
+            queue_info = getattr(obj, 'queue_data', None)
+        if queue_info:
+            if isinstance(queue_info, dict):
+                return {
+                    'id': queue_info.get('id'),
+                    'priority_level': queue_info.get('priority_level'),
+                    'status': queue_info.get('status'),
+                    'created_at': queue_info.get('created_at'),
+                    'queue_number': queue_info.get('queue_number'),
+                }
+            else:
+                # If it's a model instance, use attribute access
+                return {
+                    'id': getattr(queue_info, 'id', None),
+                    'priority_level': getattr(queue_info, 'priority_level', None),
+                    'status': getattr(queue_info, 'status', None),
+                    'created_at': getattr(queue_info, 'created_at', None),
+                    'queue_number': getattr(queue_info, 'queue_number', None),
+                }
         return None
+
+    # Optionally, if you need a display for complaint:
+    def get_complaint_display(self, obj):
+        if isinstance(obj, dict):
+            complaint = obj.get('complaint')
+        else:
+            complaint = getattr(obj, 'complaint', None)
+        choices = dict(self.fields['complaint'].choices)
+        return choices.get(complaint, 'Unknown')
 
 class PatientRegistrationSerializer(serializers.ModelSerializer):
     priority_level = serializers.ChoiceField(choices=[('Regular', 'Regular'), ('Priority', 'Priority')], default='Regular')  # Add priority field
@@ -79,12 +100,15 @@ class PatientRegistrationSerializer(serializers.ModelSerializer):
                 'created_at': queue_info.created_at,
             }
         return None
+
+
+
 class DiagnosisSerializer(serializers.ModelSerializer):
     class Meta:
         model = Diagnosis
-        fields = ['id', 'diagnosis_code', 'diagnosis_description', 'diagnosis_date']
+        fields = ['diagnosis_code', 'diagnosis_description', 'diagnosis_date']
 
 class PrescriptionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Prescription
-        fields = ['id', 'medication', 'dosage', 'frequency', 'start_date', 'end_date']
+        fields = ['medication', 'dosage', 'frequency', 'start_date', 'end_date']
