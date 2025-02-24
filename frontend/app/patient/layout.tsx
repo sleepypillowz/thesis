@@ -19,7 +19,7 @@ export default function DoctorLayout({
         <SidebarInset className="flex-1">
           <SidebarTrigger className="fixed md:hidden" />
           <Header />
-          <main className="flex-1 px-8 py-8 pt-24">
+          <main className="flex-1 px-8 py-8 md:pt-24">
             <div className="flex justify-center">
               <div className="mx-auto max-w-5xl rounded-lg">
                 <Navbar />
