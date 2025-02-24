@@ -32,10 +32,10 @@ class TreatmentListView(APIView):
     def get(self, request):
         try:
             response = supabase.table("queueing_treatment").select(
-                "id, treatment_notes, created_at, updated_at, patient_id",
-                "patient_patient(*)",
-                "queueing_treatment_diagnoses(id, treatment_id, diagnosis_id, patient_diagnosis(diagnosis_code, diagnosis_description, diagnosis_date))",
-                "queueing_treatment_prescriptions(id, treatment_id, prescription_id, patient_prescription(medication, dosage, frequency, start_date, end_date))"
+                "id, treatment_notes, created_at, updated_at, patient_id, "
+                "patient_patient(*), "
+                "queueing_treatment_diagnoses(id, treatment_id, diagnosis_id, patient_diagnosis(*)), "
+                "queueing_treatment_prescriptions(id, treatment_id, prescription_id, patient_prescription(*))"
             ).execute()
 
             if hasattr(response, 'error') and response.error:
@@ -45,19 +45,17 @@ class TreatmentListView(APIView):
 
             transformed = []
             for item in supabase_data:
-                # Get the embedded patient data (expected key: "patient_patient")
-                                # Fetch queue data from "queueing_temporarystoragequeue" for this patient
                 queue_response = supabase.table("queueing_temporarystoragequeue").select(
                     "id, priority_level, status, created_at, queue_number"
                 ).eq("patient_id", item.get("patient_id")).execute()
+
                 queue_data = queue_response.data[0] if queue_response.data else None
 
                 patient_data = {
                     **item.get("patient_patient", {}),
-                    "queueing_temporarystoragequeue": queue_data  # ✅ Correct key name
+                    "queue_data": queue_data
                 }
 
-                # Build the transformed treatment data using "patient_patient" as the key
                 transformed.append({
                     "id": item["id"],
                     "treatment_notes": item["treatment_notes"],
@@ -66,35 +64,18 @@ class TreatmentListView(APIView):
                     "patient": patient_data,
                     "diagnoses": [
                         d["patient_diagnosis"]
-                        for d in item.get("queueing_treatment_diagnoses", [])
-                        if d.get("patient_diagnosis")
+                        for d in item.get("queueing_treatment_diagnoses", []) if d.get("patient_diagnosis")
                     ],
                     "prescriptions": [
                         p["patient_prescription"]
-                        for p in item.get("queueing_treatment_prescriptions", [])
-                        if p.get("patient_prescription")
+                        for p in item.get("queueing_treatment_prescriptions", []) if p.get("patient_prescription")
                     ]
                 })
 
-            print("Transformed only", transformed[0])
-            print("Transformed data patient keys:", transformed[0]['patient'].keys())
-            # Should include 'queueing_temporarystoragequeue'
+            return Response(transformed, status=status.HTTP_200_OK)
 
-            serializer = TreatmentSerializer(instance=transformed, many=True)
-            print("Serialized queue_data:", serializer.data[0]['patient']['queue_data'])
-
-            # For debugging, print the nested queue data for each treatment's patient
-            for treatment in serializer.data:
-                print("Queue Data:", treatment['patient'].get('queue_data'))
-
-            return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
-# Make sure TreatmentSerializer and supabase are imported
 
 class TreatmentDetailView(APIView):
     def get(self, request, *args, **kwargs):
@@ -102,10 +83,10 @@ class TreatmentDetailView(APIView):
         try:
             # Query the treatment with the given pk
             response = supabase.table("queueing_treatment").select(
-                "id, treatment_notes, created_at, updated_at, patient_id",
-                "patient_patient(*)",
-                "queueing_treatment_diagnoses(id, treatment_id, diagnosis_id, patient_diagnosis(diagnosis_code, diagnosis_description, diagnosis_date))",
-                "queueing_treatment_prescriptions(id, treatment_id, prescription_id, patient_prescription(medication, dosage, frequency, start_date, end_date))"
+                "id, treatment_notes, created_at, updated_at, patient_id, "
+                "patient_patient(*), "
+                "queueing_treatment_diagnoses(id, treatment_id, diagnosis_id, patient_diagnosis(*)), "
+                "queueing_treatment_prescriptions(id, treatment_id, prescription_id, patient_prescription(*))"
             ).eq("id", pk).execute()
 
             if hasattr(response, 'error') and response.error:
@@ -115,18 +96,19 @@ class TreatmentDetailView(APIView):
             if not supabase_data:
                 return Response({"error": "Treatment not found"}, status=status.HTTP_404_NOT_FOUND)
 
-            # Get the first (and expected only) treatment
+            # Since this is a detail view, get the first (and only) treatment record
             item = supabase_data[0]
 
-            # Fetch queue data from "queueing_temporarystoragequeue" for this patient
+            # Fetch queue data for this patient
             queue_response = supabase.table("queueing_temporarystoragequeue").select(
                 "id, priority_level, status, created_at, queue_number"
             ).eq("patient_id", item.get("patient_id")).execute()
             queue_data = queue_response.data[0] if queue_response.data else None
 
+            # Build patient data merging patient details with the fetched queue data
             patient_data = {
                 **item.get("patient_patient", {}),
-                "queueing_temporarystoragequeue": queue_data  # Correct key name for queue data
+                "queue_data": queue_data  # Using the key "queue_data" for consistency
             }
 
             # Build the transformed treatment data
@@ -148,12 +130,12 @@ class TreatmentDetailView(APIView):
                 ]
             }
 
-            serializer = TreatmentSerializer(instance=transformed)
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            print("🔄 Transformed Data:", transformed)
+            # Return the transformed single treatment record
+            return Response(transformed, status=status.HTTP_200_OK)
+
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
 
 class PatientRegister(APIView):
     def post(self, request):

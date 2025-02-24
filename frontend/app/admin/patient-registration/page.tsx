@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 export default function Page() {
   const router = useRouter();
@@ -85,6 +87,9 @@ export default function Page() {
 
   return (
     <div className="flex-1 px-4 sm:px-6 lg:px-8">
+      <Button className="bg-blue-500 text-white hover:bg-blue-600">
+        <Link href="/admin/patient-treatment-queue">Old Patient</Link>
+      </Button>
       <form
         onSubmit={handleSubmit}
         className="mx-auto max-w-4xl rounded-lg bg-white p-6 shadow-lg"

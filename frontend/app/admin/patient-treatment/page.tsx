@@ -26,7 +26,7 @@ interface Patient {
   street_address: string;
   barangay: string;
   municipal_city: string;
-  queue_data: QueueData;
+  queue_data?: QueueData;
 }
 
 interface Diagnosis {
@@ -89,7 +89,7 @@ export default function TreatmentManagement() {
 
       {/* Ongoing Treatments Section */}
       <div className="rounded-lg bg-white p-4 shadow-md">
-        <h2 className="mb-4 text-xl font-semibold">Ongoing Treatments</h2>
+        <h2 className="mb-4 text-xl font-semibold">Patient Treatment Records</h2>
         <table className="min-w-full table-auto">
           <thead>
             <tr className="bg-gray-100">
@@ -109,8 +109,8 @@ export default function TreatmentManagement() {
                   {treatment.patient.first_name} {treatment.patient.middle_name} {treatment.patient.last_name}
                 </td>
                 <td className="px-4 py-2">{treatment.patient.complaint}</td>
-                <td className="px-4 py-2">{treatment.patient.queue_data.queue_number}</td>
-                <td className="px-4 py-2">{treatment.patient.queue_data.status}</td>
+                <td className="px-4 py-2">{treatment.patient.queue_data ? treatment.patient.queue_data.queue_number : 'N/A'}</td>
+                <td className="px-4 py-2">{treatment.patient.queue_data ? treatment.patient.queue_data.status : 'N/A'}</td>
                 <td className="px-4 py-2 space-x-2">
                   <Button
                     onClick={() => handleViewDetails(treatment.id)}
