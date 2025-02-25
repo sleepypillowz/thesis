@@ -6,6 +6,7 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/patient-sidebar";
+import { Toaster } from "sonner";
 
 export default function DoctorLayout({
   children,
@@ -24,6 +25,7 @@ export default function DoctorLayout({
               <div className="mx-auto max-w-5xl rounded-lg">
                 <Navbar />
                 {children}
+                <Toaster />
               </div>
             </div>
           </main>
