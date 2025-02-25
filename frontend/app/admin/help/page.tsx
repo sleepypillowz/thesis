@@ -1,8 +1,8 @@
-import Help from "@/components/help-component";
-import { HelpComponentProps } from "@/app/types/types";
+import Help from "@/components/molecules/custom-help";
+import { CustomHelpProps } from "@/app/types/types";
 
 export default function Page() {
-  const helpItems: HelpComponentProps[] = [
+  const helpItems: CustomHelpProps[] = [
     {
       title: "Managing Patient Records",
       content:

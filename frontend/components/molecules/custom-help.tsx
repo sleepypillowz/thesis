@@ -5,9 +5,9 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 
-import { HelpComponentProps } from "@/app/types/types";
+import { CustomHelpProps } from "@/app/types/types";
 
-export default function Help({ items }: { items: HelpComponentProps[] }) {
+export default function CustomHelp({ items }: { items: CustomHelpProps[] }) {
   return (
     <Accordion type="single" collapsible className="w-full">
       {items.map((item, index) => (

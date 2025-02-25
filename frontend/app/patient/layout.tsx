@@ -1,11 +1,11 @@
-import Navbar from "@/app/components/navbar";
-import Header from "../components/header";
+import Navbar from "@/components/organisms/navbar";
+import Header from "../../components/organisms/header";
 import {
   SidebarInset,
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import { AppSidebar } from "@/components/patient-sidebar";
+import { AppSidebar } from "@/components/organisms/patient-sidebar";
 import { Toaster } from "sonner";
 
 export default function DoctorLayout({

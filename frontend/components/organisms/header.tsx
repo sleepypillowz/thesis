@@ -1,6 +1,6 @@
 import Link from "next/link";
-import Notification from "@/components/notification-dropdown";
-import Profile from "@/components/profile";
+import Notification from "@/components/molecules/header/notification-dropdown";
+import Profile from "@/components/molecules/header/profile";
 
 const Header = () => {
   return (

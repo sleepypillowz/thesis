@@ -1,7 +1,7 @@
 import { MdOutlinePregnantWoman } from "react-icons/md";
 import { GiKidneys } from "react-icons/gi";
 import { Badge } from "@/components/ui/badge";
-import { SelectComponent } from "@/components/select-component";
+import { CustomSelect } from "@/components/molecules/custom-select";
 import { Baby, Ear, HeartPulse, PillBottle } from "lucide-react";
 
 export default function Page() {
@@ -19,7 +19,7 @@ export default function Page() {
       <h1 className="text-gray-foreground mb-4 text-3xl font-semibold">
         Find a Doctor
       </h1>
-      <SelectComponent title={"Select a Doctor Type..."} items={doctorTypes} />
+      <CustomSelect title={"Select a Doctor Type..."} items={doctorTypes} />
       <div className="m-4 grid grid-cols-1 place-items-center gap-4 text-card-foreground md:grid-cols-2 lg:grid-cols-4">
         <div className="card block w-full max-w-sm space-y-2 rounded-xl">
           <div className="flex items-center justify-between">

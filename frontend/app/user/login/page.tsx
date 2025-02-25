@@ -1,4 +1,4 @@
-import LoginForm from "@/components/login-form";
+import LoginForm from "@/components/organisms/forms/login-form";
 
 export default function Home() {
   return <LoginForm />;

@@ -1,9 +1,9 @@
-export interface HelpComponentProps {
+export interface CustomHelpProps {
   title: string;
   content: string;
 }
 
-export interface SelectComponentProps {
+export interface CustomSelectProps {
   title: string;
   items: string[];
 }

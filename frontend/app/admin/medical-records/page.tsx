@@ -1,7 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Patient, columns } from "@/app/components/patient-columns";
+import {
+  Patient,
+  columns,
+} from "@/components/molecules/tables/patient-columns";
 import { DataTable } from "@/components/ui/data-table";
 
 export default function Page() {

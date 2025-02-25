@@ -1,11 +1,11 @@
-import { Notification } from "@/components/notification";
+import { Notification } from "@/components/molecules/header/notification";
 
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Button } from "./ui/button";
+import { Button } from "../../ui/button";
 import { Bell } from "lucide-react";
 
 const Dropdown = () => {

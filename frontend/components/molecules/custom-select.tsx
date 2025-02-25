@@ -6,12 +6,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-interface SelectComponentProps {
-  title: string;
-  items: string[];
-}
+import { CustomSelectProps } from "@/app/types/types";
 
-export function SelectComponent({ title, items }: SelectComponentProps) {
+export function CustomSelect({ title, items }: CustomSelectProps) {
   return (
     <Select>
       <SelectTrigger className="w-[180px]">

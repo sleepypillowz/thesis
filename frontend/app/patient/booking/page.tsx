@@ -1,5 +1,5 @@
-import { AppointmentSonner } from "@/components/appointment-sonner";
-import { DatePicker } from "@/components/date-picker";
+import { AppointmentSonner } from "@/components/molecules/appointment-sonner";
+import { DatePicker } from "@/components/molecules/date-picker";
 
 export default function Page() {
   return (
