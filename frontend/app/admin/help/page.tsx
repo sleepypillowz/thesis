@@ -1,9 +1,27 @@
-import { DoctorHelp } from "@/components/admin-help";
+import Help from "@/components/help-component";
+import { HelpComponentProps } from "@/app/types/types";
 
-export default function HelpPage() {
+export default function Page() {
+  const helpItems: HelpComponentProps[] = [
+    {
+      title: "Managing Patient Records",
+      content:
+        "To manage patient records, go to the Patients section from the main dashboard. From there, you can view, edit, or delete patient information.",
+    },
+    {
+      title: "Scheduling Appointments",
+      content:
+        "The appointment scheduling tool is located in the Appointments section. You can add, update, or cancel patient appointments easily.",
+    },
+    {
+      title: "Reports and Analytics",
+      content:
+        "The Reports section offers detailed analytics on patient data, appointment trends, and staff performance. You can export these reports as PDFs.",
+    },
+  ];
   return (
     <div className="space-y-6 p-6">
-      <DoctorHelp />
+      <Help items={helpItems} />
     </div>
   );
 }
