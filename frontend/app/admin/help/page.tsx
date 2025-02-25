@@ -1,4 +1,4 @@
-import { DoctorHelp } from "@/components/doctor-help";
+import { DoctorHelp } from "@/components/admin-help";
 
 export default function HelpPage() {
   return (
