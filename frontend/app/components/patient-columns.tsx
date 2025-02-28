@@ -24,12 +24,13 @@ export type Patient = {
   middle_name: string;
   last_name: string;
   age: number;
-  queue_data: {
+  latest_queue: {
     created_at: string;
     status: string;
+    complaint: string;
   };
   time: string;
-  complaint: string;
+
 };
 
 export const columns: ColumnDef<Patient>[] = [
@@ -86,7 +87,7 @@ export const columns: ColumnDef<Patient>[] = [
     id: "created_date", // Column for Created Date (foreign key)
     header: "Created Date",
     cell: ({ row }) => {
-      const createdAt = row.original.queue_data?.created_at;
+      const createdAt = row.original.latest_queue?.created_at;
       return createdAt
         ? format(new Date(createdAt), "d MMMM yyyy", { locale: enGB })
         : "N/A";
@@ -96,21 +97,25 @@ export const columns: ColumnDef<Patient>[] = [
     id: "time", // Column for Created Date (foreign key)
     header: "Time",
     cell: ({ row }) => {
-      const createdAt = row.original.queue_data?.created_at;
+      const createdAt = row.original.latest_queue?.created_at;
       return createdAt
         ? format(new Date(createdAt), "HH:mm:ss", { locale: enGB })
         : "N/A";
     },
   },
   {
-    accessorKey: "complaint",
+    id: "complaint", // Column for Created Date (foreign key)
     header: "Complaint",
+    cell: ({ row }) => {
+      const complaint = row.original.latest_queue?.complaint;
+      return complaint || "N/A";
+    },
   },
   {
     id: "status", // Column for Created Date (foreign key)
     header: "Status",
     cell: ({ row }) => {
-      const status = row.original.queue_data?.status;
+      const status = row.original.latest_queue?.status;
       return status || "N/A";
     },
   },

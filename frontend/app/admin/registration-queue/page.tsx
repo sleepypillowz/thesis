@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { buttonVariants } from "@/components/ui/button";
-import { Patient } from "@/app/components/medicine-columns";
+
 
 // PatientQueueItem interface
 export interface PatientQueueItem {

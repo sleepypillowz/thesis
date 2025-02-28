@@ -7,18 +7,6 @@ from django.dispatch import receiver
 
 # Create your models here.'
 class Patient(models.Model):
-
-    COMPLAINT_CHOICES = [
-        ('General Illness', 'General Illness'),
-        ('Injury', 'Injury'),
-        ('Check-up', 'Check-up'),
-        ('Other', 'Other'),
-
-        # ('General Illness', 'General Illness'),
-        # ('Injury', 'Injury'),
-        # ('Checkup', 'Check-up'),
-        # ('Other', 'Other'),
-    ]
     patient_id = models.CharField(max_length=8, unique=True, primary_key=True, editable=False)
     first_name = models.CharField(max_length=200, blank=True, null=True)
     middle_name = models.CharField(max_length=100, blank=True, null=True)
@@ -26,7 +14,6 @@ class Patient(models.Model):
     email = models.EmailField()
     phone_number = models.CharField(max_length=11)
     date_of_birth = models.DateField(blank=True, null=True)
-    complaint = models.TextField(max_length=100, blank=True, null=True, choices= COMPLAINT_CHOICES)
     street_address = models.CharField(max_length=100, blank=True, null=True)
     barangay = models.CharField(max_length=100, blank=True, null=True)
     municipal_city = models.CharField(max_length=100, blank=True, null=True)
@@ -54,6 +41,13 @@ class Prescription(models.Model):
     frequency = models.CharField(max_length=50)
     start_date = models.DateField()
     end_date = models.DateField(null=True, blank=True)
+
+
+class LabResult(models.Model):
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name="lab_results")
+    image = models.ImageField(upload_to="lab_results/")
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+
     
 @receiver(pre_save, sender = Patient)
 def create_patient_id(sender, instance, **kwargs):

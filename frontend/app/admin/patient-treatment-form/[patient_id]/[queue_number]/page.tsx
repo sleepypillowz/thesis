@@ -1,12 +1,35 @@
 "use client";
 
+import React, { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
 import { Plus, Trash } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import type { FormEvent, ChangeEvent } from "react";
 
 interface Patient {
   first_name: string;
   last_name: string;
+}
+
+interface PreliminaryAssessment {
+  blood_pressure: string;
+  temperature: string;
+  heart_rate: string;
+  respiratory_rate: string;
+  pulse_rate: string;
+  allergies: string;
+  medical_history: string;
+  symptoms: string;
+  current_medications: string;
+  pain_scale: string;
+  pain_location: string;
+  smoking_status: string;
+  alcohol_use: string;
+  assessment: string;
+  created_at?: string;
+  updated_at?: string;
+  patient_id?: string;
+  queue_number?: string;
 }
 
 interface Diagnosis {
@@ -23,13 +46,22 @@ interface Prescription {
   end_date: string;
 }
 
+interface ApiResponse {
+  patient: Patient;
+  preliminary_assessment: PreliminaryAssessment;
+}
+
 export default function TreatmentForm() {
   const params = useParams();
   const { patient_id, queue_number } = params as {
     patient_id: string;
     queue_number: string;
   };
+
   const [patient, setPatient] = useState<Patient | null>(null);
+  const [assessment, setAssessment] = useState<PreliminaryAssessment | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const [diagnoses, setDiagnoses] = useState<Diagnosis[]>([
     { diagnosis_code: "", diagnosis_description: "", diagnosis_date: "" },
@@ -41,23 +73,38 @@ export default function TreatmentForm() {
 
   const [treatmentNotes, setTreatmentNotes] = useState("");
 
+  // LAB RESULT HANDLING COMMENTED OUT
+  // const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  // const [uploadSuccess, setUploadSuccess] = useState(false);
+  // const [showUploadModal, setShowUploadModal] = useState(false);
+
   useEffect(() => {
     if (!patient_id || !queue_number) return;
 
-    const apiUrl = `http://127.0.0.1:8000/queueing/patient-preliminary-assessment/${patient_id}/${queue_number}/`;
-
-    fetch(apiUrl)
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error(`HTTP error: ${res.status} ${res.statusText}`);
+    const fetchData = async () => {
+      try {
+        const response = await fetch(
+          `http://127.0.0.1:8000/patient/patient-preliminary-assessment/${patient_id}/${queue_number}/`
+        );
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error("Server error response:", errorText);
+          throw new Error(`HTTP error! status: ${response.status}`);
         }
-        return res.json();
-      })
-      .then((data) => {
-        console.log("Fetched patient data:", data);
-        setPatient(data);
-      })
-      .catch((error) => console.error("Error fetching patient:", error));
+        
+        const data: ApiResponse = await response.json();
+        setPatient(data.patient);
+        setAssessment(data.preliminary_assessment);
+        setError(null);
+      } catch (err) {
+        setError("Failed to load patient data");
+        console.error("Fetch error:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
   }, [patient_id, queue_number]);
 
   // Diagnosis handlers
@@ -106,47 +153,176 @@ export default function TreatmentForm() {
     setPrescriptions(updatedPrescriptions);
   };
 
-  // Form submission
-  const handleSubmit = async (e: React.FormEvent) => {
+  // LAB RESULT HANDLING COMMENTED OUT
+  // const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+  //   if (e.target.files && e.target.files.length > 0) {
+  //     setSelectedFile(e.target.files[0]);
+  //   }
+  // };
+
+  // Form submission handler
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
-    // IMPORTANT: Send "patient_id" (write-only field) instead of "patient"
+    let response;
+    // LAB RESULT HANDLING COMMENTED OUT: always send as JSON for now
     const treatmentData = {
       treatment_notes: treatmentNotes,
-      patient_id: patient_id,  // Updated key here
-      diagnoses: diagnoses,
-      prescriptions: prescriptions,
+      patient_id: patient_id,
+      diagnoses: diagnoses.filter(
+        (d) => d.diagnosis_code && d.diagnosis_description && d.diagnosis_date
+      ),
+      prescriptions: prescriptions.filter(
+        (p) =>
+          p.medication && p.dosage && p.frequency && p.start_date && p.end_date
+      ),
     };
 
-    console.log("Submitting Data:", treatmentData);
+    console.log("Data to serialize (JSON):", treatmentData);
+    response = await fetch(
+      `http://127.0.0.1:8000/queueing/patient-treatment/${patient_id}/${queue_number}/`,
+      {
+        method: "POST",
+        headers: { 
+          "Content-Type": "application/json",
+          "Accept": "application/json"
+        },
+        body: JSON.stringify(treatmentData),
+      }
+    );
+    
 
     try {
-      const response = await fetch(
-        `http://127.0.0.1:8000/queueing/patient-treatment/${patient_id}/${queue_number}/`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(treatmentData),
-        }
-      );
-
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(`Failed to submit: ${JSON.stringify(errorData)}`);
+        throw new Error(errorData.message || "Failed to submit treatment");
       }
-
       alert("Treatment submitted successfully!");
+      // Reset form fields
+      setDiagnoses([{ diagnosis_code: "", diagnosis_description: "", diagnosis_date: "" }]);
+      setPrescriptions([{ medication: "", dosage: "", frequency: "", start_date: "", end_date: "" }]);
+      setTreatmentNotes("");
+      // LAB RESULT HANDLING COMMENTED OUT
+      // setSelectedFile(null);
     } catch (error) {
-      console.error("Error submitting treatment:", error);
+      console.error("Submission error:", error);
+      alert(
+        error instanceof Error ? error.message : "Failed to submit treatment"
+      );
     }
   };
+
+  if (loading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="text-lg font-medium text-gray-600">Loading patient data...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="text-lg font-medium text-red-600">{error}</div>
+      </div>
+    );
+  }
 
   return (
     <div className="mx-auto max-w-4xl rounded-2xl border border-gray-200 bg-white/80 p-8 shadow-lg backdrop-blur-lg">
       <h2 className="mb-6 text-3xl font-semibold text-gray-800">
         Patient Treatment Form {patient?.first_name} {patient?.last_name}
       </h2>
-      <h4>Queueing Number: {queue_number}</h4>
+      <div className="mb-6">
+        <h4 className="text-lg font-medium text-gray-700">
+          Queue Number: <span className="font-bold text-blue-600">{queue_number}</span>
+        </h4>
+      </div>
+
+      {assessment && (
+        <div className="mb-6 rounded-lg border bg-blue-50 p-4">
+          <h3 className="mb-3 text-xl font-semibold text-gray-800">Preliminary Assessment</h3>
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <div>
+              <p>
+                <span className="font-medium">Blood Pressure:</span>{" "}
+                {assessment.blood_pressure || "N/A"}
+              </p>
+              <p>
+                <span className="font-medium">Temperature:</span>{" "}
+                {assessment.temperature || "N/A"}
+              </p>
+              <p>
+                <span className="font-medium">Heart Rate:</span>{" "}
+                {assessment.heart_rate || "N/A"}
+              </p>
+              <p>
+                <span className="font-medium">Respiratory Rate:</span>{" "}
+                {assessment.respiratory_rate || "N/A"}
+              </p>
+              <p>
+                <span className="font-medium">Pulse Rate:</span>{" "}
+                {assessment.pulse_rate || "N/A"}
+              </p>
+            </div>
+            <div>
+              <p>
+                <span className="font-medium">Allergies:</span>{" "}
+                {assessment.allergies || "N/A"}
+              </p>
+              <p>
+                <span className="font-medium">Medical History:</span>{" "}
+                {assessment.medical_history || "N/A"}
+              </p>
+              <p>
+                <span className="font-medium">Symptoms:</span>{" "}
+                {assessment.symptoms || "N/A"}
+              </p>
+              <p>
+                <span className="font-medium">Current Medications:</span>{" "}
+                {assessment.current_medications || "N/A"}
+              </p>
+              <p>
+                <span className="font-medium">Pain Scale:</span>{" "}
+                {assessment.pain_scale || "N/A"}
+              </p>
+              <p>
+                <span className="font-medium">Pain Location:</span>{" "}
+                {assessment.pain_location || "N/A"}
+              </p>
+            </div>
+          </div>
+          <div className="mt-4">
+            <p>
+              <span className="font-medium">Smoking Status:</span>{" "}
+              {assessment.smoking_status || "N/A"}
+            </p>
+            <p>
+              <span className="font-medium">Alcohol Use:</span>{" "}
+              {assessment.alcohol_use || "N/A"}
+            </p>
+            <p>
+              <span className="font-medium">Final Assessment:</span>{" "}
+              {assessment.assessment || "N/A"}
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* LAB RESULT UPLOAD SECTION COMMENTED OUT */}
+      {/* <div className="mb-8 flex items-center justify-between">
+        <Button
+          className="bg-blue-600 text-white hover:bg-blue-700"
+          onClick={() => setShowUploadModal(true)}
+        >
+          Upload Lab Result
+        </Button>
+        {uploadSuccess && (
+          <div className="ml-4 text-green-600">
+            File uploaded successfully!
+          </div>
+        )}
+      </div> */}
 
       <form onSubmit={handleSubmit}>
         {/* Diagnoses Section */}
@@ -292,6 +468,47 @@ export default function TreatmentForm() {
           Submit Treatment
         </button>
       </form>
+
+      {/* LAB RESULT MODAL COMMENTED OUT */}
+      {/*
+      {showUploadModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="w-full max-w-md rounded-lg bg-white p-6">
+            <h2 className="mb-4 text-xl font-semibold text-gray-800">Upload Lab Result</h2>
+            <div className="flex flex-col items-center justify-center space-y-4">
+              <label className="flex h-32 w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 hover:border-blue-500 hover:bg-gray-100">
+                <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                  <Plus className="mb-2 h-8 w-8 text-gray-400" />
+                  <p className="text-sm text-gray-500">Click to upload or drag and drop</p>
+                  <p className="text-xs text-gray-500">PDF, PNG, JPG (MAX. 10MB)</p>
+                </div>
+                <input
+                  type="file"
+                  className="hidden"
+                  accept=".pdf,.png,.jpg,.jpeg"
+                  onChange={handleFileChange}
+                />
+              </label>
+              {selectedFile && (
+                <div className="flex items-center space-x-2">
+                  <span className="text-sm text-gray-600">{selectedFile.name}</span>
+                  <Trash
+                    className="h-4 w-4 cursor-pointer text-red-500"
+                    onClick={() => setSelectedFile(null)}
+                  />
+                </div>
+              )}
+              <Button
+                onClick={() => setShowUploadModal(false)}
+                className="w-full bg-gray-200 text-gray-800 hover:bg-gray-300"
+              >
+                Close
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+      */}
     </div>
   );
 }

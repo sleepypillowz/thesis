@@ -8,9 +8,14 @@ class TemporaryStorageQueue(models.Model):
         ('Regular', 'Regular'),
         ('Priority', 'Priority Lane (PWD/Pregnant)')
     ]
+    COMPLAINT_CHOICES = [
+    ('General Illness', 'General Illness'),
+    ('Injury', 'Injury'),
+    ('Check-up', 'Check-up'),
+    ('Other', 'Other'),
+    ]
 
-
-    patient = models.OneToOneField(Patient, on_delete=models.CASCADE, to_field='patient_id', related_name='temporarystoragequeue')
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='temporarystoragequeue')
     priority_level = models.CharField(max_length=10, choices=PRIORITY_CHOICES, default='Regular')
     created_at = models.DateTimeField(auto_now_add=True)
     status = models.CharField(
@@ -22,6 +27,7 @@ class TemporaryStorageQueue(models.Model):
             ('Completed', 'Completed'),
         ], 
         default='Waiting')
+    complaint = models.TextField(max_length=100, blank=True, null=True, choices= COMPLAINT_CHOICES)
     
     queue_number = models.PositiveBigIntegerField(null=True, blank=True)
     queue_date = models.DateField(default=date.today)
@@ -75,5 +81,4 @@ class Treatment(models.Model):
     updated_at = models.DateTimeField(auto_now=True)  
 
     def __str__(self):
-        patient = Patient.objects.get(patient_id=self.patient_id) #Get patient from patient_id
-        return f'Preliminary Assessment for {patient.first_name} {patient.last_name}'
+        return f"Treatment for {self.patient.first_name} {self.patient.last_name}"
