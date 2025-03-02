@@ -29,15 +29,11 @@ export default function Page() {
   });
 
   useEffect(() => {
-    // Force fresh fetch by appending a timestamp and setting cache to no-cache.
-    fetch(`http://127.0.0.1:8000/queueing/preliminary_assessment_queueing/?t=${Date.now()}`, {
-      cache: "no-cache",
-    })
+    fetch("http://127.0.0.1:8000/queueing/preliminary_assessment_queueing/")
       .then((response) => response.json())
       .then((data) => {
         console.log("API Response:", data);
 
-        // Use the new API fields ("priority_current", "priority_next1", etc.)
         const priorityPatients = [
           data.priority_current,
           data.priority_next1,
@@ -50,7 +46,6 @@ export default function Page() {
           data.regular_next2,
         ].filter((p) => p !== null);
 
-        // Update state with the latest fetched data
         setPriorityQueue({
           current: priorityPatients[0] || null,
           next1: priorityPatients[1] || null,
@@ -64,10 +59,9 @@ export default function Page() {
         });
       })
       .catch((error) => console.error("Error fetching queue:", error));
-  }, []); // Runs once on mount; add dependencies or polling if needed
+  }, []); // Empty dependency array ensures the hook runs only once on mount
 
   const router = useRouter();
-
   const renderPatientInfo = (queueItem: PatientQueueItem | null) => {
     if (!queueItem) return null;
     return (
@@ -114,6 +108,7 @@ export default function Page() {
               >
                 Accept
               </button>
+
               <button
                 className={buttonVariants({ variant: "outline" })}
                 onClick={() => router.push("/payments")}
@@ -148,6 +143,7 @@ export default function Page() {
           <span>Queuing Number</span>
           <span>Current</span>
         </div>
+
         <div className="card flex h-96 w-80 max-w-sm flex-col items-center justify-center">
           <p className="text-6xl font-bold">
             {priorityQueue.next1
@@ -157,6 +153,7 @@ export default function Page() {
           <span>Queuing Number</span>
           <span>Next</span>
         </div>
+
         <div className="card flex h-96 w-80 max-w-sm flex-col items-center justify-center">
           <p className="text-6xl font-bold">
             {priorityQueue.next2
@@ -166,8 +163,10 @@ export default function Page() {
           <span>Queuing Number</span>
           <span>Next</span>
         </div>
+
         {renderPatientInfo(priorityQueue.current)}
       </div>
+
       <h2 className="text-xl font-semibold">Regular Queue</h2>
       <div className="flex flex-row justify-center gap-4">
         {/* Regular Queue Cards */}
@@ -180,20 +179,25 @@ export default function Page() {
           <span>Queuing Number</span>
           <span>Current</span>
         </div>
+
         <div className="card flex h-96 w-80 max-w-sm flex-col items-center justify-center">
           <p className="text-6xl font-bold">
+            {" "}
             {regularQueue.next1 ? `#${regularQueue.next1.queue_number}` : "N/A"}
           </p>
           <span>Queuing Number</span>
           <span>Next</span>
         </div>
+
         <div className="card flex h-96 w-80 max-w-sm flex-col items-center justify-center">
           <p className="text-6xl font-bold">
+            {" "}
             {regularQueue.next2 ? `#${regularQueue.next2.queue_number}` : "N/A"}
           </p>
           <span>Queuing Number</span>
           <span>Next</span>
         </div>
+
         {renderPatientInfo(regularQueue.current)}
       </div>
     </div>
