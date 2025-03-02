@@ -1,6 +1,6 @@
-"use client";
+"use client"
 
-import { Pie, PieChart } from "recharts";
+import { Pie, PieChart } from "recharts"
 
 import {
   Card,
@@ -8,24 +8,20 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from "@/components/ui/card"
 import {
   ChartConfig,
   ChartContainer,
   ChartLegend,
   ChartLegendContent,
-} from "@/components/ui/chart";
+} from "@/components/ui/chart"
 const chartData = [
-  {
-    browser: "cardiovascular",
-    visitors: 275,
-    fill: "var(--color-cardiovascular)",
-  },
+  { browser: "cardiovascular", visitors: 275, fill: "var(--color-cardiovascular)" },
   { browser: "cancer", visitors: 200, fill: "var(--color-cancer)" },
   { browser: "respiratory", visitors: 187, fill: "var(--color-respiratory)" },
   { browser: "mental", visitors: 173, fill: "var(--color-mental)" },
   { browser: "diabetes", visitors: 90, fill: "var(--color-diabetes)" },
-];
+]
 
 const chartConfig = {
   visitors: {
@@ -51,7 +47,7 @@ const chartConfig = {
     label: "diabetes",
     color: "hsl(var(--chart-5))",
   },
-} satisfies ChartConfig;
+} satisfies ChartConfig
 
 export function CommonDiseasesChart() {
   return (
@@ -75,5 +71,5 @@ export function CommonDiseasesChart() {
         </ChartContainer>
       </CardContent>
     </Card>
-  );
+  )
 }

@@ -1,7 +1,7 @@
-"use client";
+"use client"
 
-import { TrendingUp } from "lucide-react";
-import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
+import { TrendingUp } from "lucide-react"
+import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts"
 
 import {
   Card,
@@ -10,13 +10,13 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from "@/components/ui/card"
 import {
   ChartConfig,
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
-} from "@/components/ui/chart";
+} from "@/components/ui/chart"
 const chartData = [
   { month: "January", desktop: 186, mobile: 80 },
   { month: "February", desktop: 305, mobile: 200 },
@@ -30,7 +30,7 @@ const chartData = [
   { month: "October", desktop: 73, mobile: 190 },
   { month: "November", desktop: 209, mobile: 130 },
   { month: "December", desktop: 214, mobile: 140 },
-];
+]
 
 const chartConfig = {
   desktop: {
@@ -41,14 +41,16 @@ const chartConfig = {
     label: "Mobile",
     color: "hsl(var(--chart-2))",
   },
-} satisfies ChartConfig;
+} satisfies ChartConfig
 
 export function VisitorsChart() {
   return (
     <Card>
       <CardHeader>
         <CardTitle>Patient Statistics</CardTitle>
-        <CardDescription>Showing total visitors for last year</CardDescription>
+        <CardDescription>
+          Showing total visitors for last year
+        </CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig}>
@@ -107,5 +109,5 @@ export function VisitorsChart() {
         </div>
       </CardFooter>
     </Card>
-  );
+  )
 }

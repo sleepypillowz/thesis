@@ -39,12 +39,6 @@ export default function Home() {
                 >
                   Admin
                 </Link>
-                <Link
-                  className={buttonVariants({ variant: "secondary" })}
-                  href="/designs"
-                >
-                  Designs
-                </Link>
               </div>
               {/* End Buttons */}
             </div>
