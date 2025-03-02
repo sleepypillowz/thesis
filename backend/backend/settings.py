@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 import os
 from os import getenv, path
 from pathlib import Path
-import dotenv
+import dotenv   
 from django.core.management.utils import get_random_secret_key
 
 
@@ -151,7 +151,12 @@ STATIC_URL = 'static/'
 #     ]
 # }
 
-# Default primary key field type
+# Default primary key field type            
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+MEDIA_ROOT = BASE_DIR / "media"
+
+
+# URL that handles the media served from MEDIA_ROOT
+MEDIA_URL = "/media/"

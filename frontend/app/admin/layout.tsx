@@ -3,8 +3,8 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import { AppSidebar } from "@/components/organisms/admin-sidebar";
-import Header from "../../components/organisms/header";
+import { AppSidebar } from "@/components/admin-sidebar";
+import Header from "../components/header";
 
 export default function DoctorLayout({
   children,
