@@ -17,12 +17,15 @@ import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
 
 const formSchema = z.object({
-  name_4332846087: z.string().min(1),
-  name_5106121433: z.string(),
-  name_6875555083: z.string(),
+  name_4332846087: z.string().min(1, "Username is required"),
+  name_5106121433: z
+    .string()
+    .min(8, "Password must be at least 8 characters")
+    .regex(/[a-zA-Z]/, "Password must contain at least one letter")
+    .regex(/[0-9]/, "Password must contain at least one number"),
 });
 
-export default function RegisterForm() {
+export default function LoginForm() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
   });
@@ -54,7 +57,7 @@ export default function RegisterForm() {
             <FormItem>
               <FormLabel>Username</FormLabel>
               <FormControl>
-                <Input placeholder="shadcn" type="" {...field} />
+                <Input placeholder="shadcn" {...field} />
               </FormControl>
               <FormDescription>
                 This is your public display name.
@@ -74,21 +77,6 @@ export default function RegisterForm() {
                 <PasswordInput placeholder="******" {...field} />
               </FormControl>
               <FormDescription>Enter your password.</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="name_6875555083"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Password Confirmation</FormLabel>
-              <FormControl>
-                <PasswordInput placeholder="******" {...field} />
-              </FormControl>
-              <FormDescription>Enter your password again.</FormDescription>
               <FormMessage />
             </FormItem>
           )}
