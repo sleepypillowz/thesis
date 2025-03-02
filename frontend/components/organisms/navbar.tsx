@@ -1,13 +1,13 @@
-"use client"
+"use client";
 
-import Link from "next/link"
+import Link from "next/link";
 
 import {
   NavigationMenu,
   NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuList,
-} from "@/components/ui/navigation-menu"
+} from "@/components/ui/navigation-menu";
 
 const menuItems = [
   { name: "Home", href: "/patient" },
@@ -19,13 +19,12 @@ const menuItems = [
   { name: "Queue", href: "/patient/queue" },
   { name: "Find a Doctor", href: "/patient/find-doctor" },
   { name: "Contact", href: "/patient/contact" },
-]
+];
 export default function Navbar() {
   return (
-    <div className="flex justify-between rounded-full border-2 bg-card p-4 pl-0 shadow-sm lg:pl-4">
-
+    <div className="hidden justify-between rounded-full border-2 bg-card p-4 pl-0 shadow-sm md:visible md:flex md:pl-4">
       {/* Desktop Navigation */}
-      <NavigationMenu className="lg:flex">
+      <NavigationMenu className="md:flex">
         <NavigationMenuList>
           <NavigationMenuItem className="space-x-2">
             {menuItems.map((item) => (
@@ -42,6 +41,5 @@ export default function Navbar() {
         </NavigationMenuList>
       </NavigationMenu>
     </div>
-  )
+  );
 }
-

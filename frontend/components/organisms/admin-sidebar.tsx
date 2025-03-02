@@ -25,13 +25,14 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { NavUser } from "./nav-user";
+import { NavUser } from "../molecules/nav-user";
 import Image from "next/image";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from "./ui/collapsible";
+} from "../ui/collapsible";
+import Link from "next/link";
 
 const menu_items = [
   {
@@ -41,12 +42,12 @@ const menu_items = [
   },
   {
     title: "Registration",
-    url: "/admin/patient-registration",
+    url: "/admin/registration",
     icon: UserPlus,
   },
   {
     title: "Patient Portal",
-    url: "/admin/patient-portal",
+    url: "/admin/portal",
     icon: LayoutDashboard,
   },
   {
@@ -79,12 +80,12 @@ const patient_items = [
   },
   {
     title: "Assessment",
-    url: "/admin/patient-assessment-queue",
+    url: "/admin/assessment-queue",
     icon: ClipboardPenLine,
   },
   {
     title: "Treatment",
-    url: "/admin/patient-treatment",
+    url: "/admin/treatment",
     icon: Bandage,
   },
 ];
@@ -135,10 +136,10 @@ export function AppSidebar() {
                 {menu_items.map((item) => (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton asChild>
-                      <a href={item.url}>
+                      <Link href={item.url}>
                         <item.icon />
                         <span>{item.title}</span>
-                      </a>
+                      </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 ))}
