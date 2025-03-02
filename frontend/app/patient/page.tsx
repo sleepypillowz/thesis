@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import Link from "next/link"
+import Link from "next/link";
 import { FaPenToSquare, FaFile } from "react-icons/fa6";
 
 export default function Page() {
@@ -7,9 +7,7 @@ export default function Page() {
     <div className="mx-8 my-8 grid grid-cols-2 gap-4 space-y-4">
       <section className="col-span-2">
         <h1 className="mb-4 text-3xl font-semibold">Profile</h1>
-        <div
-          className="card grid grid-cols-1 items-center justify-center gap-12 text-center sm:grid-cols-2 md:grid-cols-2">
-
+        <div className="card grid grid-cols-1 items-center justify-center gap-12 text-center sm:grid-cols-2 md:grid-cols-2">
           <div>
             <div className="mb-4">
               <p className="text-lg font-bold">JUAN DELA CRUZ</p>
@@ -41,14 +39,18 @@ export default function Page() {
 
             <div>
               <p className="text-lg font-semibold">Medical History</p>
-              <p>Hypertension (diagnosed 1998), Hyperlipidemia (diagnosed
-                2000), Appendectomy (1985)</p>
+              <p>
+                Hypertension (diagnosed 1998), Hyperlipidemia (diagnosed 2000),
+                Appendectomy (1985)
+              </p>
             </div>
 
             <div>
               <p className="text-lg font-semibold">Family History</p>
-              <p>Father with history of heart disease, Mother with Type 2
-                Diabetes</p>
+              <p>
+                Father with history of heart disease, Mother with Type 2
+                Diabetes
+              </p>
             </div>
           </div>
         </div>
@@ -58,16 +60,25 @@ export default function Page() {
         <h1 className="mb-4 text-3xl font-semibold">Appointments</h1>
         <div className="card overflow-x-auto">
           <div className="my-4 flex flex-wrap justify-start space-y-4 sm:space-x-4 sm:space-y-0">
-            <Button variant="outline" className="rounded-full">Doctors Appointment</Button>
-            <Button variant="outline" className="rounded-full">Patient Appointment Request</Button>
+            <Button variant="outline" className="rounded-full">
+              Doctors Appointment
+            </Button>
+            <Button variant="outline" className="rounded-full">
+              Patient Appointment Request
+            </Button>
           </div>
-          <table
-            className="card w-full text-left text-sm rtl:text-right">
+          <table className="card w-full text-left text-sm rtl:text-right">
             <thead className="text-xs uppercase text-muted-foreground">
               <tr>
-                <th scope="col" className="px-4 py-4">Type</th>
-                <th scope="col" className="px-4 py-4">Date</th>
-                <th scope="col" className="px-4 py-4">Doctor</th>
+                <th scope="col" className="px-4 py-4">
+                  Type
+                </th>
+                <th scope="col" className="px-4 py-4">
+                  Date
+                </th>
+                <th scope="col" className="px-4 py-4">
+                  Doctor
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -79,31 +90,37 @@ export default function Page() {
             </tbody>
           </table>
 
-          <Link href="/patient/appointments"
-            className="flex items-center justify-end space-x-2 pt-4 text-blue-500 hover:text-blue-700">
+          <Link
+            href="/patient/appointments"
+            className="flex items-center justify-end space-x-2 pt-4 text-blue-500 hover:text-blue-700"
+          >
             <span>View all Appointments</span>
             <FaPenToSquare />
           </Link>
-
         </div>
-
-
-
       </section>
-
 
       <section className="col-span-2">
         <h1 className="mb-4 text-3xl font-semibold">Prescriptions</h1>
         <div className="card overflow-x-auto">
-          <table
-            className="card w-full text-left text-sm rtl:text-right">
+          <table className="card w-full text-left text-sm rtl:text-right">
             <thead className="text-xs uppercase text-muted-foreground">
               <tr>
-                <th scope="col" className="px-4 py-4">Drug Name</th>
-                <th scope="col" className="px-4 py-4">No. of Units</th>
-                <th scope="col" className="px-4 py-4">Dosage</th>
-                <th scope="col" className="px-4 py-4">No. of Days</th>
-                <th scope="col" className="px-4 py-4">Time</th>
+                <th scope="col" className="px-4 py-4">
+                  Drug Name
+                </th>
+                <th scope="col" className="px-4 py-4">
+                  No. of Units
+                </th>
+                <th scope="col" className="px-4 py-4">
+                  Dosage
+                </th>
+                <th scope="col" className="px-4 py-4">
+                  No. of Days
+                </th>
+                <th scope="col" className="px-4 py-4">
+                  Time
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -131,12 +148,13 @@ export default function Page() {
             </tbody>
           </table>
 
-          <Link href="/patient/prescriptions"
-            className="flex items-center justify-end space-x-2 pt-4 text-blue-500 hover:text-blue-700">
+          <Link
+            href="/patient/prescriptions"
+            className="flex items-center justify-end space-x-2 pt-4 text-blue-500 hover:text-blue-700"
+          >
             <span>View all Prescriptions</span>
             <FaPenToSquare />
           </Link>
-
         </div>
       </section>
 
@@ -151,8 +169,12 @@ export default function Page() {
             </div>
 
             <div className="flex space-x-4">
-              <Link href="/#" className="text-blue-500 hover:text-blue-700">View</Link>
-              <Link href="/#" className="text-blue-500 hover:text-blue-700">Download</Link>
+              <Link href="/#" className="text-blue-500 hover:text-blue-700">
+                View
+              </Link>
+              <Link href="/#" className="text-blue-500 hover:text-blue-700">
+                Download
+              </Link>
             </div>
           </div>
 
@@ -163,8 +185,12 @@ export default function Page() {
             </div>
 
             <div className="flex space-x-4">
-              <Link href="/#" className="text-blue-500 hover:text-blue-700">View</Link>
-              <Link href="/#" className="text-blue-500 hover:text-blue-700">Download</Link>
+              <Link href="/#" className="text-blue-500 hover:text-blue-700">
+                View
+              </Link>
+              <Link href="/#" className="text-blue-500 hover:text-blue-700">
+                Download
+              </Link>
             </div>
           </div>
 
@@ -175,11 +201,14 @@ export default function Page() {
             </div>
 
             <div className="flex space-x-4">
-              <Link href="/#" className="text-blue-500 hover:text-blue-700">View</Link>
-              <Link href="/#" className="text-blue-500 hover:text-blue-700">Download</Link>
+              <Link href="/#" className="text-blue-500 hover:text-blue-700">
+                View
+              </Link>
+              <Link href="/#" className="text-blue-500 hover:text-blue-700">
+                Download
+              </Link>
             </div>
           </div>
-
         </div>
       </section>
 
@@ -189,12 +218,13 @@ export default function Page() {
           <p className="text-lg">Diagnosis: Type 2 Diabetes</p>
           <ul className="list-disc space-y-4 text-wrap break-words pl-5">
             <li className="mt-4">Diet and excercise counseling recommended.</li>
-            <li>Follow up in 2 weeks for blood glucose monitoring and medication
-              adjustment</li>
+            <li>
+              Follow up in 2 weeks for blood glucose monitoring and medication
+              adjustment
+            </li>
           </ul>
         </div>
       </section>
-
     </div>
   );
 }

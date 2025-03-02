@@ -2,8 +2,8 @@ from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.response import Response
-from .models import Patient, TemporaryStorageQueue, Treatment
-from .serializers import PreliminaryAssessmentSerializer
+from .models import Patient, TemporaryStorageQueue
+from .serializers import PreliminaryAssessmentSerializer, TreatmentSerializer
 from api.views import supabase
 
 from datetime import date  # Import date module
@@ -13,7 +13,6 @@ from rest_framework.views import APIView
 from rest_framework import status
 
 from patient.models import Diagnosis, Prescription
-from patient.serializers import DiagnosisSerializer, PrescriptionSerializer
 
 # display patient queue
 class PatientQueue(APIView):
@@ -23,12 +22,12 @@ class PatientQueue(APIView):
         try:
             # Fetch Priority Queue
             priority_response = supabase.table(table_name).select(
-                "id, patient_id, status, created_at, priority_level, complaint", 'queue_number', 'queue_date'
+                "id, patient_id, status, created_at, priority_level", 'queue_number', 'queue_date'
             ).eq('status', 'Waiting').eq('priority_level', 'Priority').order('created_at').execute()
 
             # Fetch Regular Queue
             regular_response = supabase.table(table_name).select(
-                "id, patient_id, status, created_at, priority_level, complaint",  'queue_number', 'queue_date'
+                "id, patient_id, status, created_at, priority_level",  'queue_number', 'queue_date'
             ).eq('status', 'Waiting').eq('priority_level', 'Regular').order('created_at').execute()
 
             # Access the data attribute directly
@@ -44,13 +43,13 @@ class PatientQueue(APIView):
             # Fetch patient details for the priority queue
             priority_patient_ids = [queue["patient_id"] for queue in priority_patients]
             priority_patients_details_response = supabase.table("patient_patient").select(
-                "patient_id, first_name, last_name, date_of_birth, phone_number"
+                "patient_id, first_name, last_name, date_of_birth, phone_number, complaint"
             ).in_("patient_id", priority_patient_ids).execute()
 
             # Fetch patient details for the regular queue
             regular_patient_ids = [queue["patient_id"] for queue in regular_patients]
             regular_patients_details_response = supabase.table("patient_patient").select(
-                "patient_id, first_name, last_name, date_of_birth, phone_number"
+                "patient_id, first_name, last_name, date_of_birth, phone_number, complaint"
             ).in_("patient_id", regular_patient_ids).execute()
 
             # Access patient data
@@ -67,6 +66,7 @@ class PatientQueue(APIView):
                         "last_name": patient["last_name"],
                         "phone_number": patient["phone_number"],
                         "date_of_birth": patient["date_of_birth"],
+                        "complaint": patient["complaint"],
                         "age": patient_obj.get_age()  # Using get_age() method here
                     })
 
@@ -79,6 +79,7 @@ class PatientQueue(APIView):
                         "last_name": patient["last_name"],
                         "phone_number": patient["phone_number"],
                         "date_of_birth": patient["date_of_birth"],
+                        "complaint": patient["complaint"],
                         "age": patient_obj.get_age()  # Using get_age() method here
                     })
 
@@ -111,12 +112,13 @@ class PreliminaryAssessmentQueue(APIView):
         try:
             # Fetch Priority Queue
             priority_response = supabase.table(table_name).select(
-                "id, patient_id, status, created_at, priority_level, complaint", 'queue_number', 'queue_date'
+                "id, patient_id, status, created_at, priority_level, queue_number, queue_date"
             ).eq('status', 'Queued for Assessment').eq('priority_level', 'Priority').order('created_at').execute()
+
 
             # Fetch Regular Queue
             regular_response = supabase.table(table_name).select(
-                "id, patient_id, status, created_at, priority_level, complaint",  'queue_number', 'queue_date'
+                "id, patient_id, status, created_at, priority_level", 'queue_number', 'queue_date'
             ).eq('status', 'Queued for Assessment').eq('priority_level', 'Regular').order('created_at').execute()
 
             # Access the data attribute directly
@@ -132,13 +134,13 @@ class PreliminaryAssessmentQueue(APIView):
             # Fetch patient details for the priority queue
             priority_patient_ids = [queue["patient_id"] for queue in priority_patients]
             priority_patients_details_response = supabase.table("patient_patient").select(
-                "patient_id, first_name, last_name, date_of_birth, phone_number"
+                "patient_id, first_name, last_name, date_of_birth, phone_number, complaint"
             ).in_("patient_id", priority_patient_ids).execute()
 
             # Fetch patient details for the regular queue
             regular_patient_ids = [queue["patient_id"] for queue in regular_patients]
             regular_patients_details_response = supabase.table("patient_patient").select(
-                "patient_id, first_name, last_name, date_of_birth, phone_number"
+                "patient_id, first_name, last_name, date_of_birth, phone_number, complaint"
             ).in_("patient_id", regular_patient_ids).execute()
 
             # Access patient data
@@ -155,6 +157,7 @@ class PreliminaryAssessmentQueue(APIView):
                         "last_name": patient["last_name"],
                         "phone_number": patient["phone_number"],
                         "date_of_birth": patient["date_of_birth"],
+                        "complaint": patient["complaint"],
                         "age": patient_obj.get_age()  # Using get_age() method here
                     })
 
@@ -167,6 +170,7 @@ class PreliminaryAssessmentQueue(APIView):
                         "last_name": patient["last_name"],
                         "phone_number": patient["phone_number"],
                         "date_of_birth": patient["date_of_birth"],
+                        "complaint": patient["complaint"],
                         "age": patient_obj.get_age()  # Using get_age() method here
                     })
 
@@ -186,11 +190,8 @@ class PreliminaryAssessmentQueue(APIView):
                 },
                 status=status.HTTP_200_OK
             )
-
         except Exception as e:
-            # In case of errors, return a 500 error
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
 
 # display patient treatment queue
 class PatientTreatmentQueue(APIView):
@@ -200,12 +201,12 @@ class PatientTreatmentQueue(APIView):
         try:
             # Fetch Priority Queue
             priority_response = supabase.table(table_name).select(
-                "id, patient_id, status, created_at, priority_level", 'queue_number', 'complaint', 'queue_date'
+                "id, patient_id, status, created_at, priority_level", 'queue_number', 'queue_date'
             ).eq('status', 'Queued for Treatment').eq('priority_level', 'Priority').order('created_at').execute()
 
             # Fetch Regular Queue
             regular_response = supabase.table(table_name).select(
-                "id, patient_id, status, created_at, priority_level",  'queue_number', 'complaint', 'queue_date'
+                "id, patient_id, status, created_at, priority_level",  'queue_number', 'queue_date'
             ).eq('status', 'Queued for Treatment').eq('priority_level', 'Regular').order('created_at').execute()
 
             # Access the data attribute directly
@@ -221,13 +222,13 @@ class PatientTreatmentQueue(APIView):
             # Fetch patient details for the priority queue
             priority_patient_ids = [queue["patient_id"] for queue in priority_patients]
             priority_patients_details_response = supabase.table("patient_patient").select(
-                "patient_id, first_name, last_name, date_of_birth, phone_number"
+                "patient_id, first_name, last_name, date_of_birth, phone_number, complaint"
             ).in_("patient_id", priority_patient_ids).execute()
 
             # Fetch patient details for the regular queue
             regular_patient_ids = [queue["patient_id"] for queue in regular_patients]
             regular_patients_details_response = supabase.table("patient_patient").select(
-                "patient_id, first_name, last_name, date_of_birth, phone_number"
+                "patient_id, first_name, last_name, date_of_birth, phone_number, complaint"
             ).in_("patient_id", regular_patient_ids).execute()
 
             # Access patient data
@@ -244,6 +245,7 @@ class PatientTreatmentQueue(APIView):
                         "last_name": patient["last_name"],
                         "phone_number": patient["phone_number"],
                         "date_of_birth": patient["date_of_birth"],
+                        "complaint": patient["complaint"],
                         "age": patient_obj.get_age()  # Using get_age() method here
                     })
 
@@ -256,6 +258,7 @@ class PatientTreatmentQueue(APIView):
                         "last_name": patient["last_name"],
                         "phone_number": patient["phone_number"],
                         "date_of_birth": patient["date_of_birth"],
+                        "complaint": patient["complaint"],
                         "age": patient_obj.get_age()  # Using get_age() method here
                     })
 
@@ -288,7 +291,7 @@ class PreliminaryAssessmentForm(APIView):
 
         try:
             response = supabase.table("patient_patient").select(
-                "patient_id, first_name, last_name, date_of_birth, phone_number"
+                "patient_id, first_name, last_name, date_of_birth, phone_number, complaint"
             ).eq("patient_id", patient_id).execute()
 
             print("Supabase Response:", response.data)  # Debugging
@@ -330,42 +333,66 @@ class PreliminaryAssessmentForm(APIView):
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 class PatientTreatmentForm(APIView):
+    def get(self, request, patient_id, queue_number):
+        try:
+            response = supabase.table("patient_patient").select("*").eq("patient_id", patient_id).execute()
+            patient_data = response.data[0] if response.data else None
+
+            if not patient_data:
+                return Response({"error": "Patient not found in Supabase"}, status=status.HTTP_404_NOT_FOUND)
+                        
+            return Response(patient_data, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            
     def post(self, request, patient_id, queue_number):
-        # Fetch the patient and queue using the correct field for the patient
-        patient = get_object_or_404(Patient, patient_id=patient_id)
-        queue = get_object_or_404(TemporaryStorageQueue, queue_number=queue_number, patient=patient)
-        
-        # Extract data from request
-        treatment_notes = request.data.get("treatment_notes", "")
-        diagnoses_data = request.data.get("diagnoses", [])
-        prescriptions_data = request.data.get("prescriptions", [])
-        
-        # Create Treatment entry (assuming Treatment no longer expects a 'queue' field)
-        treatment = Treatment.objects.create(
-            patient=patient,
-            treatment_notes=treatment_notes
-        )
-        
-        # Create Diagnosis entries without passing 'treatment', then add them to treatment.diagnoses
-        for diag in diagnoses_data:
-            diagnosis, _ = Diagnosis.objects.get_or_create(
-                patient=patient,
-                diagnosis_code=diag["diagnosis_code"],
-                diagnosis_description=diag["diagnosis_description"],
-                diagnosis_date=diag["diagnosis_date"]
-            )
-            treatment.diagnoses.add(diagnosis)
-        
-        # Create Prescription entries without passing 'treatment', then add them to treatment.prescriptions
-        for presc in prescriptions_data:
-            prescription, _ = Prescription.objects.get_or_create(
-                patient=patient,
-                medication=presc["medication"],
-                dosage=presc["dosage"],
-                frequency=presc["frequency"],
-                start_date=presc["start_date"],
-                end_date=presc["end_date"]
-            )
-            treatment.prescriptions.add(prescription)
-        
-        return Response({"message": "Treatment submitted successfully"}, status=status.HTTP_201_CREATED)
+        try:
+            # Fetch patient from Supabase
+            response = supabase.table("patient_patient").select("*").eq("patient_id", patient_id).execute()
+            patient_data = response.data[0] if response.data else None
+
+            if not patient_data:
+                return Response({'error': 'Patient not found in Supabase'}, status=status.HTTP_404_NOT_FOUND)
+
+            # Get queue entry from Django
+            queue_entry = get_object_or_404(TemporaryStorageQueue, patient_id=patient_id, queue_number=queue_number)
+
+            # Update Queue Status
+            queue_entry.status = "Completed"
+            queue_entry.save()
+
+            # Extract nested data from request
+            diagnoses_data = request.data.pop('diagnoses', [])
+            prescriptions_data = request.data.pop('prescriptions', [])
+
+            # Prepare data for the serializer.
+            # Here, we force the "patient" field to be the patient_id (a simple string)
+            data_to_serialize = {
+                **request.data,
+                "patient": patient_id,
+                "diagnoses": diagnoses_data,
+                "prescriptions": prescriptions_data
+            }
+
+            serializer = TreatmentSerializer(data=data_to_serialize)
+            if serializer.is_valid():
+                treatment = serializer.save()  # The create() method uses patient_id
+
+                # Create and attach Diagnoses
+                diagnosis_objects = [
+                    Diagnosis.objects.create(patient_id=patient_id, **diag) for diag in diagnoses_data
+                ]
+                treatment.diagnoses.set(diagnosis_objects)
+
+                # Create and attach Prescriptions
+                prescription_objects = [
+                    Prescription.objects.create(patient_id=patient_id, **presc) for presc in prescriptions_data
+                ]
+                treatment.prescriptions.set(prescription_objects)
+
+                return Response(TreatmentSerializer(treatment).data, status=status.HTTP_201_CREATED)
+
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
