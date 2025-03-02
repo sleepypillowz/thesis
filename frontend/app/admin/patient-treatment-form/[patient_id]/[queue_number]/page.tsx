@@ -74,9 +74,9 @@ export default function TreatmentForm() {
   const [treatmentNotes, setTreatmentNotes] = useState("");
 
   // LAB RESULT HANDLING COMMENTED OUT
-  // const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  // const [uploadSuccess, setUploadSuccess] = useState(false);
-  // const [showUploadModal, setShowUploadModal] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [uploadSuccess, setUploadSuccess] = useState(false);
+  const [showUploadModal, setShowUploadModal] = useState(false);
 
   useEffect(() => {
     if (!patient_id || !queue_number) return;
@@ -154,11 +154,11 @@ export default function TreatmentForm() {
   };
 
   // LAB RESULT HANDLING COMMENTED OUT
-  // const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-  //   if (e.target.files && e.target.files.length > 0) {
-  //     setSelectedFile(e.target.files[0]);
-  //   }
-  // };
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      setSelectedFile(e.target.files[0]);
+    }
+  };
 
   // Form submission handler
   const handleSubmit = async (e: FormEvent) => {
@@ -310,7 +310,7 @@ export default function TreatmentForm() {
       )}
 
       {/* LAB RESULT UPLOAD SECTION COMMENTED OUT */}
-      {/* <div className="mb-8 flex items-center justify-between">
+      <div className="mb-8 flex items-center justify-between">
         <Button
           className="bg-blue-600 text-white hover:bg-blue-700"
           onClick={() => setShowUploadModal(true)}
@@ -322,7 +322,7 @@ export default function TreatmentForm() {
             File uploaded successfully!
           </div>
         )}
-      </div> */}
+      </div>
 
       <form onSubmit={handleSubmit}>
         {/* Diagnoses Section */}
@@ -470,7 +470,7 @@ export default function TreatmentForm() {
       </form>
 
       {/* LAB RESULT MODAL COMMENTED OUT */}
-      {/*
+      
       {showUploadModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
           <div className="w-full max-w-md rounded-lg bg-white p-6">
@@ -508,7 +508,7 @@ export default function TreatmentForm() {
           </div>
         </div>
       )}
-      */}
+     
     </div>
   );
 }
