@@ -1,12 +1,6 @@
-import Navbar from "@/components/organisms/navbar";
-import Header from "../../components/organisms/header";
-import {
-  SidebarInset,
-  SidebarProvider,
-  SidebarTrigger,
-} from "@/components/ui/sidebar";
-import { AppSidebar } from "@/components/organisms/patient-sidebar";
-import { Toaster } from "sonner";
+import Navbar from "@/components/navbar";
+import Header from "../components/header";
+
 
 export default function DoctorLayout({
   children,
@@ -15,22 +9,15 @@ export default function DoctorLayout({
 }>) {
   return (
     <>
-      <SidebarProvider defaultOpen={false}>
-        <AppSidebar />
-        <SidebarInset className="flex-1">
-          <SidebarTrigger className="fixed md:hidden" />
-          <Header />
-          <main className="flex-1 px-8 py-8 md:pt-24">
-            <div className="flex justify-center">
-              <div className="mx-auto max-w-5xl rounded-lg">
-                <Navbar />
-                {children}
-                <Toaster />
-              </div>
-            </div>
-          </main>
-        </SidebarInset>
-      </SidebarProvider>
+      <Header />
+      <main className="flex-1 px-8 py-8 pt-24">
+        <div className="flex justify-center">
+          <div className="mx-auto max-w-5xl rounded-lg">
+            <Navbar />
+            {children}
+          </div>
+        </div>
+      </main>
     </>
   );
 }

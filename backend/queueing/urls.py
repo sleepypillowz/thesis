@@ -12,6 +12,7 @@ urlpatterns = [
         views.PreliminaryAssessmentForm.as_view(), 
         name='patient-preliminary-assessment'),
 
+
     # treatment form    
     path('queueing/patient-treatment/<str:patient_id>/<str:queue_number>/', 
         views.PatientTreatmentForm.as_view(), 

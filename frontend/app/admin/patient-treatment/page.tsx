@@ -10,7 +10,7 @@ interface QueueData {
   priority_level: string;
   status: string;
   created_at: string;
-  queue_number: number;
+  complaint: string;
 }
 
 interface Patient {
@@ -22,7 +22,6 @@ interface Patient {
   email: string;
   phone_number: string;
   date_of_birth: string;
-  complaint: string;  // Complaint is in patient object
   street_address: string;
   barangay: string;
   municipal_city: string;
@@ -53,6 +52,18 @@ interface Treatment {
   prescriptions: Prescription[];
 }
 
+// Helper function: given an array of treatments, return only the latest treatment for each patient
+function getLatestTreatments(treatments: Treatment[]): Treatment[] {
+  const latestMap: Record<string, Treatment> = {};
+  treatments.forEach((treatment) => {
+    const pid = treatment.patient.patient_id;
+    if (!latestMap[pid] || new Date(treatment.created_at) > new Date(latestMap[pid].created_at)) {
+      latestMap[pid] = treatment;
+    }
+  });
+  return Object.values(latestMap);
+}
+
 export default function TreatmentManagement() {
   const [treatments, setTreatments] = useState<Treatment[]>([]);
   const router = useRouter();
@@ -60,10 +71,12 @@ export default function TreatmentManagement() {
   useEffect(() => {
     async function fetchTreatments() {
       try {
-        const res = await fetch("http://localhost:8000/patient/patient-treatment-list");
+        const res = await fetch("http://localhost:8000/patient/patient-treatment");
         if (!res.ok) throw new Error("Failed to fetch treatments");
         const data = await res.json();
-        setTreatments(data);
+        // Filter treatments so only the latest treatment for each patient is retained.
+        const latestTreatments = getLatestTreatments(data);
+        setTreatments(latestTreatments);
       } catch (error) {
         console.error("Error fetching treatments:", error);
       }
@@ -71,16 +84,15 @@ export default function TreatmentManagement() {
     fetchTreatments();
   }, []);
 
-  const handleViewDetails = (id: number) => {
-    router.push(`/admin/treatment-details/${id}/`);
+  const handleViewDetails = (patient_id: string) => {
+    router.push(`/admin/treatment-details/${patient_id}/`);
   };
 
   return (
     <div className="space-y-6 p-6">
       <h1 className="text-2xl font-bold">Treatment Management</h1>
       <p className="text-lg text-gray-700">
-        Manage patient treatments, add new treatments, and track ongoing
-        treatments for each patient.
+        Manage patient treatments, add new treatments, and track ongoing treatments for each patient.
       </p>
 
       <Button className="bg-blue-500 text-white hover:bg-blue-600">
@@ -93,40 +105,41 @@ export default function TreatmentManagement() {
         <table className="min-w-full table-auto">
           <thead>
             <tr className="bg-gray-100">
-              <th className="px-4 py-2 text-left">Treatment ID</th>
               <th className="px-4 py-2 text-left">Patient Name</th>
               <th className="px-4 py-2 text-left">Complaint</th>
-              <th className="px-4 py-2 text-left">Queue Number</th>
               <th className="px-4 py-2 text-left">Status</th>
               <th className="px-4 py-2 text-left">Actions</th>
             </tr>
           </thead>
           <tbody>
-            {treatments.map((treatment) => (
-              <tr key={treatment.id} className="hover:bg-gray-50">
-                <td className="px-4 py-2">{treatment.id}</td>
-                <td className="px-4 py-2">
-                  {treatment.patient.first_name} {treatment.patient.middle_name} {treatment.patient.last_name}
-                </td>
-                <td className="px-4 py-2">{treatment.patient.complaint}</td>
-                <td className="px-4 py-2">{treatment.patient.queue_data ? treatment.patient.queue_data.queue_number : 'N/A'}</td>
-                <td className="px-4 py-2">{treatment.patient.queue_data ? treatment.patient.queue_data.status : 'N/A'}</td>
-                <td className="px-4 py-2 space-x-2">
-                  <Button
-                    onClick={() => handleViewDetails(treatment.id)}
-                    className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
-                  >
-                    View Details
-                  </Button>
-                  <Button className="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600">
-                    Update
-                  </Button>
-                  <Button className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">
-                    Cancel
-                  </Button>
-                </td>
-              </tr>
-            ))}
+          {treatments.map((treatment) => (
+            <tr key={`${treatment.patient.patient_id}-${treatment.id}`} className="hover:bg-gray-50">
+              <td className="px-4 py-2">
+                {treatment.patient.first_name} {treatment.patient.middle_name} {treatment.patient.last_name}
+              </td>
+              <td className="px-4 py-2">
+                {treatment.patient.queue_data ? treatment.patient.queue_data.complaint : "N/A"}
+              </td>
+              <td className="px-4 py-2">
+                {treatment.patient.queue_data ? treatment.patient.queue_data.status : "N/A"}
+              </td>
+              <td className="px-4 py-2 space-x-2">
+                <Button
+                  onClick={() => handleViewDetails(treatment.patient.patient_id)}
+                  className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
+                >
+                  View Details
+                </Button>
+                <Button className="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600">
+                  Update
+                </Button>
+                <Button className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">
+                  Cancel
+                </Button>
+              </td>
+            </tr>
+          ))}
+
           </tbody>
         </table>
       </div>
@@ -182,9 +195,7 @@ export default function TreatmentManagement() {
 
       {/* Search and Filter Section */}
       <div className="mt-6 rounded-lg bg-white p-4 shadow-md">
-        <h2 className="mb-4 text-xl font-semibold">
-          Search and Filter Treatments
-        </h2>
+        <h2 className="mb-4 text-xl font-semibold">Search and Filter Treatments</h2>
         <div className="flex space-x-4">
           <input
             type="text"
