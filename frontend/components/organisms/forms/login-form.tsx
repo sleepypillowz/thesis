@@ -15,6 +15,8 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
+import Link from "next/link";
+import HeroHeader from "../hero-header";
 
 const formSchema = z.object({
   email: z.string().email({ message: "Invalid email address" }),
@@ -45,43 +47,56 @@ export default function LoginForm() {
   }
 
   return (
-    <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className="mx-auto max-w-3xl space-y-8 py-10"
-      >
-        <FormField
-          control={form.control}
-          name="email"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Email</FormLabel>
-              <FormControl>
-                <Input placeholder="you@example.com" type="email" {...field} />
-              </FormControl>
-              <FormDescription>Enter your email address.</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+    <>
+      <HeroHeader />
+      <Form {...form}>
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="mx-auto max-w-3xl space-y-8 py-10"
+        >
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Email</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="you@example.com"
+                    type="email"
+                    {...field}
+                  />
+                </FormControl>
+                <FormDescription>Enter your email address.</FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-        <FormField
-          control={form.control}
-          name="password"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Password</FormLabel>
-              <FormControl>
-                <PasswordInput placeholder="******" {...field} />
-              </FormControl>
-              <FormDescription>Enter your password.</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+          <FormField
+            control={form.control}
+            name="password"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Password</FormLabel>
+                <FormControl>
+                  <PasswordInput placeholder="******" {...field} />
+                </FormControl>
+                <FormDescription>Enter your password.</FormDescription>
+                <FormDescription>
+                  {" "}
+                  <Link href="/user/register" className="text-blue-500">
+                    Not Registered?
+                  </Link>
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-        <Button type="submit">Submit</Button>
-      </form>
-    </Form>
+          <Button type="submit">Login</Button>
+        </form>
+      </Form>
+    </>
   );
 }
