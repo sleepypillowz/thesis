@@ -3,8 +3,8 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import { Plus, Trash } from "lucide-react";
+import type { ChangeEvent, FormEvent } from "react";
 import { Button } from "@/components/ui/button";
-import type { FormEvent, ChangeEvent } from "react";
 
 interface Patient {
   first_name: string;
@@ -59,7 +59,9 @@ export default function TreatmentForm() {
   };
 
   const [patient, setPatient] = useState<Patient | null>(null);
-  const [assessment, setAssessment] = useState<PreliminaryAssessment | null>(null);
+  const [assessment, setAssessment] = useState<PreliminaryAssessment | null>(
+    null
+  );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -75,7 +77,7 @@ export default function TreatmentForm() {
 
   // LAB RESULT HANDLING COMMENTED OUT
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [uploadSuccess, setUploadSuccess] = useState(false);
+  const [uploadSuccess] = useState(false);
   const [showUploadModal, setShowUploadModal] = useState(false);
 
   useEffect(() => {
@@ -91,7 +93,7 @@ export default function TreatmentForm() {
           console.error("Server error response:", errorText);
           throw new Error(`HTTP error! status: ${response.status}`);
         }
-        
+
         const data: ApiResponse = await response.json();
         setPatient(data.patient);
         setAssessment(data.preliminary_assessment);
@@ -134,7 +136,13 @@ export default function TreatmentForm() {
   const addPrescription = () => {
     setPrescriptions([
       ...prescriptions,
-      { medication: "", dosage: "", frequency: "", start_date: "", end_date: "" },
+      {
+        medication: "",
+        dosage: "",
+        frequency: "",
+        start_date: "",
+        end_date: "",
+      },
     ]);
   };
 
@@ -164,7 +172,6 @@ export default function TreatmentForm() {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
-    let response;
     // LAB RESULT HANDLING COMMENTED OUT: always send as JSON for now
     const treatmentData = {
       treatment_notes: treatmentNotes,
@@ -179,18 +186,17 @@ export default function TreatmentForm() {
     };
 
     console.log("Data to serialize (JSON):", treatmentData);
-    response = await fetch(
+    const response = await fetch(
       `http://127.0.0.1:8000/queueing/patient-treatment/${patient_id}/${queue_number}/`,
       {
         method: "POST",
-        headers: { 
+        headers: {
           "Content-Type": "application/json",
-          "Accept": "application/json"
+          Accept: "application/json",
         },
         body: JSON.stringify(treatmentData),
       }
     );
-    
 
     try {
       if (!response.ok) {
@@ -199,8 +205,18 @@ export default function TreatmentForm() {
       }
       alert("Treatment submitted successfully!");
       // Reset form fields
-      setDiagnoses([{ diagnosis_code: "", diagnosis_description: "", diagnosis_date: "" }]);
-      setPrescriptions([{ medication: "", dosage: "", frequency: "", start_date: "", end_date: "" }]);
+      setDiagnoses([
+        { diagnosis_code: "", diagnosis_description: "", diagnosis_date: "" },
+      ]);
+      setPrescriptions([
+        {
+          medication: "",
+          dosage: "",
+          frequency: "",
+          start_date: "",
+          end_date: "",
+        },
+      ]);
       setTreatmentNotes("");
       // LAB RESULT HANDLING COMMENTED OUT
       // setSelectedFile(null);
@@ -215,7 +231,9 @@ export default function TreatmentForm() {
   if (loading) {
     return (
       <div className="flex min-h-screen items-center justify-center">
-        <div className="text-lg font-medium text-gray-600">Loading patient data...</div>
+        <div className="text-lg font-medium text-gray-600">
+          Loading patient data...
+        </div>
       </div>
     );
   }
@@ -235,13 +253,16 @@ export default function TreatmentForm() {
       </h2>
       <div className="mb-6">
         <h4 className="text-lg font-medium text-gray-700">
-          Queue Number: <span className="font-bold text-blue-600">{queue_number}</span>
+          Queue Number:{" "}
+          <span className="font-bold text-blue-600">{queue_number}</span>
         </h4>
       </div>
 
       {assessment && (
         <div className="mb-6 rounded-lg border bg-blue-50 p-4">
-          <h3 className="mb-3 text-xl font-semibold text-gray-800">Preliminary Assessment</h3>
+          <h3 className="mb-3 text-xl font-semibold text-gray-800">
+            Preliminary Assessment
+          </h3>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div>
               <p>
@@ -318,16 +339,16 @@ export default function TreatmentForm() {
           Upload Lab Result
         </Button>
         {uploadSuccess && (
-          <div className="ml-4 text-green-600">
-            File uploaded successfully!
-          </div>
+          <div className="ml-4 text-green-600">File uploaded successfully!</div>
         )}
       </div>
 
       <form onSubmit={handleSubmit}>
         {/* Diagnoses Section */}
         <div className="mb-8">
-          <h3 className="mb-2 text-xl font-semibold text-gray-800">Diagnoses</h3>
+          <h3 className="mb-2 text-xl font-semibold text-gray-800">
+            Diagnoses
+          </h3>
           {diagnoses.map((diag, index) => (
             <div key={index} className="mb-4 rounded-lg border bg-gray-50 p-4">
               <input
@@ -342,7 +363,11 @@ export default function TreatmentForm() {
               <textarea
                 value={diag.diagnosis_description}
                 onChange={(e) =>
-                  handleDiagnosisChange(index, "diagnosis_description", e.target.value)
+                  handleDiagnosisChange(
+                    index,
+                    "diagnosis_description",
+                    e.target.value
+                  )
                 }
                 placeholder="Diagnosis Description"
                 className="mb-2 w-full rounded-md border p-2"
@@ -378,16 +403,25 @@ export default function TreatmentForm() {
 
         {/* Prescriptions Section */}
         <div className="mb-8">
-          <h3 className="mb-4 text-xl font-semibold text-gray-800">Prescriptions</h3>
+          <h3 className="mb-4 text-xl font-semibold text-gray-800">
+            Prescriptions
+          </h3>
           {prescriptions.map((prescription, index) => (
-            <div key={index} className="mb-2 rounded-lg border bg-gray-50 p-4 shadow-sm">
+            <div
+              key={index}
+              className="mb-2 rounded-lg border bg-gray-50 p-4 shadow-sm"
+            >
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 lg:grid-cols-5">
                 <input
                   type="text"
                   placeholder="Medication Name"
                   value={prescription.medication}
                   onChange={(e) =>
-                    handlePrescriptionChange(index, "medication", e.target.value)
+                    handlePrescriptionChange(
+                      index,
+                      "medication",
+                      e.target.value
+                    )
                   }
                   className="w-full rounded-md border p-2"
                 />
@@ -414,7 +448,11 @@ export default function TreatmentForm() {
                   placeholder="Start Date"
                   value={prescription.start_date}
                   onChange={(e) =>
-                    handlePrescriptionChange(index, "start_date", e.target.value)
+                    handlePrescriptionChange(
+                      index,
+                      "start_date",
+                      e.target.value
+                    )
                   }
                   className="w-full rounded-md border p-2"
                 />
@@ -470,17 +508,23 @@ export default function TreatmentForm() {
       </form>
 
       {/* LAB RESULT MODAL COMMENTED OUT */}
-      
+
       {showUploadModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
           <div className="w-full max-w-md rounded-lg bg-white p-6">
-            <h2 className="mb-4 text-xl font-semibold text-gray-800">Upload Lab Result</h2>
+            <h2 className="mb-4 text-xl font-semibold text-gray-800">
+              Upload Lab Result
+            </h2>
             <div className="flex flex-col items-center justify-center space-y-4">
               <label className="flex h-32 w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 hover:border-blue-500 hover:bg-gray-100">
-                <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                <div className="flex flex-col items-center justify-center pb-6 pt-5">
                   <Plus className="mb-2 h-8 w-8 text-gray-400" />
-                  <p className="text-sm text-gray-500">Click to upload or drag and drop</p>
-                  <p className="text-xs text-gray-500">PDF, PNG, JPG (MAX. 10MB)</p>
+                  <p className="text-sm text-gray-500">
+                    Click to upload or drag and drop
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    PDF, PNG, JPG (MAX. 10MB)
+                  </p>
                 </div>
                 <input
                   type="file"
@@ -491,7 +535,9 @@ export default function TreatmentForm() {
               </label>
               {selectedFile && (
                 <div className="flex items-center space-x-2">
-                  <span className="text-sm text-gray-600">{selectedFile.name}</span>
+                  <span className="text-sm text-gray-600">
+                    {selectedFile.name}
+                  </span>
                   <Trash
                     className="h-4 w-4 cursor-pointer text-red-500"
                     onClick={() => setSelectedFile(null)}
@@ -508,7 +554,6 @@ export default function TreatmentForm() {
           </div>
         </div>
       )}
-     
     </div>
   );
 }

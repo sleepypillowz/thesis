@@ -65,17 +65,17 @@ const menu_items = [
 const patient_items = [
   {
     title: "Medical Records",
-    url: "/admin/medical-records",
+    url: "/admin/patient-medical-records",
     icon: ClipboardPlus,
   },
   {
     title: "Appointments",
-    url: "/admin/appointments",
+    url: "/admin/patient-appointments",
     icon: Calendar,
   },
   {
     title: "Registration Queue",
-    url: "/admin/registration-queue",
+    url: "/admin/patient-registration-queue",
     icon: Clock,
   },
   {

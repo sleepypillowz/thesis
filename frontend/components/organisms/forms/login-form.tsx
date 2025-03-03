@@ -17,13 +17,17 @@ import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
 
 const formSchema = z.object({
-  name_4332846087: z.string().min(1),
-  name_5106121433: z.string(),
+  email: z.string().email({ message: "Invalid email address" }),
+  password: z.string().min(1, { message: "Password is required" }),
 });
 
 export default function LoginForm() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
@@ -48,16 +52,14 @@ export default function LoginForm() {
       >
         <FormField
           control={form.control}
-          name="name_4332846087"
+          name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Username</FormLabel>
+              <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input placeholder="shadcn" type="" {...field} />
+                <Input placeholder="you@example.com" type="email" {...field} />
               </FormControl>
-              <FormDescription>
-                This is your public display name.
-              </FormDescription>
+              <FormDescription>Enter your email address.</FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -65,7 +67,7 @@ export default function LoginForm() {
 
         <FormField
           control={form.control}
-          name="name_5106121433"
+          name="password"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Password</FormLabel>

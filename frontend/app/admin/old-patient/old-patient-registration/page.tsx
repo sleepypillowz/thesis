@@ -34,19 +34,24 @@ export interface QueueData {
 }
 
 const PatientRegistrationForm: React.FC = () => {
-  const [selectedPatient, setSelectedPatient] = useState<PatientData | null>(null);
+  const [selectedPatient, setSelectedPatient] = useState<PatientData | null>(
+    null
+  );
   const [complaint, setComplaint] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<PatientData[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
-  const router = useRouter();
 
   // Fetch queue data for a given patient id
-  const fetchQueueForPatient = async (patient_id: string): Promise<QueueData> => {
+  const fetchQueueForPatient = async (
+    patient_id: string
+  ): Promise<QueueData> => {
     try {
-      const res = await fetch(`http://127.0.0.1:8000/patient/get-queue/?patient_id=${patient_id}`);
+      const res = await fetch(
+        `http://127.0.0.1:8000/patient/get-queue/?patient_id=${patient_id}`
+      );
       const data = await res.json();
       return data;
     } catch (error) {
@@ -59,24 +64,27 @@ const PatientRegistrationForm: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedPatient) return;
-    
+
     setIsSubmitting(true);
     setSuccessMessage("");
-    
+
     try {
       const payload = {
         patient_id: selectedPatient.patient_id,
         complaint: complaint,
       };
-  
-      const res = await fetch("http://127.0.0.1:8000/patient/patient-register/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      });
-  
+
+      const res = await fetch(
+        "http://127.0.0.1:8000/patient/patient-register/",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+        }
+      );
+
       const data = await res.json();
       if (res.ok) {
         console.log("Patient registration updated:", data);
@@ -98,7 +106,9 @@ const PatientRegistrationForm: React.FC = () => {
     setIsLoading(true);
     try {
       const res = await fetch(
-        `http://127.0.0.1:8000/patient/search-patients/?q=${encodeURIComponent(query)}`
+        `http://127.0.0.1:8000/patient/search-patients/?q=${encodeURIComponent(
+          query
+        )}`
       );
       const data = await res.json();
       setSearchResults(data.patients);
@@ -127,8 +137,13 @@ const PatientRegistrationForm: React.FC = () => {
     try {
       const queueData = await fetchQueueForPatient(patient.patient_id);
       setComplaint(queueData.complaint || "General Illness");
-    } catch (error) {
-      setComplaint("General Illness");
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        console.error("Error fetching queue data:", error.message);
+      } else {
+        console.error("An unknown error occurred.");
+      }
+      return { complaint: "General Illness" };
     }
     setSearchQuery("");
     setSearchResults([]);
@@ -140,22 +155,24 @@ const PatientRegistrationForm: React.FC = () => {
   };
 
   return (
-    <div className="bg-white rounded-2xl shadow-lg border border-blue-50 p-8">
+    <div className="rounded-2xl border border-blue-50 bg-white p-8 shadow-lg">
       <header className="mb-8">
-        <div className="flex items-center space-x-3 mb-2">
-          <div className="bg-blue-100 p-3 rounded-full">
-            <FaClipboardList className="text-blue-600 text-xl" />
+        <div className="mb-2 flex items-center space-x-3">
+          <div className="rounded-full bg-blue-100 p-3">
+            <FaClipboardList className="text-xl text-blue-600" />
           </div>
-          <h1 className="text-3xl font-bold text-slate-800">Patient Registration</h1>
+          <h1 className="text-3xl font-bold text-slate-800">
+            Patient Registration
+          </h1>
         </div>
-        <p className="text-slate-500 ml-12">
+        <p className="ml-12 text-slate-500">
           Find a patient record and update their complaint information
         </p>
-        
+
         {/* Search Bar */}
-        <div className="mt-6 relative">
+        <div className="relative mt-6">
           <div className="relative">
-            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+            <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
               <FaSearch className="text-blue-500" />
             </div>
             <input
@@ -163,36 +180,38 @@ const PatientRegistrationForm: React.FC = () => {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search patients by name, email, or phone..."
-              className="w-full pl-12 pr-4 py-3 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm"
+              className="w-full rounded-lg border border-slate-200 py-3 pl-12 pr-4 shadow-sm focus:border-transparent focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             {isLoading && (
-              <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
-                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-500"></div>
+              <div className="absolute inset-y-0 right-0 flex items-center pr-3">
+                <div className="h-5 w-5 animate-spin rounded-full border-b-2 border-blue-500"></div>
               </div>
             )}
           </div>
-          
+
           {searchResults.length > 0 && (
-            <div className="absolute z-50 mt-2 w-full bg-white rounded-lg shadow-xl border border-slate-200 max-h-96 overflow-y-auto">
-              <div className="p-2 text-sm font-medium text-slate-500 border-b border-slate-100">
+            <div className="absolute z-50 mt-2 max-h-96 w-full overflow-y-auto rounded-lg border border-slate-200 bg-white shadow-xl">
+              <div className="border-b border-slate-100 p-2 text-sm font-medium text-slate-500">
                 {searchResults.length} results found
               </div>
               {searchResults.map((result) => (
                 <div
                   key={result.patient_id}
                   onClick={() => handleSelectPatient(result)}
-                  className="cursor-pointer px-4 py-3 hover:bg-blue-50 transition-colors flex items-center border-b border-slate-100 last:border-0"
+                  className="flex cursor-pointer items-center border-b border-slate-100 px-4 py-3 transition-colors last:border-0 hover:bg-blue-50"
                 >
-                  <div className="flex-shrink-0 bg-blue-100 rounded-full p-2 mr-3">
+                  <div className="mr-3 flex-shrink-0 rounded-full bg-blue-100 p-2">
                     <FaUserAlt className="text-blue-500" />
                   </div>
                   <div className="flex-grow">
                     <p className="font-medium">
-                      {result.first_name} {result.middle_name ? result.middle_name + " " : ""}{result.last_name}
+                      {result.first_name}{" "}
+                      {result.middle_name ? result.middle_name + " " : ""}
+                      {result.last_name}
                     </p>
                     <p className="text-sm text-slate-500">{result.email}</p>
                   </div>
-                  <span className="text-xs text-slate-400 bg-slate-100 rounded-full px-2 py-1">
+                  <span className="rounded-full bg-slate-100 px-2 py-1 text-xs text-slate-400">
                     ID: {result.patient_id}
                   </span>
                 </div>
@@ -203,17 +222,20 @@ const PatientRegistrationForm: React.FC = () => {
       </header>
 
       {successMessage && (
-        <div className="mb-4 p-4 bg-green-100 text-green-800 rounded">
+        <div className="mb-4 rounded bg-green-100 p-4 text-green-800">
           {successMessage}
         </div>
       )}
 
       {!selectedPatient ? (
-        <div className="text-center py-12 bg-slate-50 rounded-lg border border-dashed border-slate-200">
-          <FaUserAlt className="mx-auto text-4xl text-slate-300 mb-4" />
-          <h3 className="text-xl font-medium text-slate-600 mb-2">No Patient Selected</h3>
-          <p className="text-slate-500 max-w-md mx-auto">
-            Search for a patient using the search box above to view and update their information.
+        <div className="rounded-lg border border-dashed border-slate-200 bg-slate-50 py-12 text-center">
+          <FaUserAlt className="mx-auto mb-4 text-4xl text-slate-300" />
+          <h3 className="mb-2 text-xl font-medium text-slate-600">
+            No Patient Selected
+          </h3>
+          <p className="mx-auto max-w-md text-slate-500">
+            Search for a patient using the search box above to view and update
+            their information.
           </p>
         </div>
       ) : (
@@ -221,7 +243,7 @@ const PatientRegistrationForm: React.FC = () => {
           <button
             type="button"
             onClick={clearSelection}
-            className="absolute right-0 top-0 text-slate-400 hover:text-red-500 transition-colors"
+            className="absolute right-0 top-0 text-slate-400 transition-colors hover:text-red-500"
           >
             <span className="sr-only">Clear selection</span>
             <svg
@@ -239,38 +261,49 @@ const PatientRegistrationForm: React.FC = () => {
           </button>
 
           <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="p-4 bg-blue-50 rounded-lg mb-6">
+            <div className="mb-6 rounded-lg bg-blue-50 p-4">
               <div className="flex items-center">
-                <div className="bg-white p-3 rounded-full mr-4 shadow-sm">
+                <div className="mr-4 rounded-full bg-white p-3 shadow-sm">
                   <FaUserAlt className="text-blue-500" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-lg text-slate-800">
-                    {selectedPatient.first_name} {selectedPatient.middle_name ? selectedPatient.middle_name + " " : ""}{selectedPatient.last_name}
+                  <h3 className="text-lg font-bold text-slate-800">
+                    {selectedPatient.first_name}{" "}
+                    {selectedPatient.middle_name
+                      ? selectedPatient.middle_name + " "
+                      : ""}
+                    {selectedPatient.last_name}
                   </h3>
-                  <p className="text-slate-500 text-sm">ID: {selectedPatient.patient_id}</p>
+                  <p className="text-sm text-slate-500">
+                    ID: {selectedPatient.patient_id}
+                  </p>
                 </div>
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
               {/* Contact Information */}
-              <div className="bg-slate-50 p-4 rounded-lg">
-                <h3 className="font-medium text-slate-700 mb-4 flex items-center">
-                  <FaPhoneAlt className="mr-2 text-blue-500" /> Contact Information
+              <div className="rounded-lg bg-slate-50 p-4">
+                <h3 className="mb-4 flex items-center font-medium text-slate-700">
+                  <FaPhoneAlt className="mr-2 text-blue-500" /> Contact
+                  Information
                 </h3>
                 <div className="space-y-4">
                   <div>
-                    <label className="text-xs font-medium text-slate-500 block mb-1">Email</label>
-                    <div className="flex items-center bg-white p-3 rounded border border-slate-200">
-                      <FaEnvelope className="text-slate-400 mr-3" />
+                    <label className="mb-1 block text-xs font-medium text-slate-500">
+                      Email
+                    </label>
+                    <div className="flex items-center rounded border border-slate-200 bg-white p-3">
+                      <FaEnvelope className="mr-3 text-slate-400" />
                       <span>{selectedPatient.email}</span>
                     </div>
                   </div>
                   <div>
-                    <label className="text-xs font-medium text-slate-500 block mb-1">Phone Number</label>
-                    <div className="flex items-center bg-white p-3 rounded border border-slate-200">
-                      <FaPhoneAlt className="text-slate-400 mr-3" />
+                    <label className="mb-1 block text-xs font-medium text-slate-500">
+                      Phone Number
+                    </label>
+                    <div className="flex items-center rounded border border-slate-200 bg-white p-3">
+                      <FaPhoneAlt className="mr-3 text-slate-400" />
                       <span>{selectedPatient.phone_number}</span>
                     </div>
                   </div>
@@ -278,27 +311,38 @@ const PatientRegistrationForm: React.FC = () => {
               </div>
 
               {/* Personal Information */}
-              <div className="bg-slate-50 p-4 rounded-lg">
-                <h3 className="font-medium text-slate-700 mb-4 flex items-center">
-                  <FaUserAlt className="mr-2 text-blue-500" /> Personal Information
+              <div className="rounded-lg bg-slate-50 p-4">
+                <h3 className="mb-4 flex items-center font-medium text-slate-700">
+                  <FaUserAlt className="mr-2 text-blue-500" /> Personal
+                  Information
                 </h3>
                 <div className="space-y-4">
                   <div>
-                    <label className="text-xs font-medium text-slate-500 block mb-1">Date of Birth</label>
-                    <div className="flex items-center bg-white p-3 rounded border border-slate-200">
-                      <FaCalendarAlt className="text-slate-400 mr-3" />
-                      <span>{new Date(selectedPatient.date_of_birth).toLocaleDateString()}</span>
-                      <span className="ml-auto bg-slate-100 text-slate-600 text-xs rounded-full px-2 py-1">
+                    <label className="mb-1 block text-xs font-medium text-slate-500">
+                      Date of Birth
+                    </label>
+                    <div className="flex items-center rounded border border-slate-200 bg-white p-3">
+                      <FaCalendarAlt className="mr-3 text-slate-400" />
+                      <span>
+                        {new Date(
+                          selectedPatient.date_of_birth
+                        ).toLocaleDateString()}
+                      </span>
+                      <span className="ml-auto rounded-full bg-slate-100 px-2 py-1 text-xs text-slate-600">
                         Age: {selectedPatient.age}
                       </span>
                     </div>
                   </div>
                   <div>
-                    <label className="text-xs font-medium text-slate-500 block mb-1">Address</label>
-                    <div className="flex items-center bg-white p-3 rounded border border-slate-200">
-                      <FaMapMarkerAlt className="text-slate-400 mr-3 flex-shrink-0" />
+                    <label className="mb-1 block text-xs font-medium text-slate-500">
+                      Address
+                    </label>
+                    <div className="flex items-center rounded border border-slate-200 bg-white p-3">
+                      <FaMapMarkerAlt className="mr-3 flex-shrink-0 text-slate-400" />
                       <span className="line-clamp-1">
-                        {selectedPatient.street_address}, {selectedPatient.barangay}, {selectedPatient.municipal_city}
+                        {selectedPatient.street_address},{" "}
+                        {selectedPatient.barangay},{" "}
+                        {selectedPatient.municipal_city}
                       </span>
                     </div>
                   </div>
@@ -307,14 +351,15 @@ const PatientRegistrationForm: React.FC = () => {
             </div>
 
             {/* Complaint Field */}
-            <div className="mt-6 bg-blue-50 p-6 rounded-lg border border-blue-100">
-              <label className="flex items-center text-slate-700 font-medium mb-3">
-                <FaRegCommentDots className="mr-2 text-blue-500" /> Current Complaint
+            <div className="mt-6 rounded-lg border border-blue-100 bg-blue-50 p-6">
+              <label className="mb-3 flex items-center font-medium text-slate-700">
+                <FaRegCommentDots className="mr-2 text-blue-500" /> Current
+                Complaint
               </label>
               <select
                 value={complaint}
                 onChange={(e) => setComplaint(e.target.value)}
-                className="block w-full rounded-lg border border-slate-200 bg-white px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="block w-full rounded-lg border border-slate-200 bg-white px-4 py-3 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="General Illness">General Illness</option>
                 <option value="Injury">Injury</option>
@@ -323,22 +368,22 @@ const PatientRegistrationForm: React.FC = () => {
               </select>
             </div>
 
-            <div className="flex flex-col md:flex-row gap-4 pt-6">
+            <div className="flex flex-col gap-4 pt-6 md:flex-row">
               <button
                 type="button"
                 onClick={clearSelection}
-                className="py-3 px-6 border border-slate-200 text-slate-600 rounded-lg hover:bg-slate-50 transition-colors focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-opacity-50 md:flex-1"
+                className="rounded-lg border border-slate-200 px-6 py-3 text-slate-600 transition-colors hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-opacity-50 md:flex-1"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="py-3 px-6 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 flex items-center justify-center md:flex-1"
+                className="flex items-center justify-center rounded-lg bg-blue-600 px-6 py-3 text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 md:flex-1"
               >
                 {isSubmitting ? (
                   <>
-                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-3"></div>
+                    <div className="mr-3 h-5 w-5 animate-spin rounded-full border-b-2 border-white"></div>
                     Submitting...
                   </>
                 ) : (
@@ -358,10 +403,10 @@ export default function Page() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 p-4 md:p-8">
-      <div className="max-w-4xl mx-auto">
+      <div className="mx-auto max-w-4xl">
         <button
           onClick={() => router.back()}
-          className="mb-6 flex items-center text-slate-600 hover:text-blue-600 transition-colors bg-white px-4 py-2 rounded-lg shadow-sm"
+          className="mb-6 flex items-center rounded-lg bg-white px-4 py-2 text-slate-600 shadow-sm transition-colors hover:text-blue-600"
         >
           <FaArrowLeft className="mr-2" />
           Back to Dashboard

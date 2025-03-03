@@ -1,6 +1,5 @@
-import Navbar from "@/components/navbar";
-import Header from "../components/header";
-
+import Navbar from "@/components/organisms/navbar";
+import Header from "@/components/organisms/header";
 
 export default function DoctorLayout({
   children,

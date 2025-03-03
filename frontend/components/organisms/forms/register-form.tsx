@@ -17,14 +17,23 @@ import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
 
 const formSchema = z.object({
-  name_4332846087: z.string().min(1),
-  name_5106121433: z.string(),
-  name_6875555083: z.string(),
+  username: z.string().min(1, "Username is required"),
+  firstName: z.string().min(1, "First name is required"),
+  lastName: z.string().min(1, "Last name is required"),
+  email: z.string().email("Invalid email format"),
+  password: z.string().min(1, "Password is required"),
 });
 
 export default function RegisterForm() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
+    defaultValues: {
+      username: "",
+      firstName: "",
+      lastName: "",
+      email: "",
+      password: "",
+    },
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
@@ -49,16 +58,14 @@ export default function RegisterForm() {
       >
         <FormField
           control={form.control}
-          name="name_4332846087"
+          name="username"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Username</FormLabel>
               <FormControl>
-                <Input placeholder="shadcn" type="" {...field} />
+                <Input placeholder="yourusername" {...field} />
               </FormControl>
-              <FormDescription>
-                This is your public display name.
-              </FormDescription>
+              <FormDescription>Choose a unique username.</FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -66,7 +73,52 @@ export default function RegisterForm() {
 
         <FormField
           control={form.control}
-          name="name_5106121433"
+          name="firstName"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>First Name</FormLabel>
+              <FormControl>
+                <Input placeholder="John" {...field} />
+              </FormControl>
+              <FormDescription>Enter your first name.</FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="lastName"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Last Name</FormLabel>
+              <FormControl>
+                <Input placeholder="Doe" {...field} />
+              </FormControl>
+              <FormDescription>Enter your last name.</FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="email"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Email</FormLabel>
+              <FormControl>
+                <Input placeholder="example@mail.com" type="email" {...field} />
+              </FormControl>
+              <FormDescription>Enter your email address.</FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="password"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Password</FormLabel>
@@ -79,22 +131,7 @@ export default function RegisterForm() {
           )}
         />
 
-        <FormField
-          control={form.control}
-          name="name_6875555083"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Password Confirmation</FormLabel>
-              <FormControl>
-                <PasswordInput placeholder="******" {...field} />
-              </FormControl>
-              <FormDescription>Enter your password again.</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <Button type="submit">Submit</Button>
+        <Button type="submit">Register</Button>
       </form>
     </Form>
   );
