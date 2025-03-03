@@ -7,8 +7,11 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('api.urls')),
     path('', include('patient.urls', namespace='patient')),
-    path('', include('queueing.urls', namespace='queueing'))
+    path('', include('queueing.urls', namespace='queueing')),
+    path('', include('user.urls', namespace='user')),
+    path('auth/', include('djoser.urls')),         # Djoser endpoints for user registration, activation, etc.
+    path('auth/', include('djoser.urls.jwt')), 
 ]
 
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+# if settings.DEBUG:
+#     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

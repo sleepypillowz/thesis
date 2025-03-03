@@ -1,0 +1,31 @@
+### Register a new user
+POST http://127.0.0.1:8000/auth/users/  
+Content-Type: application/json
+
+{
+  "username": "adam",
+  "first_name": "Adam",
+  "last_name": "Smith",
+  "email": "adam@mail.com",
+  "password": "Pass1234!",
+  "re_password": "Pass1234!"
+}
+
+
+###
+
+### Login to obtain JWT tokens
+POST http://127.0.0.1:8000/auth/jwt/create/  
+Content-Type: application/json
+
+{
+  "email": "adam@mail.com",
+  "password": "Pass1234!"
+}
+
+###
+
+### Test a protected endpoint (e.g., get current user details)
+GET http://127.0.0.1:8000/auth/users/me/  
+Content-Type: application/json  
+Authorization: Bearer <access_token>
