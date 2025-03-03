@@ -3,7 +3,8 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import { Plus, Trash } from "lucide-react";
-import type { FormEvent } from "react";
+import type { ChangeEvent, FormEvent } from "react";
+import { Button } from "@/components/ui/button";
 
 interface Patient {
   first_name: string;
@@ -76,7 +77,7 @@ export default function TreatmentForm() {
 
   // LAB RESULT HANDLING COMMENTED OUT
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [uploadSuccess, setUploadSuccess] = useState(false);
+  const [uploadSuccess] = useState(false);
   const [showUploadModal, setShowUploadModal] = useState(false);
 
   useEffect(() => {
@@ -338,9 +339,7 @@ export default function TreatmentForm() {
           Upload Lab Result
         </Button>
         {uploadSuccess && (
-          <div className="ml-4 text-green-600">
-            File uploaded successfully!
-          </div>
+          <div className="ml-4 text-green-600">File uploaded successfully!</div>
         )}
       </div>
 
@@ -509,17 +508,23 @@ export default function TreatmentForm() {
       </form>
 
       {/* LAB RESULT MODAL COMMENTED OUT */}
-      
+
       {showUploadModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
           <div className="w-full max-w-md rounded-lg bg-white p-6">
-            <h2 className="mb-4 text-xl font-semibold text-gray-800">Upload Lab Result</h2>
+            <h2 className="mb-4 text-xl font-semibold text-gray-800">
+              Upload Lab Result
+            </h2>
             <div className="flex flex-col items-center justify-center space-y-4">
               <label className="flex h-32 w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 hover:border-blue-500 hover:bg-gray-100">
                 <div className="flex flex-col items-center justify-center pb-6 pt-5">
                   <Plus className="mb-2 h-8 w-8 text-gray-400" />
-                  <p className="text-sm text-gray-500">Click to upload or drag and drop</p>
-                  <p className="text-xs text-gray-500">PDF, PNG, JPG (MAX. 10MB)</p>
+                  <p className="text-sm text-gray-500">
+                    Click to upload or drag and drop
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    PDF, PNG, JPG (MAX. 10MB)
+                  </p>
                 </div>
                 <input
                   type="file"
@@ -530,7 +535,9 @@ export default function TreatmentForm() {
               </label>
               {selectedFile && (
                 <div className="flex items-center space-x-2">
-                  <span className="text-sm text-gray-600">{selectedFile.name}</span>
+                  <span className="text-sm text-gray-600">
+                    {selectedFile.name}
+                  </span>
                   <Trash
                     className="h-4 w-4 cursor-pointer text-red-500"
                     onClick={() => setSelectedFile(null)}
@@ -547,7 +554,6 @@ export default function TreatmentForm() {
           </div>
         </div>
       )}
-     
     </div>
   );
 }
