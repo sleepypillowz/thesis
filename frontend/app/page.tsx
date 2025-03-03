@@ -39,6 +39,18 @@ export default function Home() {
                 >
                   Admin
                 </Link>
+                <Link
+                  className={buttonVariants({ variant: "secondary" })}
+                  href="/user//login"
+                >
+                  Login
+                </Link>
+                <Link
+                  className={buttonVariants({ variant: "secondary" })}
+                  href="/user/register"
+                >
+                  Register
+                </Link>
               </div>
               {/* End Buttons */}
             </div>

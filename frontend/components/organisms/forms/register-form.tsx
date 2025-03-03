@@ -16,15 +16,31 @@ import {
 import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
 
-const formSchema = z.object({
-  name_4332846087: z.string().min(1),
-  name_5106121433: z.string(),
-  name_6875555083: z.string(),
-});
+const formSchema = z
+  .object({
+    username: z.string().min(1, "Username is required"),
+    password: z
+      .string()
+      .min(8, "Password must be at least 8 characters long")
+      .regex(
+        /^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z\d]+$/,
+        "Password must be alphanumeric (at least one letter and one number)"
+      ),
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords must match",
+    path: ["confirmPassword"],
+  });
 
 export default function RegisterForm() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
+    defaultValues: {
+      username: "",
+      password: "",
+      confirmPassword: "",
+    },
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
@@ -49,12 +65,12 @@ export default function RegisterForm() {
       >
         <FormField
           control={form.control}
-          name="name_4332846087"
+          name="username"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Username</FormLabel>
               <FormControl>
-                <Input placeholder="shadcn" type="" {...field} />
+                <Input placeholder="shadcn" {...field} />
               </FormControl>
               <FormDescription>
                 This is your public display name.
@@ -66,7 +82,7 @@ export default function RegisterForm() {
 
         <FormField
           control={form.control}
-          name="name_5106121433"
+          name="password"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Password</FormLabel>
@@ -81,7 +97,7 @@ export default function RegisterForm() {
 
         <FormField
           control={form.control}
-          name="name_6875555083"
+          name="confirmPassword"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Password Confirmation</FormLabel>
