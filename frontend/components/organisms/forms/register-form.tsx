@@ -18,7 +18,7 @@ import { PasswordInput } from "@/components/ui/password-input";
 
 const formSchema = z
   .object({
-    username: z.string().min(1, "Username is required"),
+    email: z.string().email("Invalid email address"),
     password: z
       .string()
       .min(8, "Password must be at least 8 characters long")
@@ -37,7 +37,7 @@ export default function RegisterForm() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      username: "",
+      email: "",
       password: "",
       confirmPassword: "",
     },
@@ -65,16 +65,14 @@ export default function RegisterForm() {
       >
         <FormField
           control={form.control}
-          name="username"
+          name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Username</FormLabel>
+              <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input placeholder="shadcn" {...field} />
+                <Input placeholder="you@example.com" type="email" {...field} />
               </FormControl>
-              <FormDescription>
-                This is your public display name.
-              </FormDescription>
+              <FormDescription>Enter your email address.</FormDescription>
               <FormMessage />
             </FormItem>
           )}
