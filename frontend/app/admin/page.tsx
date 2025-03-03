@@ -1,11 +1,14 @@
 "use client";
 import { useEffect, useState } from "react";
-import { Patient, columns } from "@/app/components/patient-columns";
+import {
+  Patient,
+  columns,
+} from "@/components/molecules/tables/patient-columns";
 import { DataTable } from "@/components/ui/data-table";
-import { VisitorsChart } from "@/components/visitors-chart";
-import { CommonDiseasesChart } from "@/components/common-diseases-chart";
+import { VisitorsChart } from "@/components/organisms/visitors-chart";
+import { CommonDiseasesChart } from "@/components/organisms/common-diseases-chart";
 
-import StatsCard from "../components/stats-card";
+import StatsCard from "@/components/organisms/stats-cards";
 
 export default function Page() {
   const [patients, setPatients] = useState<Patient[]>([]);

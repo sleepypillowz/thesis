@@ -1,5 +1,5 @@
-import { CommonDiseasesChart } from "@/components/common-diseases-chart";
-import { VisitorsChart } from "@/components/visitors-chart";
+import { CommonDiseasesChart } from "@/components/organisms/common-diseases-chart";
+import { VisitorsChart } from "@/components/organisms/visitors-chart";
 
 export default function Page() {
   return (

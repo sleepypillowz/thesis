@@ -42,12 +42,12 @@ const menu_items = [
   },
   {
     title: "Registration",
-    url: "/admin/patient-registration",
+    url: "/admin/registration",
     icon: UserPlus,
   },
   {
     title: "Patient Portal",
-    url: "/admin/patient-portal",
+    url: "/admin/portal",
     icon: LayoutDashboard,
   },
   {
@@ -80,12 +80,12 @@ const patient_items = [
   },
   {
     title: "Assessment",
-    url: "/admin/patient-assessment-queue",
+    url: "/admin/assessment-queue",
     icon: ClipboardPenLine,
   },
   {
     title: "Treatment",
-    url: "/admin/patient-treatment",
+    url: "/admin/treatment",
     icon: Bandage,
   },
 ];
