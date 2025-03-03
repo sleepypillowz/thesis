@@ -181,6 +181,16 @@ export default function TreatmentDetailsPage() {
               >
                 Treatment History
               </button>
+              <button
+                onClick={() => setActiveTab('history')}
+                className={`px-6 py-4 text-sm font-medium ${
+                  activeTab === 'history'
+                    ? 'text-blue-600 border-b-2 border-blue-600'
+                    : 'text-gray-500 hover:text-gray-700'
+                }`}
+              >
+                Laboratory Results
+              </button>
             </div>
           </div>
 
@@ -336,7 +346,6 @@ export default function TreatmentDetailsPage() {
                   </div>
                 </div>
               )}
-
               {/* Treatment History Tab */}
               {activeTab === 'history' && (
                 <div>

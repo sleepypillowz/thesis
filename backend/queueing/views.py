@@ -6,14 +6,12 @@ from .models import Patient, TemporaryStorageQueue, Treatment
 from .serializers import PreliminaryAssessmentSerializer
 from api.views import supabase
 
-from datetime import date  # Import date module
 
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
 
 from patient.models import Diagnosis, Prescription
-from patient.serializers import DiagnosisSerializer, PrescriptionSerializer
 
 # display patient queue
 class PatientQueue(APIView):
@@ -332,9 +330,7 @@ class PreliminaryAssessmentForm(APIView):
 class PatientTreatmentForm(APIView):
     def post(self, request, patient_id, queue_number):
         # Fetch the patient and queue using the correct field for the patient
-        patient = get_object_or_404(Patient, patient_id=patient_id)
-        queue = get_object_or_404(TemporaryStorageQueue, queue_number=queue_number, patient=patient)
-        
+        patient = get_object_or_404(Patient, patient_id=patient_id)        
         # Extract data from request
         treatment_notes = request.data.get("treatment_notes", "")
         diagnoses_data = request.data.get("diagnoses", [])
@@ -345,6 +341,11 @@ class PatientTreatmentForm(APIView):
             patient=patient,
             treatment_notes=treatment_notes
         )
+        queue_entry = TemporaryStorageQueue.objects.get(patient=patient, queue_number=queue_number)
+
+        # Update the status of the queue entry to "Being Assessed"
+        queue_entry.status = 'Completed'
+        queue_entry.save()
         
         # Create Diagnosis entries without passing 'treatment', then add them to treatment.diagnoses
         for diag in diagnoses_data:
