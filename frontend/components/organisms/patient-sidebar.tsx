@@ -81,7 +81,7 @@ const data = {
   },
 };
 
-export function AppSidebar() {
+export function PatientSidebar() {
   return (
     <Sidebar>
       <SidebarHeader>
