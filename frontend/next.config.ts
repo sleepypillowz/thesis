@@ -10,7 +10,6 @@ const nextConfig: NextConfig = {
   },
   // Add other config options as needed
   reactStrictMode: true,
-  swcMinify: true,
 }
 
 export default nextConfig
