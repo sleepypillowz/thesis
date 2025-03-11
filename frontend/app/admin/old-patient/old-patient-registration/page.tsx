@@ -49,8 +49,15 @@ const PatientRegistrationForm: React.FC = () => {
     patient_id: string
   ): Promise<QueueData> => {
     try {
+      const token = localStorage.getItem("access");
       const res = await fetch(
-        `http://127.0.0.1:8000/patient/get-queue/?patient_id=${patient_id}`
+        `http://127.0.0.1:8000/patient/get-queue/?patient_id=${patient_id}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`,
+          },
+        }
       );
       const data = await res.json();
       return data;
@@ -73,13 +80,14 @@ const PatientRegistrationForm: React.FC = () => {
         patient_id: selectedPatient.patient_id,
         complaint: complaint,
       };
-
+      const token = localStorage.getItem('access');
       const res = await fetch(
         "http://127.0.0.1:8000/patient/patient-register/",
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`,
           },
           body: JSON.stringify(payload),
         }
@@ -105,11 +113,15 @@ const PatientRegistrationForm: React.FC = () => {
   const searchPatients = async (query: string) => {
     setIsLoading(true);
     try {
-      const res = await fetch(
-        `http://127.0.0.1:8000/patient/search-patients/?q=${encodeURIComponent(
-          query
-        )}`
-      );
+      const token = localStorage.getItem("access");
+      const url = `http://127.0.0.1:8000/patient/search-patients/?q=${encodeURIComponent(query)}`;
+      const res = await fetch(url, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
+      });
       const data = await res.json();
       setSearchResults(data.patients);
     } catch (error) {

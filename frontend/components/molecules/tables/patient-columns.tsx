@@ -2,9 +2,7 @@
 
 import type { ColumnDef } from "@tanstack/react-table";
 import { Checkbox } from "@/components/ui/checkbox";
-
 import { Button } from "@/components/ui/button";
-
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,18 +16,20 @@ import { format } from "date-fns";
 import { enGB } from "date-fns/locale";
 import Link from "next/link";
 
+// Update the Patient type to reflect that queue data is a separate model (an array of entries)
 export type Patient = {
   patient_id: string;
   first_name: string;
   middle_name: string;
   last_name: string;
   age: number;
+  // Assume the API returns an array of queue entries under the key "queue_data"
   queue_data: {
     created_at: string;
     status: string;
-  };
-  time: string;
-  complaint: string;
+    complaint: string;
+  }[];
+
 };
 
 export const columns: ColumnDef<Patient>[] = [
@@ -56,26 +56,20 @@ export const columns: ColumnDef<Patient>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "no", // Column for No
+    accessorKey: "no",
     header: "No",
-    cell: ({ row }) => {
-      // Calculate the patient number based on the row index
-      const patientIndex = row.index + 1; // Add 1 to make it 1-based index
-      return patientIndex;
-    },
+    cell: ({ row }) => row.index + 1,
   },
   {
     accessorKey: "patient_id",
     header: "Patient ID",
   },
   {
-    id: "patient_name", // Use 'id' for a custom column
+    id: "patient_name",
     header: "Patient Name",
     cell: ({ row }) => {
-      const { first_name, middle_name, last_name } = row.original; // Get data from the row
-      return `${first_name} ${
-        middle_name ? middle_name : ""
-      } ${last_name}`.trim(); // Combine the names
+      const { first_name, middle_name, last_name } = row.original;
+      return `${first_name} ${middle_name ? middle_name : ""} ${last_name}`.trim();
     },
   },
   {
@@ -83,42 +77,66 @@ export const columns: ColumnDef<Patient>[] = [
     header: "Age",
   },
   {
-    id: "created_date", // Column for Created Date (foreign key)
+    id: "created_date",
     header: "Created Date",
     cell: ({ row }) => {
-      const createdAt = row.original.queue_data?.created_at;
-      return createdAt
-        ? format(new Date(createdAt), "d MMMM yyyy", { locale: enGB })
-        : "N/A";
+      const queueData = row.original.queue_data;
+      if (queueData && queueData.length > 0) {
+        // Sort the queue entries descending by created_at
+        const latestQueue = queueData.sort(
+          (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+        )[0];
+        return format(new Date(latestQueue.created_at), "d MMMM yyyy", { locale: enGB });
+      }
+      return "N/A";
     },
   },
   {
-    id: "time", // Column for Created Date (foreign key)
+    id: "time",
     header: "Time",
     cell: ({ row }) => {
-      const createdAt = row.original.queue_data?.created_at;
-      return createdAt
-        ? format(new Date(createdAt), "HH:mm:ss", { locale: enGB })
-        : "N/A";
+      const queueData = row.original.queue_data;
+      if (queueData && queueData.length > 0) {
+        const latestQueue = queueData.sort(
+          (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+        )[0];
+        return format(new Date(latestQueue.created_at), "HH:mm:ss", { locale: enGB });
+      }
+      return "N/A";
     },
   },
   {
-    accessorKey: "complaint",
+    id: "complaint",
     header: "Complaint",
+    cell: ({ row }) => {
+      const queueData = row.original.queue_data;
+      if (queueData && queueData.length > 0) {
+        const latestQueue = queueData.sort(
+          (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+        )[0];
+        return latestQueue.complaint;
+      }
+      return "N/A";
+    },
   },
   {
-    id: "status", // Column for Created Date (foreign key)
+    id: "status",
     header: "Status",
     cell: ({ row }) => {
-      const status = row.original.queue_data?.status;
-      return status || "N/A";
+      const queueData = row.original.queue_data;
+      if (queueData && queueData.length > 0) {
+        const latestQueue = queueData.sort(
+          (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+        )[0];
+        return latestQueue.status;
+      }
+      return "N/A";
     },
   },
   {
     id: "actions",
     cell: ({ row }) => {
-      const payment = row.original;
-
+      const patient = row.original;
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -130,7 +148,7 @@ export const columns: ColumnDef<Patient>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(payment.patient_id)}
+              onClick={() => navigator.clipboard.writeText(patient.patient_id)}
             >
               Copy patient ID
             </DropdownMenuItem>

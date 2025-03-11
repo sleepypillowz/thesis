@@ -2,14 +2,13 @@ import os
 from os import getenv, path
 from pathlib import Path
 import dotenv   
-from django.core.management.utils import get_random_secret_key
 from datetime import timedelta
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-dotenv_file = BASE_DIR / '.env.local'
+dotenv_file = BASE_DIR / '.env'
 
 if path.isfile(dotenv_file):
     dotenv.load_dotenv(dotenv_file)
@@ -17,17 +16,18 @@ if path.isfile(dotenv_file):
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = getenv('DJANGO_SECRET_KEY', get_random_secret_key())
+SECRET_KEY = '4THuuuW08eGLG3VsT8Ey4clCk43YlYMeUbTuukJmuvgFCm3SorHaCiupv5uf5J87N2wFUzen+evrQ5qnrm+buQ=='
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = getenv('DEBUG', 'False') == 'True'
+DEBUG = True
 
 ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
 
 
 
-# Application definition
+# Application definitionpip install django-cors-headers
+
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -52,6 +52,8 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -60,12 +62,16 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 
-    'corsheaders.middleware.CorsMiddleware',
+
 ]
+# settings.py
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
 ]
-
+CORS_ALLOW_HEADERS = [
+    'authorization',  # Allow Authorization header
+    'content-type',
+]
 CORS_ALLOW_CREDENTIALS = True
 
 ROOT_URLCONF = 'backend.urls'
@@ -146,18 +152,25 @@ USE_TZ = True
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.SessionAuthentication',
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
-    'DEFAULT_PERMISSION_CLASSES': (
+    'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
-    ),
+    ],
 }
 
+
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=90),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=90), 
+    'TOKEN_OBTAIN_SERIALIZER': 'user.serializers.CustomTokenObtainPairSerializer',
 }
 DJOSER = {
+    "SERIALIZERS": {
+        "user": "user.serializers.UserAccountSerializer",
+        "user_create": "user.serializers.UserAccountSerializer",
+    },
     'LOGIN_FIELD': 'email',
     'PASSWORD_RESET_CONFIRM_URL': 'password/reset/confirm/{uid}/{token}',
     'SEND_ACTIVATION_EMAIL': False,  # Disable activation email for development
@@ -165,6 +178,8 @@ DJOSER = {
     'USER_CREATE_PASSWORD_RETYPE': True,
     'PASSWORD_RESET_CONFIRM_RETYPE': True,
     'TOKEN_MODEL': None,
+    'TOKEN_OBTAIN_SERIALIZER': 'user.serializers.CustomTokenObtainPairSerializer',
+
 }
 
 STATIC_URL = 'static/'

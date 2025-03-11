@@ -1,10 +1,12 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { Plus, Trash } from "lucide-react";
 import type { ChangeEvent, FormEvent } from "react";
 import { Button } from "@/components/ui/button";
+import userInfo from '@/components/hooks/userRole'
+
 
 interface Patient {
   first_name: string;
@@ -75,18 +77,28 @@ export default function TreatmentForm() {
 
   const [treatmentNotes, setTreatmentNotes] = useState("");
 
-  // LAB RESULT HANDLING COMMENTED OUT
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [uploadSuccess] = useState(false);
-  const [showUploadModal, setShowUploadModal] = useState(false);
+  const role = userInfo()
+  const [showRequestModal, setShowRequestModal] = useState(false);
+  // Lab test request states
+  const [labTestChoice, setLabTestChoice] = useState("");
+  const [customLabTest, setCustomLabTest] = useState("");
+  const [showModal, setShowModal] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     if (!patient_id || !queue_number) return;
 
     const fetchData = async () => {
       try {
+        const token = localStorage.getItem('access');
         const response = await fetch(
-          `http://127.0.0.1:8000/patient/patient-preliminary-assessment/${patient_id}/${queue_number}/`
+          `http://127.0.0.1:8000/patient/patient-preliminary-assessment/${patient_id}/${queue_number}/`,{
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${token}`
+            }
+          }
         );
         if (!response.ok) {
           const errorText = await response.text();
@@ -95,8 +107,10 @@ export default function TreatmentForm() {
         }
 
         const data: ApiResponse = await response.json();
+        console.log("Fetched API response:", data);
         setPatient(data.patient);
         setAssessment(data.preliminary_assessment);
+        console.log("assessment", data.preliminary_assessment)
         setError(null);
       } catch (err) {
         setError("Failed to load patient data");
@@ -146,7 +160,7 @@ export default function TreatmentForm() {
     ]);
   };
 
-  const removePrescription = (index: number) => {
+  const removePrescription = (index: number) => { 
     setPrescriptions(prescriptions.filter((_, i) => i !== index));
   };
 
@@ -162,13 +176,7 @@ export default function TreatmentForm() {
   };
 
   // LAB RESULT HANDLING COMMENTED OUT
-  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      setSelectedFile(e.target.files[0]);
-    }
-  };
 
-  // Form submission handler
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
@@ -186,12 +194,14 @@ export default function TreatmentForm() {
     };
 
     console.log("Data to serialize (JSON):", treatmentData);
+    const token = localStorage.getItem('access')
     const response = await fetch(
       `http://127.0.0.1:8000/queueing/patient-treatment/${patient_id}/${queue_number}/`,
       {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
           Accept: "application/json",
         },
         body: JSON.stringify(treatmentData),
@@ -227,6 +237,48 @@ export default function TreatmentForm() {
       );
     }
   };
+  const handleSave = async (e: FormEvent) => {
+    e.preventDefault();
+    // Determine final lab test name based on selection
+    const labTestName = labTestChoice === "Other" ? customLabTest : labTestChoice;
+    const token = localStorage.getItem("access");
+    if (!token) {
+      console.error("No access token found");
+      return;
+    }
+    try {
+      // Submit the lab request
+      const labResponse = await fetch("http://127.0.0.1:8000/patient/lab-request/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          patient: patient_id,
+          test_name: labTestName,
+          custom_test: labTestChoice === "Other" ? customLabTest : null,
+        }),
+      });
+      if (!labResponse.ok) {
+        throw new Error(`Lab Request HTTP error! Status: ${labResponse.status}`);
+      }
+      const labData = await labResponse.json();
+      console.log("Lab request successful:", labData);
+      // Clear lab request inputs and close modal
+      setShowRequestModal(false);
+      setLabTestChoice("");
+      setCustomLabTest("");
+      setShowModal(true);
+    } catch (error) {
+      console.error("Failed to save lab request and treatment:", error);
+      alert("Failed to submit lab request and save treatment. Please try again.");
+    }
+  };
+  
+  
+  
 
   if (loading) {
     return (
@@ -245,6 +297,13 @@ export default function TreatmentForm() {
       </div>
     );
   }
+  if (!role || role.role !== "doctor") {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-xl font-semibold">
+        Not Authorized
+      </div>
+    );
+  }
 
   return (
     <div className="mx-auto max-w-4xl rounded-2xl border border-gray-200 bg-white/80 p-8 shadow-lg backdrop-blur-lg">
@@ -258,7 +317,7 @@ export default function TreatmentForm() {
         </h4>
       </div>
 
-      {assessment && (
+      {assessment ? (
         <div className="mb-6 rounded-lg border bg-blue-50 p-4">
           <h3 className="mb-3 text-xl font-semibold text-gray-800">
             Preliminary Assessment
@@ -328,20 +387,26 @@ export default function TreatmentForm() {
             </p>
           </div>
         </div>
+      ) : (
+        <div className="mb-6 rounded-lg border bg-blue-50 p-4">
+          <h3 className="mb-3 text-xl font-semibold text-gray-800">
+            Preliminary Assessment
+          </h3>
+          <p className="text-gray-600">No preliminary assessment available for this patient.</p>
+        </div>
       )}
-
       {/* LAB RESULT UPLOAD SECTION COMMENTED OUT */}
+      <div>
+      {/* Button to open the lab request modal */}
       <div className="mb-8 flex items-center justify-between">
         <Button
           className="bg-blue-600 text-white hover:bg-blue-700"
-          onClick={() => setShowUploadModal(true)}
+          onClick={() => setShowRequestModal(true)}
         >
-          Upload Lab Result
+          Request Laboratory Examination
         </Button>
-        {uploadSuccess && (
-          <div className="ml-4 text-green-600">File uploaded successfully!</div>
-        )}
       </div>
+    </div>
 
       <form onSubmit={handleSubmit}>
         {/* Diagnoses Section */}
@@ -497,59 +562,172 @@ export default function TreatmentForm() {
             placeholder="Add any treatment notes here..."
           />
         </div>
+        {/* Submit and Save Buttons */}
+        <div className="flex justify-between mt-4">
 
-        {/* Submit Button */}
-        <button
-          type="submit"
-          className="w-full rounded-xl bg-blue-600 py-3 text-lg font-medium text-white transition hover:bg-blue-700"
-        >
-          Submit Treatment
-        </button>
+          <button
+            type="submit"
+            className="w-1/2 ml-2 rounded-xl bg-blue-600 py-3 text-lg font-medium text-white transition hover:bg-blue-700"
+          >
+            Submit Treatment
+          </button>
+        </div>
+
       </form>
 
-      {/* LAB RESULT MODAL COMMENTED OUT */}
-
-      {showUploadModal && (
+     {/* Laboratory Request Modal */}
+     {showRequestModal && (
+  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+    <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
+      <h2 className="mb-4 text-xl font-semibold text-gray-800">
+        Request Laboratory Examination
+      </h2>
+      <form onSubmit={handleSave}>
+        <label className="block mb-2 text-gray-700">
+          Select Laboratory Test:
+        </label>
+        <select
+          value={labTestChoice}
+          onChange={(e) => setLabTestChoice(e.target.value)}
+          className="w-full rounded-md border p-2 mb-4"
+          required
+        >
+          <option value="">-- Select a test --</option>
+          
+          <optgroup label="Laboratory Tests">
+            <option value="Standard Chemistry">Standard Chemistry</option>
+            <option value="Blood Typing Urinalysis">Blood Typing Urinalysis</option>
+            <option value="Complete Blood Count (CBC)">Complete Blood Count (CBC)</option>
+            <option value="Complete Blood Count (CBC) with Platelet Count">Complete Blood Count (CBC) with Platelet Count</option>
+            <option value="HBA1C">HBA1C</option>
+            <option value="Electrocardiogram (ECG)">Electrocardiogram (ECG)</option>                
+            <option value="Epidermolysis Bullosa Simplex (EBS)">Epidermolysis Bullosa Simplex (EBS)</option>
+            <option value="Sodium">Sodium</option>
+            <option value="Potassium">Potassium</option>
+            <option value="Rabies">Rabies</option>
+            <option value="Flu">Flu</option>
+            <option value="Pneumonia">Pneumonia</option>
+            <option value="Anti-tetanus">Anti-tetanus</option>
+            <option value="Hepatitis B Screening">Hepatitis B Screening</option>
+          </optgroup>
+          
+          <optgroup label="Radiology Tests">
+            <option value="Chest (PA)">Chest (PA)</option>
+            <option value="Chest (PA-LATERAL)">Chest (PA-LATERAL)</option>
+            <option value="Chest (LATERAL)">Chest (LATERAL)</option>
+            <option value="Chest (APICOLORDOTIC VIEW)">Chest (APICOLORDOTIC VIEW)</option>
+            <option value="Elbow">Elbow</option>
+            <option value="Hand">Hand</option>
+            <option value="Pelvic">Pelvic</option>
+            <option value="Hip Joint">Hip Joint</option>
+            <option value="Knee">Knee</option>
+            <option value="Foot imaging">Foot imaging</option>
+          </optgroup>
+          
+          <optgroup label="Other Services">
+            <option value="Rapid Antigen Testing">Rapid Antigen Testing</option>
+            <option value="Reverse Transcription Polymerase Chain Reaction (RT-PCR)">Reverse Transcription Polymerase Chain Reaction (RT-PCR)</option>
+            <option value="Saliva testing">Saliva testing</option>
+            <option value="Rapid Antibody testing">Rapid Antibody testing</option>
+          </optgroup>
+          
+          <option value="Other">Other (Specify)</option>
+        </select>
+        
+        {labTestChoice === "Other" && (
+          <>
+            <label className="block mb-2 text-gray-700">
+              Please specify:
+            </label>
+            <input
+              type="text"
+              value={customLabTest}
+              onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                setCustomLabTest(e.target.value)
+              }
+              placeholder="Enter custom test name"
+              className="w-full rounded-md border p-2 mb-4"
+              required
+            />
+          </>
+        )}
+              <div className="flex justify-end space-x-4">
+                <Button
+                  type="button"
+                  onClick={() => setShowRequestModal(false)}
+                  className="bg-gray-200 text-gray-800 hover:bg-gray-300"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  className="bg-blue-600 text-white hover:bg-blue-700"
+                >
+                  Submit Request
+                </Button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+      {/* Success Modal */}
+      {showModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="w-full max-w-md rounded-lg bg-white p-6">
-            <h2 className="mb-4 text-xl font-semibold text-gray-800">
-              Upload Lab Result
-            </h2>
-            <div className="flex flex-col items-center justify-center space-y-4">
-              <label className="flex h-32 w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 hover:border-blue-500 hover:bg-gray-100">
-                <div className="flex flex-col items-center justify-center pb-6 pt-5">
-                  <Plus className="mb-2 h-8 w-8 text-gray-400" />
-                  <p className="text-sm text-gray-500">
-                    Click to upload or drag and drop
-                  </p>
-                  <p className="text-xs text-gray-500">
-                    PDF, PNG, JPG (MAX. 10MB)
-                  </p>
-                </div>
-                <input
-                  type="file"
-                  className="hidden"
-                  accept=".pdf,.png,.jpg,.jpeg"
-                  onChange={handleFileChange}
-                />
-              </label>
-              {selectedFile && (
-                <div className="flex items-center space-x-2">
-                  <span className="text-sm text-gray-600">
-                    {selectedFile.name}
-                  </span>
-                  <Trash
-                    className="h-4 w-4 cursor-pointer text-red-500"
-                    onClick={() => setSelectedFile(null)}
-                  />
-                </div>
-              )}
-              <Button
-                onClick={() => setShowUploadModal(false)}
-                className="w-full bg-gray-200 text-gray-800 hover:bg-gray-300"
+          <div className="relative w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
+            {/* Close (X) Button */}
+            <button
+              className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 focus:outline-none"
+              onClick={() => setShowModal(false)}
+            >
+              <svg
+                className="h-5 w-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
               >
-                Close
-              </Button>
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M6 18L18 6M6 6l12 12"
+                ></path>
+              </svg>
+            </button>
+            
+            <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-green-100 text-green-600">
+              <svg
+                className="h-6 w-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M5 13l4 4L19 7"
+                ></path>
+              </svg>
+            </div>
+            <h2 className="mb-2 text-xl font-bold text-gray-900">Submission Successful</h2>
+            <p className="mb-6 text-sm text-gray-600">
+              The laboratory request is successfully submitted
+            </p>
+            <div className="flex justify-between space-x-4">
+              <button
+                className="w-full rounded-lg border border-blue-600 bg-white px-4 py-2 text-sm font-medium text-blue-600 hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                onClick={() => router.push("/admin")}
+              >
+                Go To Dashboard                
+              </button>
+              <button
+                className="w-full rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                onClick={() => router.push("/admin/patient-treatment-queue")}
+              >
+                Go to Treatment Queue
+              </button>
             </div>
           </div>
         </div>

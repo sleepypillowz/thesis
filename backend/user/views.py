@@ -1,15 +1,22 @@
-# from django.shortcuts import render
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from .serializers import UserAccountSerializer
+from .permissions import IsMedicalStaff
 
-# # Create your views here.
-# from rest_framework.views import APIView
-# from rest_framework.response import Response
-# from rest_framework import status
-# from .serializers import UserRegistrationSerializer
-
-# class UserRegistration(APIView):
-#     def post(self, request):
-#         serializer = UserRegistrationSerializer(data=request.data)
-#         if serializer.is_valid():
-#             serializer.save()
-#             return Response(serializer.data, status=status.HTTP_201_CREATED)
-#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+class UserRegistration(APIView):
+    permission_classes = [IsMedicalStaff]
+    def post(self, request):
+        # Debug: Print the incoming request data
+        print("DEBUG: Received request data:", request.data)
+        
+        serializer = UserAccountSerializer(data=request.data)
+        if serializer.is_valid():
+            user = serializer.save()
+            # Debug: Print the role of the created user
+            print("DEBUG: User created with role:", user.role)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        
+        # Debug: Print serializer errors if validation fails
+        print("DEBUG: Serializer errors:", serializer.errors)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

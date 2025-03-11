@@ -12,15 +12,26 @@ export default function Page() {
   const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
-    // Fetch patient data from the Django API or Supabase
+    // Fetch patient data from the Django API or Supabase with the token
     const fetchPatients = async () => {
       try {
-        const response = await fetch("http://127.0.0.1:8000/patients/");
+        const accessToken = localStorage.getItem("access");
+        if (!accessToken) {
+          console.error("No access token found");
+          return;
+        }
+        const response = await fetch("http://127.0.0.1:8000/patients/", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${accessToken}`,
+          },
+        });
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data: Patient[] = await response.json();
-        setPatients(data); // Set the fetched patient data
+        setPatients(data);
       } catch (error) {
         console.error("Error fetching patients:", error);
       }

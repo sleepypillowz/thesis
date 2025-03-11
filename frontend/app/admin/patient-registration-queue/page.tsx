@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { buttonVariants } from "@/components/ui/button";
+import userInfo from '@/components/hooks/userRole'
 
 // PatientQueueItem interface
 export interface PatientQueueItem {
@@ -32,10 +33,24 @@ export default function Page() {
     useState<PatientQueueItem | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const router = useRouter();
+  
 
   useEffect(() => {
-    fetch("http://127.0.0.1:8000/queueing/registration_queueing/")
-      .then((response) => response.json())
+    const token = localStorage.getItem("access");
+    fetch("http://127.0.0.1:8000/queueing/registration_queueing/",{
+      method: "GET",
+      headers:{
+        "Content-Type": "application/json",
+        // Include the token in the Authorization header
+        Authorization: `Bearer ${token}`,
+      }
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      })
       .then((data) => {
         console.log("API Response:", data);
 
@@ -79,12 +94,15 @@ export default function Page() {
 
   const confirmAccept = async (patient_id: string) => {
     try {
+      const token = localStorage.getItem("access");
       const response = await fetch(
         "http://127.0.0.1:8000/patient/update-status/",
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+
           },
           body: JSON.stringify({
             patient_id: patient_id, // ✅ Ensure you're sending the correct ID
@@ -159,6 +177,22 @@ export default function Page() {
     );
   };
 
+  const user = userInfo();
+  const userRole = user?.role;
+
+  if (userRole && !["secretary"].includes(userRole)) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-xl font-bold text-red-600">
+          You are not authorized to access this page.
+        </p>
+      </div>
+    );
+  }
+  if (!userRole) {
+    return <div>Loading...</div>;
+  }
+  
   return (
     <div className="flex-1 px-8 py-8">
       <h1 className="text-2xl font-bold">Patient Registration Queue</h1>

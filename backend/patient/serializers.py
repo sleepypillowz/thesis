@@ -1,7 +1,7 @@
 
 from datetime import datetime, date
 from rest_framework import serializers
-from .models import Patient, Diagnosis, Prescription
+from .models import Patient, Diagnosis, Prescription, LabRequest, LabResult
 
 from datetime import datetime, date
 from rest_framework import serializers
@@ -171,3 +171,83 @@ class PrescriptionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Prescription
         fields = ['medication', 'dosage', 'frequency', 'start_date', 'end_date']
+
+
+class UserAccountReadSerializer(serializers.Serializer):
+    id = serializers.CharField(read_only=True)
+    email = serializers.EmailField(read_only=True)
+    first_name = serializers.CharField(read_only=True)
+    last_name = serializers.CharField(read_only=True)
+    # Display the role's label (e.g., "Doctor") rather than the raw value
+    role = serializers.CharField(source="get_role_display", read_only=True)
+
+class LabRequestSerializer(serializers.Serializer):
+    id = serializers.CharField(read_only=True)
+    # Nested info for the user who requested (read-only)
+    requested_by = UserAccountReadSerializer(read_only=True)
+    
+    # Write-only field for patient input (e.g., the patient identifier)
+    patient = serializers.CharField(write_only=True)
+    
+    # Nested patient info for output (read-only)
+    patient_id = serializers.CharField(source="patient.patient_id", read_only=True)
+    first_name = serializers.CharField(source="patient.first_name", read_only=True)
+    middle_name = serializers.CharField(source="patient.middle_name", read_only=True)
+    last_name = serializers.CharField(source="patient.last_name", read_only=True)
+    
+    test_name = serializers.CharField()
+    custom_test = serializers.CharField(allow_blank=True, allow_null=True, required=False)
+    status = serializers.CharField(read_only=True)
+    created_at = serializers.DateTimeField(read_only=True)
+    result = serializers.SerializerMethodField()
+
+    
+    def create(self, validated_data):
+        # Get the current user from context (set automatically by the view)
+        requested_by = self.context.get('request').user
+        
+        # Pop the patient identifier from the validated data
+        patient_identifier = validated_data.pop('patient', None)
+        if not patient_identifier:
+            raise serializers.ValidationError({"patient": "This field is required."})
+        
+        # Look up the patient instance using your Patient model (adjust lookup field if needed)
+        try:
+            patient_instance = Patient.objects.get(patient_id=patient_identifier)
+        except Patient.DoesNotExist:
+            raise serializers.ValidationError({"patient": "Invalid patient identifier."})
+        
+        # Create the LabRequest with the patient and requested_by info
+        lab_request = LabRequest.objects.create(
+            requested_by=requested_by,
+            patient=patient_instance,
+            **validated_data
+        )
+        return lab_request
+    
+    def get_result(self, obj):
+        # Attempt to fetch a lab result related to this lab request.
+        # Adjust this lookup according to your model relationship.
+        try:
+            # For one-to-one relationship, if defined as lab_request.labresult:
+            lab_result = obj.result  
+        except LabResult.DoesNotExist:
+            lab_result = None
+        # If a lab result is found, return its serialized data; otherwise, return None.
+        if lab_result:
+            return LabResultSerializer(lab_result, context=self.context).data
+        return None
+
+class LabResultSerializer(serializers.ModelSerializer):
+    image = serializers.ImageField(write_only=True)  # Allow file upload
+    image_url = serializers.SerializerMethodField(read_only=True)  # For outputting URL
+    submitted_by = UserAccountReadSerializer(read_only=True)
+
+    def get_image_url(self, obj):
+        request = self.context.get("request")
+        return request.build_absolute_uri(obj.image.url) if obj.image else None
+
+    class Meta:
+        model = LabResult
+        fields = ['id', 'lab_request', 'image', 'image_url', 'uploaded_at', 'submitted_by']
+

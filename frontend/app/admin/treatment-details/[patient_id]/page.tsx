@@ -1,8 +1,8 @@
 "use client";
-
 import { useRouter, useParams } from "next/navigation";
 import { useEffect, useState } from "react";
-
+import userRole from "@/components/hooks/userRole";
+import { FileText, Eye, Download } from 'lucide-react';
 interface Diagnosis {
   diagnosis_code: string;
   diagnosis_description: string;
@@ -36,8 +36,23 @@ interface PatientInfo {
 
 interface TreatmentDetails {
   patient_info: PatientInfo;
-  recent_treatment: TreatmentRecord;
+  recent_treatment?: TreatmentRecord;
   previous_treatments: TreatmentRecord[];
+}
+interface User {
+  id: string;
+  first_name?: string;
+  middle_name?: string;
+  last_name?: string;
+  email?: string;
+  role?: string;
+}
+
+interface LabResult {
+  id: string;
+  image_url: string;
+  uploaded_at: string;
+  submitted_by?: User;
 }
 
 export default function TreatmentDetailsPage() {
@@ -48,7 +63,115 @@ export default function TreatmentDetailsPage() {
     useState<TreatmentDetails | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<"latest" | "history">("latest");
+  const [activeTab, setActiveTab] = useState<"latest" | "history" | "laboratory">("latest");
+
+  const [labResults, setLabResults] = useState<LabResult[]>([]);
+  const [labLoading, setLabLoading] = useState(false);
+  const [labError, setLabError] = useState<string | null>(null);
+  const role = userRole();
+  const getFileNameFromUrl = (url: string) => {
+    try {
+      const parsed = new URL(url);
+      return parsed.pathname.split('/').pop() || `lab-result.pdf`;
+    } catch {
+      return `lab-result.pdf`;
+    }
+  };
+  const handleDownload = async (result: LabResult) => {
+    // Get the access token from localStorage
+    const accessToken = localStorage.getItem("access");
+    if (!accessToken) {
+      console.error("No access token found. Please log in.");
+      return;
+    }
+  
+    // Construct the API URL using the lab result's ID
+    const apiUrl = `http://127.0.0.1:8000/patient/lab-results/${result.id}/download/`;
+  
+    try {
+      // Call the API endpoint with the Bearer token for authentication
+      const response = await fetch(apiUrl, {
+        method: "GET",
+        headers: {
+          "Authorization": `Bearer ${accessToken}`,
+        },
+      });
+  
+      if (!response.ok) {
+        throw new Error(`HTTP error: ${response.status} ${response.statusText}`);
+      }
+  
+      // Get the file as a Blob from the response
+      const blob = await response.blob();
+  
+      // Create an object URL from the Blob
+      const url = window.URL.createObjectURL(blob);
+  
+      // Create a temporary anchor element to trigger the download
+      const link = document.createElement("a");
+      link.href = url;
+  
+      // Try to extract filename from the Content-Disposition header; if not available, use a fallback function
+      const disposition = response.headers.get("Content-Disposition");
+      let filename = getFileNameFromUrl(result.image_url); // Fallback filename
+      if (disposition) {
+        const match = disposition.match(/filename="?(.+)"?/);
+        if (match && match[1]) {
+          filename = match[1];
+        }
+      }
+      link.download = filename;
+  
+      // Append the link, click it, and remove it from the document
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+  
+      // Revoke the object URL to free memory
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Download failed:", error);
+    }
+  };
+  
+  
+
+  useEffect(() => {
+    if (activeTab === "laboratory") {
+      setLabLoading(true);
+      const accessToken = localStorage.getItem("access");
+      if (!accessToken) {
+        console.error("No access token found");
+        return;
+      }
+      fetch(`http://127.0.0.1:8000/patient/lab-results/${patient_id}/`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${accessToken}`,
+        },
+      })
+      .then((res) => {
+        if (!res.ok) throw new Error("Failed to fetch lab results");
+        return res.json();
+      })
+      .then((data) => {
+        // Handle array of results from backend
+        if (data.lab_results && Array.isArray(data.lab_results)) {
+          setLabResults(data.lab_results);
+        } else {
+          throw new Error("Invalid lab results data format");
+        }
+        setLabLoading(false);
+      })
+      .catch((err) => {
+        setLabError(err.message || "Something went wrong");
+        setLabLoading(false);
+      });
+    }
+  }, [activeTab, patient_id]);
+  
+  
 
   useEffect(() => {
     if (!patient_id) {
@@ -58,7 +181,21 @@ export default function TreatmentDetailsPage() {
     }
 
     const apiUrl = `http://127.0.0.1:8000/patient/patient-treatment-view-details/${patient_id}/`;
-    fetch(apiUrl)
+    const accessToken = localStorage.getItem("access");
+
+    if (!accessToken) {
+      setError("No access token found. Please log in.");
+      setIsLoading(false);
+      return;
+    }
+
+    fetch(apiUrl, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${accessToken}`,
+      },
+    })
       .then((res) => {
         if (!res.ok) {
           throw new Error(`HTTP error: ${res.status} ${res.statusText}`);
@@ -66,7 +203,7 @@ export default function TreatmentDetailsPage() {
         return res.json();
       })
       .then((data) => {
-        // Use the actual patient data from the API response instead of a mock value.
+        // Optionally, if you need to massage data (e.g., mapping "patient" to "patient_info"):
         const dataWithPatientInfo = {
           ...data,
           patient_info: data.patient,
@@ -89,7 +226,9 @@ export default function TreatmentDetailsPage() {
       day: "numeric",
     });
   };
-
+  if (!role) {
+    return <div>Loading...</div>;
+  }
   return (
     <div className="min-h-screen bg-gray-50 p-4 md:p-6">
       <div className="max-w-6xl mx-auto">
@@ -223,14 +362,14 @@ export default function TreatmentDetailsPage() {
                 Treatment History
               </button>
               <button
-                onClick={() => setActiveTab("history")}
+                onClick={() => setActiveTab("laboratory")}
                 className={`px-6 py-4 text-sm font-medium ${
-                  activeTab === "history"
+                  activeTab === "laboratory"
                     ? "text-blue-600 border-b-2 border-blue-600"
                     : "text-gray-500 hover:text-gray-700"
                 }`}
               >
-                Laboratory Results
+                Laboratory Result
               </button>
             </div>
           </div>
@@ -291,12 +430,14 @@ export default function TreatmentDetailsPage() {
                       <div className="ml-4">
                         <h2 className="text-lg font-semibold text-gray-900">
                           Treatment on{" "}
-                          {formatDate(
-                            treatmentDetails.recent_treatment.created_at
-                          )}
+                          {treatmentDetails.recent_treatment
+                          ? formatDate(treatmentDetails.recent_treatment.created_at)
+                          : "No treatment yet"}
                         </h2>
                         <p className="text-sm text-gray-500">
-                          Record ID: {treatmentDetails.recent_treatment.id}
+                          Record ID:     
+                          {treatmentDetails.recent_treatment? treatmentDetails.recent_treatment.id
+                            : "N/A"}
                         </p>
                       </div>
                     </div>
@@ -306,7 +447,8 @@ export default function TreatmentDetailsPage() {
                         Treatment Notes
                       </h3>
                       <p className="text-gray-700 bg-white p-4 rounded-lg border border-gray-100 shadow-sm">
-                        {treatmentDetails.recent_treatment.treatment_notes}
+                      {treatmentDetails.recent_treatment?.treatment_notes || 
+                      "No treatment notes available"}
                       </p>
                     </div>
 
@@ -336,10 +478,10 @@ export default function TreatmentDetailsPage() {
                         </div>
 
                         <div className="p-5">
-                          {treatmentDetails.recent_treatment.diagnoses.length >
+                          {treatmentDetails.recent_treatment?.diagnoses && treatmentDetails.recent_treatment.diagnoses.length >
                           0 ? (
                             <ul className="divide-y divide-gray-100">
-                              {treatmentDetails.recent_treatment.diagnoses.map(
+                              {treatmentDetails.recent_treatment?.diagnoses?.map(
                                 (d, index) => (
                                   <li
                                     key={`${d.diagnosis_code}-${index}`}
@@ -410,10 +552,9 @@ export default function TreatmentDetailsPage() {
                         </div>
 
                         <div className="p-5">
-                          {treatmentDetails.recent_treatment.prescriptions
-                            .length > 0 ? (
+                          {treatmentDetails.recent_treatment?.prescriptions && treatmentDetails.recent_treatment.prescriptions.length > 0 ? (
                             <ul className="divide-y divide-gray-100">
-                              {treatmentDetails.recent_treatment.prescriptions.map(
+                              {treatmentDetails.recent_treatment?.prescriptions?.map(
                                 (p, index) => (
                                   <li
                                     key={`${p.medication}-${index}`}
@@ -672,6 +813,73 @@ export default function TreatmentDetailsPage() {
                     )}
                   </div>
                 )}
+
+                {/* Laboratory Results Tab Content */}
+                {activeTab === "laboratory" && (
+  <div className="">
+    
+    <div className="bg-gray-50 p-4 rounded-lg mb-4">
+      <div className="flex items-center text-sm text-gray-500 font-medium">
+        <div className="flex-1">File Name</div>
+        <div className="w-32 text-right">Upload Date</div>
+        <div className="w-24 text-right">Actions</div>
+      </div>
+    </div>
+    
+    <div className="space-y-2">
+      {labLoading && <div className="p-4 text-center text-gray-500">Loading lab results...</div>}
+      
+      {labError && (
+        <div className="p-4 text-center text-red-500">
+          Error: {labError}
+        </div>
+      )}
+
+      {!labLoading && !labError && labResults.length === 0 && (
+        <div className="p-4 text-center text-gray-500">
+          No lab results found for this patient
+        </div>
+      )}
+
+      {labResults.map((result) => (
+        <div key={result.id} className="flex items-center p-4 bg-white border rounded-md hover:bg-gray-50">
+          <div className="flex-1 flex items-center">
+            <FileText size={20} className="text-blue-500 mr-3" />
+            <span className="font-medium">
+              {getFileNameFromUrl(result.image_url)}
+            </span>
+          </div>
+          
+          <div className="w-32 text-sm text-gray-500 text-right">
+            {new Date(result.uploaded_at).toLocaleDateString('en-US', {
+              month: 'short',
+              day: '2-digit',
+              year: 'numeric'
+            })}
+          </div>
+          
+          <div className="w-24 flex justify-end space-x-2">
+            <button 
+              onClick={() => window.open(result.image_url, '_blank')}
+              className="p-2 text-gray-600 hover:text-blue-600 rounded-md hover:bg-blue-50"
+              aria-label="View file"
+            >
+              <Eye size={18} />
+            </button>
+            
+            <button 
+              onClick={() => handleDownload(result)}
+              className="p-2 text-gray-600 hover:text-green-600 rounded-md hover:bg-green-50"
+              aria-label="Download file"
+            >
+              <Download size={18} />
+            </button>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+)}
               </div>
             )
           )}
