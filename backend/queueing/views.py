@@ -4,7 +4,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from .models import Patient, TemporaryStorageQueue, Treatment
 from .serializers import PreliminaryAssessmentSerializer
-from api.views import supabase
+from backend.supabase_client import supabase
 
 
 from rest_framework.response import Response
@@ -12,12 +12,13 @@ from rest_framework.views import APIView
 from rest_framework import status
 
 from patient.models import Diagnosis, Prescription
+from user.permissions import IsMedicalStaff, isDoctor, isSecretary, isAdmin
 
-# display patient queue
-class PatientQueue(APIView):
+# display patient registration queue
+class PatientRegistrationQueue(APIView):
+    permission_classes = [isSecretary]
     def get(self, request):
         table_name = 'queueing_temporarystoragequeue'
-
         try:
             # Fetch Priority Queue
             priority_response = supabase.table(table_name).select(
@@ -98,11 +99,12 @@ class PatientQueue(APIView):
             )
 
         except Exception as e:
-            # In case of errors, return a 500 error
+            print("Error in PatientRegistrationQueue GET:", e)
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 # display patient assessment queue
 class PreliminaryAssessmentQueue(APIView):
+    permission_classes = [isSecretary]
     def get(self, request):
         table_name = 'queueing_temporarystoragequeue'
 
@@ -192,6 +194,7 @@ class PreliminaryAssessmentQueue(APIView):
 
 # display patient treatment queue
 class PatientTreatmentQueue(APIView):
+    permission_classes = [isDoctor]
     def get(self, request):
         table_name = 'queueing_temporarystoragequeue'
 
@@ -281,6 +284,7 @@ class PatientTreatmentQueue(APIView):
 
 # get patient and submit patient assessment 
 class PreliminaryAssessmentForm(APIView):
+    permission_classes = [IsMedicalStaff]
     def get(self, request, patient_id, queue_number):
         print(f"Received patient_id: {patient_id}, queue_number: {queue_number}")  # Debugging
 
@@ -328,6 +332,7 @@ class PreliminaryAssessmentForm(APIView):
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 class PatientTreatmentForm(APIView):
+    permission_classes = [isDoctor]
     def post(self, request, patient_id, queue_number):
         # Fetch the patient and queue using the correct field for the patient
         patient = get_object_or_404(Patient, patient_id=patient_id)        

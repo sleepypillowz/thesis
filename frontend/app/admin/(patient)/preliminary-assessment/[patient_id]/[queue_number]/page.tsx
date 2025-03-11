@@ -2,7 +2,7 @@
 
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-
+import userRole from "@/components/hooks/userRole";
 // Define the expected structure for patient data.
 interface Patient {
   first_name: string;
@@ -55,13 +55,20 @@ export default function PreliminaryAssessmentPage() {
     alcohol_use: "none",
     assessment: "",
   });
-
+  const role = userRole()
   useEffect(() => {
     if (!patient_id || !queue_number) return;
-
+    const token = localStorage.getItem("access");
     const apiUrl = `http://127.0.0.1:8000/queueing/patient-preliminary-assessment/${patient_id}/${queue_number}/`;
 
-    fetch(apiUrl)
+    fetch(apiUrl, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+
+      },
+    })
       .then((res) => {
         if (!res.ok) {
           throw new Error(`HTTP error: ${res.status} ${res.statusText}`);
@@ -90,9 +97,12 @@ export default function PreliminaryAssessmentPage() {
 
     const apiUrl = `http://127.0.0.1:8000/queueing/patient-preliminary-assessment/${patient_id}/${queue_number}/`;
     try {
+      const token = localStorage.getItem("access");
       const response = await fetch(apiUrl, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json",
+                  "Authorization": `Bearer ${token}`
+         },
         body: JSON.stringify(formData),
       });
       if (!response.ok) {
@@ -107,7 +117,13 @@ export default function PreliminaryAssessmentPage() {
   if (!patient) {
     return <div>Loading patient data...</div>;
   }
-
+  if (!role || role.role !== "secretary") {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-xl font-semibold">
+        Not Authorized
+      </div>
+    );
+  }
   return (
     <div className="flex-1 px-4 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-4xl rounded-lg bg-white p-6 shadow-lg">
@@ -229,23 +245,24 @@ export default function PreliminaryAssessmentPage() {
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="w-1/3 rounded-lg bg-white p-4">
             <h2 className="text-xl font-semibold">
-              Patient Registered Successfully!
+              Submitted Successfully Gago!
             </h2>
             <div className="mt-4 flex justify-around">
               <button
                 className="text-blue-500"
                 onClick={() => {
                   setShowModal(false);
+                  router.push("/admin/patient-assessment-queue")
                   //setFormData({ ...formData, priority: "Regular" });  // reset priority explicitly
                 }}
               >
-                Create New Assessment
+                Go to Assessment Queue
               </button>
               <button
                 className="text-blue-500"
-                onClick={() => router.push("/admin/patient-treatment-queue")}
+                onClick={() => router.push("/admin/patient-registration-queue")}
               >
-                Go to Treatment Queue
+                Go to Registration Queue
               </button>
             </div>
           </div>

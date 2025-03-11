@@ -4,7 +4,7 @@ from . import views
 app_name = 'queueing'
 
 urlpatterns = [
-    path('queueing/registration_queueing/', views.PatientQueue.as_view(), name='registration_queueing'),
+    path('queueing/registration_queueing/', views.PatientRegistrationQueue.as_view(), name='registration_queueing'),
     path('queueing/preliminary_assessment_queueing/', views.PreliminaryAssessmentQueue.as_view(), name='preliminary_assessment_queueing'),
     path('queueing/treatment_queueing/', views.PatientTreatmentQueue.as_view(), name='treatment_queueing'),
 

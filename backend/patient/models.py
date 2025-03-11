@@ -4,6 +4,7 @@ from django.db import models
 from datetime import date
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
+from django.conf import settings
 
 # Create your models here.'
 class Patient(models.Model):
@@ -42,11 +43,38 @@ class Prescription(models.Model):
     start_date = models.DateField()
     end_date = models.DateField(null=True, blank=True)
 
-
+class LabRequest(models.Model):
+    
+    STATUS_CHOICE = [
+        {'Pending', 'Pending'},
+        {'Submitted', 'Submitted'},
+    ]
+    id = models.CharField(max_length=8, unique=True, primary_key=True, editable=False)
+    requested_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="lab_request")
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='lab_request')
+    test_name = models.CharField(max_length=255, blank=True)  # For pre-defined tests
+    custom_test = models.CharField(max_length=255, blank=True, null=True)  # For "Other"
+    status = models.CharField(max_length=50, default="Pending")
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self):
+        test = self.test_name if self.test_name else self.custom_test
+        return f"LabRequest for Patient {self.patient_id} - {test}"
+    
 class LabResult(models.Model):
-    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name="lab_results")
+    id = models.CharField(max_length=8, unique=True, primary_key=True, editable=False)
+    lab_request = models.OneToOneField(LabRequest, on_delete=models.CASCADE, related_name="result",         
+        null=True,
+        blank=True)
     image = models.ImageField(upload_to="lab_results/")
     uploaded_at = models.DateTimeField(auto_now_add=True)
+    submitted_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="lab_results",
+        null=True,         # Allow null values
+        blank=True         # Allow blank values
+    )
+    def __str__(self):
+        return f"LabResult for {self.lab_request}"
 
     
 @receiver(pre_save, sender = Patient)
@@ -54,3 +82,12 @@ def create_patient_id(sender, instance, **kwargs):
     if not instance.patient_id:
         instance.patient_id = ''.join(random.choices(string.ascii_uppercase + string.digits, k=8))
 
+@receiver(pre_save, sender=LabRequest)
+def set_lab_request_id(sender, instance, **kwargs):
+    if not instance.id:
+        instance.id = ''.join(random.choices(string.ascii_uppercase + string.digits, k=8))
+
+@receiver(pre_save, sender=LabResult)
+def set_lab_result_id(sender, instance, **kwargs):
+    if not instance.id:
+        instance.id = ''.join(random.choices(string.ascii_uppercase + string.digits, k=8))

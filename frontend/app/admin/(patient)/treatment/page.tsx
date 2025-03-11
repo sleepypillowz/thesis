@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import userRole from "@/components/hooks/userRole";
 
 // Update interfaces to match API response structure
 interface QueueData {
@@ -11,6 +12,7 @@ interface QueueData {
   status: string;
   created_at: string;
   complaint: string;
+  queue_number: string
 }
 
 interface Patient {
@@ -67,13 +69,25 @@ function getLatestTreatments(treatments: Treatment[]): Treatment[] {
 export default function TreatmentManagement() {
   const [treatments, setTreatments] = useState<Treatment[]>([]);
   const router = useRouter();
+  const role = userRole();
 
   useEffect(() => {
     async function fetchTreatments() {
+      const accessToken = localStorage.getItem("access");
+      if (!accessToken) {
+        console.error("No access token found");
+        return;
+      }
       try {
-        const res = await fetch("http://localhost:8000/patient/patient-treatment");
+        const res = await fetch("http://127.0.0.1:8000/patient/patient-treatment", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${accessToken}`,
+          },
+        });
         if (!res.ok) throw new Error("Failed to fetch treatments");
-        const data = await res.json();
+        const data: Treatment[] = await res.json();
         // Filter treatments so only the latest treatment for each patient is retained.
         const latestTreatments = getLatestTreatments(data);
         setTreatments(latestTreatments);
@@ -83,6 +97,14 @@ export default function TreatmentManagement() {
     }
     fetchTreatments();
   }, []);
+  if (!role || role.role !== "doctor") {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-xl font-semibold">
+        Not Authorized
+      </div>
+    );
+  }
+
 
   const handleViewDetails = (patient_id: string) => {
     router.push(`/admin/treatment-details/${patient_id}/`);
@@ -130,7 +152,9 @@ export default function TreatmentManagement() {
                 >
                   View Details
                 </Button>
-                <Button className="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600">
+                <Button className="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600"
+                onClick={() => router.push(`/admin/patient-treatment-form/${treatment.patient.patient_id}/${treatment.patient.queue_data?.queue_number}`)}
+                >
                   Update
                 </Button>
                 <Button className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">

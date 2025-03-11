@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import userInfo from '@/components/hooks/userRole'
 
 export default function Page() {
   const router = useRouter();
@@ -23,7 +24,22 @@ export default function Page() {
   });
   const [showModal, setShowModal] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const user = userInfo();
+  const userRole = user?.role;
 
+  if (userRole && !["secretary"].includes(userRole)) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-xl font-bold text-red-600">
+          You are not authorized to access this page.
+        </p>
+      </div>
+    );
+  }
+  if (!userRole) {
+    return <div>Loading...</div>;
+  }
+  
   // Handle input changes
   const handleChange = (
     event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -46,25 +62,25 @@ export default function Page() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-
+  
     try {
+      // Retrieve token from localStorage
+      const token = localStorage.getItem("access");
+  
       const response = await fetch("http://127.0.0.1:8000/patient/patient-register/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          // Include the token in the Authorization header
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(formData),
       });
-
-      // Check using the HTTP status code
+  
       if (response.ok) {
         const responseBody = await response.json();
         console.log("Response Body:", responseBody);
-
-        // Optionally, you can check for a property like ok if your API returns it
-        // if (responseBody.ok) { ... }
-
-        // Reset the form data
+  
         setFormData({
           first_name: "",
           middle_name: "",
@@ -79,10 +95,8 @@ export default function Page() {
           municipal_city: "",
           agree_terms: false,
         });
-        // Show the success modal
         setShowModal(true);
       } else {
-        // Log error response for debugging
         const errorBody = await response.text();
         console.error("Registration failed:", errorBody);
       }
@@ -92,6 +106,7 @@ export default function Page() {
       setIsSubmitting(false);
     }
   };
+  
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
@@ -367,7 +382,7 @@ export default function Page() {
               </button>
               <button
                 className="w-full rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                onClick={() => router.push("/admin/registration-queue")}
+                onClick={() => router.push("/admin/patient-registration-queue")}
               >
                 View Queue
               </button>

@@ -1,0 +1,90 @@
+### Register a new user
+POST http://127.0.0.1:8000/user/register/ 
+Content-Type: application/json
+
+  {
+  "first_name": "Tests",
+  "last_name": "User",
+  "email": "testsecrestasrys@example.com",
+  "password": "nVmTfEkCFeB3APi",
+  "re_password": "nVmTfEkCFeB3APi",
+  "role": "secretary"
+}
+
+
+###
+
+### Login to obtain JWT tokens
+POST http://127.0.0.1:8000/auth/jwt/create/  
+Content-Type: application/json
+
+{
+  "email": "admin@gmail.com",
+  "password": "10200922"
+}
+###
+
+### Login Secretary
+POST http://127.0.0.1:8000/auth/jwt/create/
+Content-Type: application/json
+
+{
+  "email": "lanaroads@gmail.com",
+  "password": "nVmTfEkCFeB3APi"
+}
+
+### Login Doctor
+POST http://127.0.0.1:8000/auth/jwt/create/
+Content-Type: application/json
+
+{
+  "email": "johnnysince@gmail.com",
+  "password": "passS83K54kMubrNZ7b"
+}
+
+### lab request
+POST  http://127.0.0.1:8000/patient/lab-request/
+Content-Type: application/json  
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ5MDQ3NDc3LCJpYXQiOjE3NDEyNzE0NzcsImp0aSI6ImQxNTk4YjViNzQzNzQ1ZmZhYzUxMDkyZGFkZGY1NjBjIiwidXNlcl9pZCI6IjQiLCJpc19zdGFmZiI6ZmFsc2UsImlzX3N1cGVydXNlciI6ZmFsc2UsImVtYWlsIjoiam9obm55c2luY2VAZ21haWwuY29tIiwicm9sZSI6ImRvY3RvciIsImZpcnN0X25hbWUiOiJqb2hubnkifQ.97XJiQgog6v8vJw586m-xcOyuFqvco1P6Jt5lDEp-YQ
+
+{
+  "patient": "1KE3CFEM",
+  "test_name": "Complete Blood Count",
+  "custom_test": ""
+}
+
+### lab result upload 
+POST http://127.0.0.1:8000/patient/lab-result/
+Content-Type: application/json  
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ5MDUwNjEzLCJpYXQiOjE3NDEyNzQ2MTMsImp0aSI6ImY2YmVjMzZlMDAwOTRjZDZiNzY0MzdiYzYyNjQwNTE5IiwidXNlcl9pZCI6IlFZQUVNTzFTIiwiaXNfc3RhZmYiOmZhbHNlLCJpc19zdXBlcnVzZXIiOmZhbHNlLCJlbWFpbCI6ImxhbmFyb2Fkc0BnbWFpbC5jb20iLCJyb2xlIjoic2VjcmV0YXJ5IiwiZmlyc3RfbmFtZSI6IkxhbmEifQ.yvWdYyi0wIEQzPH0yx76idufa7wNO54_tnMtv5EHO6E
+
+{
+  "lab_request": "V2QXR4TL",
+  "image": "penis-fracture.png",
+}
+
+### 
+GET http://127.0.0.1:8000/patient/lab-request/list/
+Content-Type: application/json  
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ5MDUwNjEzLCJpYXQiOjE3NDEyNzQ2MTMsImp0aSI6ImY2YmVjMzZlMDAwOTRjZDZiNzY0MzdiYzYyNjQwNTE5IiwidXNlcl9pZCI6IlFZQUVNTzFTIiwiaXNfc3RhZmYiOmZhbHNlLCJpc19zdXBlcnVzZXIiOmZhbHNlLCJlbWFpbCI6ImxhbmFyb2Fkc0BnbWFpbC5jb20iLCJyb2xlIjoic2VjcmV0YXJ5IiwiZmlyc3RfbmFtZSI6IkxhbmEifQ.yvWdYyi0wIEQzPH0yx76idufa7wNO54_tnMtv5EHO6E
+
+### doctor request
+GET http://127.0.0.1:8000/patient/lab-results/UJXPBUCU
+Content-Type: application/json  
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ5MDU0MTU0LCJpYXQiOjE3NDEyNzgxNTQsImp0aSI6IjJlMTJlZDM2NWI4MDQ4MWFhMTNjODY0MjExZGYyNGQzIiwidXNlcl9pZCI6IjQiLCJpc19zdGFmZiI6ZmFsc2UsImlzX3N1cGVydXNlciI6ZmFsc2UsImVtYWlsIjoiam9obm55c2luY2VAZ21haWwuY29tIiwicm9sZSI6ImRvY3RvciIsImZpcnN0X25hbWUiOiJqb2hubnkifQ.fGID1s9OlHovd7uMFb2AjpqUIA-r9wgIwl09x-l36_E
+
+
+{
+  "lab_result": {
+    "id": "52ICYY7B",
+    "image": "http://127.0.0.1:8000/media/lab_results/penis-fracture_v67ob09.png",
+    "uploaded_at": "2025-03-06T21:45:07.694946Z",
+    "submitted_by": {
+      "id": "QYAEMO1S",
+      "first_name": "Alice",
+      "last_name": "Smith",
+      "email": "alice.smith@example.com",
+      "role": "Secretary"
+    }
+  }
+}
