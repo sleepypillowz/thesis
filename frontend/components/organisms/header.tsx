@@ -5,7 +5,7 @@ import Notification from "@/components/molecules/header/notification-dropdown";
 import Profile from "@/components/molecules/header/profile";
 import { useEffect, useState } from "react";
 import { supabase } from "@/config/supabase";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 
 interface DecodedToken {
   email?: string;
@@ -14,8 +14,10 @@ interface DecodedToken {
 
 const Header = () => {
   const [user, setUser] = useState<DecodedToken | null>(null);
-  const [role, setRole] = useState<string | undefined>(undefined); // Now undefined, instead of null
+  const [role, setRole] = useState<string | undefined>(undefined);
+  const [isLoaded, setIsLoaded] = useState(false);
   const router = useRouter();
+  const pathname = usePathname();
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -30,38 +32,44 @@ const Header = () => {
       if (userData?.user) {
         setUser({ email: userData.user.email });
 
-        // Fetch user role based on email
-        const { data, error } = await supabase
-          .from("profiles")
-          .select("role")
-          .eq("email", userData.user.email)
-          .single();
+        // Check localStorage AFTER component mounts (avoiding hydration mismatch)
+        const storedRole =
+          typeof window !== "undefined"
+            ? localStorage.getItem("userRole")
+            : null;
 
-        if (data) {
-          setRole(data.role);
-        } else if (error) {
-          console.error("Error fetching role:", error.message);
+        if (storedRole) {
+          setRole(storedRole);
+        } else {
+          // Fetch user role if not in localStorage
+          const { data, error } = await supabase
+            .from("profiles")
+            .select("role")
+            .eq("email", userData.user.email)
+            .single();
+
+          if (data) {
+            setRole(data.role);
+            localStorage.setItem("userRole", data.role);
+          } else if (error) {
+            console.error("Error fetching role:", error.message);
+          }
         }
       }
+
+      setIsLoaded(true);
     };
 
     fetchUser();
   }, []);
 
   useEffect(() => {
-    if (role) {
-      // Redirect based on role
-      if (role === "doctor") {
-        router.push("/doctor");
-      } else if (role === "secretary") {
-        router.push("/secretary");
-      } else if (role === "admin") {
-        router.push("/admin");
-      } else {
-        router.push("/patient"); // Default dashboard for patients
+    if (isLoaded && user && role) {
+      if (!pathname.startsWith(`/${role}`)) {
+        router.push(`/${role}`);
       }
     }
-  }, [role, router]);
+  }, [isLoaded, user, role, pathname, router]);
 
   const getRoleBadgeStyle = (role?: string) => {
     switch (role) {
@@ -81,14 +89,14 @@ const Header = () => {
       <div className="px-3 py-3 lg:px-5 lg:pl-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center justify-start rtl:justify-end">
-            <Link href={`/${role}`} className="ms-2 flex md:me-24">
+            <Link href={`/${role ?? ""}`} className="ms-2 flex md:me-24">
               <span className="ms-2 self-center whitespace-nowrap text-2xl font-semibold">
                 Malibiran Medical Clinic
               </span>
             </Link>
           </div>
           <div className="relative flex items-center space-x-4">
-            {user && (
+            {user && role && (
               <div className="flex items-center space-x-3">
                 <div className="flex flex-col items-end">
                   <span className="text-sm font-semibold">{user.email}</span>

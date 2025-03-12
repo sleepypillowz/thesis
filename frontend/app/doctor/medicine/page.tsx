@@ -14,7 +14,9 @@ export default function Page() {
 
   useEffect(() => {
     const fetchMedicines = async () => {
-      const { data, error } = await supabase.from("medicine").select("*");
+      const { data, error } = await supabase
+        .from("medicine_medicine")
+        .select("*");
 
       if (error) {
         console.error("Error fetching medicines:", error);

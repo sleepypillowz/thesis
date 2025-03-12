@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -17,6 +18,7 @@ import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
 import HeroHeader from "@/components/organisms/hero-header";
 import { useState } from "react";
+import Link from "next/link";
 
 const formSchema = z
   .object({
@@ -138,6 +140,11 @@ export default function RegisterForm() {
                 <FormControl>
                   <PasswordInput placeholder="******" {...field} />
                 </FormControl>
+                <FormDescription>
+                  <Link href="/login" className="text-blue-500">
+                    Have an Account?
+                  </Link>
+                </FormDescription>
                 <FormMessage />
               </FormItem>
             )}
