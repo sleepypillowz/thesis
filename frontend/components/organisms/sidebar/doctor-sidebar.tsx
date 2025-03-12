@@ -2,14 +2,9 @@ import {
   LayoutDashboard,
   ClipboardPlus,
   Calendar,
-  Clock,
-  ClipboardPenLine,
   Bandage,
   ChartArea,
-  HelpCircle,
-  Settings,
   Database,
-  UserPlus,
   ChevronDown,
 } from "lucide-react";
 
@@ -41,11 +36,6 @@ const menu_items = [
     icon: LayoutDashboard,
   },
   {
-    title: "Registration",
-    url: "/doctor/registration",
-    icon: UserPlus,
-  },
-  {
     title: "Patient Portal",
     url: "/doctor/portal",
     icon: LayoutDashboard,
@@ -74,32 +64,14 @@ const patient_items = [
     icon: Calendar,
   },
   {
-    title: "Registration Queue",
-    url: "/doctor/registration-queue",
-    icon: Clock,
-  },
-  {
-    title: "Assessment",
-    url: "/doctor/assessment-queue",
-    icon: ClipboardPenLine,
-  },
-  {
     title: "Treatment",
     url: "/doctor/treatment",
     icon: Bandage,
   },
-];
-
-const help_items = [
   {
-    title: "Help",
-    url: "/doctor/help",
-    icon: HelpCircle,
-  },
-  {
-    title: "Settings",
-    url: "/doctor/settings",
-    icon: Settings,
+    title: "Treatment Queue",
+    url: "/doctor/treatment-queue",
+    icon: Bandage,
   },
 ];
 
@@ -176,26 +148,6 @@ export function AppSidebar() {
             </SidebarGroupContent>
           </SidebarGroup>
         </Collapsible>
-
-        <SidebarGroup>
-          <SidebarGroupLabel>Help & Settings</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              <SidebarGroup>
-                {help_items.map((item) => (
-                  <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton asChild>
-                      <a href={item.url}>
-                        <item.icon />
-                        <span>{item.title}</span>
-                      </a>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ))}
-              </SidebarGroup>
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={data.user} />

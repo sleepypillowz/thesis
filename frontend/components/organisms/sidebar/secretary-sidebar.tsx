@@ -4,7 +4,6 @@ import {
   Calendar,
   Clock,
   ClipboardPenLine,
-  Bandage,
   ChartArea,
   Database,
   UserPlus,
@@ -44,6 +43,11 @@ const menu_items = [
     icon: UserPlus,
   },
   {
+    title: "Doctors Request",
+    url: "/secretary/doctor-request",
+    icon: UserPlus,
+  },
+  {
     title: "Patient Portal",
     url: "/admin/portal",
     icon: LayoutDashboard,
@@ -80,11 +84,6 @@ const patient_items = [
     title: "Assessment",
     url: "/admin/assessment-queue",
     icon: ClipboardPenLine,
-  },
-  {
-    title: "Treatment",
-    url: "/admin/treatment",
-    icon: Bandage,
   },
 ];
 
