@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { buttonVariants } from "@/components/ui/button";
-import userRole from "@/components/hooks/userRole";
 // PatientQueueItem interface
 export interface PatientQueueItem {
   patient_id: string;
@@ -27,18 +26,19 @@ export default function Page() {
     next1: null as PatientQueueItem | null,
     next2: null as PatientQueueItem | null,
   });
-  const role = userRole();
   useEffect(() => {
     const token = localStorage.getItem("access");
-    fetch(`http://127.0.0.1:8000/queueing/preliminary_assessment_queueing/?t=${Date.now()}`, {
-      cache: "no-cache",
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`
-
-      },
-    })
+    fetch(
+      `http://127.0.0.1:8000/queueing/preliminary_assessment_queueing/?t=${Date.now()}`,
+      {
+        cache: "no-cache",
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    )
       .then((response) => response.json())
       .then((data) => {
         console.log("API Response:", data);
@@ -138,13 +138,6 @@ export default function Page() {
       </div>
     );
   };
-  if (!role || role.role !== "secretary") {
-    return (
-      <div className="min-h-screen flex items-center justify-center text-xl font-semibold">
-        Not Authorized
-      </div>
-    );
-  }
 
   return (
     <div className="flex-1 space-y-8 px-8 py-8">

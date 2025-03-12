@@ -10,7 +10,6 @@ import { toast } from "sonner";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import userRole from "@/components/hooks/userRole";
 
 // User Schema for Validation (for editing)
 const UserSchema = z.object({
@@ -93,21 +92,21 @@ function EditUserDialog({ user, onClose, onUpdated }: { user: User; onClose: () 
             <label className="block text-sm font-medium text-gray-700">First Name</label>
             <Input {...form.register("first_name")} className="mt-1" />
             {form.formState.errors.first_name && (
-              <p className="text-red-500 text-xs mt-1">{form.formState.errors.first_name.message}</p>
+              <p className="mt-1 text-xs text-red-500">{form.formState.errors.first_name.message}</p>
             )}
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700">Last Name</label>
             <Input {...form.register("last_name")} className="mt-1" />
             {form.formState.errors.last_name && (
-              <p className="text-red-500 text-xs mt-1">{form.formState.errors.last_name.message}</p>
+              <p className="mt-1 text-xs text-red-500">{form.formState.errors.last_name.message}</p>
             )}
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700">Email</label>
             <Input {...form.register("email")} className="mt-1" />
             {form.formState.errors.email && (
-              <p className="text-red-500 text-xs mt-1">{form.formState.errors.email.message}</p>
+              <p className="mt-1 text-xs text-red-500">{form.formState.errors.email.message}</p>
             )}
           </div>
           <div>
@@ -190,21 +189,21 @@ function CreateUserDialog({ onUserCreated }: { onUserCreated: () => void }) {
             <label className="block text-sm font-medium text-gray-700">First Name</label>
             <Input {...form.register("first_name")} className="mt-1" />
             {form.formState.errors.first_name && (
-              <p className="text-red-500 text-xs mt-1">{form.formState.errors.first_name.message}</p>
+              <p className="mt-1 text-xs text-red-500">{form.formState.errors.first_name.message}</p>
             )}
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700">Last Name</label>
             <Input {...form.register("last_name")} className="mt-1" />
             {form.formState.errors.last_name && (
-              <p className="text-red-500 text-xs mt-1">{form.formState.errors.last_name.message}</p>
+              <p className="mt-1 text-xs text-red-500">{form.formState.errors.last_name.message}</p>
             )}
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700">Email</label>
             <Input {...form.register("email")} className="mt-1" />
             {form.formState.errors.email && (
-              <p className="text-red-500 text-xs mt-1">{form.formState.errors.email.message}</p>
+              <p className="mt-1 text-xs text-red-500">{form.formState.errors.email.message}</p>
             )}
           </div>
           <div>
@@ -222,14 +221,14 @@ function CreateUserDialog({ onUserCreated }: { onUserCreated: () => void }) {
             <label className="block text-sm font-medium text-gray-700">Password</label>
             <Input type="password" {...form.register("password")} className="mt-1" />
             {form.formState.errors.password && (
-              <p className="text-red-500 text-xs mt-1">{form.formState.errors.password.message}</p>
+              <p className="mt-1 text-xs text-red-500">{form.formState.errors.password.message}</p>
             )}
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700">Confirm Password</label>
             <Input type="password" {...form.register("re_password")} className="mt-1" />
             {form.formState.errors.re_password && (
-              <p className="text-red-500 text-xs mt-1">{form.formState.errors.re_password.message}</p>
+              <p className="mt-1 text-xs text-red-500">{form.formState.errors.re_password.message}</p>
             )}
           </div>
           <div className="flex items-center">
@@ -253,7 +252,6 @@ export default function UserManagementDashboard() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedRole, setSelectedRole] = useState<string | null>(null);
   const [editingUser, setEditingUser] = useState<User | null>(null);
-  const role = userRole();
 
   useEffect(() => {
     fetchUsers();
@@ -315,26 +313,17 @@ export default function UserManagementDashboard() {
     }
   }
 
-  // Only allow admin access
-  if (!role || role.role !== "admin") {
-    return (
-      <div className="min-h-screen flex items-center justify-center text-xl font-semibold">
-        Not Authorized
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-screen bg-slate-50 p-4 md:p-8 lg:p-12">
-      <div className="max-w-7xl mx-auto space-y-6">
+      <div className="mx-auto max-w-7xl space-y-6">
         {/* Refined Header */}
-        <div className="bg-white shadow-lg rounded-2xl overflow-hidden">
-          <div className="bg-gradient-to-br from-indigo-600 to-purple-700 p-6 md:p-8 flex items-center justify-between">
+        <div className="overflow-hidden rounded-2xl bg-white shadow-lg">
+          <div className="flex items-center justify-between bg-gradient-to-br from-indigo-600 to-purple-700 p-6 md:p-8">
             <div className="flex items-center space-x-4">
-              <div className="bg-white/20 p-3 rounded-xl backdrop-blur-sm">
-                <UserPlus className="w-7 h-7 text-white" />
+              <div className="rounded-xl bg-white/20 p-3 backdrop-blur-sm">
+                <UserPlus className="h-7 w-7 text-white" />
               </div>
-              <h1 className="text-2xl md:text-3xl font-semibold text-white">
+              <h1 className="text-2xl font-semibold text-white md:text-3xl">
                 User Management
               </h1>
             </div>
@@ -342,14 +331,14 @@ export default function UserManagementDashboard() {
           </div>
 
           {/* Advanced Search and Filter */}
-          <div className="p-4 md:p-6 bg-slate-100/50 border-b border-slate-200">
-            <div className="flex flex-col md:flex-row gap-4">
+          <div className="border-b border-slate-200 bg-slate-100/50 p-4 md:p-6">
+            <div className="flex flex-col gap-4 md:flex-row">
               <div className="relative flex-grow">
                 <Input 
                   placeholder="Search users by name, email, or role..." 
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10 py-2.5 border-slate-300 focus:ring-2 focus:ring-indigo-500/50 transition-all duration-300"
+                  className="border-slate-300 py-2.5 pl-10 transition-all duration-300 focus:ring-2 focus:ring-indigo-500/50"
                 />
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
               </div>
@@ -357,9 +346,9 @@ export default function UserManagementDashboard() {
                 <DropdownMenuTrigger asChild>
                   <Button 
                     variant="outline" 
-                    className="flex items-center gap-2 border-slate-300 hover:bg-slate-200/50 transition-colors"
+                    className="flex items-center gap-2 border-slate-300 transition-colors hover:bg-slate-200/50"
                   >
-                    <Filter className="w-5 h-5" /> 
+                    <Filter className="h-5 w-5" /> 
                     <span>Filter</span>
                   </Button>
                 </DropdownMenuTrigger>
@@ -383,7 +372,7 @@ export default function UserManagementDashboard() {
           {/* Enhanced User Table */}
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-slate-100 border-b border-slate-200">
+              <thead className="border-b border-slate-200 bg-slate-100">
                 <tr>
                   {['Name', 'Email', 'Role', 'Status', 'Actions'].map((header) => (
                     <th 
@@ -399,7 +388,7 @@ export default function UserManagementDashboard() {
                 {filteredUsers.map((user) => (
                   <tr 
                     key={user.id} 
-                    className="border-b border-slate-200 hover:bg-slate-100/50 transition-colors duration-150"
+                    className="border-b border-slate-200 transition-colors duration-150 hover:bg-slate-100/50"
                   >
                     <td className="p-4 font-medium text-slate-800">
                       {user.first_name} {user.last_name}
@@ -419,28 +408,28 @@ export default function UserManagementDashboard() {
                     </td>
                     <td className="p-4">
                       {user.is_active ? (
-                        <span className="flex items-center text-green-600 bg-green-100 px-2 py-1 rounded-full text-xs">
-                          <Check className="w-4 h-4 mr-1" /> Active
+                        <span className="flex items-center rounded-full bg-green-100 px-2 py-1 text-xs text-green-600">
+                          <Check className="mr-1 h-4 w-4" /> Active
                         </span>
                       ) : (
-                        <span className="flex items-center text-red-600 bg-red-100 px-2 py-1 rounded-full text-xs">
-                          <X className="w-4 h-4 mr-1" /> Inactive
+                        <span className="flex items-center rounded-full bg-red-100 px-2 py-1 text-xs text-red-600">
+                          <X className="mr-1 h-4 w-4" /> Inactive
                         </span>
                       )}
                     </td>
                     <td className="p-4 text-right">
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon" className="hover:bg-slate-200/50 transition-colors">
-                            <MoreHorizontal className="w-5 h-5 text-slate-600" />
+                          <Button variant="ghost" size="icon" className="transition-colors hover:bg-slate-200/50">
+                            <MoreHorizontal className="h-5 w-5 text-slate-600" />
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent>
                           <DropdownMenuItem onClick={() => setEditingUser(user)} className="flex items-center gap-2">
-                            <Edit className="w-4 h-4" /> Edit User
+                            <Edit className="h-4 w-4" /> Edit User
                           </DropdownMenuItem>
-                          <DropdownMenuItem className="text-red-600 focus:bg-red-50 flex items-center gap-2" onClick={() => user.id !== undefined && deleteUser(user.id)}>
-                            <Trash2 className="w-4 h-4" /> Delete User
+                          <DropdownMenuItem className="flex items-center gap-2 text-red-600 focus:bg-red-50" onClick={() => user.id !== undefined && deleteUser(user.id)}>
+                            <Trash2 className="h-4 w-4" /> Delete User
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
@@ -453,11 +442,11 @@ export default function UserManagementDashboard() {
 
           {/* Empty State */}
           {filteredUsers.length === 0 && (
-            <div className="text-center py-12 px-4 bg-slate-50">
-              <div className="bg-white p-8 rounded-2xl shadow-md border border-slate-200 max-w-md mx-auto">
-                <UserPlus className="w-16 h-16 mx-auto text-indigo-600 mb-4" />
-                <h2 className="text-xl font-semibold text-slate-800 mb-2">No Users Found</h2>
-                <p className="text-slate-600 mb-4">
+            <div className="bg-slate-50 px-4 py-12 text-center">
+              <div className="mx-auto max-w-md rounded-2xl border border-slate-200 bg-white p-8 shadow-md">
+                <UserPlus className="mx-auto mb-4 h-16 w-16 text-indigo-600" />
+                <h2 className="mb-2 text-xl font-semibold text-slate-800">No Users Found</h2>
+                <p className="mb-4 text-slate-600">
                   {searchTerm || selectedRole 
                     ? "No users match your current filter." 
                     : "Create your first user to get started."}

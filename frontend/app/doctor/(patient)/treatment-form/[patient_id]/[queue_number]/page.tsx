@@ -5,7 +5,6 @@ import { useParams, useRouter } from "next/navigation";
 import { Plus, Trash } from "lucide-react";
 import type { ChangeEvent, FormEvent } from "react";
 import { Button } from "@/components/ui/button";
-import userInfo from '@/components/hooks/userRole'
 
 
 interface Patient {
@@ -77,7 +76,6 @@ export default function TreatmentForm() {
 
   const [treatmentNotes, setTreatmentNotes] = useState("");
 
-  const role = userInfo()
   const [showRequestModal, setShowRequestModal] = useState(false);
   // Lab test request states
   const [labTestChoice, setLabTestChoice] = useState("");
@@ -294,13 +292,6 @@ export default function TreatmentForm() {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <div className="text-lg font-medium text-red-600">{error}</div>
-      </div>
-    );
-  }
-  if (!role || role.role !== "doctor") {
-    return (
-      <div className="min-h-screen flex items-center justify-center text-xl font-semibold">
-        Not Authorized
       </div>
     );
   }
@@ -563,11 +554,11 @@ export default function TreatmentForm() {
           />
         </div>
         {/* Submit and Save Buttons */}
-        <div className="flex justify-between mt-4">
+        <div className="mt-4 flex justify-between">
 
           <button
             type="submit"
-            className="w-1/2 ml-2 rounded-xl bg-blue-600 py-3 text-lg font-medium text-white transition hover:bg-blue-700"
+            className="ml-2 w-1/2 rounded-xl bg-blue-600 py-3 text-lg font-medium text-white transition hover:bg-blue-700"
           >
             Submit Treatment
           </button>
@@ -583,13 +574,13 @@ export default function TreatmentForm() {
         Request Laboratory Examination
       </h2>
       <form onSubmit={handleSave}>
-        <label className="block mb-2 text-gray-700">
+        <label className="mb-2 block text-gray-700">
           Select Laboratory Test:
         </label>
         <select
           value={labTestChoice}
           onChange={(e) => setLabTestChoice(e.target.value)}
-          className="w-full rounded-md border p-2 mb-4"
+          className="mb-4 w-full rounded-md border p-2"
           required
         >
           <option value="">-- Select a test --</option>
@@ -636,7 +627,7 @@ export default function TreatmentForm() {
         
         {labTestChoice === "Other" && (
           <>
-            <label className="block mb-2 text-gray-700">
+            <label className="mb-2 block text-gray-700">
               Please specify:
             </label>
             <input
@@ -646,7 +637,7 @@ export default function TreatmentForm() {
                 setCustomLabTest(e.target.value)
               }
               placeholder="Enter custom test name"
-              className="w-full rounded-md border p-2 mb-4"
+              className="mb-4 w-full rounded-md border p-2"
               required
             />
           </>
@@ -676,7 +667,7 @@ export default function TreatmentForm() {
           <div className="relative w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
             {/* Close (X) Button */}
             <button
-              className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 focus:outline-none"
+              className="absolute right-4 top-4 text-gray-500 hover:text-gray-700 focus:outline-none"
               onClick={() => setShowModal(false)}
             >
               <svg

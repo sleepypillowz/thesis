@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import userRole from "@/components/hooks/userRole";
 
 // Update interfaces to match API response structure
 interface QueueData {
@@ -12,7 +11,7 @@ interface QueueData {
   status: string;
   created_at: string;
   complaint: string;
-  queue_number: string
+  queue_number: string;
 }
 
 interface Patient {
@@ -59,7 +58,10 @@ function getLatestTreatments(treatments: Treatment[]): Treatment[] {
   const latestMap: Record<string, Treatment> = {};
   treatments.forEach((treatment) => {
     const pid = treatment.patient.patient_id;
-    if (!latestMap[pid] || new Date(treatment.created_at) > new Date(latestMap[pid].created_at)) {
+    if (
+      !latestMap[pid] ||
+      new Date(treatment.created_at) > new Date(latestMap[pid].created_at)
+    ) {
       latestMap[pid] = treatment;
     }
   });
@@ -69,7 +71,6 @@ function getLatestTreatments(treatments: Treatment[]): Treatment[] {
 export default function TreatmentManagement() {
   const [treatments, setTreatments] = useState<Treatment[]>([]);
   const router = useRouter();
-  const role = userRole();
 
   useEffect(() => {
     async function fetchTreatments() {
@@ -79,13 +80,16 @@ export default function TreatmentManagement() {
         return;
       }
       try {
-        const res = await fetch("http://127.0.0.1:8000/patient/patient-treatment", {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${accessToken}`,
-          },
-        });
+        const res = await fetch(
+          "http://127.0.0.1:8000/patient/patient-treatment",
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
         if (!res.ok) throw new Error("Failed to fetch treatments");
         const data: Treatment[] = await res.json();
         // Filter treatments so only the latest treatment for each patient is retained.
@@ -97,14 +101,6 @@ export default function TreatmentManagement() {
     }
     fetchTreatments();
   }, []);
-  if (!role || role.role !== "doctor") {
-    return (
-      <div className="min-h-screen flex items-center justify-center text-xl font-semibold">
-        Not Authorized
-      </div>
-    );
-  }
-
 
   const handleViewDetails = (patient_id: string) => {
     router.push(`/admin/treatment-details/${patient_id}/`);
@@ -114,16 +110,21 @@ export default function TreatmentManagement() {
     <div className="space-y-6 p-6">
       <h1 className="text-2xl font-bold">Treatment Management</h1>
       <p className="text-lg text-gray-700">
-        Manage patient treatments, add new treatments, and track ongoing treatments for each patient.
+        Manage patient treatments, add new treatments, and track ongoing
+        treatments for each patient.
       </p>
 
       <Button className="bg-blue-500 text-white hover:bg-blue-600">
-        <Link href="/admin/patient-treatment-queue">View Treatment Queueing</Link>
+        <Link href="/admin/patient-treatment-queue">
+          View Treatment Queueing
+        </Link>
       </Button>
 
       {/* Ongoing Treatments Section */}
       <div className="rounded-lg bg-white p-4 shadow-md">
-        <h2 className="mb-4 text-xl font-semibold">Patient Treatment Records</h2>
+        <h2 className="mb-4 text-xl font-semibold">
+          Patient Treatment Records
+        </h2>
         <table className="min-w-full table-auto">
           <thead>
             <tr className="bg-gray-100">
@@ -134,36 +135,50 @@ export default function TreatmentManagement() {
             </tr>
           </thead>
           <tbody>
-          {treatments.map((treatment) => (
-            <tr key={`${treatment.patient.patient_id}-${treatment.id}`} className="hover:bg-gray-50">
-              <td className="px-4 py-2">
-                {treatment.patient.first_name} {treatment.patient.middle_name} {treatment.patient.last_name}
-              </td>
-              <td className="px-4 py-2">
-                {treatment.patient.queue_data ? treatment.patient.queue_data.complaint : "N/A"}
-              </td>
-              <td className="px-4 py-2">
-                {treatment.patient.queue_data ? treatment.patient.queue_data.status : "N/A"}
-              </td>
-              <td className="px-4 py-2 space-x-2">
-                <Button
-                  onClick={() => handleViewDetails(treatment.patient.patient_id)}
-                  className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
-                >
-                  View Details
-                </Button>
-                <Button className="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600"
-                onClick={() => router.push(`/admin/patient-treatment-form/${treatment.patient.patient_id}/${treatment.patient.queue_data?.queue_number}`)}
-                >
-                  Update
-                </Button>
-                <Button className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">
-                  Cancel
-                </Button>
-              </td>
-            </tr>
-          ))}
-
+            {treatments.map((treatment) => (
+              <tr
+                key={`${treatment.patient.patient_id}-${treatment.id}`}
+                className="hover:bg-gray-50"
+              >
+                <td className="px-4 py-2">
+                  {treatment.patient.first_name} {treatment.patient.middle_name}{" "}
+                  {treatment.patient.last_name}
+                </td>
+                <td className="px-4 py-2">
+                  {treatment.patient.queue_data
+                    ? treatment.patient.queue_data.complaint
+                    : "N/A"}
+                </td>
+                <td className="px-4 py-2">
+                  {treatment.patient.queue_data
+                    ? treatment.patient.queue_data.status
+                    : "N/A"}
+                </td>
+                <td className="space-x-2 px-4 py-2">
+                  <Button
+                    onClick={() =>
+                      handleViewDetails(treatment.patient.patient_id)
+                    }
+                    className="rounded bg-blue-500 px-3 py-1 text-white hover:bg-blue-600"
+                  >
+                    View Details
+                  </Button>
+                  <Button
+                    className="rounded bg-yellow-500 px-3 py-1 text-white hover:bg-yellow-600"
+                    onClick={() =>
+                      router.push(
+                        `/admin/patient-treatment-form/${treatment.patient.patient_id}/${treatment.patient.queue_data?.queue_number}`
+                      )
+                    }
+                  >
+                    Update
+                  </Button>
+                  <Button className="rounded bg-red-500 px-3 py-1 text-white hover:bg-red-600">
+                    Cancel
+                  </Button>
+                </td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>
@@ -219,7 +234,9 @@ export default function TreatmentManagement() {
 
       {/* Search and Filter Section */}
       <div className="mt-6 rounded-lg bg-white p-4 shadow-md">
-        <h2 className="mb-4 text-xl font-semibold">Search and Filter Treatments</h2>
+        <h2 className="mb-4 text-xl font-semibold">
+          Search and Filter Treatments
+        </h2>
         <div className="flex space-x-4">
           <input
             type="text"
