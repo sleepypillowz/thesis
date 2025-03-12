@@ -1,45 +1,48 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { supabase } from "@/config/supabase";
 import {
-  Patient,
+  Medicine,
   columns,
-} from "@/components/molecules/tables/patient-columns";
+} from "@/components/molecules/tables/medicine-columns";
 import { DataTable } from "@/components/ui/data-table";
 
 export default function Page() {
-  const [patients, setPatients] = useState<Patient[]>([]);
+  const [medicines, setMedicines] = useState<Medicine[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
-    // Fetch patient data from the Django API or Supabase
-    const fetchPatients = async () => {
-      try {
-        const response = await fetch("http://127.0.0.1:8000/patients/");
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data: Patient[] = await response.json();
-        setPatients(data); // Set the fetched patient data
-      } catch (error) {
-        console.error("Error fetching patients:", error);
+    const fetchMedicines = async () => {
+      const { data, error } = await supabase.from("medicine").select("*");
+
+      if (error) {
+        console.error("Error fetching medicines:", error);
+        return;
       }
+
+      console.log("Fetched Medicines:", data); // Debugging Output
+
+      // Ensure IDs are numbers (if Supabase returns them as strings)
+      const formattedMedicines = data.map((medicine) => ({
+        ...medicine,
+        id: Number(medicine.id),
+      }));
+
+      setMedicines(formattedMedicines);
     };
 
-    fetchPatients();
-  }, []); // Empty dependency array, meaning this runs only once on mount.
+    fetchMedicines();
+  }, []);
 
-  // Filter patients based on the search term
-  const filteredPatients = patients.filter((patient) => {
-    const fullName = `${patient.first_name} ${patient.middle_name || ""} ${
-      patient.last_name
-    }`.toLowerCase();
-    return fullName.includes(searchTerm.toLowerCase());
-  });
+  // Filter medicines based on search term
+  const filteredMedicines = medicines.filter((medicine) =>
+    medicine.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <div className="container mx-auto px-10 py-10">
-      <h1 className="mb-4 text-2xl">Medicine</h1>
+      <h1 className="mb-4 text-2xl">Medicines</h1>
       {/* Search Input */}
       <input
         type="text"
@@ -48,10 +51,7 @@ export default function Page() {
         placeholder="Search medicine..."
         className="mb-4 w-full rounded border border-gray-300 p-2"
       />
-      <DataTable
-        columns={columns}
-        data={filteredPatients} // Use the filtered patients data
-      />
+      <DataTable columns={columns} data={filteredMedicines} />
     </div>
   );
 }
