@@ -3,7 +3,7 @@ import { buttonVariants } from "@/components/ui/button";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
-import { supabase } from "@/lib/supabaseClient";
+import { supabase } from "@/config/supabase";
 
 const rolePages: Record<string, string> = {
   doctor: "/doctor",

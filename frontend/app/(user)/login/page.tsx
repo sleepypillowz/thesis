@@ -18,7 +18,7 @@ import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
 import Link from "next/link";
 import HeroHeader from "@/components/organisms/hero-header";
-import { supabase } from "@/lib/supabaseClient";
+import { supabase } from "@/config/supabase";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 

@@ -4,7 +4,7 @@ import Link from "next/link";
 import Notification from "@/components/molecules/header/notification-dropdown";
 import Profile from "@/components/molecules/header/profile";
 import { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabaseClient";
+import { supabase } from "@/config/supabase";
 import { useRouter } from "next/navigation";
 
 interface DecodedToken {
