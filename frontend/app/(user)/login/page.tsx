@@ -1,5 +1,5 @@
 "use client";
-import {jwtDecode} from "jwt-decode";
+
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -17,12 +17,11 @@ import {
 import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
 import Link from "next/link";
-import HeroHeader from "../hero-header";
+import HeroHeader from "@/components/organisms/hero-header";
+import { supabase } from "@/lib/supabaseClient";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 
-interface DecodedToken {
-  is_superuser?: boolean;
-  role?: string;
-}
 const formSchema = z.object({
   email: z.string().email({ message: "Invalid email address" }),
   password: z.string().min(1, { message: "Password is required" }),
@@ -36,55 +35,45 @@ export default function LoginForm() {
       password: "",
     },
   });
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    try {
-      const response = await fetch("http://127.0.0.1:8000/auth/jwt/create/", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email: values.email,
-          password: values.password,
-        }),
-      });
+    setLoading(true);
+    setError("");
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.detail || "Login failed");
-      }
+    const { data, error } = await supabase.auth.signInWithPassword(values);
 
-      const data = await response.json();
-
-      // Store tokens in localStorage (or set them in HTTP-only cookies)
-      localStorage.setItem("access", data.access);
-      localStorage.setItem("refresh", data.refresh);
-
-      toast.success("Login successful!");
-
-      // Decode the token to check if the user is admin
-
-
-      const decoded: DecodedToken = jwtDecode(data.access);
-      console.log("Decoded token:", decoded);
-      
-      // Check for admin role either via a role field or by is_superuser flag
-      if (decoded.is_superuser || decoded.role?.toLocaleLowerCase() === "admin") {
-        // Redirect to admin dashboard
-        window.location.href = "/superadmin";
-      } else if (decoded.role?.toLocaleLowerCase() === "doctor") {
-        // Redirect to doctor dashboard
-        window.location.href = "/admin";
-      } else if (decoded.role?.toLocaleLowerCase() === "secretary") {
-        // Redirect to doctor dashboard
-        window.location.href = "/admin";
-      } else {
-        // Redirect to standard dashboard or page for other users
-        window.location.href = "/dashboard";
-      }
-    } catch (error: unknown) {
-      console.error("Form submission error", error);
-      toast.error("Failed to log in. Please try again.");
+    if (error) {
+      setError(error.message);
+      toast.error(error.message);
+      setLoading(false);
+      return;
     }
+
+    if (data.user) {
+      const { data: profile, error: profileError } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", data.user.id)
+        .single();
+
+      if (profileError) {
+        setError("Failed to fetch user role.");
+        setLoading(false);
+        return;
+      }
+
+      const rolePages: Record<string, string> = {
+        doctor: "/doctor",
+        secretary: "/secretary",
+        admin: "/admin",
+        patient: "/patient",
+      };
+      router.push(rolePages[profile?.role] || "/patient");
+    }
+    setLoading(false);
   }
 
   return (
@@ -95,6 +84,7 @@ export default function LoginForm() {
           onSubmit={form.handleSubmit(onSubmit)}
           className="mx-auto max-w-3xl space-y-8 py-10"
         >
+          {error && <p className="text-red-500">{error}</p>}
           <FormField
             control={form.control}
             name="email"
@@ -125,8 +115,7 @@ export default function LoginForm() {
                 </FormControl>
                 <FormDescription>Enter your password.</FormDescription>
                 <FormDescription>
-                  {" "}
-                  <Link href="/user/register" className="text-blue-500">
+                  <Link href="/register" className="text-blue-500">
                     Not Registered?
                   </Link>
                 </FormDescription>
@@ -135,7 +124,9 @@ export default function LoginForm() {
             )}
           />
 
-          <Button type="submit">Login</Button>
+          <Button type="submit" disabled={loading}>
+            {loading ? "Logging in..." : "Login"}
+          </Button>
         </form>
       </Form>
     </>

@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import userInfo from '@/components/hooks/userRole'
 
 export default function Page() {
   const router = useRouter();
@@ -24,22 +23,7 @@ export default function Page() {
   });
   const [showModal, setShowModal] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const user = userInfo();
-  const userRole = user?.role;
 
-  if (userRole && !["secretary"].includes(userRole)) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-xl font-bold text-red-600">
-          You are not authorized to access this page.
-        </p>
-      </div>
-    );
-  }
-  if (!userRole) {
-    return <div>Loading...</div>;
-  }
-  
   // Handle input changes
   const handleChange = (
     event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -62,25 +46,28 @@ export default function Page() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-  
+
     try {
       // Retrieve token from localStorage
       const token = localStorage.getItem("access");
-  
-      const response = await fetch("http://127.0.0.1:8000/patient/patient-register/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          // Include the token in the Authorization header
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(formData),
-      });
-  
+
+      const response = await fetch(
+        "http://127.0.0.1:8000/patient/patient-register/",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            // Include the token in the Authorization header
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(formData),
+        }
+      );
+
       if (response.ok) {
         const responseBody = await response.json();
         console.log("Response Body:", responseBody);
-  
+
         setFormData({
           first_name: "",
           middle_name: "",
@@ -106,13 +93,14 @@ export default function Page() {
       setIsSubmitting(false);
     }
   };
-  
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
         <div className="mb-8 flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-gray-900">Patient Registration</h1>
+          <h1 className="text-2xl font-bold text-gray-900">
+            Patient Registration
+          </h1>
           <Button className="bg-blue-600 text-white hover:bg-blue-700">
             <Link href="/admin/old-patient/old-patient-registration">
               Existing Patient
@@ -122,7 +110,9 @@ export default function Page() {
 
         <div className="overflow-hidden rounded-xl bg-white shadow">
           <div className="border-b border-gray-200 bg-blue-50 px-6 py-4">
-            <h2 className="text-lg font-medium text-blue-800">New Patient Information</h2>
+            <h2 className="text-lg font-medium text-blue-800">
+              New Patient Information
+            </h2>
             <p className="mt-1 text-sm text-blue-600">
               Please fill in all required fields marked with *
             </p>
@@ -136,7 +126,10 @@ export default function Page() {
               </h3>
               <div className="grid gap-6 md:grid-cols-3">
                 <div>
-                  <label htmlFor="first_name" className="mb-2 block text-sm font-medium text-gray-700">
+                  <label
+                    htmlFor="first_name"
+                    className="mb-2 block text-sm font-medium text-gray-700"
+                  >
                     First Name <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -150,7 +143,10 @@ export default function Page() {
                   />
                 </div>
                 <div>
-                  <label htmlFor="middle_name" className="mb-2 block text-sm font-medium text-gray-700">
+                  <label
+                    htmlFor="middle_name"
+                    className="mb-2 block text-sm font-medium text-gray-700"
+                  >
                     Middle Name
                   </label>
                   <input
@@ -163,7 +159,10 @@ export default function Page() {
                   />
                 </div>
                 <div>
-                  <label htmlFor="last_name" className="mb-2 block text-sm font-medium text-gray-700">
+                  <label
+                    htmlFor="last_name"
+                    className="mb-2 block text-sm font-medium text-gray-700"
+                  >
                     Last Name <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -177,7 +176,10 @@ export default function Page() {
                   />
                 </div>
                 <div>
-                  <label htmlFor="date_of_birth" className="mb-2 block text-sm font-medium text-gray-700">
+                  <label
+                    htmlFor="date_of_birth"
+                    className="mb-2 block text-sm font-medium text-gray-700"
+                  >
                     Date of Birth <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -190,7 +192,10 @@ export default function Page() {
                   />
                 </div>
                 <div>
-                  <label htmlFor="phone_number" className="mb-2 block text-sm font-medium text-gray-700">
+                  <label
+                    htmlFor="phone_number"
+                    className="mb-2 block text-sm font-medium text-gray-700"
+                  >
                     Phone Number <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -204,7 +209,10 @@ export default function Page() {
                   />
                 </div>
                 <div>
-                  <label htmlFor="email" className="mb-2 block text-sm font-medium text-gray-700">
+                  <label
+                    htmlFor="email"
+                    className="mb-2 block text-sm font-medium text-gray-700"
+                  >
                     Email Address <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -227,7 +235,10 @@ export default function Page() {
               </h3>
               <div className="grid gap-6 md:grid-cols-3">
                 <div className="md:col-span-3">
-                  <label htmlFor="street_address" className="mb-2 block text-sm font-medium text-gray-700">
+                  <label
+                    htmlFor="street_address"
+                    className="mb-2 block text-sm font-medium text-gray-700"
+                  >
                     Street Address <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -241,7 +252,10 @@ export default function Page() {
                   />
                 </div>
                 <div>
-                  <label htmlFor="barangay" className="mb-2 block text-sm font-medium text-gray-700">
+                  <label
+                    htmlFor="barangay"
+                    className="mb-2 block text-sm font-medium text-gray-700"
+                  >
                     Barangay <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -255,7 +269,10 @@ export default function Page() {
                   />
                 </div>
                 <div>
-                  <label htmlFor="municipal_city" className="mb-2 block text-sm font-medium text-gray-700">
+                  <label
+                    htmlFor="municipal_city"
+                    className="mb-2 block text-sm font-medium text-gray-700"
+                  >
                     Municipal/City <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -278,7 +295,10 @@ export default function Page() {
               </h3>
               <div className="grid gap-6 md:grid-cols-2">
                 <div>
-                  <label htmlFor="complaint" className="mb-2 block text-sm font-medium text-gray-700">
+                  <label
+                    htmlFor="complaint"
+                    className="mb-2 block text-sm font-medium text-gray-700"
+                  >
                     Type of Complaint <span className="text-red-500">*</span>
                   </label>
                   <select
@@ -295,7 +315,10 @@ export default function Page() {
                   </select>
                 </div>
                 <div>
-                  <label htmlFor="priority_level" className="mb-2 block text-sm font-medium text-gray-700">
+                  <label
+                    htmlFor="priority_level"
+                    className="mb-2 block text-sm font-medium text-gray-700"
+                  >
                     Priority Level <span className="text-red-500">*</span>
                   </label>
                   <select
@@ -306,7 +329,9 @@ export default function Page() {
                     required
                   >
                     <option value="Regular">Regular</option>
-                    <option value="Priority">Priority Lane (PWD/Pregnant/Senior Citizen)</option>
+                    <option value="Priority">
+                      Priority Lane (PWD/Pregnant/Senior Citizen)
+                    </option>
                   </select>
                 </div>
               </div>
@@ -326,11 +351,16 @@ export default function Page() {
                   />
                 </div>
                 <div className="ml-3 text-sm">
-                  <label htmlFor="agree_terms" className="font-medium text-gray-700">
-                    I agree to the terms and conditions <span className="text-red-500">*</span>
+                  <label
+                    htmlFor="agree_terms"
+                    className="font-medium text-gray-700"
+                  >
+                    I agree to the terms and conditions{" "}
+                    <span className="text-red-500">*</span>
                   </label>
                   <p className="mt-1 text-xs text-gray-500">
-                    By agreeing, you consent to the collection and processing of your personal information for medical purposes.
+                    By agreeing, you consent to the collection and processing of
+                    your personal information for medical purposes.
                   </p>
                 </div>
               </div>
@@ -369,7 +399,9 @@ export default function Page() {
                 ></path>
               </svg>
             </div>
-            <h2 className="mb-2 text-xl font-bold text-gray-900">Registration Successful</h2>
+            <h2 className="mb-2 text-xl font-bold text-gray-900">
+              Registration Successful
+            </h2>
             <p className="mb-6 text-sm text-gray-600">
               The patient has been successfully registered in the system.
             </p>

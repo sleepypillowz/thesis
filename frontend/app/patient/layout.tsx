@@ -5,7 +5,7 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import { PatientSidebar } from "@/components/organisms/patient-sidebar";
+import { PatientSidebar } from "@/components/organisms/sidebar/patient-sidebar";
 
 export default function DoctorLayout({
   children,

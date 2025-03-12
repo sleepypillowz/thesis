@@ -1,10 +1,5 @@
 "use client";
-import {
-  LayoutDashboard,
-  HelpCircle,
-  Settings,
-  ChartNoAxesGantt 
-} from "lucide-react";
+import { LayoutDashboard, ChartNoAxesGantt } from "lucide-react";
 
 import {
   Sidebar,
@@ -18,7 +13,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { NavUser } from "../molecules/nav-user";
+import { NavUser } from "../../molecules/nav-user";
 import Image from "next/image";
 
 import Link from "next/link";
@@ -26,25 +21,12 @@ const menu_items = [
   {
     title: "Dashboard",
     url: "/admin",
-    icon: LayoutDashboard
+    icon: LayoutDashboard,
   },
   {
     title: "User Management",
-    url: "/superadmin/user-management",
-    icon: ChartNoAxesGantt , 
-  },
-];
-
-const help_items = [
-  {
-    title: "Help",
-    url: "/admin/help",
-    icon: HelpCircle,
-  },
-  {
-    title: "Settings",
-    url: "/admin/settings",
-    icon: Settings,
+    url: "/admin/user-management",
+    icon: ChartNoAxesGantt,
   },
 ];
 
@@ -74,35 +56,11 @@ export function AppSidebar() {
       <SidebarContent>
         {/* Main Menu */}
         <SidebarGroup>
-            <SidebarGroupLabel>Main Menu</SidebarGroupLabel>
-            <SidebarGroupContent>
-                <SidebarMenu>
-                <SidebarGroup>
-                {menu_items
-                    .map((item) => (
-                    <SidebarMenuItem key={item.title}>
-                        <SidebarMenuButton asChild>
-                        <Link href={item.url}>
-                            <item.icon />
-                            <span>{item.title}</span>
-                        </Link>
-                        </SidebarMenuButton>
-                    </SidebarMenuItem>
-                ))}
-
-                </SidebarGroup>
-                </SidebarMenu>
-            </SidebarGroupContent>
-        </SidebarGroup>
-
-
-        {/* Help & Settings */}
-        <SidebarGroup>
-          <SidebarGroupLabel>Help & Settings</SidebarGroupLabel>
+          <SidebarGroupLabel>Main Menu</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarGroup>
-                {help_items.map((item) => (
+                {menu_items.map((item) => (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton asChild>
                       <Link href={item.url}>

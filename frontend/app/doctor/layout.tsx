@@ -3,10 +3,10 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import { AppSidebar } from "@/components/organisms/sidebar/admin-sidebar";
+import { AppSidebar } from "@/components/organisms/sidebar/doctor-sidebar";
 import Header from "@/components/organisms/header";
 
-export default function Page({
+export default function DoctorLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
