@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Notification from "@/components/molecules/header/notification-dropdown";
 import Profile from "@/components/molecules/header/profile";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { supabase } from "@/config/supabase";
 import { useRouter, usePathname } from "next/navigation";
 
@@ -19,49 +19,69 @@ const Header = () => {
   const router = useRouter();
   const pathname = usePathname();
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      const { data: userData, error: userError } =
-        await supabase.auth.getUser();
+  // Fetch user and role details
+  const fetchUser = useCallback(async () => {
+    const { data: userData, error: userError } = await supabase.auth.getUser();
 
-      if (userError) {
-        console.error("Error fetching user:", userError.message);
-        return;
+    if (userError) {
+      console.error("Error fetching user:", userError.message);
+      return;
+    }
+
+    if (userData?.user) {
+      // Clear role if switching accounts
+      if (user?.email !== userData.user.email) {
+        localStorage.removeItem("userRole");
+        setRole(undefined);
       }
 
-      if (userData?.user) {
-        setUser({ email: userData.user.email });
+      setUser({ email: userData.user.email });
 
-        // Check localStorage AFTER component mounts (avoiding hydration mismatch)
-        const storedRole =
-          typeof window !== "undefined"
-            ? localStorage.getItem("userRole")
-            : null;
+      const storedRole = localStorage.getItem("userRole");
+      if (storedRole) {
+        setRole(storedRole);
+      } else {
+        const { data, error } = await supabase
+          .from("profiles")
+          .select("role")
+          .eq("email", userData.user.email)
+          .single();
 
-        if (storedRole) {
-          setRole(storedRole);
-        } else {
-          // Fetch user role if not in localStorage
-          const { data, error } = await supabase
-            .from("profiles")
-            .select("role")
-            .eq("email", userData.user.email)
-            .single();
-
-          if (data) {
-            setRole(data.role);
-            localStorage.setItem("userRole", data.role);
-          } else if (error) {
-            console.error("Error fetching role:", error.message);
-          }
+        if (data) {
+          setRole(data.role);
+          localStorage.setItem("userRole", data.role);
+        } else if (error) {
+          console.error("Error fetching role:", error.message);
         }
       }
+    } else {
+      setUser(null);
+      setRole(undefined);
+      localStorage.removeItem("userRole");
+    }
 
-      setIsLoaded(true);
-    };
+    setIsLoaded(true);
+  }, [user]);
 
+  useEffect(() => {
     fetchUser();
-  }, []);
+
+    const { data: authListener } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        if (!session) {
+          setUser(null);
+          setRole(undefined);
+          localStorage.removeItem("userRole");
+        } else {
+          fetchUser();
+        }
+      }
+    );
+
+    return () => {
+      authListener.subscription.unsubscribe();
+    };
+  }, [fetchUser]);
 
   useEffect(() => {
     if (isLoaded && user && role) {
