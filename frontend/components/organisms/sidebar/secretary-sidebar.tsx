@@ -39,7 +39,7 @@ const menu_items = [
   },
   {
     title: "Registration",
-    url: "/admin/registration",
+    url: "/secretary/registration",
     icon: UserPlus,
   },
   {
@@ -49,17 +49,17 @@ const menu_items = [
   },
   {
     title: "Patient Portal",
-    url: "/admin/portal",
+    url: "/secretary/portal",
     icon: LayoutDashboard,
   },
   {
     title: "Medicine",
-    url: "/admin/medicine",
+    url: "/secretary/medicine",
     icon: Database,
   },
   {
     title: "Reports",
-    url: "/admin/reports",
+    url: "/secretary/reports",
     icon: ChartArea,
   },
 ];
@@ -67,22 +67,22 @@ const menu_items = [
 const patient_items = [
   {
     title: "Medical Records",
-    url: "/admin/medical-records",
+    url: "/secretary/medical-records",
     icon: ClipboardPlus,
   },
   {
     title: "Appointments",
-    url: "/admin/appointments",
+    url: "/secretary/appointments",
     icon: Calendar,
   },
   {
     title: "Registration Queue",
-    url: "/admin/registration-queue",
+    url: "/secretary/registration-queue",
     icon: Clock,
   },
   {
     title: "Assessment",
-    url: "/admin/assessment-queue",
+    url: "/secretary/assessment-queue",
     icon: ClipboardPenLine,
   },
 ];
