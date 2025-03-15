@@ -79,3 +79,15 @@ GET  http://127.0.0.1:8000/patient/patient-treatment-view-details/YCDDSXHJ
 Content-Type: application/json  
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ5NTkzOTg1LCJpYXQiOjE3NDE4MTc5ODUsImp0aSI6IjY2ODNkMjY1ODZhMzQ3MGI5YTQ2ZWQxNzlkMjYwYmVjIiwidXNlcl9pZCI6IjNTTTJNQVQ2IiwiaXNfc3RhZmYiOmZhbHNlLCJpc19zdXBlcnVzZXIiOmZhbHNlLCJlbWFpbCI6ImRvY3RvcmFjY291bnRAZ21haWwuY29tIiwicm9sZSI6ImRvY3RvciIsImZpcnN0X25hbWUiOiJEb2N0b3IifQ.RmRRmURWdqy8HJcBblhBpJYK-Pcvg-Gq4lsRtkgUPnE
 
+### Batch Confirm Dispense for Multiple Prescriptions
+GET  http://localhost:8000/medicine-prescription-display/
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ5NjQxNjYyLCJpYXQiOjE3NDE4NjU2NjIsImp0aSI6ImU3MTU3NGI3YWI5NTQ5ZjA5ZDA5Y2VjZjVjODE3OWJjIiwidXNlcl9pZCI6IkVFMkRZWFlZIiwiaXNfc3RhZmYiOmZhbHNlLCJpc19zdXBlcnVzZXIiOmZhbHNlLCJlbWFpbCI6InNlY3JldGFyeWFjY291bnRAZ21haWwuY29tIiwicm9sZSI6InNlY3JldGFyeSIsImZpcnN0X25hbWUiOiJTZWNyZXRhcnkifQ.2sJNq-_qg0xbv4AYlnY-LXMUSZXCTh9dY3L33drXbtM
+
+# {
+#   "prescriptions": [
+#     { "id": 120, "confirmed": 1 },
+#     { "id": 121, "confirmed": 1 },
+#     { "id": 122, "confirmed": 1 }
+#   ]
+# }

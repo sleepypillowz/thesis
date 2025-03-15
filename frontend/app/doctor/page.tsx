@@ -27,7 +27,7 @@ export default function Page() {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${accessToken}`,
+            Authorization: `Bearer ${accessToken}`,
           },
         });
         if (!response.ok) {
@@ -45,16 +45,18 @@ export default function Page() {
 
   // Filter patients based on the search term
   const filteredPatients = patients.filter((patient) => {
-    const fullName = `${patient.first_name} ${patient.middle_name || ""} ${patient.last_name}`.toLowerCase();
+    const fullName = `${patient.first_name} ${patient.middle_name || ""} ${
+      patient.last_name
+    }`.toLowerCase();
     return fullName.includes(searchTerm.toLowerCase());
   });
-  
+
   return (
     <div className="mb-4 space-y-4 text-center md:text-left lg:m-0">
       <div className="px-6 py-4">
-      <p className="text-2xl font-bold">
-        Good Day, <span className="text-blue-500">{user?.first_name}</span>
-      </p>
+        <p className="text-2xl font-bold">
+          Good Day, <span className="text-blue-500">{user?.first_name}</span>
+        </p>
 
         <p className="text-sm">
           Check out the latest updates from the past 7 days!
@@ -68,8 +70,13 @@ export default function Page() {
           <VisitorsChart />
         </div>
 
-        <div className="lg:w-full lg:max-w-xs">
-          <CommonDiseasesChart />
+        <div className="w-1/4 space-y-4">
+          <div className="lg:w-full lg:max-w-xs">
+            <CommonDiseasesChart />
+          </div>
+          <div className="lg:w-full lg:max-w-xs">
+            <CommonDiseasesChart />
+          </div>
         </div>
       </div>
       <div className="container mx-auto px-10 py-10">
@@ -82,10 +89,7 @@ export default function Page() {
           placeholder="Search patient name..."
           className="mb-4 w-full rounded border border-gray-300 p-2"
         />
-        <DataTable
-          columns={columns}
-          data={filteredPatients}
-        />
+        <DataTable columns={columns} data={filteredPatients} />
       </div>
     </div>
   );

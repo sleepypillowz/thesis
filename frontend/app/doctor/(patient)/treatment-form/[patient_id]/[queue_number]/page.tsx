@@ -2,10 +2,17 @@
 
 import React, { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { Plus, Trash } from "lucide-react";
+import {
+  Plus,
+  Trash,
+  Search,
+  XCircle,
+  AlertTriangle,
+  Check,
+} from "lucide-react";
 import type { ChangeEvent, FormEvent } from "react";
 import { Button } from "@/components/ui/button";
-
+import userInfo from "@/components/hooks/userRole";
 
 interface Patient {
   first_name: string;
@@ -38,18 +45,27 @@ interface Diagnosis {
   diagnosis_description: string;
   diagnosis_date: string;
 }
+interface ApiResponse {
+  patient: Patient;
+  preliminary_assessment: PreliminaryAssessment;
+}
 
 interface Prescription {
+  id?: number;
+  medicine_id?: number;
   medication: string;
   dosage: string;
   frequency: string;
+  quantity: string;
   start_date: string;
   end_date: string;
 }
 
-interface ApiResponse {
-  patient: Patient;
-  preliminary_assessment: PreliminaryAssessment;
+interface Medicine {
+  id?: number;
+  name: string;
+  strength: string;
+  stocks: number;
 }
 
 export default function TreatmentForm() {
@@ -71,11 +87,19 @@ export default function TreatmentForm() {
   ]);
 
   const [prescriptions, setPrescriptions] = useState<Prescription[]>([
-    { medication: "", dosage: "", frequency: "", start_date: "", end_date: "" },
+    {
+      medication: "",
+      dosage: "",
+      frequency: "",
+      quantity: "",
+      start_date: "",
+      end_date: "",
+    },
   ]);
 
   const [treatmentNotes, setTreatmentNotes] = useState("");
 
+  const role = userInfo();
   const [showRequestModal, setShowRequestModal] = useState(false);
   // Lab test request states
   const [labTestChoice, setLabTestChoice] = useState("");
@@ -83,19 +107,26 @@ export default function TreatmentForm() {
   const [showModal, setShowModal] = useState(false);
   const router = useRouter();
 
+  // Medicine State
+  const [activePrescriptionIndex, setActivePrescriptionIndex] = useState(-1);
+  const [medicineQuery, setMedicineQuery] = useState("");
+  const [medicineResults, setMedicineResults] = useState<Medicine[]>([]);
+  const [isMedicineLoading, setIsMedicineLoading] = useState(false);
+
   useEffect(() => {
     if (!patient_id || !queue_number) return;
 
     const fetchData = async () => {
       try {
-        const token = localStorage.getItem('access');
+        const token = localStorage.getItem("access");
         const response = await fetch(
-          `http://127.0.0.1:8000/patient/patient-preliminary-assessment/${patient_id}/${queue_number}/`,{
+          `http://127.0.0.1:8000/patient/patient-preliminary-assessment/${patient_id}/${queue_number}/`,
+          {
             method: "GET",
             headers: {
               "Content-Type": "application/json",
-              "Authorization": `Bearer ${token}`
-            }
+              Authorization: `Bearer ${token}`,
+            },
           }
         );
         if (!response.ok) {
@@ -108,7 +139,7 @@ export default function TreatmentForm() {
         console.log("Fetched API response:", data);
         setPatient(data.patient);
         setAssessment(data.preliminary_assessment);
-        console.log("assessment", data.preliminary_assessment)
+        console.log("assessment", data.preliminary_assessment);
         setError(null);
       } catch (err) {
         setError("Failed to load patient data");
@@ -121,6 +152,41 @@ export default function TreatmentForm() {
     fetchData();
   }, [patient_id, queue_number]);
 
+  const searchMedicines = async (query: string) => {
+    if (query.length < 2) {
+      setMedicineResults([]);
+      return;
+    }
+
+    setIsMedicineLoading(true);
+    try {
+      const token = localStorage.getItem("access");
+      const url = `http://127.0.0.1:8000/medicine/medicine-search/?q=${encodeURIComponent(
+        query
+      )}`;
+      const res = await fetch(url, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const data = await res.json();
+      setMedicineResults(data.medicine || []);
+    } catch (error) {
+      console.error("Error fetching medicines:", error);
+      setMedicineResults([]);
+    } finally {
+      setIsMedicineLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (medicineQuery.length >= 2) {
+      const handler = setTimeout(() => searchMedicines(medicineQuery), 300);
+      return () => clearTimeout(handler);
+    }
+  }, [medicineQuery]);
   // Diagnosis handlers
   const addDiagnosis = () => {
     setDiagnoses([
@@ -152,13 +218,14 @@ export default function TreatmentForm() {
         medication: "",
         dosage: "",
         frequency: "",
+        quantity: "",
         start_date: "",
         end_date: "",
       },
     ]);
   };
 
-  const removePrescription = (index: number) => { 
+  const removePrescription = (index: number) => {
     setPrescriptions(prescriptions.filter((_, i) => i !== index));
   };
 
@@ -167,10 +234,11 @@ export default function TreatmentForm() {
     field: keyof Prescription,
     value: string
   ) => {
-    const updatedPrescriptions = prescriptions.map((p, i) =>
-      i === index ? { ...p, [field]: value } : p
+    setPrescriptions((prev) =>
+      prev.map((prescription, i) =>
+        i === index ? { ...prescription, [field]: value } : prescription
+      )
     );
-    setPrescriptions(updatedPrescriptions);
   };
 
   // LAB RESULT HANDLING COMMENTED OUT
@@ -192,14 +260,14 @@ export default function TreatmentForm() {
     };
 
     console.log("Data to serialize (JSON):", treatmentData);
-    const token = localStorage.getItem('access')
+    const token = localStorage.getItem("access");
     const response = await fetch(
       `http://127.0.0.1:8000/queueing/patient-treatment/${patient_id}/${queue_number}/`,
       {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
           Accept: "application/json",
         },
         body: JSON.stringify(treatmentData),
@@ -221,6 +289,7 @@ export default function TreatmentForm() {
           medication: "",
           dosage: "",
           frequency: "",
+          quantity: "",
           start_date: "",
           end_date: "",
         },
@@ -238,7 +307,8 @@ export default function TreatmentForm() {
   const handleSave = async (e: FormEvent) => {
     e.preventDefault();
     // Determine final lab test name based on selection
-    const labTestName = labTestChoice === "Other" ? customLabTest : labTestChoice;
+    const labTestName =
+      labTestChoice === "Other" ? customLabTest : labTestChoice;
     const token = localStorage.getItem("access");
     if (!token) {
       console.error("No access token found");
@@ -246,21 +316,26 @@ export default function TreatmentForm() {
     }
     try {
       // Submit the lab request
-      const labResponse = await fetch("http://127.0.0.1:8000/patient/lab-request/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`,
-          Accept: "application/json",
-        },
-        body: JSON.stringify({
-          patient: patient_id,
-          test_name: labTestName,
-          custom_test: labTestChoice === "Other" ? customLabTest : null,
-        }),
-      });
+      const labResponse = await fetch(
+        "http://127.0.0.1:8000/patient/lab-request/",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+            Accept: "application/json",
+          },
+          body: JSON.stringify({
+            patient: patient_id,
+            test_name: labTestName,
+            custom_test: labTestChoice === "Other" ? customLabTest : null,
+          }),
+        }
+      );
       if (!labResponse.ok) {
-        throw new Error(`Lab Request HTTP error! Status: ${labResponse.status}`);
+        throw new Error(
+          `Lab Request HTTP error! Status: ${labResponse.status}`
+        );
       }
       const labData = await labResponse.json();
       console.log("Lab request successful:", labData);
@@ -271,19 +346,16 @@ export default function TreatmentForm() {
       setShowModal(true);
     } catch (error) {
       console.error("Failed to save lab request and treatment:", error);
-      alert("Failed to submit lab request and save treatment. Please try again.");
+      alert(
+        "Failed to submit lab request and save treatment. Please try again."
+      );
     }
   };
-  
-  
-  
 
   if (loading) {
     return (
       <div className="flex min-h-screen items-center justify-center">
-        <div className="text-lg font-medium text-gray-600">
-          Loading patient data...
-        </div>
+        <div className="text-lg font-medium">Loading patient data...</div>
       </div>
     );
   }
@@ -295,24 +367,29 @@ export default function TreatmentForm() {
       </div>
     );
   }
+  if (!role || role.role !== "doctor") {
+    return (
+      <div className="flex min-h-screen items-center justify-center text-xl font-semibold">
+        Not Authorized
+      </div>
+    );
+  }
 
   return (
-    <div className="mx-auto max-w-4xl rounded-2xl border border-gray-200 bg-white/80 p-8 shadow-lg backdrop-blur-lg">
-      <h2 className="mb-6 text-3xl font-semibold text-gray-800">
+    <div className="card mx-auto max-w-4xl rounded-2xl p-8 shadow-lg backdrop-blur-lg">
+      <h2 className="mb-6 text-3xl font-semibold">
         Patient Treatment Form {patient?.first_name} {patient?.last_name}
       </h2>
       <div className="mb-6">
-        <h4 className="text-lg font-medium text-gray-700">
+        <h4 className="text-lg font-medium">
           Queue Number:{" "}
           <span className="font-bold text-blue-600">{queue_number}</span>
         </h4>
       </div>
 
       {assessment ? (
-        <div className="mb-6 rounded-lg border bg-blue-50 p-4">
-          <h3 className="mb-3 text-xl font-semibold text-gray-800">
-            Preliminary Assessment
-          </h3>
+        <div className="card mb-6 rounded-lg p-4">
+          <h3 className="mb-3 text-xl font-semibold">Preliminary Assessment</h3>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div>
               <p>
@@ -379,34 +456,29 @@ export default function TreatmentForm() {
           </div>
         </div>
       ) : (
-        <div className="mb-6 rounded-lg border bg-blue-50 p-4">
-          <h3 className="mb-3 text-xl font-semibold text-gray-800">
-            Preliminary Assessment
-          </h3>
-          <p className="text-gray-600">No preliminary assessment available for this patient.</p>
+        <div className="mb-6 rounded-lg border p-4">
+          <h3 className="mb-3 text-xl font-semibold">Preliminary Assessment</h3>
+          <p className="">
+            No preliminary assessment available for this patient.
+          </p>
         </div>
       )}
       {/* LAB RESULT UPLOAD SECTION COMMENTED OUT */}
       <div>
-      {/* Button to open the lab request modal */}
-      <div className="mb-8 flex items-center justify-between">
-        <Button
-          className="bg-blue-600 text-white hover:bg-blue-700"
-          onClick={() => setShowRequestModal(true)}
-        >
-          Request Laboratory Examination
-        </Button>
+        {/* Button to open the lab request modal */}
+        <div className="mb-8 flex items-center justify-between">
+          <Button onClick={() => setShowRequestModal(true)}>
+            Request Laboratory Examination
+          </Button>
+        </div>
       </div>
-    </div>
 
       <form onSubmit={handleSubmit}>
         {/* Diagnoses Section */}
         <div className="mb-8">
-          <h3 className="mb-2 text-xl font-semibold text-gray-800">
-            Diagnoses
-          </h3>
+          <h3 className="mb-2 text-xl font-semibold">Diagnoses</h3>
           {diagnoses.map((diag, index) => (
-            <div key={index} className="mb-4 rounded-lg border bg-gray-50 p-4">
+            <div key={index} className="card mb-4 rounded-lg border p-4">
               <input
                 type="text"
                 value={diag.diagnosis_code}
@@ -459,28 +531,135 @@ export default function TreatmentForm() {
 
         {/* Prescriptions Section */}
         <div className="mb-8">
-          <h3 className="mb-4 text-xl font-semibold text-gray-800">
-            Prescriptions
-          </h3>
+          <h3 className="mb-4 text-xl font-semibold">Prescriptions</h3>
           {prescriptions.map((prescription, index) => (
             <div
               key={index}
-              className="mb-2 rounded-lg border bg-gray-50 p-4 shadow-sm"
+              className="card mb-2 rounded-lg border p-4 shadow-sm"
             >
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 lg:grid-cols-5">
-                <input
-                  type="text"
-                  placeholder="Medication Name"
-                  value={prescription.medication}
-                  onChange={(e) =>
-                    handlePrescriptionChange(
-                      index,
-                      "medication",
-                      e.target.value
-                    )
-                  }
-                  className="w-full rounded-md border p-2"
-                />
+                <div className="relative">
+                  <input
+                    type="text"
+                    placeholder="Medication Name"
+                    value={prescription.medication}
+                    onChange={(e) => {
+                      handlePrescriptionChange(
+                        index,
+                        "medication",
+                        e.target.value
+                      );
+                      setMedicineQuery(e.target.value);
+                      setActivePrescriptionIndex(index);
+                    }}
+                    onFocus={() => setActivePrescriptionIndex(index)}
+                    className="w-full rounded-md border p-2"
+                  />
+                  {activePrescriptionIndex === index && (
+                    <div className="card absolute z-30 mt-2 w-[300px] rounded-lg border shadow-xl">
+                      {isMedicineLoading ? (
+                        <div className="flex items-center justify-center p-4">
+                          <svg
+                            className="mr-2 h-5 w-5 animate-spin text-blue-600"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                          >
+                            <circle
+                              className="opacity-25"
+                              cx="12"
+                              cy="12"
+                              r="10"
+                              stroke="currentColor"
+                              strokeWidth="4"
+                            />
+                            <path
+                              className="opacity-75"
+                              fill="currentColor"
+                              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                            />
+                          </svg>
+                          Searching medicines...
+                        </div>
+                      ) : (
+                        <div className="max-h-60 overflow-y-auto">
+                          {(medicineResults || []).map((medicine, idx) => (
+                            <button
+                              key={idx}
+                              type="button"
+                              className="w-full border-b p-3 text-left transition-colors last:border-b-0"
+                              onClick={() => {
+                                console.log(
+                                  "Selected medicine id:",
+                                  medicine.id
+                                );
+                                handlePrescriptionChange(
+                                  index,
+                                  "medicine_id",
+                                  medicine.id?.toString() || ""
+                                );
+                                handlePrescriptionChange(
+                                  index,
+                                  "medication",
+                                  medicine.name
+                                );
+                                handlePrescriptionChange(
+                                  index,
+                                  "dosage",
+                                  medicine.strength
+                                );
+                                setMedicineResults([]);
+                                setActivePrescriptionIndex(-1);
+                              }}
+                            >
+                              <div className="flex items-center justify-between">
+                                <div className="min-w-0 flex-1">
+                                  <span className="block truncate font-medium">
+                                    {medicine.name}
+                                  </span>
+                                  <span className="mt-0.5 block text-sm">
+                                    Dosage: {medicine.strength}
+                                  </span>
+                                </div>
+
+                                <div className="ml-4 flex-shrink-0">
+                                  <span
+                                    className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium 
+                                      ${
+                                        medicine.stocks >= 200
+                                          ? "bg-green-100 text-green-800"
+                                          : medicine.stocks > 100
+                                          ? "bg-orange-100 text-orange-800"
+                                          : medicine.stocks > 0
+                                          ? "bg-rose-100 text-rose-800"
+                                          : "bg-red-100 text-red-800"
+                                      }`}
+                                  >
+                                    {medicine.stocks >= 200 ? (
+                                      <Check className="mr-1 h-4 w-4" />
+                                    ) : medicine.stocks > 0 ? (
+                                      <AlertTriangle className="mr-1 h-4 w-4" />
+                                    ) : (
+                                      <XCircle className="mr-1 h-4 w-4" />
+                                    )}
+                                    Stock: {medicine.stocks}
+                                  </span>
+                                </div>
+                              </div>
+                            </button>
+                          ))}
+                        </div>
+                      )}
+
+                      {medicineResults?.length === 0 && !isMedicineLoading && (
+                        <div className="p-4 text-center">
+                          <Search className="mx-auto mb-2 h-5 w-5" />
+                          No medicines found
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+                {/* Keep other prescription fields the same */}
                 <input
                   type="text"
                   placeholder="Dosage"
@@ -496,6 +675,15 @@ export default function TreatmentForm() {
                   value={prescription.frequency}
                   onChange={(e) =>
                     handlePrescriptionChange(index, "frequency", e.target.value)
+                  }
+                  className="w-full rounded-md border p-2"
+                />
+                <input
+                  type="text"
+                  placeholder="Quantity"
+                  value={prescription.quantity}
+                  onChange={(e) =>
+                    handlePrescriptionChange(index, "quantity", e.target.value)
                   }
                   className="w-full rounded-md border p-2"
                 />
@@ -544,7 +732,7 @@ export default function TreatmentForm() {
 
         {/* Treatment Notes */}
         <div className="mb-8">
-          <label className="block font-medium text-gray-700">Notes</label>
+          <label className="block font-medium">Notes</label>
           <textarea
             value={treatmentNotes}
             onChange={(e) => setTreatmentNotes(e.target.value)}
@@ -555,7 +743,6 @@ export default function TreatmentForm() {
         </div>
         {/* Submit and Save Buttons */}
         <div className="mt-4 flex justify-between">
-
           <button
             type="submit"
             className="ml-2 w-1/2 rounded-xl bg-blue-600 py-3 text-lg font-medium text-white transition hover:bg-blue-700"
@@ -563,99 +750,109 @@ export default function TreatmentForm() {
             Submit Treatment
           </button>
         </div>
-
       </form>
 
-     {/* Laboratory Request Modal */}
-     {showRequestModal && (
-  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-    <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
-      <h2 className="mb-4 text-xl font-semibold text-gray-800">
-        Request Laboratory Examination
-      </h2>
-      <form onSubmit={handleSave}>
-        <label className="mb-2 block text-gray-700">
-          Select Laboratory Test:
-        </label>
-        <select
-          value={labTestChoice}
-          onChange={(e) => setLabTestChoice(e.target.value)}
-          className="mb-4 w-full rounded-md border p-2"
-          required
-        >
-          <option value="">-- Select a test --</option>
-          
-          <optgroup label="Laboratory Tests">
-            <option value="Standard Chemistry">Standard Chemistry</option>
-            <option value="Blood Typing Urinalysis">Blood Typing Urinalysis</option>
-            <option value="Complete Blood Count (CBC)">Complete Blood Count (CBC)</option>
-            <option value="Complete Blood Count (CBC) with Platelet Count">Complete Blood Count (CBC) with Platelet Count</option>
-            <option value="HBA1C">HBA1C</option>
-            <option value="Electrocardiogram (ECG)">Electrocardiogram (ECG)</option>                
-            <option value="Epidermolysis Bullosa Simplex (EBS)">Epidermolysis Bullosa Simplex (EBS)</option>
-            <option value="Sodium">Sodium</option>
-            <option value="Potassium">Potassium</option>
-            <option value="Rabies">Rabies</option>
-            <option value="Flu">Flu</option>
-            <option value="Pneumonia">Pneumonia</option>
-            <option value="Anti-tetanus">Anti-tetanus</option>
-            <option value="Hepatitis B Screening">Hepatitis B Screening</option>
-          </optgroup>
-          
-          <optgroup label="Radiology Tests">
-            <option value="Chest (PA)">Chest (PA)</option>
-            <option value="Chest (PA-LATERAL)">Chest (PA-LATERAL)</option>
-            <option value="Chest (LATERAL)">Chest (LATERAL)</option>
-            <option value="Chest (APICOLORDOTIC VIEW)">Chest (APICOLORDOTIC VIEW)</option>
-            <option value="Elbow">Elbow</option>
-            <option value="Hand">Hand</option>
-            <option value="Pelvic">Pelvic</option>
-            <option value="Hip Joint">Hip Joint</option>
-            <option value="Knee">Knee</option>
-            <option value="Foot imaging">Foot imaging</option>
-          </optgroup>
-          
-          <optgroup label="Other Services">
-            <option value="Rapid Antigen Testing">Rapid Antigen Testing</option>
-            <option value="Reverse Transcription Polymerase Chain Reaction (RT-PCR)">Reverse Transcription Polymerase Chain Reaction (RT-PCR)</option>
-            <option value="Saliva testing">Saliva testing</option>
-            <option value="Rapid Antibody testing">Rapid Antibody testing</option>
-          </optgroup>
-          
-          <option value="Other">Other (Specify)</option>
-        </select>
-        
-        {labTestChoice === "Other" && (
-          <>
-            <label className="mb-2 block text-gray-700">
-              Please specify:
-            </label>
-            <input
-              type="text"
-              value={customLabTest}
-              onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                setCustomLabTest(e.target.value)
-              }
-              placeholder="Enter custom test name"
-              className="mb-4 w-full rounded-md border p-2"
-              required
-            />
-          </>
-        )}
+      {/* Laboratory Request Modal */}
+      {showRequestModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="card w-full max-w-md rounded-lg p-6 shadow-xl">
+            <h2 className="mb-4 text-xl font-semibold">
+              Request Laboratory Examination
+            </h2>
+            <form onSubmit={handleSave}>
+              <label className="mb-2 block">Select Laboratory Test:</label>
+              <select
+                value={labTestChoice}
+                onChange={(e) => setLabTestChoice(e.target.value)}
+                className="mb-4 w-full rounded-md border p-2"
+                required
+              >
+                <option value="">-- Select a test --</option>
+
+                <optgroup label="Laboratory Tests">
+                  <option value="Standard Chemistry">Standard Chemistry</option>
+                  <option value="Blood Typing Urinalysis">
+                    Blood Typing Urinalysis
+                  </option>
+                  <option value="Complete Blood Count (CBC)">
+                    Complete Blood Count (CBC)
+                  </option>
+                  <option value="Complete Blood Count (CBC) with Platelet Count">
+                    Complete Blood Count (CBC) with Platelet Count
+                  </option>
+                  <option value="HBA1C">HBA1C</option>
+                  <option value="Electrocardiogram (ECG)">
+                    Electrocardiogram (ECG)
+                  </option>
+                  <option value="Epidermolysis Bullosa Simplex (EBS)">
+                    Epidermolysis Bullosa Simplex (EBS)
+                  </option>
+                  <option value="Sodium">Sodium</option>
+                  <option value="Potassium">Potassium</option>
+                  <option value="Rabies">Rabies</option>
+                  <option value="Flu">Flu</option>
+                  <option value="Pneumonia">Pneumonia</option>
+                  <option value="Anti-tetanus">Anti-tetanus</option>
+                  <option value="Hepatitis B Screening">
+                    Hepatitis B Screening
+                  </option>
+                </optgroup>
+
+                <optgroup label="Radiology Tests">
+                  <option value="Chest (PA)">Chest (PA)</option>
+                  <option value="Chest (PA-LATERAL)">Chest (PA-LATERAL)</option>
+                  <option value="Chest (LATERAL)">Chest (LATERAL)</option>
+                  <option value="Chest (APICOLORDOTIC VIEW)">
+                    Chest (APICOLORDOTIC VIEW)
+                  </option>
+                  <option value="Elbow">Elbow</option>
+                  <option value="Hand">Hand</option>
+                  <option value="Pelvic">Pelvic</option>
+                  <option value="Hip Joint">Hip Joint</option>
+                  <option value="Knee">Knee</option>
+                  <option value="Foot imaging">Foot imaging</option>
+                </optgroup>
+
+                <optgroup label="Other Services">
+                  <option value="Rapid Antigen Testing">
+                    Rapid Antigen Testing
+                  </option>
+                  <option value="Reverse Transcription Polymerase Chain Reaction (RT-PCR)">
+                    Reverse Transcription Polymerase Chain Reaction (RT-PCR)
+                  </option>
+                  <option value="Saliva testing">Saliva testing</option>
+                  <option value="Rapid Antibody testing">
+                    Rapid Antibody testing
+                  </option>
+                </optgroup>
+
+                <option value="Other">Other (Specify)</option>
+              </select>
+
+              {labTestChoice === "Other" && (
+                <>
+                  <label className="mb-2 block">Please specify:</label>
+                  <input
+                    type="text"
+                    value={customLabTest}
+                    onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                      setCustomLabTest(e.target.value)
+                    }
+                    placeholder="Enter custom test name"
+                    className="mb-4 w-full rounded-md border p-2"
+                    required
+                  />
+                </>
+              )}
               <div className="flex justify-end space-x-4">
                 <Button
                   type="button"
+                  variant="destructive"
                   onClick={() => setShowRequestModal(false)}
-                  className="bg-gray-200 text-gray-800 hover:bg-gray-300"
                 >
                   Cancel
                 </Button>
-                <Button
-                  type="submit"
-                  className="bg-blue-600 text-white hover:bg-blue-700"
-                >
-                  Submit Request
-                </Button>
+                <Button type="submit">Submit Request</Button>
               </div>
             </form>
           </div>
@@ -664,10 +861,10 @@ export default function TreatmentForm() {
       {/* Success Modal */}
       {showModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="relative w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
+          <div className="card relative w-full max-w-md rounded-lg p-6 shadow-xl">
             {/* Close (X) Button */}
             <button
-              className="absolute right-4 top-4 text-gray-500 hover:text-gray-700 focus:outline-none"
+              className="hover: absolute right-4 top-4 focus:outline-none"
               onClick={() => setShowModal(false)}
             >
               <svg
@@ -685,7 +882,7 @@ export default function TreatmentForm() {
                 ></path>
               </svg>
             </button>
-            
+
             <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-green-100 text-green-600">
               <svg
                 className="h-6 w-6"
@@ -702,20 +899,20 @@ export default function TreatmentForm() {
                 ></path>
               </svg>
             </div>
-            <h2 className="mb-2 text-xl font-bold text-gray-900">Submission Successful</h2>
-            <p className="mb-6 text-sm text-gray-600">
+            <h2 className="mb-2 text-xl font-bold">Submission Successful</h2>
+            <p className="mb-6 text-sm">
               The laboratory request is successfully submitted
             </p>
             <div className="flex justify-between space-x-4">
               <button
-                className="w-full rounded-lg border border-blue-600 bg-white px-4 py-2 text-sm font-medium text-blue-600 hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                onClick={() => router.push("/admin")}
+                className="card w-full rounded-lg border border-blue-600 px-4 py-2 text-sm font-medium text-blue-600 hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                onClick={() => router.push("/doctor")}
               >
-                Go To Dashboard                
+                Go To Dashboard
               </button>
               <button
                 className="w-full rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                onClick={() => router.push("/admin/patient-treatment-queue")}
+                onClick={() => router.push("/doctor/patient-treatment-queue")}
               >
                 Go to Treatment Queue
               </button>

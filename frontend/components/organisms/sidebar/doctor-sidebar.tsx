@@ -37,7 +37,7 @@ const menu_items = [
   },
   {
     title: "Patient Portal",
-    url: "/doctor/patient-portal",
+    url: "/doctor/portal",
     icon: LayoutDashboard,
   },
   {
@@ -55,22 +55,22 @@ const menu_items = [
 const patient_items = [
   {
     title: "Medical Records",
-    url: "/doctor/patient-medical-records",
+    url: "/doctor/medical-records",
     icon: ClipboardPlus,
   },
   {
     title: "Appointments",
-    url: "/doctor/patient-appointments",
+    url: "/doctor/appointments",
     icon: Calendar,
   },
   {
     title: "Treatment",
-    url: "/doctor/patient-treatment",
+    url: "/doctor/treatment",
     icon: Bandage,
   },
   {
     title: "Treatment Queue",
-    url: "/doctor/patient-treatment-queue",
+    url: "/doctor/treatment-queue",
     icon: Bandage,
   },
 ];

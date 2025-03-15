@@ -29,7 +29,6 @@ export type Patient = {
     status: string;
     complaint: string;
   }[];
-
 };
 
 export const columns: ColumnDef<Patient>[] = [
@@ -69,7 +68,9 @@ export const columns: ColumnDef<Patient>[] = [
     header: "Patient Name",
     cell: ({ row }) => {
       const { first_name, middle_name, last_name } = row.original;
-      return `${first_name} ${middle_name ? middle_name : ""} ${last_name}`.trim();
+      return `${first_name} ${
+        middle_name ? middle_name : ""
+      } ${last_name}`.trim();
     },
   },
   {
@@ -84,9 +85,12 @@ export const columns: ColumnDef<Patient>[] = [
       if (queueData && queueData.length > 0) {
         // Sort the queue entries descending by created_at
         const latestQueue = queueData.sort(
-          (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+          (a, b) =>
+            new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
         )[0];
-        return format(new Date(latestQueue.created_at), "d MMMM yyyy", { locale: enGB });
+        return format(new Date(latestQueue.created_at), "d MMMM yyyy", {
+          locale: enGB,
+        });
       }
       return "N/A";
     },
@@ -98,9 +102,12 @@ export const columns: ColumnDef<Patient>[] = [
       const queueData = row.original.queue_data;
       if (queueData && queueData.length > 0) {
         const latestQueue = queueData.sort(
-          (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+          (a, b) =>
+            new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
         )[0];
-        return format(new Date(latestQueue.created_at), "HH:mm:ss", { locale: enGB });
+        return format(new Date(latestQueue.created_at), "HH:mm:ss", {
+          locale: enGB,
+        });
       }
       return "N/A";
     },
@@ -112,7 +119,8 @@ export const columns: ColumnDef<Patient>[] = [
       const queueData = row.original.queue_data;
       if (queueData && queueData.length > 0) {
         const latestQueue = queueData.sort(
-          (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+          (a, b) =>
+            new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
         )[0];
         return latestQueue.complaint;
       }
@@ -126,7 +134,8 @@ export const columns: ColumnDef<Patient>[] = [
       const queueData = row.original.queue_data;
       if (queueData && queueData.length > 0) {
         const latestQueue = queueData.sort(
-          (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+          (a, b) =>
+            new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
         )[0];
         return latestQueue.status;
       }
@@ -153,13 +162,13 @@ export const columns: ColumnDef<Patient>[] = [
               Copy patient ID
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <Link href="/admin/patient-information">
+            <Link href="/secretary/information">
               <DropdownMenuItem>View</DropdownMenuItem>
             </Link>
-            <Link href="/admin/medical-records">
+            <Link href="/secretary/medical-records">
               <DropdownMenuItem>Edit</DropdownMenuItem>
             </Link>
-            <Link href="/admin/medical-records">
+            <Link href="/secretary/medical-records">
               <DropdownMenuItem>Delete</DropdownMenuItem>
             </Link>
           </DropdownMenuContent>

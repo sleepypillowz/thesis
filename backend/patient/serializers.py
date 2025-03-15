@@ -81,42 +81,6 @@ class PatientSerializer(serializers.Serializer):
             return queue_info
         return None
 
-
-# class PatientRegistrationSerializer(serializers.ModelSerializer):
-#     priority_level = serializers.ChoiceField(choices=[('Regular', 'Regular'), ('Priority', 'Priority')], default='Regular')  # Add priority field
-#     agree_terms = serializers.BooleanField(write_only=True, required=True)
-#     complaint = serializers.ChoiceField(
-#         choices=[
-#             ('General Illness', 'General Illness'),
-#             ('Injury', 'Injury'),
-#             ('Check-up', 'Check-up'),
-#             ('Other', 'Other'),
-#         ],
-#         allow_blank=True,
-#         required=False
-#     )
-
-#     class Meta:
-#         model = Patient
-#         fields = [
-#             "first_name", "middle_name", "last_name", "email", "phone_number",
-#             "date_of_birth", "street_address", "barangay",
-#             "municipal_city", "agree_terms", "complaint"
-#         ]
-
-#     def get_queue_data(self, obj):
-#         """Fetch queue data for the patient."""
-#         queue_info = obj.temporarystoragequeue_set.filter(status='Waiting').first()  # Adjust as per your model relations
-#         if queue_info:
-#             return {
-#                 'id': queue_info.id,
-#                 'priority_level': queue_info.priority_level,
-#                 'status': queue_info.status,
-#                 'created_at': queue_info.created_at,
-#                 'complaint': queue_info.complaint,
-#             }
-#         return None
-
 class PatientRegistrationSerializer(serializers.Serializer):
     first_name = serializers.CharField(max_length=100)
     middle_name = serializers.CharField(max_length=100, required=False, allow_blank=True)

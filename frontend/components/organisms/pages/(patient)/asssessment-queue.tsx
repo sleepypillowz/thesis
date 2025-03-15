@@ -15,7 +15,7 @@ export interface PatientQueueItem {
   queue_number: number;
 }
 
-export default function Page() {
+export default function AssessmentQueue() {
   const [priorityQueue, setPriorityQueue] = useState({
     current: null as PatientQueueItem | null,
     next1: null as PatientQueueItem | null,
@@ -28,20 +28,24 @@ export default function Page() {
     next2: null as PatientQueueItem | null,
   });
   const role = userRole();
-
   useEffect(() => {
     const token = localStorage.getItem("access");
-    fetch("http://127.0.0.1:8000/queueing/treatment_queueing/", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    })
+    fetch(
+      `http://127.0.0.1:8000/queueing/preliminary_assessment_queueing/?t=${Date.now()}`,
+      {
+        cache: "no-cache",
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    )
       .then((response) => response.json())
       .then((data) => {
         console.log("API Response:", data);
 
+        // Use the new API fields ("priority_current", "priority_next1", etc.)
         const priorityPatients = [
           data.priority_current,
           data.priority_next1,
@@ -54,6 +58,7 @@ export default function Page() {
           data.regular_next2,
         ].filter((p) => p !== null);
 
+        // Update state with the latest fetched data
         setPriorityQueue({
           current: priorityPatients[0] || null,
           next1: priorityPatients[1] || null,
@@ -67,9 +72,10 @@ export default function Page() {
         });
       })
       .catch((error) => console.error("Error fetching queue:", error));
-  }, []); // Empty dependency array ensures the hook runs only once on mount
+  }, [priorityQueue, regularQueue]); // Runs once on mount; add dependencies or polling if needed
 
   const router = useRouter();
+
   const renderPatientInfo = (queueItem: PatientQueueItem | null) => {
     if (!queueItem) return null;
     return (
@@ -109,14 +115,13 @@ export default function Page() {
                     return;
                   }
                   router.push(
-                    `/doctor/treatment-form/${queueItem.patient_id}/${queueItem.queue_number}/`
+                    `/secretary/patient-preliminary-assessment/${queueItem.patient_id}/${queueItem.queue_number}/`
                   );
                 }}
                 className={buttonVariants({ variant: "outline" })}
               >
                 Accept
               </button>
-
               <button
                 className={buttonVariants({ variant: "outline" })}
                 onClick={() => router.push("/payments")}
@@ -135,7 +140,7 @@ export default function Page() {
       </div>
     );
   };
-  if (!role || role.role !== "doctor") {
+  if (!role || role.role !== "secretary") {
     return (
       <div className="flex min-h-screen items-center justify-center text-xl font-semibold">
         Not Authorized
@@ -145,7 +150,7 @@ export default function Page() {
 
   return (
     <div className="flex-1 space-y-8 px-8 py-8">
-      <h1 className="text-2xl font-bold">Patient Treatment Queue</h1>
+      <h1 className="text-2xl font-bold">Patient Assessment Queue</h1>
       <h2 className="text-xl font-semibold">Priority Queue</h2>
       <div className="flex flex-row justify-center gap-4">
         {/* Priority Queue Cards */}
@@ -158,7 +163,6 @@ export default function Page() {
           <span>Queuing Number</span>
           <span>Current</span>
         </div>
-
         <div className="card flex h-96 w-80 max-w-sm flex-col items-center justify-center">
           <p className="text-6xl font-bold">
             {priorityQueue.next1
@@ -168,7 +172,6 @@ export default function Page() {
           <span>Queuing Number</span>
           <span>Next</span>
         </div>
-
         <div className="card flex h-96 w-80 max-w-sm flex-col items-center justify-center">
           <p className="text-6xl font-bold">
             {priorityQueue.next2
@@ -178,10 +181,8 @@ export default function Page() {
           <span>Queuing Number</span>
           <span>Next</span>
         </div>
-
         {renderPatientInfo(priorityQueue.current)}
       </div>
-
       <h2 className="text-xl font-semibold">Regular Queue</h2>
       <div className="flex flex-row justify-center gap-4">
         {/* Regular Queue Cards */}
@@ -194,25 +195,20 @@ export default function Page() {
           <span>Queuing Number</span>
           <span>Current</span>
         </div>
-
         <div className="card flex h-96 w-80 max-w-sm flex-col items-center justify-center">
           <p className="text-6xl font-bold">
-            {" "}
             {regularQueue.next1 ? `#${regularQueue.next1.queue_number}` : "N/A"}
           </p>
           <span>Queuing Number</span>
           <span>Next</span>
         </div>
-
         <div className="card flex h-96 w-80 max-w-sm flex-col items-center justify-center">
           <p className="text-6xl font-bold">
-            {" "}
             {regularQueue.next2 ? `#${regularQueue.next2.queue_number}` : "N/A"}
           </p>
           <span>Queuing Number</span>
           <span>Next</span>
         </div>
-
         {renderPatientInfo(regularQueue.current)}
       </div>
     </div>

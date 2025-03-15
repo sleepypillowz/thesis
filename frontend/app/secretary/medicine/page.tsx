@@ -119,12 +119,10 @@ export default function MedicineList() {
 
   return (
     <div className="container mx-auto p-4">
-      <div className="mb-6 rounded-lg bg-white p-6 shadow">
+      <div className="card mb-6 rounded-lg p-6 shadow">
         <div className="mb-6 flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-gray-800">
-            Medicines Management
-          </h1>
-          <Button className="rounded-lg bg-blue-500 px-5 py-2 text-white shadow-md transition duration-300 hover:bg-blue-600">
+          <h1 className="text-2xl font-bold">Medicines Management</h1>
+          <Button>
             <Link href="/secretary/manage-medicines">
               View Prescribed Medicines
             </Link>
@@ -134,12 +132,12 @@ export default function MedicineList() {
           {/* Search input */}
           <div className="relative flex-1">
             <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-              <Search className="h-5 w-5 text-gray-400" />
+              <Search className="h-5 w-5" />
             </div>
             <input
               type="text"
               placeholder="Search medicines..."
-              className="w-full rounded-lg border border-gray-300 py-2 pl-10 pr-4 focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
+              className="w-full rounded-lg border py-2 pl-10 pr-4 focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -148,10 +146,10 @@ export default function MedicineList() {
           {/* Category filter */}
           <div className="relative w-full md:w-64">
             <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-              <Filter className="h-5 w-5 text-gray-400" />
+              <Filter className="h-5 w-5" />
             </div>
             <select
-              className="w-full appearance-none rounded-lg border border-gray-300 py-2 pl-10 pr-4 focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
+              className="w-full appearance-none rounded-lg border py-2 pl-10 pr-4 focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
               value={categoryFilter}
               onChange={(e) => setCategoryFilter(e.target.value)}
             >
@@ -166,7 +164,7 @@ export default function MedicineList() {
         </div>
 
         <div className="mb-4 flex items-center justify-between">
-          <p className="text-gray-600">
+          <p className="">
             Showing <span className="font-medium">{startIndex + 1}</span> to{" "}
             <span className="font-medium">
               {Math.min(startIndex + rowsPerPage, filteredMedicines.length)}
@@ -179,9 +177,7 @@ export default function MedicineList() {
 
       {filteredMedicines.length === 0 ? (
         <div className="rounded-lg bg-gray-50 p-8 text-center">
-          <p className="text-lg text-gray-500">
-            No medicines found matching your criteria
-          </p>
+          <p className="text-lg">No medicines found matching your criteria</p>
         </div>
       ) : (
         <>
@@ -189,7 +185,7 @@ export default function MedicineList() {
             {paginatedMedicines.map((medicine) => (
               <div
                 key={medicine.id}
-                className="relative overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm transition-shadow duration-200 hover:shadow-md"
+                className="card relative overflow-hidden rounded-lg border shadow-sm transition-shadow duration-200 hover:shadow-md"
               >
                 {/* Stock Badge On Upper-Right */}
                 <div
@@ -216,7 +212,7 @@ export default function MedicineList() {
                   {/* Medicine Name */}
                   <div className="mb-3 flex items-center">
                     <Pill className="mr-2 h-5 w-5 text-blue-500" />
-                    <h2 className="truncate text-xl font-semibold text-gray-800">
+                    <h2 className="truncate text-xl font-semibold">
                       {medicine.name}
                     </h2>
                   </div>
@@ -227,34 +223,26 @@ export default function MedicineList() {
                   </div>
 
                   {/* Medicine Details */}
-                  <div className="space-y-2 text-sm text-gray-700">
+                  <div className="space-y-2 text-sm">
                     <div className="grid grid-cols-3 gap-1">
-                      <span className="font-medium text-gray-500">
-                        Dosage Form:
-                      </span>
+                      <span className="font-medium">Dosage Form:</span>
                       <span className="col-span-2">{medicine.dosage_form}</span>
                     </div>
 
                     <div className="grid grid-cols-3 gap-1">
-                      <span className="font-medium text-gray-500">
-                        Strength:
-                      </span>
+                      <span className="font-medium">Strength:</span>
                       <span className="col-span-2">{medicine.strength}</span>
                     </div>
 
                     <div className="grid grid-cols-3 gap-1">
-                      <span className="font-medium text-gray-500">
-                        Manufacturer:
-                      </span>
+                      <span className="font-medium">Manufacturer:</span>
                       <span className="col-span-2">
                         {medicine.manufacturer}
                       </span>
                     </div>
 
                     <div className="grid grid-cols-3 gap-1">
-                      <span className="font-medium text-gray-500">
-                        Classification:
-                      </span>
+                      <span className="font-medium">Classification:</span>
                       <span className="col-span-2">
                         {medicine.classification}
                       </span>
@@ -262,9 +250,8 @@ export default function MedicineList() {
 
                     {/* Expiration Date */}
                     <div className="grid grid-cols-3 gap-1">
-                      <span className="flex items-center font-medium text-gray-500">
-                        <Calendar className="mr-1 h-4 w-4 text-gray-500" />{" "}
-                        Expiry:
+                      <span className="flex items-center font-medium">
+                        <Calendar className="mr-1 h-4 w-4" /> Expiry:
                       </span>
                       <span className="col-span-2">
                         {new Date(
@@ -275,11 +262,9 @@ export default function MedicineList() {
                   </div>
 
                   {/* Indication */}
-                  <div className="mt-4 border-t border-gray-100 pt-4">
-                    <h3 className="mb-1 text-sm font-medium text-gray-500">
-                      Indication:
-                    </h3>
-                    <p className="line-clamp-2 text-sm text-gray-700">
+                  <div className="mt-4 flex border-t pt-4">
+                    <h3 className="mb-1 text-sm font-medium">Indication: </h3>
+                    <p className="line-clamp-2 text-sm">
                       {medicine.indication}
                     </p>
                   </div>
@@ -289,13 +274,13 @@ export default function MedicineList() {
           </div>
 
           {/* Pagination controls */}
-          <div className="mt-6 flex items-center justify-between rounded-lg bg-white p-4 shadow-sm">
+          <div className="card mt-6 flex items-center justify-between rounded-lg p-4 shadow-sm">
             <button
               onClick={goToPreviousPage}
               disabled={currentPage === 1}
               className={`flex items-center px-4 py-2 text-sm font-medium rounded-md ${
                 currentPage === 1
-                  ? "text-gray-400 cursor-not-allowed"
+                  ? " cursor-not-allowed"
                   : "text-blue-600 hover:bg-blue-50"
               }`}
             >
@@ -303,7 +288,7 @@ export default function MedicineList() {
               Previous
             </button>
 
-            <span className="text-sm text-gray-700">
+            <span className="text-sm">
               Page <span className="font-medium">{currentPage}</span> of{" "}
               <span className="font-medium">{totalPages || 1}</span>
             </span>
@@ -313,7 +298,7 @@ export default function MedicineList() {
               disabled={currentPage === totalPages || totalPages === 0}
               className={`flex items-center px-4 py-2 text-sm font-medium rounded-md ${
                 currentPage === totalPages || totalPages === 0
-                  ? "text-gray-400 cursor-not-allowed"
+                  ? " cursor-not-allowed"
                   : "text-blue-600 hover:bg-blue-50"
               }`}
             >

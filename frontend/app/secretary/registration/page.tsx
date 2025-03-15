@@ -1,9 +1,11 @@
 "use client";
 
+import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import userInfo from "@/components/hooks/userRole";
 
 export default function Page() {
   const router = useRouter();
@@ -23,8 +25,23 @@ export default function Page() {
   });
   const [showModal, setShowModal] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const user = userInfo();
+  const userRole = user?.role;
 
-  // Handle input changes
+  if (userRole && !["secretary"].includes(userRole)) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <p className="text-xl font-bold text-red-600">
+          You are not authorized to access this page.
+        </p>
+      </div>
+    );
+  }
+  if (!userRole) {
+    return <div>Loading...</div>;
+  }
+
+  // Handle Input changes
   const handleChange = (
     event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
@@ -95,20 +112,18 @@ export default function Page() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen py-8">
       <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
         <div className="mb-8 flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-gray-900">
-            Patient Registration
-          </h1>
-          <Button className="bg-blue-600 text-white hover:bg-blue-700">
-            <Link href="/admin/old-patient/old-patient-registration">
+          <h1 className="text-2xl font-bold">Patient Registration</h1>
+          <Button>
+            <Link href="/secretary/old-patient/old-patient-registration">
               Existing Patient
             </Link>
           </Button>
         </div>
 
-        <div className="overflow-hidden rounded-xl bg-white shadow">
+        <div className="card overflow-hidden p-0">
           <div className="border-b border-gray-200 bg-blue-50 px-6 py-4">
             <h2 className="text-lg font-medium text-blue-800">
               New Patient Information
@@ -121,23 +136,22 @@ export default function Page() {
           <form onSubmit={handleSubmit} className="p-6">
             {/* Personal Information Section */}
             <div className="mb-8">
-              <h3 className="mb-4 text-base font-semibold text-gray-700">
+              <h3 className="mb-4 text-base font-semibold">
                 Personal Information
               </h3>
               <div className="grid gap-6 md:grid-cols-3">
                 <div>
                   <label
                     htmlFor="first_name"
-                    className="mb-2 block text-sm font-medium text-gray-700"
+                    className="mb-2 block text-sm font-medium"
                   >
                     First Name <span className="text-red-500">*</span>
                   </label>
-                  <input
+                  <Input
                     type="text"
                     id="first_name"
                     value={formData.first_name}
                     onChange={handleChange}
-                    className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-3 text-sm text-gray-900 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:ring-opacity-30"
                     placeholder="Enter first name"
                     required
                   />
@@ -145,32 +159,30 @@ export default function Page() {
                 <div>
                   <label
                     htmlFor="middle_name"
-                    className="mb-2 block text-sm font-medium text-gray-700"
+                    className="mb-2 block text-sm font-medium"
                   >
                     Middle Name
                   </label>
-                  <input
+                  <Input
                     type="text"
                     id="middle_name"
                     value={formData.middle_name}
                     onChange={handleChange}
-                    className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-3 text-sm text-gray-900 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:ring-opacity-30"
                     placeholder="Enter middle name"
                   />
                 </div>
                 <div>
                   <label
                     htmlFor="last_name"
-                    className="mb-2 block text-sm font-medium text-gray-700"
+                    className="mb-2 block text-sm font-medium"
                   >
                     Last Name <span className="text-red-500">*</span>
                   </label>
-                  <input
+                  <Input
                     type="text"
                     id="last_name"
                     value={formData.last_name}
                     onChange={handleChange}
-                    className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-3 text-sm text-gray-900 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:ring-opacity-30"
                     placeholder="Enter last name"
                     required
                   />
@@ -178,32 +190,30 @@ export default function Page() {
                 <div>
                   <label
                     htmlFor="date_of_birth"
-                    className="mb-2 block text-sm font-medium text-gray-700"
+                    className="mb-2 block text-sm font-medium"
                   >
                     Date of Birth <span className="text-red-500">*</span>
                   </label>
-                  <input
+                  <Input
                     type="date"
                     id="date_of_birth"
                     value={formData.date_of_birth}
                     onChange={handleChange}
-                    className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-3 text-sm text-gray-900 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:ring-opacity-30"
                     required
                   />
                 </div>
                 <div>
                   <label
                     htmlFor="phone_number"
-                    className="mb-2 block text-sm font-medium text-gray-700"
+                    className="mb-2 block text-sm font-medium"
                   >
                     Phone Number <span className="text-red-500">*</span>
                   </label>
-                  <input
+                  <Input
                     type="tel"
                     id="phone_number"
                     value={formData.phone_number}
                     onChange={handleChange}
-                    className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-3 text-sm text-gray-900 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:ring-opacity-30"
                     placeholder="e.g., 09123456789"
                     required
                   />
@@ -211,16 +221,15 @@ export default function Page() {
                 <div>
                   <label
                     htmlFor="email"
-                    className="mb-2 block text-sm font-medium text-gray-700"
+                    className="mb-2 block text-sm font-medium"
                   >
                     Email Address <span className="text-red-500">*</span>
                   </label>
-                  <input
+                  <Input
                     type="email"
                     id="email"
                     value={formData.email}
                     onChange={handleChange}
-                    className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-3 text-sm text-gray-900 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:ring-opacity-30"
                     placeholder="email@example.com"
                     required
                   />
@@ -230,58 +239,59 @@ export default function Page() {
 
             {/* Address Information Section */}
             <div className="mb-8">
-              <h3 className="mb-4 text-base font-semibold text-gray-700">
+              <h3 className="mb-4 text-base font-semibold">
                 Address Information
               </h3>
-              <div className="grid gap-6 md:grid-cols-3">
+              <div className="">
                 <div className="md:col-span-3">
                   <label
                     htmlFor="street_address"
-                    className="mb-2 block text-sm font-medium text-gray-700"
+                    className="mb-2 block text-sm font-medium"
                   >
                     Street Address <span className="text-red-500">*</span>
                   </label>
-                  <input
+                  <Input
                     type="text"
                     id="street_address"
                     value={formData.street_address}
                     onChange={handleChange}
-                    className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-3 text-sm text-gray-900 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:ring-opacity-30"
                     placeholder="House/Building No., Street Name"
                     required
                   />
                 </div>
-                <div>
+              </div>
+              <div className="flex flex-col gap-4 pt-4 sm:flex-row">
+                <div className="w-full">
                   <label
                     htmlFor="barangay"
-                    className="mb-2 block text-sm font-medium text-gray-700"
+                    className="mb-2 block text-sm font-medium"
                   >
                     Barangay <span className="text-red-500">*</span>
                   </label>
-                  <input
+                  <Input
                     type="text"
                     id="barangay"
                     value={formData.barangay}
                     onChange={handleChange}
-                    className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-3 text-sm text-gray-900 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:ring-opacity-30"
                     placeholder="Enter barangay"
+                    className="w-full"
                     required
                   />
                 </div>
-                <div>
+                <div className="w-full">
                   <label
                     htmlFor="municipal_city"
-                    className="mb-2 block text-sm font-medium text-gray-700"
+                    className="mb-2 block text-sm font-medium"
                   >
                     Municipal/City <span className="text-red-500">*</span>
                   </label>
-                  <input
+                  <Input
                     type="text"
                     id="municipal_city"
                     value={formData.municipal_city}
                     onChange={handleChange}
-                    className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-3 text-sm text-gray-900 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:ring-opacity-30"
                     placeholder="Enter municipal/city"
+                    className="w-full"
                     required
                   />
                 </div>
@@ -290,22 +300,22 @@ export default function Page() {
 
             {/* Medical Information Section */}
             <div className="mb-8">
-              <h3 className="mb-4 text-base font-semibold text-gray-700">
+              <h3 className="mb-4 text-base font-semibold">
                 Medical Information
               </h3>
               <div className="grid gap-6 md:grid-cols-2">
                 <div>
                   <label
                     htmlFor="complaint"
-                    className="mb-2 block text-sm font-medium text-gray-700"
+                    className="mb-2 block text-sm font-medium"
                   >
                     Type of Complaint <span className="text-red-500">*</span>
                   </label>
                   <select
                     id="complaint"
                     value={formData.complaint}
+                    className="card block w-full rounded-lg p-3 text-sm"
                     onChange={handleChange}
-                    className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-3 text-sm text-gray-900 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:ring-opacity-30"
                     required
                   >
                     <option value="General Illness">General Illness</option>
@@ -317,15 +327,15 @@ export default function Page() {
                 <div>
                   <label
                     htmlFor="priority_level"
-                    className="mb-2 block text-sm font-medium text-gray-700"
+                    className="mb-2 block text-sm font-medium"
                   >
                     Priority Level <span className="text-red-500">*</span>
                   </label>
                   <select
                     id="priority_level"
                     value={formData.priority_level}
+                    className="card block w-full rounded-lg p-3 text-sm"
                     onChange={handleChange}
-                    className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-3 text-sm text-gray-900 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:ring-opacity-30"
                     required
                   >
                     <option value="Regular">Regular</option>
@@ -338,10 +348,10 @@ export default function Page() {
             </div>
 
             {/* Terms and Conditions */}
-            <div className="mb-8 rounded-lg bg-gray-50 p-4">
+            <div className="mb-8 rounded-lg p-4">
               <div className="flex items-start">
                 <div className="flex h-5 items-center">
-                  <input
+                  <Input
                     id="agree_terms"
                     type="checkbox"
                     checked={formData.agree_terms}
@@ -351,14 +361,11 @@ export default function Page() {
                   />
                 </div>
                 <div className="ml-3 text-sm">
-                  <label
-                    htmlFor="agree_terms"
-                    className="font-medium text-gray-700"
-                  >
+                  <label htmlFor="agree_terms" className="font-medium">
                     I agree to the terms and conditions{" "}
                     <span className="text-red-500">*</span>
                   </label>
-                  <p className="mt-1 text-xs text-gray-500">
+                  <p className="mt-1 text-xs">
                     By agreeing, you consent to the collection and processing of
                     your personal information for medical purposes.
                   </p>
@@ -367,13 +374,9 @@ export default function Page() {
             </div>
 
             <div className="flex justify-end">
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className="rounded-lg bg-blue-600 px-6 py-3 text-center text-sm font-medium text-white shadow-md transition-all hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-70"
-              >
+              <Button type="submit" disabled={isSubmitting}>
                 {isSubmitting ? "Registering..." : "Register Patient"}
-              </button>
+              </Button>
             </div>
           </form>
         </div>
@@ -382,7 +385,7 @@ export default function Page() {
       {/* Success Modal */}
       {showModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
+          <div className="card w-full max-w-md rounded-lg p-6 shadow-xl">
             <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-green-100 text-green-600">
               <svg
                 className="h-6 w-6"
@@ -399,25 +402,24 @@ export default function Page() {
                 ></path>
               </svg>
             </div>
-            <h2 className="mb-2 text-xl font-bold text-gray-900">
-              Registration Successful
-            </h2>
-            <p className="mb-6 text-sm text-gray-600">
+            <h2 className="mb-2 text-xl font-bold">Registration Successful</h2>
+            <p className="mb-6 text-sm">
               The patient has been successfully registered in the system.
             </p>
             <div className="flex justify-between space-x-4">
-              <button
-                className="w-full rounded-lg border border-blue-600 bg-white px-4 py-2 text-sm font-medium text-blue-600 hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+              <Button
+                variant="outline"
                 onClick={() => setShowModal(false)}
+                className="w-full border border-blue-900 text-blue-900"
               >
                 Add New Patient
-              </button>
-              <button
-                className="w-full rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                onClick={() => router.push("/admin/patient-registration-queue")}
+              </Button>
+              <Button
+                onClick={() => router.push("/secretary/registration-queue")}
+                className="w-full"
               >
                 View Queue
-              </button>
+              </Button>
             </div>
           </div>
         </div>

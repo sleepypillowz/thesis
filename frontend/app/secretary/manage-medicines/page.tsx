@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Trash, Edit, ChevronLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -25,15 +25,49 @@ interface Medicine {
 
 export default function PrescribedMedicines() {
   const router = useRouter();
-  const [medicines, setMedicines] = useState<Medicine[]>([
-    { id: 1, name: "Paracetamol", dosage: "500mg", quantity: 45, taken: 0 },
-    { id: 2, name: "Ibuprofen", dosage: "200mg", quantity: 30, taken: 0 },
-    { id: 3, name: "Amoxicillin", dosage: "250mg", quantity: 20, taken: 0 },
-  ]);
+  const [medicines, setMedicines] = useState<Medicine[]>([]);
   const [selectedMedicine, setSelectedMedicine] = useState<Medicine | null>(
     null
   );
   const [inputTaken, setInputTaken] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  // Fetch prescribed medicines from the backend
+  useEffect(() => {
+    const fetchMedicines = async () => {
+      try {
+        const res = await fetch(
+          " http://localhost:8000/medicine-prescription-display/",
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        if (!res.ok) {
+          throw new Error("Failed to fetch prescribed medicines");
+        }
+
+        const data = await res.json();
+        const formattedData = data.map((item: any) => ({
+          id: item.id,
+          name: item.medication.name,
+          dosage: item.medication.dosage,
+          quantity: item.quantity,
+          taken: 0, // Default to 0, user will update this
+        }));
+
+        setMedicines(formattedData);
+      } catch {
+        toast.error("Error fetching medicines");
+      }
+    };
+
+    fetchMedicines();
+  }, []);
 
   const handleEdit = (medicine: Medicine) => {
     setSelectedMedicine(medicine);
@@ -58,16 +92,45 @@ export default function PrescribedMedicines() {
     toast.success("Medicine removed");
   };
 
-  const handleManageAll = () => {
-    if (window.confirm("Are you sure you want to update all stocks?")) {
-      setMedicines((prev) =>
-        prev.map((med) => ({
-          ...med,
-          quantity: Math.max(0, med.quantity - med.taken),
-          taken: 0,
-        }))
+  const handleManageAll = async () => {
+    if (!window.confirm("Are you sure you want to confirm all updates?"))
+      return;
+
+    setLoading(true);
+    try {
+      const payload = {
+        prescriptions: medicines.map((med) => ({
+          id: med.id,
+          confirmed: med.taken,
+        })),
+      };
+
+      const res = await fetch(
+        "http://localhost:8000/medicine/confirm-dispense/",
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+        }
       );
+
+      const responseData = await res.json();
+
+      if (!res.ok) {
+        throw new Error(
+          responseData.errors?.map((e: any) => e.error).join(", ")
+        );
+      }
+
       toast.success("All stocks updated successfully");
+      setMedicines((prev) => prev.map((med) => ({ ...med, taken: 0 })));
+    } catch {
+      toast.error("Failed to update stocks");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -200,8 +263,9 @@ export default function PrescribedMedicines() {
         <Button
           onClick={handleManageAll}
           className="bg-indigo-600 px-8 py-4 text-lg hover:bg-indigo-700"
+          disabled={loading}
         >
-          Confirm All Updates
+          {loading ? "Updating..." : "Confirm All Updates"}
         </Button>
       </div>
     </div>
