@@ -1,3 +1,4 @@
+from datetime import date
 from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
 from rest_framework import status
@@ -12,7 +13,10 @@ from rest_framework.views import APIView
 from rest_framework import status
 
 from patient.models import Diagnosis, Prescription
-from user.permissions import IsMedicalStaff, isDoctor, isSecretary, isAdmin
+from medicine.models import Medicine
+
+from user.permissions import IsMedicalStaff, isDoctor, isSecretary
+
 
 # display patient registration queue
 class PatientRegistrationQueue(APIView):
@@ -333,26 +337,24 @@ class PreliminaryAssessmentForm(APIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 class PatientTreatmentForm(APIView):
     permission_classes = [isDoctor]
+    
     def post(self, request, patient_id, queue_number):
-        # Fetch the patient and queue using the correct field for the patient
         patient = get_object_or_404(Patient, patient_id=patient_id)        
-        # Extract data from request
+        
         treatment_notes = request.data.get("treatment_notes", "")
         diagnoses_data = request.data.get("diagnoses", [])
         prescriptions_data = request.data.get("prescriptions", [])
         
-        # Create Treatment entry (assuming Treatment no longer expects a 'queue' field)
+
         treatment = Treatment.objects.create(
             patient=patient,
             treatment_notes=treatment_notes
         )
         queue_entry = TemporaryStorageQueue.objects.get(patient=patient, queue_number=queue_number)
 
-        # Update the status of the queue entry to "Being Assessed"
         queue_entry.status = 'Completed'
         queue_entry.save()
         
-        # Create Diagnosis entries without passing 'treatment', then add them to treatment.diagnoses
         for diag in diagnoses_data:
             diagnosis, _ = Diagnosis.objects.get_or_create(
                 patient=patient,
@@ -361,17 +363,59 @@ class PatientTreatmentForm(APIView):
                 diagnosis_date=diag["diagnosis_date"]
             )
             treatment.diagnoses.add(diagnosis)
-        
-        # Create Prescription entries without passing 'treatment', then add them to treatment.prescriptions
+            
         for presc in prescriptions_data:
-            prescription, _ = Prescription.objects.get_or_create(
-                patient=patient,
-                medication=presc["medication"],
-                dosage=presc["dosage"],
-                frequency=presc["frequency"],
-                start_date=presc["start_date"],
-                end_date=presc["end_date"]
-            )
-            treatment.prescriptions.add(prescription)
-        
+            print(f"Debug: Prescription data received: {presc}")
+            try:
+                # Check if a unique medicine id was provided
+                if "medicine_id" in presc and presc["medicine_id"].strip() != "":
+                    # Convert the id to integer if it's coming as a string
+                    med_id = int(presc["medicine_id"])
+                    print(f"Debug: Looking for medicine with ID: {med_id}")
+                    medicine = Medicine.objects.get(id=med_id)
+                else:
+                    # Standardize and debug the medicine name
+                    medicine_name = presc["medication"].strip()
+                    print(f"Debug: Looking for medicine by name: '{medicine_name}'")
+                    
+                    # Use case-insensitive filtering to avoid issues with casing/whitespace
+                    medicines = Medicine.objects.filter(name__iexact=medicine_name)
+                    if not medicines.exists():
+                        print(f"Debug: Medicine '{medicine_name}' not found!")
+                        return Response({"error": f"Medicine '{medicine_name}' not found!"}, status=status.HTTP_400_BAD_REQUEST)
+                    if medicines.count() > 1:
+                        print(f"Debug: Multiple records found for '{medicine_name}'. Count: {medicines.count()}. Using the first one.")
+                    medicine = medicines.first()
+                
+                print(f"Debug: Retrieved Medicine: {medicine.name} with expiration: {medicine.expiration_date}")
+                
+                # Check if the medicine is expired
+                if medicine.expiration_date and medicine.expiration_date < date.today():
+                    print(f"Debug: Medicine {medicine.name} is expired! Expiration: {medicine.expiration_date}, Today's date: {date.today()}")
+                    return Response({"error": f"{medicine.name} is expired!"}, status=status.HTTP_400_BAD_REQUEST)
+                
+                # Attempt to create or retrieve a prescription
+                prescription, created = Prescription.objects.get_or_create(
+                    patient=patient,
+                    medication=medicine,
+                    dosage=presc["dosage"],
+                    frequency=presc["frequency"],
+                    quantity=presc["quantity"],
+                    start_date=presc["start_date"],
+                    end_date=presc["end_date"]
+                )
+                if created:
+                    print(f"Debug: Created new prescription for medicine {medicine.name}.")
+                else:
+                    print(f"Debug: Existing prescription found for medicine {medicine.name}.")
+                
+                # Associate the prescription with the treatment
+                treatment.prescriptions.add(prescription)
+            except Exception as e:
+                print(f"Debug: Exception occurred while processing prescription: {e}")
+                return Response({"error": "An error occurred while processing the prescription."}, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
         return Response({"message": "Treatment submitted successfully"}, status=status.HTTP_201_CREATED)

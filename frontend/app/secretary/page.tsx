@@ -7,30 +7,41 @@ import {
 import { DataTable } from "@/components/ui/data-table";
 import { VisitorsChart } from "@/components/organisms/visitors-chart";
 import { CommonDiseasesChart } from "@/components/organisms/common-diseases-chart";
-
 import StatsCard from "@/components/organisms/stats-cards";
+import userInfo from "@/components/hooks/userRole";
 
 export default function Page() {
   const [patients, setPatients] = useState<Patient[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
-
+  const user = userInfo();
   useEffect(() => {
-    // Fetch patient data from the Django API or Supabase
+    // Fetch patient data from the Django API or Supabase with the token
     const fetchPatients = async () => {
       try {
-        const response = await fetch("http://127.0.0.1:8000/patients/");
+        const accessToken = localStorage.getItem("access");
+        if (!accessToken) {
+          console.error("No access token found");
+          return;
+        }
+        const response = await fetch("http://127.0.0.1:8000/patients/", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data: Patient[] = await response.json();
-        setPatients(data); // Set the fetched patient data
+        setPatients(data);
       } catch (error) {
         console.error("Error fetching patients:", error);
       }
     };
 
     fetchPatients();
-  }, []); // Empty dependency array, meaning this runs only once on mount.
+  }, []);
 
   // Filter patients based on the search term
   const filteredPatients = patients.filter((patient) => {
@@ -39,10 +50,14 @@ export default function Page() {
     }`.toLowerCase();
     return fullName.includes(searchTerm.toLowerCase());
   });
+
   return (
     <div className="mb-4 space-y-4 text-center md:text-left lg:m-0">
       <div className="px-6 py-4">
-        <p className="text-2xl font-bold">Good Day, Test</p>
+        <p className="text-2xl font-bold">
+          Good Day, <span className="text-blue-500">{user?.first_name}</span>
+        </p>
+
         <p className="text-sm">
           Check out the latest updates from the past 7 days!
         </p>
@@ -69,10 +84,7 @@ export default function Page() {
           placeholder="Search patient name..."
           className="mb-4 w-full rounded border border-gray-300 p-2"
         />
-        <DataTable
-          columns={columns}
-          data={filteredPatients} // Use the filtered patients data
-        />
+        <DataTable columns={columns} data={filteredPatients} />
       </div>
     </div>
   );

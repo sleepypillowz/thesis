@@ -29,7 +29,7 @@ POST http://127.0.0.1:8000/auth/jwt/create/
 Content-Type: application/json
 
 {
-  "email": "lanaroads@gmail.com",
+  "email": "secretaryaccount@gmail.com",
   "password": "nVmTfEkCFeB3APi"
 }
 
@@ -38,7 +38,7 @@ POST http://127.0.0.1:8000/auth/jwt/create/
 Content-Type: application/json
 
 {
-  "email": "johnnysince@gmail.com",
+  "email": "doctoraccount@gmail.com",
   "password": "passS83K54kMubrNZ7b"
 }
 
@@ -73,18 +73,9 @@ GET http://127.0.0.1:8000/patient/lab-results/UJXPBUCU
 Content-Type: application/json  
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ5MDU0MTU0LCJpYXQiOjE3NDEyNzgxNTQsImp0aSI6IjJlMTJlZDM2NWI4MDQ4MWFhMTNjODY0MjExZGYyNGQzIiwidXNlcl9pZCI6IjQiLCJpc19zdGFmZiI6ZmFsc2UsImlzX3N1cGVydXNlciI6ZmFsc2UsImVtYWlsIjoiam9obm55c2luY2VAZ21haWwuY29tIiwicm9sZSI6ImRvY3RvciIsImZpcnN0X25hbWUiOiJqb2hubnkifQ.fGID1s9OlHovd7uMFb2AjpqUIA-r9wgIwl09x-l36_E
 
+### list medicines
 
-{
-  "lab_result": {
-    "id": "52ICYY7B",
-    "image": "http://127.0.0.1:8000/media/lab_results/penis-fracture_v67ob09.png",
-    "uploaded_at": "2025-03-06T21:45:07.694946Z",
-    "submitted_by": {
-      "id": "QYAEMO1S",
-      "first_name": "Alice",
-      "last_name": "Smith",
-      "email": "alice.smith@example.com",
-      "role": "Secretary"
-    }
-  }
-}
+GET  http://127.0.0.1:8000/patient/patient-treatment-view-details/YCDDSXHJ
+Content-Type: application/json  
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ5NTkzOTg1LCJpYXQiOjE3NDE4MTc5ODUsImp0aSI6IjY2ODNkMjY1ODZhMzQ3MGI5YTQ2ZWQxNzlkMjYwYmVjIiwidXNlcl9pZCI6IjNTTTJNQVQ2IiwiaXNfc3RhZmYiOmZhbHNlLCJpc19zdXBlcnVzZXIiOmZhbHNlLCJlbWFpbCI6ImRvY3RvcmFjY291bnRAZ21haWwuY29tIiwicm9sZSI6ImRvY3RvciIsImZpcnN0X25hbWUiOiJEb2N0b3IifQ.RmRRmURWdqy8HJcBblhBpJYK-Pcvg-Gq4lsRtkgUPnE
+

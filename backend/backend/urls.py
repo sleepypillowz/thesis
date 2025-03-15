@@ -9,6 +9,7 @@ urlpatterns = [
     path('', include('patient.urls', namespace='patient')),
     path('', include('queueing.urls', namespace='queueing')),
     path('', include('user.urls', namespace='user')),
+    path('', include('medicine.urls', namespace='medicine')),
     path('auth/', include('djoser.urls')),         # Djoser endpoints for user registration, activation, etc.
     path('auth/', include('djoser.urls.jwt')), 
 ]

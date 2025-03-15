@@ -20,7 +20,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { NavUser } from "../../molecules/nav-user";
+import { NavUser } from "@/components/molecules/nav-user";
 import Image from "next/image";
 import {
   Collapsible,
@@ -37,7 +37,7 @@ const menu_items = [
   },
   {
     title: "Patient Portal",
-    url: "/doctor/portal",
+    url: "/doctor/patient-portal",
     icon: LayoutDashboard,
   },
   {
@@ -55,22 +55,22 @@ const menu_items = [
 const patient_items = [
   {
     title: "Medical Records",
-    url: "/doctor/medical-records",
+    url: "/doctor/patient-medical-records",
     icon: ClipboardPlus,
   },
   {
     title: "Appointments",
-    url: "/doctor/appointments",
+    url: "/doctor/patient-appointments",
     icon: Calendar,
   },
   {
     title: "Treatment",
-    url: "/doctor/treatment",
+    url: "/doctor/patient-treatment",
     icon: Bandage,
   },
   {
     title: "Treatment Queue",
-    url: "/doctor/treatment-queue",
+    url: "/doctor/patient-treatment-queue",
     icon: Bandage,
   },
 ];

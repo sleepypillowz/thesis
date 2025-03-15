@@ -1,8 +1,4 @@
-"use client";
-
-import { useEffect, useState } from "react";
-import { supabase } from "@/config/supabase";
-import { useRouter } from "next/navigation";
+"use client"
 
 import {
   BadgeCheck,
@@ -11,9 +7,13 @@ import {
   CreditCard,
   LogOut,
   Sparkles,
-} from "lucide-react";
+} from "lucide-react"
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@/components/ui/avatar"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -22,68 +22,23 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from "@/components/ui/dropdown-menu"
 import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-} from "@/components/ui/sidebar";
+} from "@/components/ui/sidebar"
 
 export function NavUser({
-  user: initialUser,
+  user,
 }: {
-  user: { name?: string; email: string };
-}) {
-  const { isMobile } = useSidebar();
-  const [user, setUser] = useState<{ email: string; role: string }>({
-    email: initialUser.email ?? "",
-    role: "patient",
-  });
-  const router = useRouter();
-
-  useEffect(() => {
-    const fetchUser = async () => {
-      const { data: userData, error: userError } =
-        await supabase.auth.getUser();
-
-      if (userError) {
-        console.error("Error fetching user:", userError.message);
-        return;
-      }
-
-      if (userData?.user) {
-        const userEmail = userData.user.email ?? ""; // Ensure email is always a string
-
-        const { data, error } = await supabase
-          .from("profiles")
-          .select("role")
-          .eq("email", userEmail)
-          .single();
-
-        if (error) {
-          console.error("Error fetching user role:", error.message);
-          return;
-        }
-
-        setUser({
-          email: userEmail,
-          role: data?.role ?? "patient", // Ensure role is always a string
-        });
-      }
-    };
-
-    fetchUser();
-  }, []);
-
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-    router.push("/login"); // Redirect to login page after logout
-  };
-
-  if (!user) {
-    return null; // Don't render until user data is loaded
+  user: {
+    name: string
+    email: string
   }
+}) {
+  const { isMobile } = useSidebar()
 
   return (
     <SidebarMenu>
@@ -96,15 +51,11 @@ export function NavUser({
             >
               <Avatar>
                 <AvatarImage src="https://github.com/shadcn.png" />
-                <AvatarFallback>
-                  {user.email.charAt(0).toUpperCase()}
-                </AvatarFallback>
+                <AvatarFallback>CN</AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
+                <span className="truncate font-semibold">{user.name}</span>
                 <span className="truncate text-xs">{user.email}</span>
-                <span className="truncate text-xs text-gray-500">
-                  {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
-                </span>
               </div>
               <ChevronsUpDown className="ml-auto size-4" />
             </SidebarMenuButton>
@@ -119,15 +70,11 @@ export function NavUser({
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar>
                   <AvatarImage src="https://github.com/shadcn.png" />
-                  <AvatarFallback>
-                    {user.email.charAt(0).toUpperCase()}
-                  </AvatarFallback>
+                  <AvatarFallback>CN</AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
+                  <span className="truncate font-semibold">{user.name}</span>
                   <span className="truncate text-xs">{user.email}</span>
-                  <span className="truncate text-xs text-gray-500">
-                    {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
-                  </span>
                 </div>
               </div>
             </DropdownMenuLabel>
@@ -154,7 +101,7 @@ export function NavUser({
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={handleLogout} className="cursor-pointer">
+            <DropdownMenuItem>
               <LogOut />
               Log out
             </DropdownMenuItem>
@@ -162,5 +109,5 @@ export function NavUser({
         </DropdownMenu>
       </SidebarMenuItem>
     </SidebarMenu>
-  );
+  )
 }

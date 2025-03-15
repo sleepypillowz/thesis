@@ -2,10 +2,10 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from .serializers import UserAccountSerializer
-from .permissions import IsMedicalStaff
+from .permissions import isAdmin
 
 class UserRegistration(APIView):
-    permission_classes = [IsMedicalStaff]
+    permission_classes = [isAdmin]
     def post(self, request):
         # Debug: Print the incoming request data
         print("DEBUG: Received request data:", request.data)

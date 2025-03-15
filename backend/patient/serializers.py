@@ -10,6 +10,7 @@ from .models import Patient  # Your Patient model
 from datetime import datetime, date
 from rest_framework import serializers
 from .models import Patient  # Adjust as needed
+from medicine.serializers import MedicineSerializer
 
 class PatientSerializer(serializers.Serializer):
     patient_id = serializers.CharField(max_length=8)
@@ -168,9 +169,11 @@ class DiagnosisSerializer(serializers.ModelSerializer):
         fields = ['diagnosis_code', 'diagnosis_description', 'diagnosis_date']
 
 class PrescriptionSerializer(serializers.ModelSerializer):
+    medication = MedicineSerializer(read_only=True)
+    medicine_id = serializers.IntegerField(write_only=True)
     class Meta:
         model = Prescription
-        fields = ['medication', 'dosage', 'frequency', 'start_date', 'end_date']
+        fields = ['id', 'medicine_id', 'medication', 'dosage', 'frequency', 'quantity', 'start_date', 'end_date']
 
 
 class UserAccountReadSerializer(serializers.Serializer):

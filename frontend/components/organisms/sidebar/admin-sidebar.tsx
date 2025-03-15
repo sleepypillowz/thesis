@@ -13,7 +13,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { NavUser } from "../../molecules/nav-user";
+import { NavUser } from "@/components/molecules/nav-user";
 import Image from "next/image";
 
 import Link from "next/link";

@@ -6,7 +6,7 @@ import {
 import { AppSidebar } from "@/components/organisms/sidebar/doctor-sidebar";
 import Header from "@/components/organisms/header";
 
-export default function DoctorLayout({
+export default function Page({
   children,
 }: Readonly<{
   children: React.ReactNode;

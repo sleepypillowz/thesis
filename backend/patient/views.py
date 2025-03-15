@@ -308,7 +308,7 @@ class TreatmentDetailView(APIView):
             treatment_response = supabase.table("queueing_treatment").select(
                 "id, treatment_notes, created_at, updated_at, patient_id, "
                 "queueing_treatment_diagnoses(id, treatment_id, diagnosis_id, patient_diagnosis(*)), "
-                "queueing_treatment_prescriptions(id, treatment_id, prescription_id, patient_prescription(*))"
+                "queueing_treatment_prescriptions(id, treatment_id, prescription_id, patient_prescription(*, medicine_medicine(id, name)))"
             ).eq("patient_id", patient_id).order("created_at", desc=True).execute()
 
             treatments = treatment_response.data
@@ -338,9 +338,12 @@ class TreatmentDetailView(APIView):
                             if d.get("patient_diagnosis")
                         ],
                         "prescriptions": [
-                            p["patient_prescription"]
+                            {
+                                **p["patient_prescription"],
+                                "medication": p["patient_prescription"].pop("medicine_medicine")
+                            }
                             for p in item.get("queueing_treatment_prescriptions", [])
-                            if p.get("patient_prescription")
+                                if p.get("patient_prescription")
                         ]
                     }
                     transformed_treatments.append(transformed)

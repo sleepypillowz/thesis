@@ -1,6 +1,7 @@
 "use client";
 import { useRouter, useParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import userRole from "@/components/hooks/userRole";
 import { FileText, Eye, Download } from 'lucide-react';
 interface Diagnosis {
   diagnosis_code: string;
@@ -9,9 +10,12 @@ interface Diagnosis {
 }
 
 interface Prescription {
-  medication: string;
+  medication: {
+    name: string
+  };
   dosage: string;
   frequency: string;
+  quantity: number;
   start_date: string;
   end_date: string;
 }
@@ -67,6 +71,8 @@ export default function TreatmentDetailsPage() {
   const [labResults, setLabResults] = useState<LabResult[]>([]);
   const [labLoading, setLabLoading] = useState(false);
   const [labError, setLabError] = useState<string | null>(null);
+  const role = userRole();
+  
   const getFileNameFromUrl = (url: string) => {
     try {
       const parsed = new URL(url);
@@ -224,16 +230,19 @@ export default function TreatmentDetailsPage() {
       day: "numeric",
     });
   };
+  if (!role) {
+    return <div>Loading...</div>;
+  }
   return (
     <div className="min-h-screen bg-gray-50 p-4 md:p-6">
-      <div className="mx-auto max-w-6xl">
+      <div className="max-w-6xl mx-auto">
         <button
           onClick={() => router.back()}
-          className="mb-6 flex items-center font-medium text-gray-600 transition-colors hover:text-gray-900"
+          className="mb-6 flex items-center text-gray-600 hover:text-gray-900 transition-colors font-medium"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            className="mr-2 h-5 w-5"
+            className="h-5 w-5 mr-2"
             viewBox="0 0 20 20"
             fill="currentColor"
           >
@@ -246,18 +255,18 @@ export default function TreatmentDetailsPage() {
           Back
         </button>
 
-        <div className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
           {/* Patient Information Header */}
           {treatmentDetails && !isLoading && !error && (
-            <div className="bg-gradient-to-r from-blue-600 to-blue-500 p-6 text-white md:p-8">
+            <div className="bg-gradient-to-r from-blue-600 to-blue-500 p-6 md:p-8 text-white">
               <div className="flex flex-col md:flex-row md:items-center md:justify-between">
                 <div className="flex items-center">
-                  <div className="mr-4 flex h-12 w-12 items-center justify-center rounded-full bg-white text-xl font-bold text-blue-600">
+                  <div className="h-12 w-12 bg-white rounded-full flex items-center justify-center text-blue-600 font-bold text-xl mr-4">
                     {treatmentDetails.patient_info.first_name.charAt(0)}
                     {treatmentDetails.patient_info.last_name.charAt(0)}
                   </div>
                   <div>
-                    <h1 className="text-2xl font-bold md:text-3xl">
+                    <h1 className="text-2xl md:text-3xl font-bold">
                       {treatmentDetails.patient_info.first_name}{" "}
                       {treatmentDetails.patient_info.middle_name &&
                         `${treatmentDetails.patient_info.middle_name.charAt(
@@ -265,11 +274,11 @@ export default function TreatmentDetailsPage() {
                         )}. `}
                       {treatmentDetails.patient_info.last_name}
                     </h1>
-                    <div className="mt-1 flex flex-col text-sm text-blue-100 sm:flex-row sm:items-center">
+                    <div className="mt-1 flex flex-col sm:flex-row sm:items-center text-blue-100 text-sm">
                       <span className="flex items-center">
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
-                          className="mr-1 h-4 w-4"
+                          className="h-4 w-4 mr-1"
                           fill="none"
                           viewBox="0 0 24 24"
                           stroke="currentColor"
@@ -283,10 +292,10 @@ export default function TreatmentDetailsPage() {
                         </svg>
                         {treatmentDetails.patient_info.email}
                       </span>
-                      <span className="mt-1 flex items-center sm:ml-4 sm:mt-0">
+                      <span className="sm:ml-4 mt-1 sm:mt-0 flex items-center">
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
-                          className="mr-1 h-4 w-4"
+                          className="h-4 w-4 mr-1"
                           fill="none"
                           viewBox="0 0 24 24"
                           stroke="currentColor"
@@ -304,10 +313,10 @@ export default function TreatmentDetailsPage() {
                   </div>
                 </div>
                 <div className="mt-4 md:mt-0">
-                  <span className="inline-flex items-center rounded-full bg-white px-3 py-1 text-sm font-medium text-blue-700">
+                  <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-white text-blue-700">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
-                      className="mr-1 h-4 w-4"
+                      className="h-4 w-4 mr-1"
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"
@@ -327,7 +336,7 @@ export default function TreatmentDetailsPage() {
           )}
 
           {/* Treatment Title Section */}
-          <div className="border-b border-gray-100 bg-white p-6 md:p-8">
+          <div className="bg-white p-6 md:p-8 border-b border-gray-100">
             <h2 className="text-xl font-bold text-gray-900">
               Treatment Records
             </h2>
@@ -370,17 +379,17 @@ export default function TreatmentDetailsPage() {
           </div>
 
           {isLoading ? (
-            <div className="flex h-64 items-center justify-center">
+            <div className="flex justify-center items-center h-64">
               <div className="relative">
-                <div className="h-12 w-12 animate-spin rounded-full border-4 border-gray-200 border-t-blue-600"></div>
-                <p className="mt-4 font-medium text-gray-600">
+                <div className="animate-spin rounded-full h-12 w-12 border-4 border-gray-200 border-t-blue-600"></div>
+                <p className="mt-4 text-gray-600 font-medium">
                   Loading treatment data...
                 </p>
               </div>
             </div>
           ) : error ? (
             <div className="p-8 text-center">
-              <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-full bg-red-50">
+              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-red-50 mb-4">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   className="h-8 w-8 text-red-500"
@@ -396,7 +405,7 @@ export default function TreatmentDetailsPage() {
                   />
                 </svg>
               </div>
-              <h2 className="mb-2 text-xl font-bold text-gray-800">Error</h2>
+              <h2 className="text-xl font-bold text-gray-800 mb-2">Error</h2>
               <p className="text-gray-600">{error}</p>
             </div>
           ) : (
@@ -406,7 +415,7 @@ export default function TreatmentDetailsPage() {
                 {activeTab === "latest" && (
                   <div className="space-y-8">
                     <div className="flex items-center">
-                      <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-blue-100">
+                      <div className="flex-shrink-0 h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           className="h-5 w-5 text-blue-600"
@@ -437,24 +446,24 @@ export default function TreatmentDetailsPage() {
                       </div>
                     </div>
 
-                    <div className="rounded-xl bg-gray-50 p-6">
-                      <h3 className="mb-4 text-lg font-medium text-gray-900">
+                    <div className="bg-gray-50 rounded-xl p-6">
+                      <h3 className="text-lg font-medium text-gray-900 mb-4">
                         Treatment Notes
                       </h3>
-                      <p className="rounded-lg border border-gray-100 bg-white p-4 text-gray-700 shadow-sm">
+                      <p className="text-gray-700 bg-white p-4 rounded-lg border border-gray-100 shadow-sm">
                       {treatmentDetails.recent_treatment?.treatment_notes || 
                       "No treatment notes available"}
                       </p>
                     </div>
 
-                    <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                       {/* Diagnoses Section */}
-                      <div className="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm">
-                        <div className="border-b border-gray-100 bg-blue-50 p-5">
+                      <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+                        <div className="p-5 border-b border-gray-100 bg-blue-50">
                           <div className="flex items-center">
                             <svg
                               xmlns="http://www.w3.org/2000/svg"
-                              className="mr-2 h-5 w-5 text-blue-600"
+                              className="h-5 w-5 text-blue-600 mr-2"
                               fill="none"
                               viewBox="0 0 24 24"
                               stroke="currentColor"
@@ -483,7 +492,7 @@ export default function TreatmentDetailsPage() {
                                     className="py-3"
                                   >
                                     <div className="flex items-start">
-                                      <span className="mr-3 inline-flex h-6 w-auto min-w-[3rem] items-center justify-center rounded-full bg-blue-100 px-2 text-xs font-medium text-blue-800">
+                                      <span className="inline-flex items-center justify-center h-6 w-auto min-w-[3rem] px-2 bg-blue-100 text-blue-800 text-xs font-medium rounded-full mr-3">
                                         {d.diagnosis_code}
                                       </span>
                                       <p className="text-gray-700">
@@ -491,7 +500,7 @@ export default function TreatmentDetailsPage() {
                                       </p>
                                     </div>
                                     {d.diagnosis_date && (
-                                      <p className="ml-12 mt-1 text-sm text-gray-500">
+                                      <p className="text-sm text-gray-500 mt-1 ml-12">
                                         Diagnosed:{" "}
                                         {formatDate(d.diagnosis_date)}
                                       </p>
@@ -501,10 +510,10 @@ export default function TreatmentDetailsPage() {
                               )}
                             </ul>
                           ) : (
-                            <div className="flex h-32 flex-col items-center justify-center text-gray-400">
+                            <div className="flex flex-col items-center justify-center h-32 text-gray-400">
                               <svg
                                 xmlns="http://www.w3.org/2000/svg"
-                                className="mb-2 h-10 w-10"
+                                className="h-10 w-10 mb-2"
                                 fill="none"
                                 viewBox="0 0 24 24"
                                 stroke="currentColor"
@@ -523,12 +532,12 @@ export default function TreatmentDetailsPage() {
                       </div>
 
                       {/* Prescriptions Section */}
-                      <div className="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm">
-                        <div className="border-b border-gray-100 bg-green-50 p-5">
+                      <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+                        <div className="p-5 border-b border-gray-100 bg-green-50">
                           <div className="flex items-center">
                             <svg
                               xmlns="http://www.w3.org/2000/svg"
-                              className="mr-2 h-5 w-5 text-green-600"
+                              className="h-5 w-5 text-green-600 mr-2"
                               fill="none"
                               viewBox="0 0 24 24"
                               stroke="currentColor"
@@ -556,7 +565,7 @@ export default function TreatmentDetailsPage() {
                                     className="py-3"
                                   >
                                     <div className="flex items-center">
-                                      <span className="mr-3 inline-flex h-8 w-8 items-center justify-center rounded-full bg-green-100 text-green-800">
+                                      <span className="inline-flex items-center justify-center h-8 w-8 bg-green-100 text-green-800 rounded-full mr-3">
                                         <svg
                                           xmlns="http://www.w3.org/2000/svg"
                                           className="h-4 w-4"
@@ -574,20 +583,23 @@ export default function TreatmentDetailsPage() {
                                       </span>
                                       <div className="flex-1">
                                         <h4 className="text-base font-medium text-gray-900">
-                                          {p.medication}
+                                          {p.medication?.name}
                                         </h4>
-                                        <div className="mt-2 flex flex-wrap gap-2">
-                                          <span className="inline-flex items-center rounded-full bg-green-50 px-2.5 py-0.5 text-xs font-medium text-green-700">
+                                        <div className="flex flex-wrap gap-2 mt-2">
+                                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-50 text-green-700">
                                             {p.dosage}
                                           </span>
-                                          <span className="inline-flex items-center rounded-full bg-green-50 px-2.5 py-0.5 text-xs font-medium text-green-700">
+                                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-50 text-green-700">
                                             {p.frequency}
+                                          </span>
+                                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-50 text-green-700">
+                                            {p.quantity}
                                           </span>
                                         </div>
                                       </div>
                                     </div>
                                     {(p.start_date || p.end_date) && (
-                                      <div className="ml-11 mt-2 text-sm text-gray-500">
+                                      <div className="mt-2 ml-11 text-sm text-gray-500">
                                         <div className="flex space-x-4">
                                           {p.start_date && (
                                             <span>
@@ -607,10 +619,10 @@ export default function TreatmentDetailsPage() {
                               )}
                             </ul>
                           ) : (
-                            <div className="flex h-32 flex-col items-center justify-center text-gray-400">
+                            <div className="flex flex-col items-center justify-center h-32 text-gray-400">
                               <svg
                                 xmlns="http://www.w3.org/2000/svg"
-                                className="mb-2 h-10 w-10"
+                                className="h-10 w-10 mb-2"
                                 fill="none"
                                 viewBox="0 0 24 24"
                                 stroke="currentColor"
@@ -645,15 +657,15 @@ export default function TreatmentDetailsPage() {
                             {treatmentDetails.previous_treatments.map(
                               (treatment) => (
                                 <div key={treatment.id} className="relative">
-                                  <div className="absolute -left-1 mt-1.5 h-10 w-10 rounded-full border-4 border-gray-200 bg-white"></div>
+                                  <div className="absolute -left-1 mt-1.5 h-10 w-10 rounded-full bg-white border-4 border-gray-200"></div>
                                   <div className="ml-14">
-                                    <div className="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm">
+                                    <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
                                       <div className="p-5">
-                                        <div className="mb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between">
-                                          <div className="mb-2 flex items-center sm:mb-0">
+                                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4">
+                                          <div className="flex items-center mb-2 sm:mb-0">
                                             <svg
                                               xmlns="http://www.w3.org/2000/svg"
-                                              className="mr-2 h-5 w-5 text-gray-400"
+                                              className="h-5 w-5 text-gray-400 mr-2"
                                               fill="none"
                                               viewBox="0 0 24 24"
                                               stroke="currentColor"
@@ -669,13 +681,13 @@ export default function TreatmentDetailsPage() {
                                               {formatDate(treatment.created_at)}
                                             </span>
                                           </div>
-                                          <span className="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-800">
+                                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
                                             ID: {treatment.id}
                                           </span>
                                         </div>
 
-                                        <div className="mb-4 rounded-lg bg-gray-50 p-4">
-                                          <h3 className="mb-2 font-medium text-gray-700">
+                                        <div className="bg-gray-50 rounded-lg p-4 mb-4">
+                                          <h3 className="font-medium text-gray-700 mb-2">
                                             Treatment Notes
                                           </h3>
                                           <p className="text-gray-600">
@@ -684,7 +696,7 @@ export default function TreatmentDetailsPage() {
                                         </div>
 
                                         <details className="group">
-                                          <summary className="flex cursor-pointer list-none items-center justify-between rounded-lg p-2 font-medium text-blue-600 transition-colors hover:bg-blue-50 hover:text-blue-700">
+                                          <summary className="flex justify-between items-center font-medium cursor-pointer list-none text-blue-600 hover:text-blue-700 p-2 rounded-lg hover:bg-blue-50 transition-colors">
                                             <span>View Treatment Details</span>
                                             <svg
                                               xmlns="http://www.w3.org/2000/svg"
@@ -701,9 +713,9 @@ export default function TreatmentDetailsPage() {
                                               />
                                             </svg>
                                           </summary>
-                                          <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
-                                            <div className="rounded-lg bg-gray-50 p-4">
-                                              <h3 className="mb-3 font-medium text-gray-700">
+                                          <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <div className="bg-gray-50 rounded-lg p-4">
+                                              <h3 className="font-medium text-gray-700 mb-3">
                                                 Diagnoses
                                               </h3>
                                               {treatment.diagnoses.length >
@@ -713,10 +725,10 @@ export default function TreatmentDetailsPage() {
                                                     (d, idx) => (
                                                       <li
                                                         key={`${d.diagnosis_code}-${idx}`}
-                                                        className="rounded-lg border border-gray-100 bg-white p-2"
+                                                        className="bg-white p-2 rounded-lg border border-gray-100"
                                                       >
                                                         <div className="flex items-start">
-                                                          <span className="mr-2 inline-flex h-6 w-auto min-w-[3rem] items-center justify-center rounded bg-gray-100 px-2 text-xs font-medium text-gray-700">
+                                                          <span className="inline-flex items-center justify-center h-6 w-auto min-w-[3rem] px-2 bg-gray-100 text-gray-700 text-xs font-medium rounded mr-2">
                                                             {d.diagnosis_code}
                                                           </span>
                                                           <span className="text-gray-600">
@@ -730,14 +742,14 @@ export default function TreatmentDetailsPage() {
                                                   )}
                                                 </ul>
                                               ) : (
-                                                <p className="italic text-gray-500">
+                                                <p className="text-gray-500 italic">
                                                   No diagnoses recorded
                                                 </p>
                                               )}
                                             </div>
 
-                                            <div className="rounded-lg bg-gray-50 p-4">
-                                              <h3 className="mb-3 font-medium text-gray-700">
+                                            <div className="bg-gray-50 rounded-lg p-4">
+                                              <h3 className="font-medium text-gray-700 mb-3">
                                                 Prescriptions
                                               </h3>
                                               {treatment.prescriptions.length >
@@ -747,16 +759,16 @@ export default function TreatmentDetailsPage() {
                                                     (p, idx) => (
                                                       <li
                                                         key={`${p.medication}-${idx}`}
-                                                        className="rounded-lg border border-gray-100 bg-white p-2"
+                                                        className="bg-white p-2 rounded-lg border border-gray-100"
                                                       >
                                                         <div className="font-medium text-gray-700">
-                                                          {p.medication}
+                                                          {p.medication?.name}
                                                         </div>
-                                                        <div className="mt-1 flex flex-wrap gap-2 text-sm text-gray-500">
-                                                          <span className="rounded bg-gray-50 px-2 py-0.5">
+                                                        <div className="text-sm text-gray-500 flex flex-wrap gap-2 mt-1">
+                                                          <span className="px-2 py-0.5 bg-gray-50 rounded">
                                                             {p.dosage}
                                                           </span>
-                                                          <span className="rounded bg-gray-50 px-2 py-0.5">
+                                                          <span className="px-2 py-0.5 bg-gray-50 rounded">
                                                             {p.frequency}
                                                           </span>
                                                         </div>
@@ -765,7 +777,7 @@ export default function TreatmentDetailsPage() {
                                                   )}
                                                 </ul>
                                               ) : (
-                                                <p className="italic text-gray-500">
+                                                <p className="text-gray-500 italic">
                                                   No prescriptions recorded
                                                 </p>
                                               )}
@@ -785,7 +797,7 @@ export default function TreatmentDetailsPage() {
                       <div className="flex flex-col items-center justify-center p-12 text-gray-400">
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
-                          className="mb-4 h-16 w-16"
+                          className="h-16 w-16 mb-4"
                           fill="none"
                           viewBox="0 0 24 24"
                           stroke="currentColor"
@@ -797,7 +809,7 @@ export default function TreatmentDetailsPage() {
                             d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
                           />
                         </svg>
-                        <h3 className="mb-1 text-xl font-medium text-gray-500">
+                        <h3 className="text-xl font-medium text-gray-500 mb-1">
                           No Previous Treatments
                         </h3>
                         <p className="text-gray-400">
@@ -813,8 +825,8 @@ export default function TreatmentDetailsPage() {
                 {activeTab === "laboratory" && (
   <div className="">
     
-    <div className="mb-4 rounded-lg bg-gray-50 p-4">
-      <div className="flex items-center text-sm font-medium text-gray-500">
+    <div className="bg-gray-50 p-4 rounded-lg mb-4">
+      <div className="flex items-center text-sm text-gray-500 font-medium">
         <div className="flex-1">File Name</div>
         <div className="w-32 text-right">Upload Date</div>
         <div className="w-24 text-right">Actions</div>
@@ -837,15 +849,15 @@ export default function TreatmentDetailsPage() {
       )}
 
       {labResults.map((result) => (
-        <div key={result.id} className="flex items-center rounded-md border bg-white p-4 hover:bg-gray-50">
-          <div className="flex flex-1 items-center">
-            <FileText size={20} className="mr-3 text-blue-500" />
+        <div key={result.id} className="flex items-center p-4 bg-white border rounded-md hover:bg-gray-50">
+          <div className="flex-1 flex items-center">
+            <FileText size={20} className="text-blue-500 mr-3" />
             <span className="font-medium">
               {getFileNameFromUrl(result.image_url)}
             </span>
           </div>
           
-          <div className="w-32 text-right text-sm text-gray-500">
+          <div className="w-32 text-sm text-gray-500 text-right">
             {new Date(result.uploaded_at).toLocaleDateString('en-US', {
               month: 'short',
               day: '2-digit',
@@ -853,10 +865,10 @@ export default function TreatmentDetailsPage() {
             })}
           </div>
           
-          <div className="flex w-24 justify-end space-x-2">
+          <div className="w-24 flex justify-end space-x-2">
             <button 
               onClick={() => window.open(result.image_url, '_blank')}
-              className="rounded-md p-2 text-gray-600 hover:bg-blue-50 hover:text-blue-600"
+              className="p-2 text-gray-600 hover:text-blue-600 rounded-md hover:bg-blue-50"
               aria-label="View file"
             >
               <Eye size={18} />
@@ -864,7 +876,7 @@ export default function TreatmentDetailsPage() {
             
             <button 
               onClick={() => handleDownload(result)}
-              className="rounded-md p-2 text-gray-600 hover:bg-green-50 hover:text-green-600"
+              className="p-2 text-gray-600 hover:text-green-600 rounded-md hover:bg-green-50"
               aria-label="Download file"
             >
               <Download size={18} />
