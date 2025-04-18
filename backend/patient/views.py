@@ -66,7 +66,86 @@ class PatientListView(APIView):
         except Exception as e:
             print("Exception occurred:", e)
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+class PatientInfoView(APIView):
+    permission_classes = [IsMedicalStaff]
+    
+    def get(self, request, patient_id):
+        try: 
+            # Fetch patient details
+            response = supabase.table("patient_patient").select("*").eq("patient_id", patient_id).execute()
+            if hasattr(response, 'error') and response.error:
+                return Response({"error": response.error.message}, status=status.HTTP_400_BAD_REQUEST)
 
+            patient_data = response.data[0] if response.data else None
+            if not patient_data:
+                return Response({"error": "Patient not found"}, status=status.HTTP_404_NOT_FOUND)
+
+            if patient_data.get("date_of_birth"):
+                try:
+                    patient_data['date_of_birth'] = datetime.strptime(patient_data["date_of_birth"], "%Y-%m-%d").date()
+                except Exception as e:
+                    patient_data["date_of_birth"] = None
+                    
+            patient_age = Patient(**patient_data)
+            patient_data['age'] = patient_age.get_age()
+            
+            # Fetch latest queue data
+            queue_response = supabase.table("queueing_temporarystoragequeue").select(
+                "id, priority_level, created_at, queue_number, complaint, status"
+            ).eq("patient_id", patient_id).order("created_at", desc=True).execute()
+            queue_data = queue_response.data[0] if queue_response.data else None
+
+            # Fetch latest treatment with related diagnoses and prescriptions
+            treatment_response = supabase.table("queueing_treatment").select(
+                "id, treatment_notes, created_at, updated_at, patient_id, "
+                "queueing_treatment_diagnoses(id, diagnosis_id, patient_diagnosis(*)), "
+                "queueing_treatment_prescriptions(id, prescription_id, patient_prescription(*))"
+            ).eq("patient_id", patient_id).order("created_at", desc=True).limit(1).execute()
+
+            latest_treatment = treatment_response.data[0] if treatment_response.data else None
+            if latest_treatment:
+                diagnoses = [
+                    d["patient_diagnosis"] for d in latest_treatment.get("queueing_treatment_diagnoses", []) if d.get("patient_diagnosis")
+                ]
+                prescriptions = [
+                    p["patient_prescription"] for p in latest_treatment.get("queueing_treatment_prescriptions", []) if p.get("patient_prescription")
+                ]
+                treatment_summary = {
+                    "id": latest_treatment["id"],
+                    "treatment_notes": latest_treatment["treatment_notes"],
+                    "created_at": latest_treatment["created_at"],
+                    "updated_at": latest_treatment["updated_at"],
+                    "diagnoses": diagnoses,
+                    "prescriptions": prescriptions,
+                }
+            else:
+                # If no treatment found, return an empty structure
+                treatment_summary = {
+                    "id": None,
+                    "treatment_notes": "",
+                    "created_at": "",
+                    "updated_at": "",
+                    "diagnoses": [],
+                    "prescriptions": [],
+                }
+
+            # Construct response data
+            response_data = {
+                "patient": {
+                    **patient_data,
+                    "queue_data": queue_data
+                },
+                "latest_treatment": treatment_summary,
+                "latest_treatment_id": treatment_summary["id"]
+            }
+
+            return Response(response_data, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+            
 class PreliminaryAssessmentView(APIView):
     permission_classes = [IsMedicalStaff]
     def get(self, request, patient_id, queue_number):
@@ -436,6 +515,7 @@ class PatientRegister(APIView):
                         email=validated_data['email'],
                         phone_number=validated_data['phone_number'],
                         date_of_birth=datetime.strptime(validated_data['date_of_birth'], '%Y-%m-%d').date(),
+                        gender=validated_data.get('gender', ''),
                         street_address=validated_data.get('street_address', ''),
                         barangay=validated_data.get('barangay', ''),
                         municipal_city=validated_data.get('municipal_city', '')
@@ -479,12 +559,19 @@ class SearchPatient(APIView):
             queryset=TemporaryStorageQueue.objects.order_by('-created_at')
         )
         
+        months = {
+            'january': 1, 'february': 2, "march": 3, "april": 4, "may": 5, "june": 6,
+            "july": 7, "august": 8, "september": 9, "october": 10, "november": 11, "december": 12
+        }
+        month_number = months.get(query, None)
+        
         if query:
             patients = Patient.objects.filter(
                 Q(first_name__icontains=query) |
                 Q(last_name__icontains=query) |
                 Q(email__icontains=query) |
                 Q(phone_number__icontains=query) |
+                (Q(date_of_birth__isnull=False) & Q(date_of_birth__month=month_number) if month_number else Q()) |
                 Q(temporarystoragequeue__complaint__icontains=query)
             ).distinct().prefetch_related(queue_prefetch)
         else:

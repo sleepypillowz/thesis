@@ -219,104 +219,85 @@ function CreateUserDialog({ onUserCreated }: { onUserCreated: () => void }) {
 
   return (
     <Dialog
-      open={open}
-      onOpenChange={(open) => {
-        if (!open) form.reset();
-        setOpen(open);
-      }}
-    >
-      <DialogTrigger asChild>
-        <Button className="card">Create New User</Button>
-      </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
-        <DialogHeader>
-          <DialogTitle>Create New User</DialogTitle>
-        </DialogHeader>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+  open={open}
+  onOpenChange={(open) => {
+    if (!open) form.reset();
+    setOpen(open);
+  }}
+>
+  <DialogTrigger asChild>
+    <Button className="card">Create New User</Button>
+  </DialogTrigger>
+  <DialogContent className="sm:max-w-[425px]">
+    <DialogHeader>
+      <DialogTitle>Create New User</DialogTitle>
+    </DialogHeader>
+    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+      {/* Existing fields (first_name, last_name, email) */}
+      
+      <div>
+        <label className="block text-sm font-medium">Role</label>
+        <select
+          {...form.register("role")}
+          className="mt-1 block w-full rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+          onChange={(e) => {
+            form.setValue("role", e.target.value);
+            // You might want to show/hide doctor fields based on role selection
+          }}
+        >
+          <option value="doctor">Doctor</option>
+          <option value="admin">Admin</option>
+          <option value="secretary">Medical Secretary</option>
+        </select>
+      </div>
+
+      {form.watch("role") === "doctor" && (
+        <>
           <div>
-            <label className="block text-sm font-medium">First Name</label>
-            <Input {...form.register("first_name")} className="mt-1" />
-            {form.formState.errors.first_name && (
-              <p className="mt-1 text-xs text-red-500">
-                {form.formState.errors.first_name.message}
-              </p>
-            )}
-          </div>
-          <div>
-            <label className="block text-sm font-medium">Last Name</label>
-            <Input {...form.register("last_name")} className="mt-1" />
-            {form.formState.errors.last_name && (
-              <p className="mt-1 text-xs text-red-500">
-                {form.formState.errors.last_name.message}
-              </p>
-            )}
-          </div>
-          <div>
-            <label className="block text-sm font-medium">Email</label>
-            <Input {...form.register("email")} className="mt-1" />
-            {form.formState.errors.email && (
-              <p className="mt-1 text-xs text-red-500">
-                {form.formState.errors.email.message}
-              </p>
-            )}
-          </div>
-          <div>
-            <label className="block text-sm font-medium">Role</label>
-            <select
-              {...form.register("role")}
-              className="mt-1 block w-full rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-            >
-              <option value="doctor">Doctor</option>
-              <option value="admin">Admin</option>
-              <option value="secretary">Medical Secretary</option>
-            </select>
-          </div>
-          <div>
-            <label className="block text-sm font-medium">Password</label>
-            <Input
-              type="password"
-              {...form.register("password")}
-              className="mt-1"
+            <label className="block text-sm font-medium">Specialization</label>
+            <Input 
+              {...form.register("doctor_profile.specialization")} 
+              className="mt-1" 
             />
-            {form.formState.errors.password && (
-              <p className="mt-1 text-xs text-red-500">
-                {form.formState.errors.password.message}
-              </p>
-            )}
           </div>
-          <div>
-            <label className="block text-sm font-medium">
-              Confirm Password
-            </label>
-            <Input
-              type="password"
-              {...form.register("re_password")}
-              className="mt-1"
-            />
-            {form.formState.errors.re_password && (
-              <p className="mt-1 text-xs text-red-500">
-                {form.formState.errors.re_password.message}
-              </p>
-            )}
-          </div>
-          <div className="flex items-center">
-            <input
-              type="checkbox"
-              {...form.register("is_active")}
-              className="rounded text-indigo-600 focus:ring-indigo-500"
-            />
-            <label className="ml-2 block text-sm">Active Account</label>
-          </div>
-          <Button type="submit" disabled={isSubmitting} className="w-full">
-            {isSubmitting ? (
-              <Loader2 className="animate-spin" />
-            ) : (
-              "Create User"
-            )}
-          </Button>
-        </form>
-      </DialogContent>
-    </Dialog>
+          {/* You can add schedule fields here if needed */}
+        </>
+      )}
+
+      {/* Password fields */}
+      <div>
+        <label className="block text-sm font-medium">Password</label>
+        <Input
+          type="password"
+          {...form.register("password")}
+          className="mt-1"
+        />
+      </div>
+      <div>
+        <label className="block text-sm font-medium">Confirm Password</label>
+        <Input
+          type="password"
+          {...form.register("re_password")}
+          className="mt-1"
+        />
+      </div>
+
+      <div className="flex items-center">
+        <input
+          type="checkbox"
+          {...form.register("is_active")}
+          className="rounded text-indigo-600 focus:ring-indigo-500"
+          defaultChecked
+        />
+        <label className="ml-2 block text-sm">Active Account</label>
+      </div>
+
+      <Button type="submit" disabled={isSubmitting} className="w-full">
+        {isSubmitting ? <Loader2 className="animate-spin" /> : "Create User"}
+      </Button>
+    </form>
+  </DialogContent>
+</Dialog>
   );
 }
 

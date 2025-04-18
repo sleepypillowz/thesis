@@ -11,6 +11,9 @@ import { Label } from "@/components/ui/label";
 interface Patient {
   first_name: string;
   last_name: string;
+  allergies?: string;
+  medical_history?: string;
+  current_medications?: string;
   // Add additional fields if needed.
 }
 
@@ -87,6 +90,17 @@ export default function PreliminaryAssessmentID() {
       })
       .catch((error) => console.error("Error fetching patient:", error));
   }, [patient_id, queue_number]);
+
+  useEffect(() => {
+    if (patient) {
+      setFormData((prev) => ({
+        ...prev,
+        allergies: patient.allergies || "",
+        medical_history: patient.medical_history || "",
+        current_medications: patient.current_medications || "",
+      }));
+    }
+  }, [patient]);
 
   // Handle changes for form inputs.
   const handleChange = (
@@ -190,6 +204,15 @@ export default function PreliminaryAssessmentID() {
                   onChange={handleChange}
                 />
               </div>
+              <div>
+                <label className="block">Pulse Rate</label>
+                <Input
+                  type="number"
+                  name="pulse_rate"
+                  required
+                  onChange={handleChange}
+                />
+              </div>
             </div>
           </fieldset>
 
@@ -201,34 +224,38 @@ export default function PreliminaryAssessmentID() {
             <div className="grid grid-cols-1 gap-4">
               {/* Allergies */}
               <div className="grid w-full gap-1.5">
-                <Label htmlFor="message">Allergies</Label>
+                <Label htmlFor="allergies">Allergies</Label>
                 <Textarea
                   name="allergies"
                   id="allergies"
                   onChange={handleChange}
+                  value={formData.allergies}
                 />
               </div>
 
               {/* Medical History */}
               <div className="grid w-full gap-1.5">
-                <Label htmlFor="message">Medical History</Label>
+                <Label htmlFor="medical_history">Medical History</Label>
                 <Textarea
                   name="medical_history"
                   id="medical_history"
                   onChange={handleChange}
+                  value={formData.medical_history}
                 />
               </div>
 
               {/* Current Medications */}
               <div className="grid w-full gap-1.5">
-                <Label htmlFor="message">Current Medications</Label>
+                <Label htmlFor="current_medications">
+                  Current Medications
+                </Label>
                 <Textarea
                   name="current_medications"
                   id="current_medications"
                   onChange={handleChange}
+                  value={formData.current_medications}
                 />
               </div>
-
               {/* Symptoms */}
               <div className="grid w-full gap-1.5">
                 <Label htmlFor="message">Symptoms</Label>

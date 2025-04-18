@@ -16,6 +16,7 @@ export default function Page() {
     phone_number: "",
     email: "",
     date_of_birth: "",
+    gender: "Male", // New gender field added to state
     complaint: "General Illness",
     priority_level: "Regular",
     street_address: "",
@@ -92,6 +93,7 @@ export default function Page() {
           phone_number: "",
           email: "",
           date_of_birth: "",
+          gender: "", // Reset gender field
           complaint: "General Illness",
           priority_level: "Regular",
           street_address: "",
@@ -187,20 +189,41 @@ export default function Page() {
                     required
                   />
                 </div>
-                <div>
-                  <label
-                    htmlFor="date_of_birth"
-                    className="mb-2 block text-sm font-medium"
-                  >
-                    Date of Birth <span className="text-red-500">*</span>
-                  </label>
-                  <Input
-                    type="date"
-                    id="date_of_birth"
-                    value={formData.date_of_birth}
-                    onChange={handleChange}
-                    required
-                  />
+                {/* Date of Birth and Gender grouped together */}
+                <div className="flex flex-col gap-4 md:flex-row md:items-end">
+                  <div className="flex-1">
+                    <label
+                      htmlFor="date_of_birth"
+                      className="mb-2 block text-sm font-medium"
+                    >
+                      Date of Birth <span className="text-red-500">*</span>
+                    </label>
+                    <Input
+                      type="date"
+                      id="date_of_birth"
+                      value={formData.date_of_birth}
+                      onChange={handleChange}
+                      required
+                    />
+                  </div>
+                  <div className="flex-1">
+                    <label
+                      htmlFor="gender"
+                      className="mb-2 block text-sm font-medium"
+                    >
+                      Gender <span className="text-red-500">*</span>
+                    </label>
+                    <select
+                      id="gender"
+                      value={formData.gender}
+                      onChange={handleChange}
+                      className="card block w-full rounded-lg p-3 text-sm"
+                      required
+                    >
+                      <option value="Male">Male</option>
+                      <option value="Female">Female</option>
+                    </select>
+                  </div>
                 </div>
                 <div>
                   <label

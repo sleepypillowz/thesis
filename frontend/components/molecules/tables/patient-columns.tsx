@@ -16,6 +16,7 @@ import { format } from "date-fns";
 import { enGB } from "date-fns/locale";
 import Link from "next/link";
 
+
 // Update the Patient type to reflect that queue data is a separate model (an array of entries)
 export type Patient = {
   patient_id: string;
@@ -29,6 +30,7 @@ export type Patient = {
     status: string;
     complaint: string;
   }[];
+  
 };
 
 export const columns: ColumnDef<Patient>[] = [
@@ -146,7 +148,9 @@ export const columns: ColumnDef<Patient>[] = [
     id: "actions",
     cell: ({ row }) => {
       const patient = row.original;
+
       return (
+        
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="h-8 w-8 p-0">
@@ -162,8 +166,9 @@ export const columns: ColumnDef<Patient>[] = [
               Copy patient ID
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <Link href="/secretary/information">
-              <DropdownMenuItem>View</DropdownMenuItem>
+            <Link href= {`/secretary/information/${patient.patient_id}`}>
+              <DropdownMenuItem
+              >View</DropdownMenuItem>
             </Link>
             <Link href="/secretary/medical-records">
               <DropdownMenuItem>Edit</DropdownMenuItem>

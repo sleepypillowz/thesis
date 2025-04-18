@@ -88,6 +88,7 @@ class PatientRegistrationSerializer(serializers.Serializer):
     email = serializers.EmailField()
     phone_number = serializers.CharField(max_length=15)
     date_of_birth = serializers.DateField()
+    gender = serializers.CharField()
     street_address = serializers.CharField(max_length=255)
     barangay = serializers.CharField(max_length=100)
     municipal_city = serializers.CharField(max_length=100)

@@ -28,6 +28,16 @@ const menu_items = [
     url: "/admin/user-management",
     icon: ChartNoAxesGantt,
   },
+  {
+    title: "Doctor Management",
+    url: "/admin/doctor-management",
+    icon: ChartNoAxesGantt,
+  },
+  {
+    title: "Secretary Management",
+    url: "/admin/secretary-management",
+    icon: ChartNoAxesGantt,
+  },
 ];
 
 const data = {
