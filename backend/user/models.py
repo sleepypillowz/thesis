@@ -35,6 +35,7 @@ class UserAccount(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
     role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='doctor')
+    date_joined = models.DateTimeField(auto_now_add=True,  blank=True, null=True)
 
     objects = UserAccountManager()
 
@@ -43,9 +44,46 @@ class UserAccount(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return f"{self.email} ({self.get_role_display()})"
+    def get_full_name(self):
+        return f"{self.first_name} {self.last_name}"
     
 @receiver(pre_save, sender=UserAccount)
 def create_user_id(sender, instance, **kwargs):
     if not instance.id:
         instance.id = ''.join(random.choices(string.ascii_uppercase + string.digits, k=8))
+        
+class Doctor(models.Model):
+    user = models.OneToOneField(
+        UserAccount,
+        on_delete=models.CASCADE,
+        limit_choices_to={'role':'doctor'}
+    )
+    specialization = models.CharField(max_length=255)
+    def __str__(self):
+        return f"{self.user.get_full_name()} - {self.specialization}"
+    
+class Schedule(models.Model):
+    DAYS_OF_WEEK = [
+        ('Monday', 'Monday'),
+        ('Tuesday', 'Tuesday'),
+        ('Wednesday', 'Wednesday'),
+        ('Thursday', 'Thursday'),
+        ('Friday', 'Friday'),
+        ('Saturday', 'Saturday'),
+        ('Sunday', 'Sunday'),
+    ]
 
+    doctor = models.ForeignKey(
+        Doctor,
+        on_delete=models.CASCADE,
+        related_name='schedule'
+    )
+    day_of_week = models.CharField(max_length=10, choices=DAYS_OF_WEEK)
+    start_time = models.TimeField()
+    end_time = models.TimeField()
+
+    class Meta:
+        unique_together = ('doctor', 'day_of_week', 'start_time', 'end_time')
+
+    def __str__(self):
+        return f"{self.doctor.user.get_full_name()} - {self.day_of_week} {self.start_time} to {self.end_time}"

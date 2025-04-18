@@ -38,7 +38,7 @@ class PatientRegistrationQueue(APIView):
             priority_patients = priority_response.data if hasattr(priority_response, 'data') else []
             regular_patients = regular_response.data if hasattr(regular_response, 'data') else []
 
-            def get_next_patients(queue):
+            def get_next_patients(queue):   
                 current = queue[0] if len(queue) > 0 else None
                 next1 = queue[1] if len(queue) > 1 else None
                 next2 = queue[2] if len(queue) > 2 else None
@@ -296,11 +296,22 @@ class PreliminaryAssessmentForm(APIView):
             response = supabase.table("patient_patient").select(
                 "patient_id, first_name, last_name, date_of_birth, phone_number"
             ).eq("patient_id", patient_id).execute()
-
+            
+            queue_response = supabase.table("queueing_preliminaryassessment").select(
+                'allergies', 'medical_history', 'current_medications'
+            ).eq("patient_id", patient_id).order('assessment_date', desc=True).limit(1).execute()
+                    
             print("Supabase Response:", response.data)  # Debugging
+            print('Supabase Response: ',queue_response.data )
 
             patient_data = response.data[0] if response.data else None
             
+            if queue_response.data and len(queue_response.data) > 0:
+                preliminary_data = queue_response.data[0]
+                patient_data['allergies'] = preliminary_data.get('allergies')
+                patient_data['medical_history'] = preliminary_data.get('medical_history')
+                patient_data['current_medications'] = preliminary_data.get('current_medications')
+
 
             if not patient_data:
                 return Response({"error": "Patient not found"}, status=status.HTTP_404_NOT_FOUND)
@@ -327,7 +338,8 @@ class PreliminaryAssessmentForm(APIView):
             return Response({'error': 'Queue entry not found'}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
+        
+        print("date: ", request.data)
         # Now, handle the preliminary assessment using the serializer
         serializer = PreliminaryAssessmentSerializer(data=request.data, context={'patient': patient})
         if serializer.is_valid():

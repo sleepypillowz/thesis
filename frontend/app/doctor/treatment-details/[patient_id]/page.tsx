@@ -58,6 +58,18 @@ interface LabResult {
   submitted_by?: User;
 }
 
+{/* Doctors referral */}
+interface DoctorProfile {
+  specialization: string;
+}
+
+interface Doctor {
+  id: string;
+  first_name: string;
+  last_name: string;
+  doctor_profile: DoctorProfile;
+}
+
 export default function TreatmentDetailsPage() {
   const router = useRouter();
   const params = useParams();
@@ -71,6 +83,16 @@ export default function TreatmentDetailsPage() {
   const [labResults, setLabResults] = useState<LabResult[]>([]);
   const [labLoading, setLabLoading] = useState(false);
   const [labError, setLabError] = useState<string | null>(null);
+
+  {/*Referral*/}
+  const [doctors, setDoctors] = useState<Doctor[]>([]);
+  const [isReferModalOpen, setIsReferModalOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filteredDoctors, setFilteredDoctors] = useState<Doctor[]>([]);
+  const [selectedDoctor, setSelectedDoctor] = useState<Doctor | null>(null);
+  const [referralNotes, setReferralNotes] = useState("");
+  const [referralReason, setReferralReason] = useState(""); 
+
   const role = userRole();
   
   const getFileNameFromUrl = (url: string) => {
@@ -137,9 +159,6 @@ export default function TreatmentDetailsPage() {
       console.error("Download failed:", error);
     }
   };
-  
-  
-
   useEffect(() => {
     if (activeTab === "laboratory") {
       setLabLoading(true);
@@ -221,8 +240,107 @@ export default function TreatmentDetailsPage() {
         setIsLoading(false);
       });
   }, [patient_id]);
+  useEffect(() => {
+    const fetchDoctors = async () => {
+      try {
+        // Reset states
+        setIsLoading(true);
+        setError(null);
+  
+        // Validate access token
+        const accessToken = localStorage.getItem("access");
+        if (!accessToken) {
+          throw new Error("No access token found. Please log in.");
+        }
+  
+        // Make API call
+        const response = await fetch('http://127.0.0.1:8000/user/users/?role=doctor', {
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${accessToken}`,
+          },
+        });
+  
+        // Handle HTTP errors
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.message || "Failed to fetch doctors");
+        }
+  
+        // Process response data
+        const data = await response.json();
+        
+        // Update both doctors and filteredDoctors state
+        setDoctors(data);
+        setFilteredDoctors(data);
+  
+      } catch (error) {
+        // Handle errors
+        const errorMessage = error instanceof Error 
+          ? error.message 
+          : "Failed to load doctors list";
+        setError(errorMessage);
+        console.error("Doctors fetch error:", error);
+        
+      } finally {
+        // Update loading state
+        setIsLoading(false);
+      }
+    };
+  
+    fetchDoctors();
+  }, []); // Empty dependency array = runs once on mount
 
-  // Format date helper function
+  // Filter doctors based on search query
+  useEffect(() => {
+    const results = doctors.filter(doctor =>
+      doctor.first_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      doctor.last_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      doctor.doctor_profile.specialization.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+    setFilteredDoctors(results);
+  }, [searchQuery, doctors]);
+
+
+const handleSendReferral = async () => {
+  if (!selectedDoctor || !referralNotes || !referralReason) {
+    alert("Please fill all required fields");
+    return};
+
+  try {
+    const accessToken = localStorage.getItem("access");
+    const response = await fetch("http://127.0.0.1:8000/appointment-referral/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${accessToken}`,
+      },
+      body: JSON.stringify({
+        receiving_doctor: selectedDoctor.id,  // Changed to match backend field name
+        patient: patient_id,                 // Changed to match backend field name
+        reason: referralReason,              // Added reason field
+        notes: referralNotes
+      }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || "Failed to send referral");
+    }
+    
+    // Handle success
+    setIsReferModalOpen(false);
+    setSelectedDoctor(null);
+    setReferralNotes("");
+    setReferralReason("");
+    alert("Referral sent successfully");
+
+  } catch (err) {
+    console.error("Referral error:", err);
+    alert(err instanceof Error ? err.message : "Failed to send referral");
+  }
+};
+
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-US", {
       year: "numeric",
@@ -336,12 +454,33 @@ export default function TreatmentDetailsPage() {
           )}
 
           {/* Treatment Title Section */}
-          <div className="bg-white p-6 md:p-8 border-b border-gray-100">
-            <h2 className="text-xl font-bold text-gray-900">
-              Treatment Records
-            </h2>
+          <div className="bg-gradient-to-r from-white to-blue-50 p-6 md:p-8 border-b border-gray-200 shadow-sm">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+              <div>
+                <h2 className="text-2xl font-bold text-gray-900 flex items-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 mr-2 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                  </svg>
+                  Treatment Records
+                </h2>
+                <p className="mt-1 text-sm text-gray-500">View and manage patient treatment history</p>
+              </div>
+              <button
+            onClick={() => setIsReferModalOpen(true)}
+            className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 px-5 rounded-md shadow-sm transition-all duration-200 hover:shadow"
+          >
+            <svg 
+              xmlns="http://www.w3.org/2000/svg" 
+              className="h-5 w-5" 
+              viewBox="0 0 20 20" 
+              fill="currentColor"
+            >
+              <path d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6zM16 7a1 1 0 10-2 0v1h-1a1 1 0 100 2h1v1a1 1 0 102 0v-1h1a1 1 0 100-2h-1V7z" />
+            </svg>
+            Refer Patient
+          </button>
+            </div>
           </div>
-
           {/* Tabs */}
           <div className="border-b border-gray-100">
             <div className="flex">
@@ -884,6 +1023,130 @@ export default function TreatmentDetailsPage() {
           </div>
         </div>
       ))}
+    </div>
+  </div>
+)}
+{isReferModalOpen && (
+  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
+    <div className="bg-white rounded-lg w-full max-w-2xl">
+      <div className="p-6 border-b border-gray-200">
+        <h3 className="text-lg font-semibold">
+          {selectedDoctor ? "Add Referral Notes" : "Select Specialist"}
+        </h3>
+      </div>
+      
+      <div className="p-6">
+        {!selectedDoctor ? (
+          <>
+            <div className="relative mb-4">
+              <input
+                type="text"
+                placeholder="Search doctors by name or specialization..."
+                className="w-full px-4 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+              <svg className="absolute right-3 top-3 h-5 w-5 text-gray-400" 
+                   fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </div>
+
+            <div className="h-96 overflow-y-auto">
+              {filteredDoctors.length > 0 ? (
+                filteredDoctors.map((doctor) => (
+                  <div
+                    key={doctor.id}
+                    className="flex items-center p-4 hover:bg-gray-50 cursor-pointer border-b border-gray-100"
+                    onClick={() => setSelectedDoctor(doctor)}
+                  >
+                    <div className="flex-1">
+                      <h4 className="font-medium">{doctor.first_name} {doctor.last_name}</h4>
+                      <p className="text-gray-600 text-sm">{doctor.doctor_profile.specialization}</p>
+                    </div>
+                    <svg className="h-5 w-5 text-gray-400" 
+                         fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </div>
+                ))
+              ) : (
+                <div className="text-center py-8 text-gray-500">
+                  No doctors found matching your search criteria
+                </div>
+              )}
+            </div>
+          </>
+        ) : (
+          <div className="space-y-6">
+            <div className="border rounded-lg p-4">
+              <h4 className="font-medium">{selectedDoctor.first_name} {selectedDoctor.last_name}</h4>
+              <p className="text-gray-600 text-sm">{selectedDoctor.doctor_profile.specialization}</p>
+            </div>
+
+            <div className="space-y-2">
+              <label className="block text-sm font-medium text-gray-700">
+                Referral Reason
+              </label>
+              <input
+                type="text"
+                value={referralReason}
+                onChange={(e) => setReferralReason(e.target.value)}
+                className="w-full px-4 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                placeholder="Enter referral reason"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label className="block text-sm font-medium text-gray-700">
+                Referral Instructions
+              </label>
+              <textarea
+                value={referralNotes}
+                onChange={(e) => setReferralNotes(e.target.value)}
+                className="w-full px-4 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500 h-32"
+                placeholder="Enter specific instructions for the specialist..."
+              />
+            </div>
+          </div>
+        )}
+      </div>
+
+      <div className="flex justify-between p-6 border-t border-gray-200">
+        {selectedDoctor ? (
+          <button
+            onClick={() => {
+              setSelectedDoctor(null);
+              setReferralNotes("");
+            }}
+            className="px-4 py-2 text-gray-600 hover:text-gray-800"
+          >
+            Back
+          </button>
+        ) : (
+          <div /> // Empty div to maintain space
+        )}
+        <div className="space-x-4">
+          <button
+            onClick={() => {
+              setIsReferModalOpen(false);
+              setSelectedDoctor(null);
+              setReferralNotes("");
+            }}
+            className="px-4 py-2 text-gray-600 hover:text-gray-800"
+          >
+            Cancel
+          </button>
+          {selectedDoctor && (
+            <button
+              onClick={handleSendReferral}
+              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+            >
+              Send Referral
+            </button>
+          )}
+        </div>
+      </div>
     </div>
   </div>
 )}

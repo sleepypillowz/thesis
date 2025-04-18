@@ -15,20 +15,21 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-interface Medicine {
+interface Prescription {
   id: number;
-  name: string;
+  medication: {
+    name: string;
+    stocks: number;
+  };
   dosage: string;
   quantity: number;
-  taken: number;
+  taken: number; // Changed to number type
 }
 
 export default function PrescribedMedicines() {
   const router = useRouter();
-  const [medicines, setMedicines] = useState<Medicine[]>([]);
-  const [selectedMedicine, setSelectedMedicine] = useState<Medicine | null>(
-    null
-  );
+  const [medicines, setMedicines] = useState<Prescription[]>([]);
+  const [selectedMedicine, setSelectedMedicine] = useState<Prescription | null>(null);
   const [inputTaken, setInputTaken] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -36,28 +37,26 @@ export default function PrescribedMedicines() {
   useEffect(() => {
     const fetchMedicines = async () => {
       try {
-        const res = await fetch(
-          " http://localhost:8000/medicine-prescription-display/",
-          {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-              "Content-Type": "application/json",
-            },
-          }
-        );
+        const res = await fetch("http://localhost:8000/medicine-prescription-display/", {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access")}`,
+            "Content-Type": "application/json",
+          },
+        });
 
-        if (!res.ok) {
-          throw new Error("Failed to fetch prescribed medicines");
-        }
+        if (!res.ok) throw new Error("Failed to fetch prescribed medicines");
 
-        const data = await res.json();
-        const formattedData = data.map((item: any) => ({
+        const data: Prescription[] = await res.json();
+        const formattedData = data.map((item) => ({
           id: item.id,
-          name: item.medication.name,
-          dosage: item.medication.dosage,
+          medication: {
+            name: item.medication.name,
+            stocks: item.medication.stocks,
+          },
+          dosage: item.dosage,
           quantity: item.quantity,
-          taken: 0, // Default to 0, user will update this
+          taken: 0, // Initialize taken as 0 (frontend only)
         }));
 
         setMedicines(formattedData);
@@ -69,7 +68,7 @@ export default function PrescribedMedicines() {
     fetchMedicines();
   }, []);
 
-  const handleEdit = (medicine: Medicine) => {
+  const handleEdit = (medicine: Prescription) => {
     setSelectedMedicine(medicine);
     setInputTaken(medicine.taken.toString());
   };
@@ -77,10 +76,16 @@ export default function PrescribedMedicines() {
   const saveEdit = () => {
     if (!selectedMedicine || !inputTaken) return;
 
-    const takenValue = Math.min(Number(inputTaken), selectedMedicine.quantity);
-    setMedicines((prev) =>
-      prev.map((med) =>
-        med.id === selectedMedicine.id ? { ...med, taken: takenValue } : med
+    const takenValue = Math.min(
+      Number(inputTaken),
+      selectedMedicine.medication.stocks // Use actual stock for validation
+    );
+    
+    setMedicines(prev =>
+      prev.map(med =>
+        med.id === selectedMedicine.id 
+          ? { ...med, taken: takenValue } 
+          : med
       )
     );
     toast.success("Updated taken quantity");
@@ -88,55 +93,61 @@ export default function PrescribedMedicines() {
   };
 
   const handleRemove = (id: number) => {
-    setMedicines((prev) => prev.filter((med) => med.id !== id));
-    toast.success("Medicine removed");
+    setMedicines(prev => prev.filter(med => med.id !== id));
+    toast.success("Medicine removed from list");
   };
 
   const handleManageAll = async () => {
-    if (!window.confirm("Are you sure you want to confirm all updates?"))
-      return;
+    if (!window.confirm("Are you sure you want to confirm all updates?")) return;
 
     setLoading(true);
     try {
       const payload = {
-        prescriptions: medicines.map((med) => ({
+        prescriptions: medicines.map(med => ({
           id: med.id,
           confirmed: med.taken,
         })),
       };
 
-      const res = await fetch(
-        "http://localhost:8000/medicine/confirm-dispense/",
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(payload),
-        }
-      );
-
-      const responseData = await res.json();
+      const res = await fetch("http://localhost:8000/medicine/confirm-dispense/", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access")}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
 
       if (!res.ok) {
-        throw new Error(
-          responseData.errors?.map((e: any) => e.error).join(", ")
-        );
+        const errorData = await res.json();
+        throw new Error(errorData.message || "Failed to confirm dispense");
       }
-
-      toast.success("All stocks updated successfully");
-      setMedicines((prev) => prev.map((med) => ({ ...med, taken: 0 })));
-    } catch {
-      toast.error("Failed to update stocks");
+      
+      // Refresh data after successful confirmation
+      const newData = await fetch("http://localhost:8000/medicine-prescription-display/",{
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access")}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      }).then(res => res.json());
+      setMedicines(newData.map((item: any) => ({
+        ...item,
+        taken: 0 // Reset taken values after confirmation
+      })));
+      
+      toast.success("Dispense confirmed and stocks updated");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Failed to update stocks");
     } finally {
       setLoading(false);
     }
   };
 
-  const getStockStatus = (quantity: number) => {
-    if (quantity === 0) return "Out of Stock";
-    if (quantity <= 10) return "Low Stock";
+  const getStockStatus = (stocks: number) => {
+    if (stocks === 0) return "Out of Stock";
+    if (stocks <= 10) return "Low Stock";
     return "In Stock";
   };
 
@@ -151,9 +162,7 @@ export default function PrescribedMedicines() {
           <ChevronLeft size={18} />
           Back to Medicines
         </Button>
-        <h1 className="text-3xl font-bold text-gray-900">
-          Prescribed Medicines
-        </h1>
+        <h1 className="text-3xl font-bold text-gray-900">Prescribed Medicines</h1>
         <div className="w-24" /> {/* Spacer for alignment */}
       </div>
 
@@ -166,17 +175,17 @@ export default function PrescribedMedicines() {
             <div className="flex items-center justify-between">
               <div className="space-y-2">
                 <div className="flex items-center gap-4">
-                  <h2 className="text-xl font-semibold">{med.name}</h2>
+                  <h2 className="text-xl font-semibold">{med.medication.name}</h2>
                   <span
                     className={`px-3 py-1 rounded-full text-sm font-medium ${
-                      getStockStatus(med.quantity) === "In Stock"
+                      getStockStatus(med.medication.stocks) === "In Stock"
                         ? "bg-green-100 text-green-800"
-                        : getStockStatus(med.quantity) === "Low Stock"
+                        : getStockStatus(med.medication.stocks) === "Low Stock"
                         ? "bg-yellow-100 text-yellow-800"
                         : "bg-red-100 text-red-800"
                     }`}
                   >
-                    {getStockStatus(med.quantity)}
+                    {getStockStatus(med.medication.stocks)}
                   </span>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
@@ -185,7 +194,7 @@ export default function PrescribedMedicines() {
                     <p className="font-medium">{med.dosage}</p>
                   </div>
                   <div>
-                    <Label className="text-sm text-gray-500">Quantity</Label>
+                    <Label className="text-sm text-gray-500">Prescribed</Label>
                     <p className="font-medium">{med.quantity}</p>
                   </div>
                   <div>
@@ -193,8 +202,8 @@ export default function PrescribedMedicines() {
                     <p className="font-medium">{med.taken}</p>
                   </div>
                   <div>
-                    <Label className="text-sm text-gray-500">Remaining</Label>
-                    <p className="font-medium">{med.quantity - med.taken}</p>
+                    <Label className="text-sm text-gray-500">Remaining Stock</Label>
+                    <p className="font-medium">{med.medication.stocks - med.taken}</p>
                   </div>
                 </div>
               </div>
@@ -214,7 +223,7 @@ export default function PrescribedMedicines() {
 
                   <DialogContent>
                     <DialogHeader>
-                      <DialogTitle>Edit {med.name}</DialogTitle>
+                      <DialogTitle>Edit {med.medication.name}</DialogTitle>
                     </DialogHeader>
                     <div className="space-y-4">
                       <div>
@@ -224,10 +233,10 @@ export default function PrescribedMedicines() {
                           value={inputTaken}
                           onChange={(e) => setInputTaken(e.target.value)}
                           min="0"
-                          max={med.quantity}
+                          max={med.medication.stocks}
                         />
                         <p className="mt-1 text-sm text-gray-500">
-                          Max available: {med.quantity}
+                          Max available: {med.medication.stocks}
                         </p>
                       </div>
                     </div>
@@ -241,11 +250,7 @@ export default function PrescribedMedicines() {
                   variant="destructive"
                   size="sm"
                   onClick={() => {
-                    if (
-                      window.confirm(
-                        "Are you sure you want to remove this medicine?"
-                      )
-                    ) {
+                    if (window.confirm("Are you sure you want to remove this medicine?")) {
                       handleRemove(med.id);
                     }
                   }}
@@ -260,9 +265,9 @@ export default function PrescribedMedicines() {
       </div>
 
       <div className="flex justify-end">
-        <Button
-          onClick={handleManageAll}
-          className="bg-indigo-600 px-8 py-4 text-lg hover:bg-indigo-700"
+        <Button 
+          onClick={handleManageAll} 
+          className="bg-indigo-600 hover:bg-indigo-700 px-8 py-4 text-lg"
           disabled={loading}
         >
           {loading ? "Updating..." : "Confirm All Updates"}

@@ -41,6 +41,11 @@ const menu_items = [
     icon: LayoutDashboard,
   },
   {
+    title: "Doctors",
+    url: "/doctor/doctors",
+    icon: LayoutDashboard,
+  },
+  {
     title: "Medicine",
     url: "/doctor/medicine",
     icon: Database,

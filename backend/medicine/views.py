@@ -50,7 +50,6 @@ class PrescriptionViews(generics.ListAPIView):
     permission_classes = [isSecretary]
 
 
-
 class ConfirmDispenseview(APIView):
     permission_classes = [isSecretary]
     def post(self, request):
