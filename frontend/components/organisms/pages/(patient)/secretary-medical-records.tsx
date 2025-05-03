@@ -7,7 +7,7 @@ import {
 } from "@/components/molecules/tables/secretary-patient-columns";
 import { DataTable } from "@/components/ui/data-table";
 
-export default function MedicalRecords() {
+export default function SecretaryMedicalRecords() {
   const [patients, setPatients] = useState<Patient[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
 
