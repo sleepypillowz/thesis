@@ -42,8 +42,8 @@ POST http://127.0.0.1:8000/auth/jwt/create/
 Content-Type: application/json
 
 {
-  "email": "generaldoctor@hospital.com",
-  "password": "securepassword123"
+  "email": "secretaryaccount@gmail.com",
+  "password": "nVmTfEkCFeB3APi"
 }
 ###
 
@@ -66,9 +66,9 @@ Content-Type: application/json
 }
 
 ### secretary request
-GET  http://127.0.0.1:8000/appointment/doctors/PDINRVY9/availability/?start_date=2023-06-15&end_date=2023-06-21
+GET  http://localhost:8000/user/users/whoami/
 Content-Type: application/json  
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzUxNDE3MTgxLCJpYXQiOjE3NDM2NDExODEsImp0aSI6Ijc0ZjEwYzQ0ZWI0MTQxODc5ZjE3N2QyMDc0MDAzOWU1IiwidXNlcl9pZCI6IkVFMkRZWFlZIiwiaXNfc3RhZmYiOmZhbHNlLCJpc19zdXBlcnVzZXIiOmZhbHNlLCJlbWFpbCI6InNlY3JldGFyeWFjY291bnRAZ21haWwuY29tIiwicm9sZSI6InNlY3JldGFyeSIsImZpcnN0X25hbWUiOiJTZWNyZXRhcnkifQ.8ss0JwXKUdxOMfCJqmUdLqqafupBhSG2aqNrDid410E
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzUyNzY3NzQ4LCJpYXQiOjE3NDQ5OTE3NDgsImp0aSI6ImYyMDEzMjkzNzlmYjRmNGNiYzM1OTkyZGY1N2YzNDc2IiwidXNlcl9pZCI6IkxGRzRZSjJQIiwiaXNfc3RhZmYiOmZhbHNlLCJpc19zdXBlcnVzZXIiOmZhbHNlLCJlbWFpbCI6ImdlbmVyYWxkb2N0b3JAaG9zcGl0YWwuY29tIiwicm9sZSI6ImRvY3RvciIsImZpcnN0X25hbWUiOiJKYW5lIn0.ZbwXGznu9L0kWwD-DkZG6YPeMociOq68aAAeakM7r3o
 ### secretary request
 GET  http://127.0.0.1:8000/appointment/doctor-schedule/PDINRVY9/
 Content-Type: application/json  
@@ -86,7 +86,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiY
 }
 
 ### Secretary req
-GET http://127.0.0.1:8000/appointment-referral-list/
+GET http://127.0.0.1:8000/appointment/doctor-schedule/KWPBL7OT
 Content-Type: application/json  
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzUwOTAyNDUxLCJpYXQiOjE3NDMxMjY0NTEsImp0aSI6ImYwM2U5N2Q4N2RkMjRjYjBiOWViODBkNGY0MjYzODEzIiwidXNlcl9pZCI6IkVFMkRZWFlZIiwiaXNfc3RhZmYiOmZhbHNlLCJpc19zdXBlcnVzZXIiOmZhbHNlLCJlbWFpbCI6InNlY3JldGFyeWFjY291bnRAZ21haWwuY29tIiwicm9sZSI6InNlY3JldGFyeSIsImZpcnN0X25hbWUiOiJTZWNyZXRhcnkifQ.fmqLJ07u7BSLqLruWF8EwMrAzem-O5UZJidmG--uB6k
 
@@ -103,18 +103,14 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiY
   "notes": "Patient has a history of heart disease and requires further evaluation."
 }
 
-### list medicines
-
-GET  http://127.0.0.1:8000/patient/patient-info/BBDJHUD6
-Content-Type: application/json  
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ5NTkzOTg1LCJpYXQiOjE3NDE4MTc5ODUsImp0aSI6IjY2ODNkMjY1ODZhMzQ3MGI5YTQ2ZWQxNzlkMjYwYmVjIiwidXNlcl9pZCI6IjNTTTJNQVQ2IiwiaXNfc3RhZmYiOmZhbHNlLCJpc19zdXBlcnVzZXIiOmZhbHNlLCJlbWFpbCI6ImRvY3RvcmFjY291bnRAZ21haWwuY29tIiwicm9sZSI6ImRvY3RvciIsImZpcnN0X25hbWUiOiJEb2N0b3IifQ.RmRRmURWdqy8HJcBblhBpJYK-Pcvg-Gq4lsRtkgUPnE
 
 ### Batch Confirm Dispense for Multiple Prescriptions
-GET  http://localhost:8000/queueing/patient-preliminary-assessment/6ND1F8G3/2/
+
+GET  http://localhost:8000/patient/patient-info/6ND1F8G3
 Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ5NjQxNjYyLCJpYXQiOjE3NDE4NjU2NjIsImp0aSI6ImU3MTU3NGI3YWI5NTQ5ZjA5ZDA5Y2VjZjVjODE3OWJjIiwidXNlcl9pZCI6IkVFMkRZWFlZIiwiaXNfc3RhZmYiOmZhbHNlLCJpc19zdXBlcnVzZXIiOmZhbHNlLCJlbWFpbCI6InNlY3JldGFyeWFjY291bnRAZ21haWwuY29tIiwicm9sZSI6InNlY3JldGFyeSIsImZpcnN0X25hbWUiOiJTZWNyZXRhcnkifQ.2sJNq-_qg0xbv4AYlnY-LXMUSZXCTh9dY3L33drXbtM
 
 ### Get referrals
-GET  http://localhost:8000/referrals/
+PATCH  http://localhost:8000/user/users/WD49V73T/restore/
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzUyNDg0OTY5LCJpYXQiOjE3NDQ3MDg5NjksImp0aSI6IjgyY2QyNWM5MTNmMjRhMmFiNTIxNGFlZGE4ZWRlMGM3IiwidXNlcl9pZCI6IkxGRzRZSjJQIiwiaXNfc3RhZmYiOmZhbHNlLCJpc19zdXBlcnVzZXIiOmZhbHNlLCJlbWFpbCI6ImdlbmVyYWxkb2N0b3JAaG9zcGl0YWwuY29tIiwicm9sZSI6ImRvY3RvciIsImZpcnN0X25hbWUiOiJKYW5lIn0.80-1-yvQPXuEdzs42Svr5kdaezTJyBDQFmkXtcnErvo
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzUzNjQ1NDYzLCJpYXQiOjE3NDU4Njk0NjMsImp0aSI6IjAyYWM4NjJlZTk2ZDQ4NmFhZjM1NWQzMzQzZGJjMTkwIiwidXNlcl9pZCI6IkxGRzRZSjJQIiwiaXNfc3RhZmYiOmZhbHNlLCJpc19zdXBlcnVzZXIiOmZhbHNlLCJlbWFpbCI6ImdlbmVyYWxkb2N0b3JAaG9zcGl0YWwuY29tIiwicm9sZSI6ImRvY3RvciIsImZpcnN0X25hbWUiOiJKYW5lIn0.CtCBKKY8uPtCq_u2V4oScC5vRQDtNTEc-nWxVsd2R9s

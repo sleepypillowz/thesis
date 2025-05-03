@@ -5,7 +5,7 @@ import { supabase } from "@/config/supabase";
 import {
   Patient,
   columns,
-} from "@/components/molecules/tables/patient-columns";
+} from "@/components/molecules/tables/secretary-patient-columns";
 import { DataTable } from "@/components/ui/data-table";
 
 export default function MedicalRecords() {

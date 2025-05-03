@@ -10,7 +10,7 @@ import {
   AlertTriangle,
   Check,
 } from "lucide-react";
-import type { ChangeEvent, FormEvent } from "react";
+import type {FormEvent } from "react";
 import { Button } from "@/components/ui/button";
 import userInfo from "@/components/hooks/userRole";
 
@@ -378,572 +378,562 @@ export default function TreatmentForm() {
   }
 
   return (
-    <div className="mx-auto max-w-4xl rounded-2xl border border-gray-200 bg-white/80 p-8 shadow-lg backdrop-blur-lg">
-      <h2 className="mb-6 text-3xl font-semibold text-gray-800">
-        Patient Treatment Form {patient?.first_name} {patient?.last_name}
-      </h2>
-      <div className="mb-6">
-        <h4 className="text-lg font-medium text-gray-700">
-          Queue Number:{" "}
-          <span className="font-bold text-blue-600">{queue_number}</span>
-        </h4>
-      </div>
-
-      {assessment ? (
-        <div className="mb-6 rounded-lg border bg-blue-50 p-4">
-          <h3 className="mb-3 text-xl font-semibold text-gray-800">
-            Preliminary Assessment
-          </h3>
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-            <div>
-              <p>
-                <span className="font-medium">Blood Pressure:</span>{" "}
-                {assessment.blood_pressure || "N/A"}
-              </p>
-              <p>
-                <span className="font-medium">Temperature:</span>{" "}
-                {assessment.temperature || "N/A"}
-              </p>
-              <p>
-                <span className="font-medium">Heart Rate:</span>{" "}
-                {assessment.heart_rate || "N/A"}
-              </p>
-              <p>
-                <span className="font-medium">Respiratory Rate:</span>{" "}
-                {assessment.respiratory_rate || "N/A"}
-              </p>
-              <p>
-                <span className="font-medium">Pulse Rate:</span>{" "}
-                {assessment.pulse_rate || "N/A"}
-              </p>
-            </div>
-            <div>
-              <p>
-                <span className="font-medium">Allergies:</span>{" "}
-                {assessment.allergies || "N/A"}
-              </p>
-              <p>
-                <span className="font-medium">Medical History:</span>{" "}
-                {assessment.medical_history || "N/A"}
-              </p>
-              <p>
-                <span className="font-medium">Symptoms:</span>{" "}
-                {assessment.symptoms || "N/A"}
-              </p>
-              <p>
-                <span className="font-medium">Current Medications:</span>{" "}
-                {assessment.current_medications || "N/A"}
-              </p>
-              <p>
-                <span className="font-medium">Pain Scale:</span>{" "}
-                {assessment.pain_scale || "N/A"}
-              </p>
-              <p>
-                <span className="font-medium">Pain Location:</span>{" "}
-                {assessment.pain_location || "N/A"}
-              </p>
-            </div>
-          </div>
-          <div className="mt-4">
-            <p>
-              <span className="font-medium">Smoking Status:</span>{" "}
-              {assessment.smoking_status || "N/A"}
-            </p>
-            <p>
-              <span className="font-medium">Alcohol Use:</span>{" "}
-              {assessment.alcohol_use || "N/A"}
-            </p>
-            <p>
-              <span className="font-medium">Final Assessment:</span>{" "}
-              {assessment.assessment || "N/A"}
-            </p>
+    <div className="mx-auto max-w-6xl px-4 py-8">
+      <div className="mb-8 rounded-xl border border-gray-100 bg-white p-8 shadow-lg">
+        <div className="mb-6 border-b border-gray-100 pb-6">
+          <h2 className="text-3xl font-bold tracking-tight text-gray-800">
+            Patient Treatment
+          </h2>
+          <div className="mt-2 flex items-center">
+            <span className="text-lg font-medium text-gray-700">
+              {patient?.first_name} {patient?.last_name}
+            </span>
+            <span className="mx-3 text-gray-400">•</span>
+            <span className="flex items-center rounded-full bg-blue-50 px-3 py-1 text-sm font-medium text-blue-700">
+              Queue #{queue_number}
+            </span>
           </div>
         </div>
-      ) : (
-        <div className="mb-6 rounded-lg border bg-blue-50 p-4">
-          <h3 className="mb-3 text-xl font-semibold text-gray-800">
-            Preliminary Assessment
-          </h3>
-          <p className="text-gray-600">
-            No preliminary assessment available for this patient.
-          </p>
-        </div>
-      )}
-      {/* LAB RESULT UPLOAD SECTION COMMENTED OUT */}
-      <div>
-        {/* Button to open the lab request modal */}
-        <div className="mb-8 flex items-center justify-between">
+  
+        {assessment ? (
+          <div className="mb-8 overflow-hidden rounded-xl border border-blue-100 bg-blue-50 shadow-sm">
+            <div className="border-b border-blue-100 bg-blue-100/40 px-6 py-4">
+              <h3 className="font-semibold text-blue-900">Preliminary Assessment</h3>
+            </div>
+            <div className="p-6">
+              <div className="grid grid-cols-1 gap-y-6 gap-x-8 md:grid-cols-2">
+                <div className="space-y-3">
+                  <div>
+                    <h4 className="text-sm font-medium text-gray-500">Vital Signs</h4>
+                    <div className="mt-1 grid grid-cols-2 gap-3">
+                      <div className="rounded-lg bg-white p-3 shadow-sm">
+                        <p className="text-xs font-medium text-gray-500">Blood Pressure</p>
+                        <p className="text-sm font-medium">{assessment.blood_pressure || "N/A"}</p>
+                      </div>
+                      <div className="rounded-lg bg-white p-3 shadow-sm">
+                        <p className="text-xs font-medium text-gray-500">Temperature</p>
+                        <p className="text-sm font-medium">{assessment.temperature || "N/A"}</p>
+                      </div>
+                      <div className="rounded-lg bg-white p-3 shadow-sm">
+                        <p className="text-xs font-medium text-gray-500">Heart Rate</p>
+                        <p className="text-sm font-medium">{assessment.heart_rate || "N/A"}</p>
+                      </div>
+                      <div className="rounded-lg bg-white p-3 shadow-sm">
+                        <p className="text-xs font-medium text-gray-500">Respiratory Rate</p>
+                        <p className="text-sm font-medium">{assessment.respiratory_rate || "N/A"}</p>
+                      </div>
+                      <div className="rounded-lg bg-white p-3 shadow-sm">
+                        <p className="text-xs font-medium text-gray-500">Pulse Rate</p>
+                        <p className="text-sm font-medium">{assessment.pulse_rate || "N/A"}</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-medium text-gray-500">Patient History</h4>
+                    <div className="mt-1 space-y-2">
+                      <div className="rounded-lg bg-white p-3 shadow-sm">
+                        <p className="text-xs font-medium text-gray-500">Allergies</p>
+                        <p className="text-sm">{assessment.allergies || "None reported"}</p>
+                      </div>
+                      <div className="rounded-lg bg-white p-3 shadow-sm">
+                        <p className="text-xs font-medium text-gray-500">Medical History</p>
+                        <p className="text-sm">{assessment.medical_history || "None reported"}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="space-y-3">
+                  <div>
+                    <h4 className="text-sm font-medium text-gray-500">Current Condition</h4>
+                    <div className="mt-1 space-y-2">
+                      <div className="rounded-lg bg-white p-3 shadow-sm">
+                        <p className="text-xs font-medium text-gray-500">Symptoms</p>
+                        <p className="text-sm">{assessment.symptoms || "None reported"}</p>
+                      </div>
+                      <div className="rounded-lg bg-white p-3 shadow-sm">
+                        <p className="text-xs font-medium text-gray-500">Current Medications</p>
+                        <p className="text-sm">{assessment.current_medications || "None"}</p>
+                      </div>
+                      <div className="grid grid-cols-2 gap-2">
+                        <div className="rounded-lg bg-white p-3 shadow-sm">
+                          <p className="text-xs font-medium text-gray-500">Pain Scale</p>
+                          <p className="text-sm font-medium">{assessment.pain_scale || "N/A"}</p>
+                        </div>
+                        <div className="rounded-lg bg-white p-3 shadow-sm">
+                          <p className="text-xs font-medium text-gray-500">Pain Location</p>
+                          <p className="text-sm">{assessment.pain_location || "N/A"}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-medium text-gray-500">Lifestyle</h4>
+                    <div className="mt-1 grid grid-cols-2 gap-2">
+                      <div className="rounded-lg bg-white p-3 shadow-sm">
+                        <p className="text-xs font-medium text-gray-500">Smoking Status</p>
+                        <p className="text-sm">{assessment.smoking_status || "N/A"}</p>
+                      </div>
+                      <div className="rounded-lg bg-white p-3 shadow-sm">
+                        <p className="text-xs font-medium text-gray-500">Alcohol Use</p>
+                        <p className="text-sm">{assessment.alcohol_use || "N/A"}</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="rounded-lg bg-white p-3 shadow-sm">
+                    <p className="text-xs font-medium text-gray-500">Final Assessment</p>
+                    <p className="text-sm">{assessment.assessment || "N/A"}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div className="mb-8 rounded-lg border border-gray-200 bg-gray-50 p-6 text-center">
+            <p className="text-gray-600">No preliminary assessment available for this patient.</p>
+          </div>
+        )}
+  
+        <div className="mb-8">
           <Button
-            className="bg-blue-600 text-white hover:bg-blue-700"
+            className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white transition-all hover:from-blue-700 hover:to-indigo-700 hover:shadow-md"
             onClick={() => setShowRequestModal(true)}
           >
+            <Plus size={16} />
             Request Laboratory Examination
           </Button>
         </div>
-      </div>
-
-      <form onSubmit={handleSubmit}>
-        {/* Diagnoses Section */}
-        <div className="mb-8">
-          <h3 className="mb-2 text-xl font-semibold text-gray-800">
-            Diagnoses
-          </h3>
-          {diagnoses.map((diag, index) => (
-            <div key={index} className="mb-4 rounded-lg border bg-gray-50 p-4">
-              <input
-                type="text"
-                value={diag.diagnosis_code}
-                onChange={(e) =>
-                  handleDiagnosisChange(index, "diagnosis_code", e.target.value)
-                }
-                placeholder="Diagnosis Code"
-                className="mb-2 w-full rounded-md border p-2"
-              />
-              <textarea
-                value={diag.diagnosis_description}
-                onChange={(e) =>
-                  handleDiagnosisChange(
-                    index,
-                    "diagnosis_description",
-                    e.target.value
-                  )
-                }
-                placeholder="Diagnosis Description"
-                className="mb-2 w-full rounded-md border p-2"
-                rows={3}
-              />
-              <input
-                type="date"
-                value={diag.diagnosis_date}
-                onChange={(e) =>
-                  handleDiagnosisChange(index, "diagnosis_date", e.target.value)
-                }
-                className="w-full rounded-md border p-2"
-              />
-              {index > 0 && (
-                <button
-                  type="button"
-                  onClick={() => removeDiagnosis(index)}
-                  className="mt-2 flex items-center text-red-500 hover:text-red-700"
-                >
-                  <Trash size={18} className="mr-1" /> Remove Diagnosis
-                </button>
-              )}
+  
+        <form onSubmit={handleSubmit} className="space-y-8">
+          {/* Diagnoses Section */}
+          <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+            <div className="mb-4 flex items-center justify-between">
+              <h3 className="text-xl font-semibold text-gray-800">Diagnoses</h3>
+              <button
+                type="button"
+                onClick={addDiagnosis}
+                className="flex items-center rounded-full bg-blue-50 px-3 py-1.5 text-xs font-medium text-blue-600 transition-colors hover:bg-blue-100"
+              >
+                <Plus size={14} className="mr-1" /> Add Diagnosis
+              </button>
             </div>
-          ))}
-          <button
-            type="button"
-            onClick={addDiagnosis}
-            className="mt-2 flex items-center text-blue-600 hover:text-blue-800"
-          >
-            <Plus size={18} className="mr-1" /> Add Diagnosis
-          </button>
-        </div>
-
-        {/* Prescriptions Section */}
-        <div className="mb-8">
-          <h3 className="mb-4 text-xl font-semibold text-gray-800">
-            Prescriptions
-          </h3>
-          {prescriptions.map((prescription, index) => (
-            <div
-              key={index}
-              className="mb-2 rounded-lg border bg-gray-50 p-4 shadow-sm"
-            >
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 lg:grid-cols-5">
-                <div className="relative">
-                  <input
-                    type="text"
-                    placeholder="Medication Name"
-                    value={prescription.medication}
-                    onChange={(e) => {
-                      handlePrescriptionChange(
-                        index,
-                        "medication",
-                        e.target.value
-                      );
-                      setMedicineQuery(e.target.value);
-                      setActivePrescriptionIndex(index);
-                    }}
-                    onFocus={() => setActivePrescriptionIndex(index)}
-                    className="w-full rounded-md border p-2"
-                  />
-                  {activePrescriptionIndex === index && (
-                    <div className="absolute z-30 mt-2 w-[300px] rounded-lg border bg-white shadow-xl">
-                      {isMedicineLoading ? (
-                        <div className="flex items-center justify-center p-4 text-gray-500">
-                          <svg
-                            className="mr-2 h-5 w-5 animate-spin text-blue-600"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                          >
-                            <circle
-                              className="opacity-25"
-                              cx="12"
-                              cy="12"
-                              r="10"
-                              stroke="currentColor"
-                              strokeWidth="4"
-                            />
-                            <path
-                              className="opacity-75"
-                              fill="currentColor"
-                              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                            />
-                          </svg>
-                          Searching medicines...
-                        </div>
-                      ) : (
-                        <div className="max-h-60 overflow-y-auto">
-                          {(medicineResults || []).map((medicine, idx) => (
-                            <button
-                              key={idx}
-                              type="button"
-                              className="w-full border-b p-3 text-left transition-colors last:border-b-0 hover:bg-gray-50 focus:bg-gray-100 focus:outline-none"
-                              onClick={() => {
-                                console.log(
-                                  "Selected medicine id:",
-                                  medicine.id
-                                );
-                                handlePrescriptionChange(
-                                  index,
-                                  "medicine_id",
-                                  medicine.id?.toString() || ""
-                                );
-                                handlePrescriptionChange(
-                                  index,
-                                  "medication",
-                                  medicine.name
-                                );
-                                handlePrescriptionChange(
-                                  index,
-                                  "dosage",
-                                  medicine.strength
-                                );
-                                setMedicineResults([]);
-                                setActivePrescriptionIndex(-1);
-                              }}
-                            >
-                              <div className="flex items-center justify-between">
-                                <div className="min-w-0 flex-1">
-                                  <span className="block truncate font-medium text-gray-900">
-                                    {medicine.name}
-                                  </span>
-                                  <span className="mt-0.5 block text-sm text-gray-500">
-                                    Dosage: {medicine.strength}
-                                  </span>
-                                </div>
-
-                                <div className="ml-4 flex-shrink-0">
+            <div className="space-y-4">
+              {diagnoses.map((diag, index) => (
+                <div key={index} className="rounded-lg border border-gray-100 bg-gray-50 p-4 shadow-sm">
+                  <div className="grid gap-4 md:grid-cols-2">
+                    <div>
+                      <label className="mb-1 block text-xs font-medium text-gray-500">
+                        Diagnosis Code
+                      </label>
+                      <input
+                        type="text"
+                        value={diag.diagnosis_code}
+                        onChange={(e) =>
+                          handleDiagnosisChange(index, "diagnosis_code", e.target.value)
+                        }
+                        placeholder="Enter diagnosis code"
+                        className="w-full rounded-md border border-gray-300 p-2 text-sm shadow-sm focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                      />
+                    </div>
+                    <div>
+                      <label className="mb-1 block text-xs font-medium text-gray-500">
+                        Diagnosis Date
+                      </label>
+                      <input
+                        type="date"
+                        value={diag.diagnosis_date}
+                        onChange={(e) =>
+                          handleDiagnosisChange(index, "diagnosis_date", e.target.value)
+                        }
+                        className="w-full rounded-md border border-gray-300 p-2 text-sm shadow-sm focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                      />
+                    </div>
+                  </div>
+                  <div className="mt-3">
+                    <label className="mb-1 block text-xs font-medium text-gray-500">
+                      Diagnosis Description
+                    </label>
+                    <textarea
+                      value={diag.diagnosis_description}
+                      onChange={(e) =>
+                        handleDiagnosisChange(index, "diagnosis_description", e.target.value)
+                      }
+                      placeholder="Describe the diagnosis in detail"
+                      className="w-full rounded-md border border-gray-300 p-2 text-sm shadow-sm focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                      rows={2}
+                    />
+                  </div>
+                  {index > 0 && (
+                    <button
+                      type="button"
+                      onClick={() => removeDiagnosis(index)}
+                      className="mt-3 flex items-center text-xs font-medium text-red-500 hover:text-red-700"
+                    >
+                      <Trash size={14} className="mr-1" /> Remove
+                    </button>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+  
+          {/* Prescriptions Section */}
+          <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+            <div className="mb-4 flex items-center justify-between">
+              <h3 className="text-xl font-semibold text-gray-800">Prescriptions</h3>
+              <button
+                type="button"
+                onClick={addPrescription}
+                className="flex items-center rounded-full bg-blue-50 px-3 py-1.5 text-xs font-medium text-blue-600 transition-colors hover:bg-blue-100"
+              >
+                <Plus size={14} className="mr-1" /> Add Prescription
+              </button>
+            </div>
+            <div className="space-y-4">
+              {prescriptions.map((prescription, index) => (
+                <div key={index} className="rounded-lg border border-gray-100 bg-gray-50 p-5 shadow-sm">
+                  <div className="mb-4 grid grid-cols-1 gap-4 md:grid-cols-2">
+                    <div className="relative">
+                      <label className="mb-1 block text-xs font-medium text-gray-500">
+                        Medication
+                      </label>
+                      <div className="relative">
+                        <input
+                          type="text"
+                          placeholder="Search for medications"
+                          value={prescription.medication}
+                          onChange={(e) => {
+                            handlePrescriptionChange(index, "medication", e.target.value);
+                            setMedicineQuery(e.target.value);
+                            setActivePrescriptionIndex(index);
+                          }}
+                          onFocus={() => setActivePrescriptionIndex(index)}
+                          className="w-full rounded-md border border-gray-300 p-2 pl-8 text-sm shadow-sm focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                        />
+                        <Search size={16} className="absolute left-2.5 top-2.5 text-gray-400" />
+                      </div>
+                      {activePrescriptionIndex === index && medicineResults.length > 0 && (
+                        <div className="absolute z-30 mt-1 w-full rounded-md border border-gray-200 bg-white shadow-lg">
+                          <div className="max-h-56 overflow-y-auto rounded-md">
+                            {isMedicineLoading ? (
+                              <div className="flex items-center justify-center p-4 text-sm text-gray-500">
+                                <svg
+                                  className="mr-2 h-4 w-4 animate-spin text-blue-600"
+                                  fill="none"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <circle
+                                    className="opacity-25"
+                                    cx="12"
+                                    cy="12"
+                                    r="10"
+                                    stroke="currentColor"
+                                    strokeWidth="4"
+                                  />
+                                  <path
+                                    className="opacity-75"
+                                    fill="currentColor"
+                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                                  />
+                                </svg>
+                                Searching...
+                              </div>
+                            ) : (
+                              medicineResults.map((medicine, idx) => (
+                                <button
+                                  key={idx}
+                                  type="button"
+                                  className="flex w-full items-center justify-between border-b border-gray-100 px-4 py-2 text-left text-sm hover:bg-blue-50 focus:bg-blue-50 focus:outline-none"
+                                  onClick={() => {
+                                    handlePrescriptionChange(
+                                      index,
+                                      "medicine_id",
+                                      medicine.id?.toString() || ""
+                                    );
+                                    handlePrescriptionChange(index, "medication", medicine.name);
+                                    handlePrescriptionChange(index, "dosage", medicine.strength);
+                                    setMedicineResults([]);
+                                    setActivePrescriptionIndex(-1);
+                                  }}
+                                >
+                                  <div>
+                                    <div className="font-medium text-gray-900">{medicine.name}</div>
+                                    <div className="text-xs text-gray-500">
+                                      Strength: {medicine.strength}
+                                    </div>
+                                  </div>
                                   <span
-                                    className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium 
-                                      ${
-                                        medicine.stocks >= 200
-                                          ? "bg-green-100 text-green-800"
-                                          : medicine.stocks > 100
-                                          ? "bg-orange-100 text-orange-800"
-                                          : medicine.stocks > 0
-                                          ? "bg-rose-100 text-rose-800"
-                                          : "bg-red-100 text-red-800"
-                                      }`}
+                                    className={`ml-4 inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${
+                                      medicine.stocks >= 200
+                                        ? "bg-green-100 text-green-800"
+                                        : medicine.stocks > 100
+                                        ? "bg-yellow-100 text-yellow-800"
+                                        : medicine.stocks > 0
+                                        ? "bg-orange-100 text-orange-800"
+                                        : "bg-red-100 text-red-800"
+                                    }`}
                                   >
                                     {medicine.stocks >= 200 ? (
-                                      <Check className="mr-1 h-4 w-4" />
+                                      <Check size={12} className="mr-1" />
                                     ) : medicine.stocks > 0 ? (
-                                      <AlertTriangle className="mr-1 h-4 w-4" />
+                                      <AlertTriangle size={12} className="mr-1" />
                                     ) : (
-                                      <XCircle className="mr-1 h-4 w-4" />
+                                      <XCircle size={12} className="mr-1" />
                                     )}
-                                    Stock: {medicine.stocks}
+                                    {medicine.stocks}
                                   </span>
-                                </div>
-                              </div>
-                            </button>
-                          ))}
-                        </div>
-                      )}
-
-                      {medicineResults?.length === 0 && !isMedicineLoading && (
-                        <div className="p-4 text-center text-gray-500">
-                          <Search className="mx-auto mb-2 h-5 w-5 text-gray-400" />
-                          No medicines found
+                                </button>
+                              ))
+                            )}
+                          </div>
                         </div>
                       )}
                     </div>
+                    <div>
+                      <label className="mb-1 block text-xs font-medium text-gray-500">
+                        Dosage
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="e.g. 500mg"
+                        value={prescription.dosage}
+                        onChange={(e) => handlePrescriptionChange(index, "dosage", e.target.value)}
+                        className="w-full rounded-md border border-gray-300 p-2 text-sm shadow-sm focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                      />
+                    </div>
+                  </div>
+                  <div className="mb-4 grid grid-cols-1 gap-4 md:grid-cols-2">
+                    <div>
+                      <label className="mb-1 block text-xs font-medium text-gray-500">
+                        Frequency
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="e.g. Twice daily"
+                        value={prescription.frequency}
+                        onChange={(e) => handlePrescriptionChange(index, "frequency", e.target.value)}
+                        className="w-full rounded-md border border-gray-300 p-2 text-sm shadow-sm focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                      />
+                    </div>
+                    <div>
+                      <label className="mb-1 block text-xs font-medium text-gray-500">
+                        Quantity
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="e.g. 30 tablets"
+                        value={prescription.quantity}
+                        onChange={(e) => handlePrescriptionChange(index, "quantity", e.target.value)}
+                        className="w-full rounded-md border border-gray-300 p-2 text-sm shadow-sm focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                      />
+                    </div>
+                  </div>
+                  <div className="mb-4 grid grid-cols-1 gap-4 md:grid-cols-2">
+                    <div>
+                      <label className="mb-1 block text-xs font-medium text-gray-500">
+                        Start Date
+                      </label>
+                      <input
+                        type="date"
+                        value={prescription.start_date}
+                        onChange={(e) =>
+                          handlePrescriptionChange(index, "start_date", e.target.value)
+                        }
+                        className="w-full rounded-md border border-gray-300 p-2 text-sm shadow-sm focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                      />
+                    </div>
+                    <div>
+                      <label className="mb-1 block text-xs font-medium text-gray-500">
+                        End Date
+                      </label>
+                      <input
+                        type="date"
+                        value={prescription.end_date}
+                        onChange={(e) => handlePrescriptionChange(index, "end_date", e.target.value)}
+                        className="w-full rounded-md border border-gray-300 p-2 text-sm shadow-sm focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                      />
+                    </div>
+                  </div>
+                  {index > 0 && (
+                    <button
+                      type="button"
+                      onClick={() => removePrescription(index)}
+                      className="flex items-center text-xs font-medium text-red-500 hover:text-red-700"
+                    >
+                      <Trash size={14} className="mr-1" /> Remove
+                    </button>
                   )}
                 </div>
-                {/* Keep other prescription fields the same */}
-                <input
-                  type="text"
-                  placeholder="Dosage"
-                  value={prescription.dosage}
-                  onChange={(e) =>
-                    handlePrescriptionChange(index, "dosage", e.target.value)
-                  }
-                  className="w-full rounded-md border p-2"
-                />
-                <input
-                  type="text"
-                  placeholder="Frequency"
-                  value={prescription.frequency}
-                  onChange={(e) =>
-                    handlePrescriptionChange(index, "frequency", e.target.value)
-                  }
-                  className="w-full rounded-md border p-2"
-                />
-                <input
-                  type="text"
-                  placeholder="Quantity"
-                  value={prescription.quantity}
-                  onChange={(e) =>
-                    handlePrescriptionChange(index, "quantity", e.target.value)
-                  }
-                  className="w-full rounded-md border p-2"
-                />
-                <input
-                  type="date"
-                  placeholder="Start Date"
-                  value={prescription.start_date}
-                  onChange={(e) =>
-                    handlePrescriptionChange(
-                      index,
-                      "start_date",
-                      e.target.value
-                    )
-                  }
-                  className="w-full rounded-md border p-2"
-                />
-                <input
-                  type="date"
-                  placeholder="End Date"
-                  value={prescription.end_date}
-                  onChange={(e) =>
-                    handlePrescriptionChange(index, "end_date", e.target.value)
-                  }
-                  className="w-full rounded-md border p-2"
-                />
-              </div>
-              {index > 0 && (
-                <button
-                  type="button"
-                  onClick={() => removePrescription(index)}
-                  className="mt-2 flex items-center text-red-500 hover:text-red-700"
-                >
-                  <Trash size={18} className="mr-1" /> Remove Prescription
-                </button>
-              )}
+              ))}
             </div>
-          ))}
-          <button
-            type="button"
-            onClick={addPrescription}
-            className="mt-4 flex items-center font-medium text-blue-600 hover:text-blue-800"
-          >
-            <Plus size={18} className="mr-1" /> Add more prescription
-          </button>
-        </div>
-
-        {/* Treatment Notes */}
-        <div className="mb-8">
-          <label className="block font-medium text-gray-700">Notes</label>
-          <textarea
-            value={treatmentNotes}
-            onChange={(e) => setTreatmentNotes(e.target.value)}
-            className="w-full rounded-xl border border-gray-300 p-3 transition focus:ring focus:ring-blue-400"
-            rows={4}
-            placeholder="Add any treatment notes here..."
-          />
-        </div>
-        {/* Submit and Save Buttons */}
-        <div className="mt-4 flex justify-between">
-          <button
-            type="submit"
-            className="ml-2 w-1/2 rounded-xl bg-blue-600 py-3 text-lg font-medium text-white transition hover:bg-blue-700"
-          >
-            Submit Treatment
-          </button>
-        </div>
-      </form>
-
-      {/* Laboratory Request Modal */}
-      {showRequestModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
-            <h2 className="mb-4 text-xl font-semibold text-gray-800">
-              Request Laboratory Examination
-            </h2>
-            <form onSubmit={handleSave}>
-              <label className="mb-2 block text-gray-700">
-                Select Laboratory Test:
-              </label>
-              <select
-                value={labTestChoice}
-                onChange={(e) => setLabTestChoice(e.target.value)}
-                className="mb-4 w-full rounded-md border p-2"
-                required
-              >
-                <option value="">-- Select a test --</option>
-
-                <optgroup label="Laboratory Tests">
-                  <option value="Standard Chemistry">Standard Chemistry</option>
-                  <option value="Blood Typing Urinalysis">
-                    Blood Typing Urinalysis
-                  </option>
-                  <option value="Complete Blood Count (CBC)">
-                    Complete Blood Count (CBC)
-                  </option>
-                  <option value="Complete Blood Count (CBC) with Platelet Count">
-                    Complete Blood Count (CBC) with Platelet Count
-                  </option>
-                  <option value="HBA1C">HBA1C</option>
-                  <option value="Electrocardiogram (ECG)">
-                    Electrocardiogram (ECG)
-                  </option>
-                  <option value="Epidermolysis Bullosa Simplex (EBS)">
-                    Epidermolysis Bullosa Simplex (EBS)
-                  </option>
-                  <option value="Sodium">Sodium</option>
-                  <option value="Potassium">Potassium</option>
-                  <option value="Rabies">Rabies</option>
-                  <option value="Flu">Flu</option>
-                  <option value="Pneumonia">Pneumonia</option>
-                  <option value="Anti-tetanus">Anti-tetanus</option>
-                  <option value="Hepatitis B Screening">
-                    Hepatitis B Screening
-                  </option>
-                </optgroup>
-
-                <optgroup label="Radiology Tests">
-                  <option value="Chest (PA)">Chest (PA)</option>
-                  <option value="Chest (PA-LATERAL)">Chest (PA-LATERAL)</option>
-                  <option value="Chest (LATERAL)">Chest (LATERAL)</option>
-                  <option value="Chest (APICOLORDOTIC VIEW)">
-                    Chest (APICOLORDOTIC VIEW)
-                  </option>
-                  <option value="Elbow">Elbow</option>
-                  <option value="Hand">Hand</option>
-                  <option value="Pelvic">Pelvic</option>
-                  <option value="Hip Joint">Hip Joint</option>
-                  <option value="Knee">Knee</option>
-                  <option value="Foot imaging">Foot imaging</option>
-                </optgroup>
-
-                <optgroup label="Other Services">
-                  <option value="Rapid Antigen Testing">
-                    Rapid Antigen Testing
-                  </option>
-                  <option value="Reverse Transcription Polymerase Chain Reaction (RT-PCR)">
-                    Reverse Transcription Polymerase Chain Reaction (RT-PCR)
-                  </option>
-                  <option value="Saliva testing">Saliva testing</option>
-                  <option value="Rapid Antibody testing">
-                    Rapid Antibody testing
-                  </option>
-                </optgroup>
-
-                <option value="Other">Other (Specify)</option>
-              </select>
-
-              {labTestChoice === "Other" && (
-                <>
-                  <label className="mb-2 block text-gray-700">
-                    Please specify:
-                  </label>
-                  <input
-                    type="text"
-                    value={customLabTest}
-                    onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                      setCustomLabTest(e.target.value)
-                    }
-                    placeholder="Enter custom test name"
-                    className="mb-4 w-full rounded-md border p-2"
-                    required
-                  />
-                </>
-              )}
-              <div className="flex justify-end space-x-4">
-                <Button
-                  type="button"
-                  onClick={() => setShowRequestModal(false)}
-                  className="bg-gray-200 text-gray-800 hover:bg-gray-300"
-                >
-                  Cancel
-                </Button>
-                <Button
-                  type="submit"
-                  className="bg-blue-600 text-white hover:bg-blue-700"
-                >
-                  Submit Request
-                </Button>
-              </div>
-            </form>
           </div>
-        </div>
-      )}
-      {/* Success Modal */}
-      {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="relative w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
-            {/* Close (X) Button */}
-            <button
-              className="absolute right-4 top-4 text-gray-500 hover:text-gray-700 focus:outline-none"
-              onClick={() => setShowModal(false)}
+  
+          {/* Treatment Notes */}
+          <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+            <label className="mb-2 block text-sm font-medium text-gray-700">Treatment Notes</label>
+            <textarea
+              value={treatmentNotes}
+              onChange={(e) => setTreatmentNotes(e.target.value)}
+              className="w-full rounded-lg border border-gray-300 p-3 text-sm shadow-sm transition-all focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+              rows={4}
+              placeholder="Add any additional notes about the treatment plan..."
+            />
+          </div>
+  
+          {/* Submit Button */}
+          <div className="mt-8 flex justify-end">
+            <Button
+              type="submit"
+              className="min-w-32 bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-3 text-sm font-medium text-white transition-all hover:from-blue-700 hover:to-indigo-700 hover:shadow-lg"
             >
-              <svg
-                className="h-5 w-5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M6 18L18 6M6 6l12 12"
-                ></path>
-              </svg>
-            </button>
-
-            <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-green-100 text-green-600">
-              <svg
-                className="h-6 w-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M5 13l4 4L19 7"
-                ></path>
-              </svg>
-            </div>
-            <h2 className="mb-2 text-xl font-bold text-gray-900">
-              Submission Successful
-            </h2>
-            <p className="mb-6 text-sm text-gray-600">
-              The laboratory request is successfully submitted
-            </p>
-            <div className="flex justify-between space-x-4">
-              <button
-                className="w-full rounded-lg border border-blue-600 bg-white px-4 py-2 text-sm font-medium text-blue-600 hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                onClick={() => router.push("/doctor")}
-              >
-                Go To Dashboard
-              </button>
-              <button
-                className="w-full rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                onClick={() => router.push("/doctor/patient-treatment-queue")}
-              >
-                Go to Treatment Queue
-              </button>
+              Submit Treatment
+            </Button>
+            
+          </div>
+        </form>
+  
+        {/* Laboratory Request Modal */}
+        {showRequestModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
+            <div className="w-full max-w-md rounded-xl border border-gray-100 bg-white p-6 shadow-2xl">
+              <h2 className="mb-4 text-xl font-bold text-gray-800">Request Laboratory Examination</h2>
+              <form onSubmit={handleSave} className="space-y-4">
+                <div>
+                  <label className="mb-1 block text-sm font-medium text-gray-700">
+                    Select Laboratory Test
+                  </label>
+                  <select
+                    value={labTestChoice}
+                    onChange={(e) => setLabTestChoice(e.target.value)}
+                    className="w-full rounded-md border border-gray-300 p-2 text-sm shadow-sm focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                    required
+                  >
+                    <option value="">-- Select a test --</option>
+                    <optgroup label="Laboratory Tests">
+                      <option value="Standard Chemistry">Standard Chemistry</option>
+                      <option value="Blood Typing Urinalysis">Blood Typing Urinalysis</option>
+                      <option value="Complete Blood Count (CBC)">Complete Blood Count (CBC)</option>
+                      <option value="Complete Blood Count (CBC) with Platelet Count">
+                        Complete Blood Count (CBC) with Platelet Count
+                      </option>
+                      <option value="HBA1C">HBA1C</option>
+                      <option value="Electrocardiogram (ECG)">Electrocardiogram (ECG)</option>
+                      <option value="Epidermolysis Bullosa Simplex (EBS)">
+                        Epidermolysis Bullosa Simplex (EBS)
+                      </option>
+                      <option value="Sodium">Sodium</option>
+                      <option value="Potassium">Potassium</option>
+                      <option value="Rabies">Rabies</option>
+                      <option value="Flu">Flu</option>
+                      <option value="Pneumonia">Pneumonia</option>
+                      <option value="Anti-tetanus">Anti-tetanus</option>
+                      <option value="Hepatitis B Screening">Hepatitis B Screening</option>
+                    </optgroup>
+                    <optgroup label="Radiology Tests">
+                      <option value="Chest (PA)">Chest (PA)</option>
+                      <option value="Chest (PA-LATERAL)">Chest (PA-LATERAL)</option>
+                      <option value="Chest (LATERAL)">Chest (LATERAL)</option>
+                      <option value="Chest (APICOLORDOTIC VIEW)">Chest (APICOLORDOTIC VIEW)</option>
+                      <option value="Elbow">Elbow</option>
+                      <option value="Hand">Hand</option>
+                      <option value="Pelvic">Pelvic</option>
+                      <option value="Hip Joint">Hip Joint</option>
+                      <option value="Knee">Knee</option>
+                      <option value="Foot imaging">Foot imaging</option>
+                    </optgroup>
+                    <optgroup label="Other Services">
+                      <option value="Rapid Antigen Testing">Rapid Antigen Testing</option>
+                      <option value="Reverse Transcription Polymerase Chain Reaction (RT-PCR)">
+                        Reverse Transcription Polymerase Chain Reaction (RT-PCR)
+                      </option>
+                      <option value="Saliva testing">Saliva testing</option>
+                      <option value="Rapid Antibody testing">Rapid Antibody testing</option>
+                    </optgroup>
+                    <option value="Other">Other (Specify)</option>
+                  </select>
+                </div>
+  
+                {labTestChoice === "Other" && (
+                  <div>
+                    <label className="mb-1 block text-sm font-medium text-gray-700">
+                      Custom Test Name
+                    </label>
+                    <input
+                      type="text"
+                      value={customLabTest}
+                      onChange={(e) => setCustomLabTest(e.target.value)}
+                      placeholder="Enter custom test name"
+                      className="w-full rounded-md border border-gray-300 p-2 text-sm shadow-sm focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                      required
+                    />
+                  </div>
+                )}
+  
+                <div className="mt-6 flex justify-end gap-3">
+                  <Button
+                    type="button"
+                    onClick={() => setShowRequestModal(false)}
+                    className="border border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    type="submit"
+                    className="bg-blue-600 text-white hover:bg-blue-700"
+                  >
+                    Submit Request
+                  </Button>
+                </div>
+              </form>
             </div>
           </div>
-        </div>
-      )}
+        )}
+  
+        {/* Success Modal */}
+        {showModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
+            <div className="w-full max-w-md overflow-hidden rounded-xl bg-white shadow-2xl">
+              <div className="bg-green-50 px-6 py-4 text-center">
+                <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
+                  <svg
+                    className="h-8 w-8 text-green-600"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M5 13l4 4L19 7"
+                    ></path>
+                  </svg>
+                </div>
+                <h3 className="text-xl font-bold text-gray-900">Success!</h3>
+              </div>
+              <div className="p-6">
+                <p className="mb-6 text-center text-gray-600">
+                  Laboratory request has been successfully submitted.
+                </p>
+                <div className="grid grid-cols-2 gap-4">
+                  <button
+                    className="rounded-lg border border-blue-600 bg-white px-4 py-2 text-sm font-medium text-blue-600 transition-colors hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                    onClick={() => router.push("/doctor")}
+                  >
+                    Go To Dashboard
+                  </button>
+                  <button
+                    className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                    onClick={() => router.push("/doctor/patient-treatment-queue")}
+                  >
+                    Treatment Queue
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

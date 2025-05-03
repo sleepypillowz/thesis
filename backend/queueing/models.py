@@ -2,6 +2,8 @@ from datetime import date
 from django.db import models
 from patient.models import Patient, Diagnosis, Prescription
 from  django.utils.timezone import now
+from django.conf import settings
+from user.models import UserAccount
 # Create your models here.
 class TemporaryStorageQueue(models.Model):
     PRIORITY_CHOICES = [
@@ -28,8 +30,9 @@ class TemporaryStorageQueue(models.Model):
             ('Completed', 'Completed'),
         ], 
         default='Waiting')
-    complaint = models.TextField(max_length=100, blank=True, null=True, choices= COMPLAINT_CHOICES)
-    
+    complaint = models.TextField(max_length=100, blank=True, null=True, choices= COMPLAINT_CHOICES
+                                 , help_text="Either one of the predefined choices, or a custom text when 'Other'")
+    other_complaint = None
     queue_number = models.PositiveBigIntegerField(null=True, blank=True)
     queue_date = models.DateField(default=date.today)
 
@@ -74,7 +77,14 @@ class PreliminaryAssessment(models.Model):
 
 class Treatment(models.Model):
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name="treatments")
-    # doctor= 
+    doctor = models.ForeignKey(
+        UserAccount,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='treatments',
+    )
+
     diagnoses = models.ManyToManyField(Diagnosis, related_name="treatments")
     prescriptions = models.ManyToManyField(Prescription, related_name="treatments")
     treatment_notes = models.TextField(blank=True, null=True)

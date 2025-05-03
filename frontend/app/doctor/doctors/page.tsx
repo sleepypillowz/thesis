@@ -8,18 +8,20 @@ import React, {
 } from "react";
 import {
   Dialog,
-  DialogTrigger,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
+  DialogTrigger,
 } from "@/components/ui/dialog";
 import Image from 'next/image';
+import { Button } from "@/components/ui/button"
 interface Schedule {
   day_of_week: string;
   start_time: string;
   end_time: string;
 }
-
+import { useRouter } from 'next/navigation';
 interface DoctorProfile {
   specialization: string;
   schedules: Schedule[];
@@ -199,12 +201,42 @@ const DoctorCard: React.FC<DoctorCardComponentProps> = ({
               >
                 Edit
               </button>
-              <button
-                onClick={onDelete}
-                className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 text-xs"
-              >
-                Delete
-              </button>
+              
+              <Dialog>
+                <DialogTrigger asChild>
+                  <button
+                    className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 text-xs"
+                  >
+                    Delete
+                  </button>
+                </DialogTrigger>
+                
+                <DialogContent className="sm:max-w-[425px]">
+                  <DialogHeader>
+                    <DialogTitle>Confirm Delete</DialogTitle>
+                    <DialogDescription>
+                      Are you sure you want to delete this item? Deleted data goes to Archive and it will be deleted within 30 days.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="flex justify-end gap-2 mt-4">
+                    <Button
+                      variant="outline"
+                      onClick={() => document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }))}
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      variant="destructive"
+                      onClick={() => {
+                        onDelete();
+                        document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
+                      }}
+                    >
+                      Confirm 
+                    </Button>
+                  </div>
+                </DialogContent>
+              </Dialog>
             </div>
           )}
         </div>
@@ -227,6 +259,7 @@ interface NewDoctorData {
 // --- Main DoctorsPage Component ---
 const DoctorsPage: React.FC = () => {
   const [userEmail, setUserEmail] = useState<string>('');
+  const router = useRouter();
 
   useEffect(() => {
     const fetchUserEmail = async () => {
@@ -517,27 +550,27 @@ const DoctorsPage: React.FC = () => {
   };
 
   // --- Delete Doctor ---
-  const handleDeleteDoctor = async (doctorId: string) => {
-    if (!confirm("Are you sure you want to delete this doctor?")) return;
-    try {
-      const token = localStorage.getItem("access");
-      const response = await fetch(
-        `http://127.0.0.1:8000/user/users/${doctorId}/`,
-        {
-          method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      if (!response.ok) throw new Error("Failed to delete doctor");
-      fetchDoctors();
-    } catch (err) {
-      console.error(err);
-      alert("Failed to delete doctor");
-    }
-  };
-
+// Update the delete handler function
+const handleArchiveDoctor = async (doctorId: string) => {
+  try {
+    const token = localStorage.getItem("access");
+    const response = await fetch(
+      `http://127.0.0.1:8000/user/users/${doctorId}/`,
+      {
+        method: "DELETE",  // Still using DELETE method but backend archives
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    if (!response.ok) throw new Error("Failed to archive doctor");
+    fetchDoctors();
+    alert("Doctor archived successfully");
+  } catch (err) {
+    console.error(err);
+    alert("Failed to archive doctor");
+  }
+};
   // --- Prepare Edit Modal ---
   const openEditModal = (doctor: ExtendedDoctorCardProps) => {
     const nameParts = doctor.name.split(" ");
@@ -576,11 +609,19 @@ const DoctorsPage: React.FC = () => {
       if (sortBy === "reviews") return b.reviewCount - a.reviewCount;
       return 0;
     });
-
+    const handleArchivesClick = () => {
+      router.push('/doctor/archives');
+    };
   return (
     <div className="container mx-auto px-6 py-8 max-w-6xl">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold text-blue-800">Find Doctors</h1>
+      <div className="flex items-center gap-4 mb-6">
+      <h1 className="text-3xl font-bold text-blue-800 flex-1">Find Doctors</h1>
+        <button
+            onClick={handleArchivesClick}
+            className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-blue-700"
+          >
+            Archives
+          </button>
         {isGeneralDoctor && (
           <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
             <DialogTrigger asChild>
@@ -990,7 +1031,7 @@ const DoctorsPage: React.FC = () => {
             key={doctor.id}
             {...doctor}
             onEdit={isGeneralDoctor ? () => openEditModal(doctor) : undefined}
-            onDelete={isGeneralDoctor ? () => handleDeleteDoctor(doctor.id) : undefined}
+            onDelete={isGeneralDoctor ? () => handleArchiveDoctor(doctor.id) : undefined}
           />
         ))}
       </div>
@@ -1011,6 +1052,7 @@ const DoctorsPage: React.FC = () => {
           </button>
         </div>
       )}
+      
     </div>
   );
 };

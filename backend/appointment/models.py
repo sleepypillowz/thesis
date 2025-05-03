@@ -1,3 +1,4 @@
+from datetime import timedelta
 from django.db import models
 from patient.models import Patient
 from user.models import Doctor
@@ -20,10 +21,16 @@ class Appointment(models.Model):
     #downpayment = 
     class Meta:
         ordering = ['appointment_date']
+        constraints = [
+            models.UniqueConstraint(
+                fields=['doctor', 'appointment_date'],
+                name='unique_appointment_per_doctor_and_slot'
+            )
+        ]
 
     def __str__(self):
         return f"Appointment {self.id} on {self.appointment_date} with {self.scheduled_by} for {self.patient}"
-    
+
 class AppointmentReferral(models.Model):
     STATUS_CHOICES = [
         ('pending', 'Pending Secretary Review'),

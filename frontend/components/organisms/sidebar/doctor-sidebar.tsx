@@ -1,3 +1,4 @@
+'use client'
 import {
   LayoutDashboard,
   ClipboardPlus,
@@ -7,7 +8,6 @@ import {
   Database,
   ChevronDown,
 } from "lucide-react";
-
 import {
   Sidebar,
   SidebarContent,
@@ -28,6 +28,7 @@ import {
   CollapsibleTrigger,
 } from "../../ui/collapsible";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
 const menu_items = [
   {
@@ -88,6 +89,52 @@ const data = {
 };
 
 export function AppSidebar() {
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchCurrentUser = async () => {
+      try {
+        const token = localStorage.getItem("access");
+        if (!token) {
+          console.warn("No token found");
+          return;
+        }
+
+        const response = await fetch("http://localhost:8000/user/users/whoami/", {
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`,
+          },
+        });
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error("Failed to fetch user: ", response.status, errorText);
+          return;
+        }
+
+        const data = await response.json();
+        setCurrentUserId(data.id);
+      } catch (error) {
+        console.error("Failed to fetch current user", error);
+      }
+    };
+
+    fetchCurrentUser();
+  }, []);
+
+  const filteredMenuItems = currentUserId === 'LFG4YJ2P' 
+    ? menu_items 
+    : menu_items.filter(item => 
+        ['Dashboard', 'Doctors'].includes(item.title)
+      );
+
+  const filteredPatientItems = currentUserId === 'LFG4YJ2P'
+    ? patient_items
+    : patient_items.filter(item =>
+        ['Appointments', 'Treatment'].includes(item.title)
+      );
+
   return (
     <Sidebar>
       <SidebarHeader>
@@ -110,7 +157,7 @@ export function AppSidebar() {
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarGroup>
-                {menu_items.map((item) => (
+                {filteredMenuItems.map((item) => (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton asChild>
                       <Link href={item.url}>
@@ -125,34 +172,36 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
 
-        <Collapsible defaultOpen className="group/collapsible">
-          <SidebarGroup>
-            <SidebarGroupLabel asChild>
-              <CollapsibleTrigger>
-                Patients
-                <ChevronDown className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180" />
-              </CollapsibleTrigger>
-            </SidebarGroupLabel>
-            <SidebarGroupContent>
-              <SidebarMenu>
-                <SidebarGroup>
-                  <CollapsibleContent>
-                    {patient_items.map((item) => (
-                      <SidebarMenuItem key={item.title}>
-                        <SidebarMenuButton asChild>
-                          <a href={item.url}>
-                            <item.icon />
-                            <span>{item.title}</span>
-                          </a>
-                        </SidebarMenuButton>
-                      </SidebarMenuItem>
-                    ))}
-                  </CollapsibleContent>
-                </SidebarGroup>
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
-        </Collapsible>
+        {filteredPatientItems.length > 0 && (
+          <Collapsible defaultOpen className="group/collapsible">
+            <SidebarGroup>
+              <SidebarGroupLabel asChild>
+                <CollapsibleTrigger>
+                  Patients
+                  <ChevronDown className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180" />
+                </CollapsibleTrigger>
+              </SidebarGroupLabel>
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  <SidebarGroup>
+                    <CollapsibleContent>
+                      {filteredPatientItems.map((item) => (
+                        <SidebarMenuItem key={item.title}>
+                          <SidebarMenuButton asChild>
+                            <Link href={item.url}>
+                              <item.icon />
+                              <span>{item.title}</span>
+                            </Link>
+                          </SidebarMenuButton>
+                        </SidebarMenuItem>
+                      ))}
+                    </CollapsibleContent>
+                  </SidebarGroup>
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </SidebarGroup>
+          </Collapsible>
+        )}
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={data.user} />
