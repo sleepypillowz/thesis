@@ -1,65 +1,3 @@
-// import { buttonVariants } from "@/components/ui/button";
-// import Link from "next/link";
-
-// export default function Home() {
-//   return (
-//     <main className="flex min-h-[100dvh] items-center">
-//       <div className="flex w-full justify-center">
-//         <div className="relative z-10">
-//           <div className="container py-10 lg:py-16">
-//             <div className="mx-auto max-w-2xl text-center">
-//               <p className="text-lg font-medium text-gray-500">
-//                 Your Health, Our Priority
-//               </p>
-//               {/* Title */}
-//               <div className="mt-5 flex max-w-2xl justify-center">
-//                 <h1 className="flex scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
-//                   Malibiran Medical Clinic
-//                 </h1>
-//               </div>
-//               {/* End Title */}
-//               <div className="mt-5 max-w-3xl">
-//                 <p className="text-xl text-gray-600">
-//                   Providing quality healthcare services with compassion and
-//                   expertise. Visit our clinic to experience personalized care
-//                   for all your medical needs.
-//                 </p>
-//               </div>
-//               {/* Buttons */}
-//               <div className="mt-8 flex justify-center gap-3">
-//                 <Link
-//                   className={buttonVariants({ variant: "default" })}
-//                   href="/patient"
-//                 >
-//                   Patient
-//                 </Link>
-//                 <Link
-//                   className={buttonVariants({ variant: "secondary" })}
-//                   href="/admin"
-//                 >
-//                   Admin
-//                 </Link>
-//                 <Link
-//                   className={buttonVariants({ variant: "secondary" })}
-//                   href="/user//login"
-//                 >
-//                   Login
-//                 </Link>
-//                 <Link
-//                   className={buttonVariants({ variant: "secondary" })}
-//                   href="/user/register"
-//                 >
-//                   Register
-//                 </Link>
-//               </div>
-//               {/* End Buttons */}
-//             </div>
-//           </div>
-//         </div>
-//       </div>
-//     </main>
-//   );
-//}
 "use client";
 import { useState, useEffect } from "react";
 import {
@@ -72,6 +10,7 @@ import {
   Shield,
   Clock,
 } from "lucide-react";
+import Link from "next/link";
 
 // Simulated button variant function since we can't import the actual one
 const buttonVariants = ({ variant }) => {
@@ -86,15 +25,6 @@ const buttonVariants = ({ variant }) => {
     return `${baseClasses} border border-gray-300 hover:bg-gray-100`;
   }
   return baseClasses;
-};
-
-// Custom Link component since we can't import Next.js Link
-const Link = ({ href, className, children }) => {
-  return (
-    <a href={href} className={className}>
-      {children}
-    </a>
-  );
 };
 
 export default function Home() {
@@ -179,7 +109,7 @@ export default function Home() {
           </div>
           <div className="hidden md:block">
             <Link
-              href="/user/login"
+              href="/login"
               className={buttonVariants({ variant: "default" })}
             >
               Login
@@ -382,7 +312,7 @@ export default function Home() {
               <span className="font-medium text-gray-900">Admin Access</span>
             </Link>
             <Link
-              href="/user/login"
+              href="/login"
               className="flex flex-col items-center rounded-xl border border-gray-100 bg-gray-50 p-6 transition-colors hover:border-blue-100 hover:bg-blue-50"
             >
               <svg
@@ -402,7 +332,7 @@ export default function Home() {
               <span className="font-medium text-gray-900">Login</span>
             </Link>
             <Link
-              href="/user/register"
+              href="/register"
               className="flex flex-col items-center rounded-xl border border-gray-100 bg-gray-50 p-6 transition-colors hover:border-blue-100 hover:bg-blue-50"
             >
               <Plus className="mb-3 h-8 w-8 text-blue-600" />

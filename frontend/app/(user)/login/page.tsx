@@ -1,134 +1,38 @@
-"use client";
+import { GalleryVerticalEnd } from "lucide-react";
 
-import { toast } from "sonner";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
-import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { PasswordInput } from "@/components/ui/password-input";
+import { LoginForm } from "@/components/organisms/forms/login-form";
 import Link from "next/link";
-import HeroHeader from "@/components/organisms/hero-header";
-import { supabase } from "@/config/supabase";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import Image from "next/image";
 
-const formSchema = z.object({
-  email: z.string().email({ message: "Invalid email address" }),
-  password: z.string().min(1, { message: "Password is required" }),
-});
-
-export default function LoginForm() {
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      email: "",
-      password: "",
-    },
-  });
-  const router = useRouter();
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-
-  async function onSubmit(values: z.infer<typeof formSchema>) {
-    setLoading(true);
-    setError("");
-
-    const { data, error } = await supabase.auth.signInWithPassword(values);
-
-    if (error) {
-      setError(error.message);
-      toast.error(error.message);
-      setLoading(false);
-      return;
-    }
-
-    if (data.user) {
-      const { data: profile, error: profileError } = await supabase
-        .from("profiles")
-        .select("role")
-        .eq("id", data.user.id)
-        .single();
-
-      if (profileError) {
-        setError("Failed to fetch user role.");
-        setLoading(false);
-        return;
-      }
-
-      const rolePages: Record<string, string> = {
-        doctor: "/doctor",
-        secretary: "/secretary",
-        admin: "/admin",
-        patient: "/patient",
-      };
-      router.push(rolePages[profile?.role] || "/patient");
-    }
-    setLoading(false);
-  }
-
+export default function Home() {
   return (
     <>
-      <HeroHeader />
-      <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className="mx-auto max-w-3xl space-y-8 py-10"
-        >
-          {error && <p className="text-red-500">{error}</p>}
-          <FormField
-            control={form.control}
-            name="email"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Email</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="you@example.com"
-                    type="email"
-                    {...field}
-                  />
-                </FormControl>
-                <FormDescription>Enter your email address.</FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
+      <div className="grid min-h-svh lg:grid-cols-2">
+        <div className="relative hidden bg-muted lg:block">
+          <Image
+            src="/malibiran-medical-clinic.jpg"
+            width={918}
+            height={1632}
+            alt="malibiran-medical-clinic"
+            className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
           />
-
-          <FormField
-            control={form.control}
-            name="password"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Password</FormLabel>
-                <FormControl>
-                  <PasswordInput placeholder="******" {...field} />
-                </FormControl>
-                <FormDescription>Enter your password.</FormDescription>
-                <FormDescription>
-                  <Link href="/register" className="text-blue-500">
-                    Not Registered?
-                  </Link>
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <Button type="submit" disabled={loading}>
-            {loading ? "Logging in..." : "Login"}
-          </Button>
-        </form>
-      </Form>
+        </div>
+        <div className="flex flex-col gap-4 p-6 md:p-10">
+          <div className="flex justify-center gap-2 md:justify-start">
+            <Link href="/" className="flex items-center gap-2 font-medium">
+              <div className="flex h-6 w-6 items-center justify-center rounded-md bg-primary text-primary-foreground">
+                <GalleryVerticalEnd className="size-4" />
+              </div>
+              MediTrakk
+            </Link>
+          </div>
+          <div className="flex flex-1 items-center justify-center">
+            <div className="w-full max-w-xs">
+              <LoginForm />
+            </div>
+          </div>
+        </div>
+      </div>
     </>
   );
 }
