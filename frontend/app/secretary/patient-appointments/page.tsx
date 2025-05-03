@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import {
   Patient,
   columns,
-} from "@/components/molecules/tables/patient-columns";
+} from "@/components/molecules/tables/doctor-patient-columns";
 import { DataTable } from "@/components/ui/data-table";
 
 export default function Page() {

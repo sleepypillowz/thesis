@@ -2,8 +2,13 @@
 
 import * as React from "react";
 import { Calendar } from "@/components/ui/calendar";
-import { format, isBefore, parseISO } from "date-fns";
+import { format } from 'date-fns';
 import { Skeleton } from "@/components/ui/skeleton";
+
+interface Appointment {
+  id: string;
+  appointment_date: string;
+}
 
 interface Referral {
   id: string;
@@ -13,16 +18,14 @@ interface Referral {
   reason: string;
   notes: string;
   status: string;
-  appointment: any;
+  appointment: Appointment | null;
   created_at: string;
   updated_at: string;
 }
 
 interface DoctorAvailability {
-  date: string;
-  day_of_week: string;
-  start_time: string;
-  end_time: string;
+  start: string;
+  end: string;
   is_available: boolean;
 }
 
@@ -31,6 +34,7 @@ interface Doctor {
   full_name: string;
   specialization: string;
   email: string;
+  timezone: string;
   availability?: DoctorAvailability[];
 }
 
@@ -53,7 +57,6 @@ export default function ReferralScheduler() {
   const [loadingReferrals, setLoadingReferrals] = React.useState(true);
   const [loadingDoctor, setLoadingDoctor] = React.useState(false);
 
-  // Fetch referrals from Django on mount
   React.useEffect(() => {
     const token = localStorage.getItem("access");
     setLoadingReferrals(true);
@@ -74,57 +77,55 @@ export default function ReferralScheduler() {
       });
   }, []);
 
-  // When a referral is selected, fetch the corresponding doctor's schedule
   React.useEffect(() => {
-    if (selectedReferral) {
-      const token = localStorage.getItem("access");
-      setLoadingDoctor(true);
-      fetch(`http://127.0.0.1:8000/appointment/doctor-schedule/${selectedReferral.receiving_doctor}`, {
+    if (!selectedReferral) return;
+    const token = localStorage.getItem("access");
+    setLoadingDoctor(true);
+    
+    fetch(
+      `http://127.0.0.1:8000/appointment/doctor-schedule/${selectedReferral.receiving_doctor}`,
+      {
         headers: {
           "Authorization": token ? `Bearer ${token}` : "",
           "Content-Type": "application/json",
         },
-      })
-        .then((res) => res.json())
-        .then((data: Doctor) => {
-          setDoctor(data);
-          const availabilityData = data.availability || [];
-          const slots: Record<string, TimeSlot[]> = {};
-          availabilityData.forEach((slot) => {
-            const dateKey = slot.date;
-            if (!slots[dateKey]) {
-              slots[dateKey] = [];
-            }
-            slots[dateKey].push({
-              id: `${dateKey}-${slot.start_time}`,
-              start: new Date(`${slot.date}T${slot.start_time}`).toISOString(),
-              end: new Date(`${slot.date}T${slot.end_time}`).toISOString(),
-              available: slot.is_available,
-            });
+      }
+    )
+      .then((res) => res.json())
+      .then((data: Doctor) => {
+        const slotsByDate: Record<string, TimeSlot[]> = {};
+        (data.availability || []).forEach((slot) => {
+          const dateKey = format(new Date(slot.start), "yyyy-MM-dd");
+          if (!slotsByDate[dateKey]) slotsByDate[dateKey] = [];
+          slotsByDate[dateKey].push({
+            id: `${dateKey}-${slot.start}`,
+            start: slot.start,
+            end: slot.end,
+            available: slot.is_available,
           });
-          setAvailability(slots);
-          setLoadingDoctor(false);
-        })
-        .catch((error) => {
-          console.error("Error fetching doctor's schedule:", error);
-          setLoadingDoctor(false);
         });
-    }
+        
+        setDoctor(data);
+        setAvailability(slotsByDate);
+        setLoadingDoctor(false);
+      })
+      .catch((error) => {
+        console.error("Error fetching doctor's schedule:", error);
+        setLoadingDoctor(false);
+      });
   }, [selectedReferral]);
 
+  const selectedDateKey = date ? format(date, "yyyy-MM-dd") : "";
+  const slotsForDate = selectedDateKey ? availability[selectedDateKey] || [] : [];
+
   const handleSchedule = () => {
-    if (!selectedReferral || !selectedSlot || !date) return;
-  
-    // Find the selected slot object from the availableSlots array.
-    const selectedSlotObject = availableSlots.find((slot) => slot.id === selectedSlot);
-    if (!selectedSlotObject) return;
-  
+    if (!selectedReferral || !selectedSlot || !doctor) return;
+    
+    const slot = slotsForDate.find(s => s.id === selectedSlot);
+    if (!slot) return;
+
     setIsScheduling(true);
-  
-    // Use the base URL without appending the referral id.
-    const url = `http://127.0.0.1:8000/appointment/schedule-appointment/`;
-  
-    fetch(url, {
+    fetch("http://127.0.0.1:8000/appointment/schedule-appointment/", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -133,25 +134,21 @@ export default function ReferralScheduler() {
           : "",
       },
       body: JSON.stringify({
-        referral_id: selectedReferral.id, // send the referral ID in the POST body
-        appointment_date: selectedSlotObject.start, // ISO datetime string from the selected slot
+        referral_id: selectedReferral.id,
+        appointment_date: slot.start,
       }),
     })
       .then((res) => {
-        if (!res.ok) {
-          throw new Error("Network response was not ok");
-        }
+        if (!res.ok) throw new Error("Scheduling failed");
         return res.json();
       })
-      .then((data) => {
-        // Handle success response
+      .then(() => {
         setIsScheduling(false);
         setSuccess(true);
         setTimeout(() => {
           setSuccess(false);
           setSelectedReferral(null);
           setSelectedSlot(null);
-          setDoctor(null);
           setAvailability({});
         }, 2000);
       })
@@ -160,12 +157,29 @@ export default function ReferralScheduler() {
         setIsScheduling(false);
       });
   };
-  
 
-  const selectedDateKey = date ? format(date, "yyyy-MM-dd") : "";
-  const availableSlots = selectedDateKey
-    ? (availability[selectedDateKey] || []).filter((slot) => slot.available)
-    : [];
+  // New time formatting function
+  const formatTime = (dateString: string, timeZone: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleTimeString('en-US', {
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true,
+      timeZone
+    });
+  };
+
+  // New time comparison function
+  const isSlotPast = (endTime: string, timeZone: string) => {
+    const now = new Date();
+    const slotEnd = new Date(endTime);
+    
+    // Convert to doctor's timezone for comparison
+    const doctorNow = new Date(now.toLocaleString('en-US', { timeZone }));
+    const doctorSlotEnd = new Date(slotEnd.toLocaleString('en-US', { timeZone }));
+    
+    return doctorSlotEnd < doctorNow;
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
@@ -176,7 +190,6 @@ export default function ReferralScheduler() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3">
-          {/* Referrals List */}
           <div className="border-r p-4 h-[600px] overflow-y-auto">
             <h2 className="font-semibold text-lg mb-4">Pending Referrals</h2>
             <div className="space-y-3">
@@ -193,10 +206,7 @@ export default function ReferralScheduler() {
                 referrals.map((referral) => (
                   <div
                     key={referral.id}
-                    onClick={() => {
-                      setSelectedReferral(referral);
-                      setDate(new Date());
-                    }}
+                    onClick={() => setSelectedReferral(referral)}
                     className={`p-4 border rounded-lg cursor-pointer transition-colors ${
                       selectedReferral?.id === referral.id
                         ? "border-blue-500 bg-blue-50"
@@ -224,7 +234,6 @@ export default function ReferralScheduler() {
             </div>
           </div>
 
-          {/* Calendar and Scheduling Panel */}
           <div className="col-span-2 p-6">
             {!selectedReferral ? (
               <div className="h-full flex items-center justify-center text-gray-500">
@@ -232,26 +241,13 @@ export default function ReferralScheduler() {
               </div>
             ) : (
               <div className="space-y-6">
-                {/* Referral Info */}
                 <div className="bg-gray-50 p-4 rounded-lg">
                   {loadingDoctor ? (
                     <div className="space-y-4">
-                      <div>
-                        <Skeleton className="h-4 w-24 mb-1" />
-                        <Skeleton className="h-4 w-32" />
-                      </div>
-                      <div>
-                        <Skeleton className="h-4 w-24 mb-1" />
-                        <Skeleton className="h-4 w-48" />
-                      </div>
-                      <div>
-                        <Skeleton className="h-4 w-24 mb-1" />
-                        <Skeleton className="h-4 w-full" />
-                      </div>
-                      <div>
-                        <Skeleton className="h-4 w-24 mb-1" />
-                        <Skeleton className="h-4 w-full" />
-                      </div>
+                      <Skeleton className="h-4 w-24 mb-1" />
+                      <Skeleton className="h-4 w-32" />
+                      <Skeleton className="h-4 w-24 mb-1" />
+                      <Skeleton className="h-4 w-48" />
                     </div>
                   ) : (
                     <div className="grid grid-cols-2 gap-4">
@@ -261,34 +257,20 @@ export default function ReferralScheduler() {
                       </div>
                       <div>
                         <p className="text-sm font-medium text-gray-500">Specialist</p>
-                        <p>
-                          {doctor
-                            ? `${doctor.full_name} - ${doctor.specialization}`
-                            : selectedReferral.receiving_doctor}
-                        </p>
+                        <p>{doctor?.full_name} - {doctor?.specialization}</p>
                       </div>
                       <div className="col-span-2">
                         <p className="text-sm font-medium text-gray-500">Reason</p>
                         <p>{selectedReferral.reason}</p>
                       </div>
-                      <div className="col-span-2">
-                        <p className="text-sm font-medium text-gray-500">Notes</p>
-                        <p>{selectedReferral.notes}</p>
-                      </div>
                     </div>
                   )}
                 </div>
 
-                {/* Calendar Component */}
                 <div className="border rounded-md p-4">
                   {loadingDoctor ? (
                     <div className="flex flex-col items-center space-y-2">
                       <Skeleton className="h-8 w-48 mb-4" />
-                      <div className="grid grid-cols-7 gap-2">
-                        {Array(7).fill(0).map((_, i) => (
-                          <Skeleton key={i} className="h-6 w-6" />
-                        ))}
-                      </div>
                       <div className="grid grid-cols-7 gap-2">
                         {Array(35).fill(0).map((_, i) => (
                           <Skeleton key={i} className="h-8 w-8" />
@@ -299,20 +281,17 @@ export default function ReferralScheduler() {
                     <Calendar
                       mode="single"
                       selected={date}
-                      onSelect={(newDate) => {
-                        setDate(newDate);
-                        setSelectedSlot(null);
-                      }}
+                      onSelect={setDate}
                       className="rounded-md border shadow"
                       disabled={(date) => {
                         const dateKey = format(date, "yyyy-MM-dd");
-                        return !availability[dateKey] || availability[dateKey].filter((s) => s.available).length === 0;
+                        return !availability[dateKey] || 
+                          !availability[dateKey].some(s => s.available);
                       }}
                     />
                   )}
                 </div>
 
-                {/* Time Slots */}
                 {date && (
                   <div>
                     <h3 className="font-medium mb-3">
@@ -325,31 +304,34 @@ export default function ReferralScheduler() {
                           <Skeleton key={i} className="h-16 rounded-lg" />
                         ))}
                       </div>
-                    ) : availableSlots.length === 0 ? (
+                    ) : slotsForDate.length === 0 ? (
                       <p className="text-gray-500">No available slots for this date</p>
                     ) : (
                       <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                        {availableSlots.map((slot) => {
-                          const slotStart = parseISO(slot.start);
-                          const slotEnd = parseISO(slot.end);
-                          const isPast = isBefore(slotEnd, new Date());
+                        {slotsForDate.map((slot) => {
+                          const doctorTimezone = doctor?.timezone || 'UTC';
+                          const isPast = isSlotPast(slot.end, doctorTimezone);
+                          const isTaken = !slot.available;
+                          const disabled = isPast || isTaken;
 
                           return (
                             <button
                               key={slot.id}
-                              onClick={() => !isPast && setSelectedSlot(slot.id)}
-                              disabled={isPast}
-                              className={`p-3 border rounded-lg text-center ${
+                              onClick={() => !disabled && setSelectedSlot(slot.id)}
+                              disabled={disabled}
+                              className={`p-3 border rounded-lg text-center transition-colors ${
                                 selectedSlot === slot.id
                                   ? "bg-blue-100 border-blue-500"
-                                  : isPast
-                                  ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                                  : disabled
+                                  ? "opacity-50 cursor-not-allowed bg-gray-100"
                                   : "hover:bg-gray-50"
                               }`}
                             >
                               <div className="font-medium">
-                                {format(slotStart, "h:mm a")} - {format(slotEnd, "h:mm a")}
+                                {formatTime(slot.start, doctorTimezone)} -{' '}
+                                {formatTime(slot.end, doctorTimezone)}
                               </div>
+                              {isTaken && <div className="text-xs text-red-500 mt-1">Taken</div>}
                               {isPast && <div className="text-xs text-red-500 mt-1">Passed</div>}
                             </button>
                           );
@@ -359,7 +341,6 @@ export default function ReferralScheduler() {
                   </div>
                 )}
 
-                {/* Action Buttons */}
                 <div className="flex justify-end space-x-3 pt-4">
                   <button
                     onClick={() => {

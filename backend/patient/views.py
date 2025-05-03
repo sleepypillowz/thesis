@@ -100,9 +100,38 @@ class PatientInfoView(APIView):
             treatment_response = supabase.table("queueing_treatment").select(
                 "id, treatment_notes, created_at, updated_at, patient_id, "
                 "queueing_treatment_diagnoses(id, diagnosis_id, patient_diagnosis(*)), "
-                "queueing_treatment_prescriptions(id, prescription_id, patient_prescription(*))"
+                "queueing_treatment_prescriptions(id, prescription_id, patient_prescription(*, medicine_medicine(id, name)))"
             ).eq("patient_id", patient_id).order("created_at", desc=True).limit(1).execute()
-
+            
+            appointment_response = supabase.table('appointment_appointment').select(
+                "appointment_date, status, doctor_id, "
+                "appointment_appointmentreferral(id, reason)"
+            ).eq('patient_id', patient_id).order('appointment_date', desc=True).execute()
+            appointment_data = appointment_response.data or [] 
+            print(appointment_data)
+            doctor_ids = list({a["doctor_id"] for a in appointment_data if a.get("doctor_id")})
+            doctor_name_map = {}
+            if doctor_ids:
+                doctors_resp = supabase.table("user_doctor") \
+                    .select("id, user_useraccount ( first_name, last_name )") \
+                    .in_("id", doctor_ids) \
+                    .execute()
+            for doc in doctors_resp.data or []:
+                    ua = doc.get("user_useraccount") or {}
+                    doctor_name_map[doc["id"]] = f"{ua.get('first_name','')} {ua.get('last_name','')}".strip()
+                        
+            annotated_appts = []
+            for a in appointment_data:
+                referral = a.get("appointment_appointmentreferral", {})
+                reason   = referral.get("reason", "")
+                annotated_appts.append({
+                    "appointment_date": a["appointment_date"],
+                    "status": a["status"],
+                    "doctor_id": a["doctor_id"],
+                    "doctor_name": doctor_name_map.get(a["doctor_id"], ""),
+                    "reason":           reason,
+                })       
+                    
             latest_treatment = treatment_response.data[0] if treatment_response.data else None
             if latest_treatment:
                 diagnoses = [
@@ -137,7 +166,8 @@ class PatientInfoView(APIView):
                     "queue_data": queue_data
                 },
                 "latest_treatment": treatment_summary,
-                "latest_treatment_id": treatment_summary["id"]
+                "latest_treatment_id": treatment_summary["id"],
+                "appointments": annotated_appts, 
             }
 
             return Response(response_data, status=status.HTTP_200_OK)
@@ -385,11 +415,32 @@ class TreatmentDetailView(APIView):
 
             # 3. Fetch treatments with related data
             treatment_response = supabase.table("queueing_treatment").select(
-                "id, treatment_notes, created_at, updated_at, patient_id, "
-                "queueing_treatment_diagnoses(id, treatment_id, diagnosis_id, patient_diagnosis(*)), "
-                "queueing_treatment_prescriptions(id, treatment_id, prescription_id, patient_prescription(*, medicine_medicine(id, name)))"
+                """
+                id, 
+                treatment_notes, 
+                created_at, 
+                updated_at, 
+                patient_id, 
+                doctor_id(
+                    id,
+                    first_name,
+                    last_name,
+                    user_doctor(specialization)
+                ),
+                queueing_treatment_diagnoses(
+                    id, 
+                    treatment_id, 
+                    diagnosis_id, 
+                    patient_diagnosis(*)
+                ), 
+                queueing_treatment_prescriptions(
+                    id, 
+                    treatment_id, 
+                    prescription_id, 
+                    patient_prescription(*, medicine_medicine(id, name))
+                )
+                """
             ).eq("patient_id", patient_id).order("created_at", desc=True).execute()
-
             treatments = treatment_response.data
 
             # 4. Structure response data
@@ -406,26 +457,42 @@ class TreatmentDetailView(APIView):
                 # Process treatments data
                 transformed_treatments = []
                 for item in treatments:
-                    transformed = {
-                        "id": item["id"],
-                        "treatment_notes": item["treatment_notes"],
-                        "created_at": item["created_at"],
-                        "updated_at": item["updated_at"],
-                        "diagnoses": [
-                            d["patient_diagnosis"]
-                            for d in item.get("queueing_treatment_diagnoses", [])
-                            if d.get("patient_diagnosis")
-                        ],
-                        "prescriptions": [
-                            {
-                                **p["patient_prescription"],
-                                "medication": p["patient_prescription"].pop("medicine_medicine")
-                            }
-                            for p in item.get("queueing_treatment_prescriptions", [])
-                                if p.get("patient_prescription")
-                        ]
+                    # 1. Safe doctor layer
+                    raw_doc     = item.get("doctor_id") or {}
+                    raw_profile = raw_doc.get("user_doctor") or {}
+
+                    doctor_info = {
+                        "id":             raw_doc.get("id"),
+                        "name":           " ".join(filter(None, [raw_doc.get("first_name"), raw_doc.get("last_name")])),
+                        "specialization": raw_profile.get("specialization")
                     }
-                    transformed_treatments.append(transformed)
+
+                    # 2. Safe diagnoses
+                    diagnoses = [
+                        d["patient_diagnosis"]
+                        for d in item.get("queueing_treatment_diagnoses", [])
+                        if d.get("patient_diagnosis")
+                    ]
+
+                    # 3. Safe prescriptions
+                    prescriptions = []
+                    for p in item.get("queueing_treatment_prescriptions", []):
+                        presc = p.get("patient_prescription")
+                        if not presc:
+                            continue
+                        med = presc.pop("medicine_medicine", None)
+                        prescriptions.append({ **presc, "medication": med })
+
+                    transformed_treatments.append({
+                        "id":             item.get("id"),
+                        "treatment_notes":item.get("treatment_notes"),
+                        "created_at":     item.get("created_at"),
+                        "updated_at":     item.get("updated_at"),
+                        "doctor_info":    doctor_info,
+                        "diagnoses":      diagnoses,
+                        "prescriptions":  prescriptions
+                    })
+
 
                 # Separate recent and previous treatments
                 response_data["recent_treatment"] = transformed_treatments[0]
@@ -444,25 +511,36 @@ class PatientRegister(APIView):
 
         # Helper: determine priority automatically based on complaint
         def determine_priority():
-            # Retrieve all queue entries for the patient, ordered by creation time
-            queue_entries = TemporaryStorageQueue.objects.filter(patient=request.data["patient_id"]).order_by("created_at")
+            queue_entries = TemporaryStorageQueue.objects.filter(
+                patient=request.data.get("patient_id")
+            ).order_by("created_at")
             if queue_entries.exists():
-                queue_entry = queue_entries.first()  # Use the earliest entry (or choose based on your criteria)
+                queue_entry = queue_entries.first()
                 print("priority to", queue_entry.priority_level)
                 return queue_entry.priority_level
             return "Regular"
 
-
-        # Re-registration branch (existing patient)
+        # RE-REGISTRATION (existing patient)
         if request.data.get("patient_id"):
             try:
-                patient = Patient.objects.get(patient_id=request.data["patient_id"])
+                patient = Patient.objects.get(
+                    patient_id=request.data["patient_id"]
+                )
             except Patient.DoesNotExist:
-                return Response({"error": "Patient not found"}, status=status.HTTP_404_NOT_FOUND)
+                return Response(
+                    {"error": "Patient not found"},
+                    status=status.HTTP_404_NOT_FOUND
+                )
 
-            complaint = request.data.get("complaint", "")
+            # Pull the raw complaint; if "Other", override with free text
+            raw_complaint = request.data.get("complaint", "")
+            if raw_complaint == "Other":
+                raw_complaint = request.data.get("other_complaint", "").strip()
+
             priority_level = determine_priority()
-            last_queue_number = TemporaryStorageQueue.objects.aggregate(Max('queue_number'))['queue_number__max']
+            last_queue_number = TemporaryStorageQueue.objects.aggregate(
+                Max('queue_number')
+            )['queue_number__max']
             queue_number = (last_queue_number or 0) + 1
             print("🔥 Assigned Queue Number:", queue_number)
 
@@ -470,11 +548,13 @@ class PatientRegister(APIView):
                 patient=patient,
                 priority_level=priority_level,
                 queue_number=queue_number,
-                complaint=complaint,
+                complaint=raw_complaint,
                 status='Waiting'
             )
 
-            queue_entries = TemporaryStorageQueue.objects.filter(patient=patient).order_by("created_at")
+            queue_entries = TemporaryStorageQueue.objects.filter(
+                patient=patient
+            ).order_by("created_at")
             queue_entries_data = [{
                 "id": entry.id,
                 "priority_level": entry.priority_level,
@@ -490,63 +570,74 @@ class PatientRegister(APIView):
                 "queue_entries": queue_entries_data
             }, status=status.HTTP_201_CREATED)
 
-        # New patient registration branch
-        else:
-            serializer = PatientRegistrationSerializer(data=request.data)
-            if serializer.is_valid():
-                validated_data = serializer.validated_data
-                print("🔄 Validated Data:", validated_data)
+        # NEW PATIENT REGISTRATION
+        serializer = PatientRegistrationSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-                if validated_data.get("date_of_birth"):
-                    validated_data["date_of_birth"] = validated_data["date_of_birth"].strftime("%Y-%m-%d")
+        validated_data = serializer.validated_data
+        print("🔄 Validated Data:", validated_data)
 
-                try:
-                    # Extract and remove complaint from validated data
-                    complaint = validated_data.get('complaint', '')
-                    priority_level = validated_data.get('priority_level', 'Regular')
-                    last_queue_number = TemporaryStorageQueue.objects.aggregate(Max('queue_number'))['queue_number__max']
-                    queue_number = (last_queue_number or 0) + 1
-                    print("🔥 Assigned Queue Number:", queue_number)
+        # Normalize DOB string
+        if validated_data.get("date_of_birth"):
+            validated_data["date_of_birth"] = (
+                validated_data["date_of_birth"].strftime("%Y-%m-%d")
+            )
 
-                    patient = Patient.objects.create(
-                        first_name=validated_data.get('first_name', ''),
-                        middle_name=validated_data.get('middle_name', ''),
-                        last_name=validated_data['last_name'],
-                        email=validated_data['email'],
-                        phone_number=validated_data['phone_number'],
-                        date_of_birth=datetime.strptime(validated_data['date_of_birth'], '%Y-%m-%d').date(),
-                        gender=validated_data.get('gender', ''),
-                        street_address=validated_data.get('street_address', ''),
-                        barangay=validated_data.get('barangay', ''),
-                        municipal_city=validated_data.get('municipal_city', '')
-                    )
+        try:
+            # Extract the dropdown complaint
+            complaint_value = validated_data.get('complaint', '')
+            # If the user chose "Other", override with the free-text entry
+            if complaint_value == "Other":
+                complaint_value = request.data.get("other_complaint", "").strip()
 
-                    queue_entry = TemporaryStorageQueue.objects.create(
-                        patient=patient,
-                        priority_level=priority_level,
-                        queue_number=queue_number,
-                        complaint=complaint,
-                        status='Waiting'
-                    )
+            # Determine queue number
+            last_queue_number = TemporaryStorageQueue.objects.aggregate(
+                Max('queue_number')
+            )['queue_number__max']
+            queue_number = (last_queue_number or 0) + 1
+            print("🔥 Assigned Queue Number:", queue_number)
 
-                    patient_serializer = PatientRegistrationSerializer(patient)
-                    return Response({
-                        "message": "Patient registered successfully.",
-                        "patient": patient_serializer.data,
-                        "queue_entry": {
-                            "id": queue_entry.id,
-                            "priority_level": queue_entry.priority_level,
-                            "status": queue_entry.status,
-                            "queue_number": queue_entry.queue_number,
-                            "complaint": queue_entry.complaint
-                        }
-                    }, status=status.HTTP_201_CREATED)
+            # Create Patient
+            patient = Patient.objects.create(
+                first_name=validated_data.get('first_name', ''),
+                middle_name=validated_data.get('middle_name', ''),
+                last_name=validated_data['last_name'],
+                email=validated_data['email'],
+                phone_number=validated_data['phone_number'],
+                date_of_birth=datetime.strptime(
+                    validated_data['date_of_birth'], '%Y-%m-%d'
+                ).date(),
+                gender=validated_data.get('gender', ''),
+                street_address=validated_data.get('street_address', ''),
+                barangay=validated_data.get('barangay', ''),
+                municipal_city=validated_data.get('municipal_city', '')
+            )
 
-                except Exception as e:
-                    return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-            else:
-                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            # Enqueue
+            queue_entry = TemporaryStorageQueue.objects.create(
+                patient=patient,
+                priority_level=validated_data.get('priority_level', 'Regular'),
+                queue_number=queue_number,
+                complaint=complaint_value,
+                status='Waiting'
+            )
 
+            patient_serializer = PatientRegistrationSerializer(patient)
+            return Response({
+                "message": "Patient registered successfully.",
+                "patient": patient_serializer.data,
+                "queue_entry": {
+                    "id": queue_entry.id,
+                    "priority_level": queue_entry.priority_level,
+                    "status": queue_entry.status,
+                    "queue_number": queue_entry.queue_number,
+                    "complaint": queue_entry.complaint
+                }
+            }, status=status.HTTP_201_CREATED)
+
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 class SearchPatient(APIView):
     permission_classes = [IsMedicalStaff]

@@ -3,38 +3,111 @@ from .models import UserAccount
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework import serializers
 from .models import UserAccount, Schedule, Doctor
-from django.contrib.auth import get_user_model
+from appointment.models import Appointment
+import calendar
+from django.db.models import Q
 
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
     def get_token(cls, user):
-        # Debug: Print to ensure this method is called
+        # Debugging: Print to ensure this method is called
         print("CustomTokenObtainPairSerializer: Creating token for", user.email, user.first_name)
         token = super().get_token(user)
         token['is_staff'] = user.is_staff
         token['is_superuser'] = user.is_superuser
         token['email'] = user.email
         token['role'] = user.role
-        token['first_name'] = user.first_name  # Add first_name to the token
+        token['first_name'] = user.first_name
         return token
     
 class ScheduleSerializer(serializers.ModelSerializer):
+    day_of_week = serializers.ChoiceField(
+        choices=Schedule.DAYS_OF_WEEK
+    )
+
     class Meta:
         model = Schedule
         fields = ['day_of_week', 'start_time', 'end_time']
 
+
 class DoctorProfileSerializer(serializers.ModelSerializer):
     schedules = ScheduleSerializer(many=True, required=False)
+
+    # Map calendar.day_name (Mon=0…Sun=6) → Django week_day (Sun=1…Sat=7)
+    _WEEKDAY_MAP = {
+        name: ((idx + 2) if idx < 6 else 1)
+        for idx, name in enumerate(calendar.day_name)
+    }
 
     class Meta:
         model = Doctor
         fields = ['specialization', 'schedules']
 
+    def validate_schedules(self, schedules):
+        def overlaps(a_start, a_end, b_start, b_end):
+            return max(a_start, b_start) < min(a_end, b_end)
+
+        # 1) Intra‐list overlap
+        for i, s1 in enumerate(schedules):
+            for s2 in schedules[i+1:]:
+                if (s1['day_of_week'] == s2['day_of_week'] and
+                    overlaps(s1['start_time'], s1['end_time'],
+                             s2['start_time'], s2['end_time'])):
+                    raise serializers.ValidationError(
+                        f"{s1['day_of_week']} {s1['start_time']}–{s1['end_time']} "
+                        f"overlaps {s2['start_time']}–{s2['end_time']}."
+                    )
+
+        # 2) Appointment‐conflict check (only on existing Doctor)
+        if self.instance is not None:
+            for slot in schedules:
+                day_name = slot['day_of_week']
+                day_int  = self._WEEKDAY_MAP.get(day_name)
+                if not day_int:
+                    raise serializers.ValidationError(f"Invalid day: {day_name}")
+
+                conflict = Appointment.objects.filter(
+                    Q(doctor=self.instance) &
+                    Q(appointment_date__time__lt=slot['end_time']) &
+                    Q(appointment_date__time__gt=slot['start_time']) &
+                    Q(appointment_date__week_day=day_int)
+                ).exists()
+
+                if conflict:
+                    raise serializers.ValidationError(
+                        f"Cannot set schedule on {day_name} "
+                        f"{slot['start_time']}–{slot['end_time']}: already booked."
+                    )
+
+        return schedules
+
+    def update(self, instance, validated_data):
+        # Pop off and handle schedules separately
+        schedules_data = validated_data.pop('schedules', None)
+
+        # 1) Update specialization (or other Doctor fields)
+        instance.specialization = validated_data.get('specialization', instance.specialization)
+        instance.save()
+
+        # 2) If client provided schedules, replace them wholesale
+        if schedules_data is not None:
+            # Delete old slots
+            instance.schedule.all().delete()
+            # Create new ones
+            for slot in schedules_data:
+                Schedule.objects.create(
+                    doctor=instance,
+                    day_of_week=slot['day_of_week'],
+                    start_time=slot['start_time'],
+                    end_time=slot['end_time']
+                )
+
+        return instance
 class UserAccountSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, required=True, style={'input_type': 'password'})
     re_password = serializers.CharField(write_only=True, required=True, style={'input_type': 'password'})
     role = serializers.ChoiceField(choices=UserAccount.ROLE_CHOICES, required=True)
-    # Only doctors should include doctor_profile data.
+    # Only doctors shoul*d include doctor_profile data.
     doctor_profile = DoctorProfileSerializer(required=False)
 
     class Meta:
@@ -54,6 +127,7 @@ class UserAccountSerializer(serializers.ModelSerializer):
         if attrs.get('role') == 'doctor' and not attrs.get('doctor_profile'):
             raise serializers.ValidationError({"doctor_profile": "This field is required for doctors."})
         return attrs
+    
 
     def create(self, validated_data):
         # Pop nested doctor_profile data if present.
@@ -76,36 +150,30 @@ class UserAccountSerializer(serializers.ModelSerializer):
                     end_time=schedule['end_time']
                 )
         return user
-    
     def update(self, instance, validated_data):
-        doctor_profile_data = validated_data.pop('doctor_profile', None)
+        # 1) Extract nested doctor_profile
+        profile_data = validated_data.pop('doctor_profile', None)
 
-        validated_data.pop('password', None)
-        validated_data.pop('re_password', None)
-        
-        for attr, value in validated_data.items():
-            setattr(instance, attr, value)
+        # 2) Update user fields
+        for attr, val in validated_data.items():
+            setattr(instance, attr, val)
         instance.save()
 
-        if instance.role == 'doctor' and doctor_profile_data:
-            doctor_obj = Doctor.objects.get_or_create(user=instance)
+        # 3) If doctor_profile provided, run its serializer
+        if instance.role == 'doctor' and profile_data:
+            # Get or create the Doctor instance
             doctor_obj, _ = Doctor.objects.get_or_create(user=instance)
-            doctor_obj.specialization = doctor_profile_data["specialization"]
-            doctor_obj.save()
-
-            # b) Replace schedules wholesale (you could diff/patch instead)
-            #    First, delete existing schedules
-            doctor_obj.schedule.all().delete()
-
-            #    Then recreate from incoming data
-            for sched in doctor_profile_data.get("schedules", []):
-                Schedule.objects.create(
-                    doctor=doctor_obj,
-                    day_of_week=sched["day_of_week"],
-                    start_time=sched["start_time"],
-                    end_time=sched["end_time"],
-                )
-
+            
+            # Pass context so nested serializer can use request, etc.
+            prof_serializer = DoctorProfileSerializer(
+                instance=doctor_obj,
+                data=profile_data,
+                partial=True,
+                context=self.context
+            )
+            # This runs validate_schedules(...) with schedules as list of dicts
+            prof_serializer.is_valid(raise_exception=True)
+            prof_serializer.save()
         return instance
     def to_representation(self, instance):
         representation = super().to_representation(instance)

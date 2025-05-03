@@ -12,7 +12,7 @@ from django.utils import timezone
 from datetime import datetime, timedelta
 from .models import Appointment
 
-from user.models import Doctor, UserAccount
+from user.models import Doctor, UserAccount, Schedule
 from user.models import UserAccount 
 from user.permissions import IsReferralParticipant
 
@@ -21,7 +21,10 @@ from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from django.db.models import Q
 from patient.serializers import PatientSerializer
-
+from django.db import IntegrityError
+import pytz
+from dateutil.relativedelta import relativedelta  # <-- Add this
+from dateutil.relativedelta import MO, TU, WE, TH, FR, SA, SU
 
 class DoctorCreateReferralView(APIView):
     permission_classes = [isDoctor]
@@ -42,6 +45,8 @@ class DoctorCreateReferralView(APIView):
                 notes=serializer.validated_data.get('notes', '')
             )
             return Response(AppointmentReferralSerializer(referral).data, status=status.HTTP_201_CREATED)
+        if not serializer.is_valid():
+            print(serializer.errors)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 class ReferralViewList(APIView):
@@ -50,157 +55,185 @@ class ReferralViewList(APIView):
         referrals = AppointmentReferral.objects.filter(status='pending')
         serializer = AppointmentReferralSerializer(referrals, many=True)
         return Response(serializer.data)
-
 class DoctorSchedule(APIView):
     permission_classes = [isSecretary]
-    
-    def get(self, request, doctor_id):
-        # Retrieve the UserAccount and then the related Doctor profile
-        try:
-            user = UserAccount.objects.get(id=doctor_id, role='doctor')
-            doctor = user.doctor  # Access the one-to-one relation to Doctor
-        except UserAccount.DoesNotExist:
-            return Response({"error": "Doctor not found"}, status=status.HTTP_404_NOT_FOUND)
-        except Doctor.DoesNotExist:
-            return Response({"error": "Doctor profile not found"}, status=status.HTTP_404_NOT_FOUND)
-        
-        # Default date range (next 3 months)
-        start_date = timezone.now().date()
-        end_date = start_date + timedelta(days=90)
-        
-        # Get query parameters for custom date range
-        start_date_str = request.query_params.get('start_date')
-        end_date_str = request.query_params.get('end_date')
-        
-        try:
-            if start_date_str:
-                start_date = datetime.strptime(start_date_str, '%Y-%m-%d').date()
-            if end_date_str:
-                end_date = datetime.strptime(end_date_str, '%Y-%m-%d').date()
-        except ValueError:
-            return Response(
-                {"error": "Invalid date format. Use YYYY-MM-DD"},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        
-        # Retrieve schedules directly from the Doctor profile
-        schedules = doctor.schedule.all()
-        
-        availability = []
-        current_date = start_date
-        
-        while current_date <= end_date:
-            day_of_week = current_date.strftime('%A')
-            day_schedules = schedules.filter(day_of_week=day_of_week)
-            
-            for schedule in day_schedules:
-                # Create timezone-aware datetime objects for the schedule start and end times
-                slot_start = timezone.make_aware(datetime.combine(current_date, schedule.start_time))
-                slot_end = timezone.make_aware(datetime.combine(current_date, schedule.end_time))
-                
-                # Generate 30-minute slots within the schedule
-                current_slot = slot_start
-                while current_slot + timedelta(minutes=30) <= slot_end:
-                    slot_end_time = current_slot + timedelta(minutes=30)
-                    
-                    # Check for existing appointments in the current slot
-                    existing_appointment = Appointment.objects.filter(
-                        doctor=doctor,
-                        appointment_date__gte=current_slot,
-                        appointment_date__lt=slot_end_time
-                    ).exists()
-                    
-                    # Only include future available slots
-                    if not existing_appointment and current_slot > timezone.now():
-                        availability.append({
-                            'date': current_date.isoformat(),
-                            'day_of_week': day_of_week,
-                            'start_time': current_slot.time().strftime('%H:%M:%S'),
-                            'end_time': slot_end_time.time().strftime('%H:%M:%S'),
-                            'is_available': True
-                        })
-                    
-                    current_slot = slot_end_time
-            
-            current_date += timedelta(days=1)
-        
-        doctor_data = {
-            'id': doctor.user.id,
-            'full_name': doctor.user.get_full_name(),
-            'specialization': doctor.specialization,
-            'email': doctor.user.email,
-            'availability': availability
-        }
-        
-        return Response(doctor_data)
 
+    def get(self, request, doctor_id):
+        try:
+            # Step 1: Get UserAccount (using the provided user ID)
+            user = UserAccount.objects.get(id=doctor_id, role='doctor')
+            
+            # Step 2: Get the Doctor instance linked to the UserAccount
+            doctor = user.doctor  # Directly access via OneToOneField
+            
+            # Step 3: Get all schedules for this doctor
+            schedules = Schedule.objects.filter(doctor=doctor)
+            
+            # Step 4: Generate availability slots based on the schedules
+            availability = []
+            doctor_tz = pytz.timezone(doctor.timezone)
+            now = timezone.now().astimezone(doctor_tz)
+
+            for schedule in schedules:
+                # For each scheduled day (e.g., Tuesday), generate slots for the next 12 weeks
+                day_name = schedule.day_of_week
+                start_time = schedule.start_time
+                end_time = schedule.end_time
+
+                # Generate slots for this day for the next 12 weeks
+                for week in range(12):
+                    # Find the next occurrence of this day (e.g., Tuesday)
+                    next_day = now + relativedelta(
+                        weeks=week, 
+                        weekday=day_to_weekday(day_name),  # Helper function
+                        hour=start_time.hour,
+                        minute=start_time.minute,
+                        second=0,
+                        microsecond=0
+                    )
+                    
+                    # Generate time slots for this day
+                    current_slot = next_day
+                    while current_slot.time() < end_time:
+                        slot_end = current_slot + timedelta(minutes=30)
+                        
+                        # Check if slot is available
+                        is_available = not Appointment.objects.filter(
+                            doctor=doctor,
+                            appointment_date__gte=current_slot.astimezone(pytz.UTC),
+                            appointment_date__lt=slot_end.astimezone(pytz.UTC),
+                            status='Scheduled'
+                        ).exists()
+                        
+                        availability.append({
+                            "start": current_slot.astimezone(pytz.UTC).isoformat(),
+                            "end": slot_end.astimezone(pytz.UTC).isoformat(),
+                            "is_available": is_available
+                        })
+                        
+                        current_slot = slot_end
+
+            return Response({
+                "doctor_id": user.id,
+                "doctor_name": user.get_full_name(),
+                "timezone": doctor.timezone,
+                "specialization": doctor.specialization,
+                "availability": availability
+            })
+
+        except UserAccount.DoesNotExist:
+            return Response({"error": "Doctor not found"}, status=404)
+        except Doctor.DoesNotExist:
+            return Response({"error": "Doctor profile not found"}, status=404)
+    
+def day_to_weekday(day_name):
+    return {
+        'Monday': MO(-1),
+        'Tuesday': TU(-1),
+        'Wednesday': WE(-1),
+        'Thursday': TH(-1),
+        'Friday': FR(-1),
+        'Saturday': SA(-1),
+        'Sunday': SU(-1)
+    }[day_name]    
+        
 class ScheduleAppointment(APIView):
     permission_classes = [isSecretary]
 
     def post(self, request):
         data = request.data
+        print('data', data)
         referral_id = data.get("referral_id")
         appointment_date_str = data.get("appointment_date")
 
-        if not referral_id:
-            return Response({"error": "referral_id is required."}, status=status.HTTP_400_BAD_REQUEST)
-        if not appointment_date_str:
-            return Response({"error": "appointment_date is required."}, status=status.HTTP_400_BAD_REQUEST)
-        print('data ito: ',request.data)
-        
-        appointment_date = parse_datetime(appointment_date_str)
-        if appointment_date is None:
-            return Response({"error": "Invalid appointment_date format. Use ISO format."}, status=status.HTTP_400_BAD_REQUEST)
-
+        if not referral_id or not appointment_date_str:
+            return Response(
+                {"error": "Both referral_id and appointment_date are required"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
         try:
             referral = AppointmentReferral.objects.get(id=referral_id)
-        except AppointmentReferral.DoesNotExist:
-            return Response({"error": "Referral not found."}, status=status.HTTP_404_NOT_FOUND)
+            doctor = referral.receiving_doctor.doctor
+            doctor_tz = pytz.timezone(doctor.timezone)
+        except (AppointmentReferral.DoesNotExist, Doctor.DoesNotExist):
+            return Response({"error": "Invalid referral"}, status=status.HTTP_404_NOT_FOUND)
 
-        
-        receiving_doctor_id = referral.receiving_doctor.id
-        
+        # Parse datetime
         try:
-            doctor = Doctor.objects.get(user__id=receiving_doctor_id, user__role='doctor')
-        except Doctor.DoesNotExist:
-            return Response({"error": "Receiving doctor not found."}, status=status.HTTP_404_NOT_FOUND)
+            # Handle both naive and aware datetimes
+            if 'Z' in appointment_date_str:
+                appointment_date = datetime.fromisoformat(appointment_date_str.replace('Z', '+00:00'))
+            else:
+                appointment_date = datetime.fromisoformat(appointment_date_str)
+        except ValueError:
+            return Response({"error": "Invalid ISO datetime format"}, status=400)
 
-        # The patient is obtained from the referral
-        patient = referral.patient
-        # The secretary who is scheduling is the current user
-        scheduled_by = request.user
+        # Convert to doctor's timezone and UTC
+        try:
+            if appointment_date.tzinfo is None:  # Naive datetime
+                appointment_date_doctor = doctor_tz.localize(appointment_date)
+            else:  # Aware datetime - convert directly
+                appointment_date_doctor = appointment_date.astimezone(doctor_tz)
+                
+            appointment_date_utc = appointment_date_doctor.astimezone(pytz.UTC)
+        except (pytz.exceptions.NonExistentTimeError, pytz.exceptions.AmbiguousTimeError):
+            return Response({"error": "Invalid time due to DST transition"}, status=400)
 
-        # Create the appointment
-        appointment = Appointment.objects.create(
-            patient=patient,
+        # Validate slot alignment
+        if (appointment_date_doctor.minute % 30 != 0 or 
+            appointment_date_doctor.second != 0 or 
+            appointment_date_doctor.microsecond != 0):
+            return Response({"error": "Appointments must start at :00 or :30"}, status=400)
+
+        # Check doctor's schedule
+        day_of_week = appointment_date_doctor.strftime('%A')
+        schedule_exists = doctor.schedule.filter(
+            day_of_week=day_of_week,
+            start_time__lte=appointment_date_doctor.time(),
+            end_time__gte=(appointment_date_doctor + timedelta(minutes=30)).time()
+        ).exists()
+        
+        if not schedule_exists:
+            return Response({"error": "Doctor not available at this time"}, status=400)
+
+        # Check for conflicts using calculated end time
+        calculated_end_utc = appointment_date_utc + timedelta(minutes=30)
+        conflict = Appointment.objects.filter(
             doctor=doctor,
-            scheduled_by=scheduled_by,
-            appointment_date=appointment_date,
-            status="Scheduled",  # or use the default status
-        )
+            appointment_date__lt=calculated_end_utc,
+            appointment_date__gte=appointment_date_utc - timedelta(minutes=29)  # 1-minute buffer
+        ).exists()
 
-        # Update the referral to link the new appointment and change its status
+        if conflict:
+            return Response({"error": "Time slot is already booked"}, status=status.HTTP_409_CONFLICT)
+
+        # Create appointment
+        try:
+            appointment = Appointment.objects.create(
+                patient=referral.patient,
+                doctor=doctor,
+                scheduled_by=request.user,
+                appointment_date=appointment_date_utc,
+                status='Scheduled'
+            )
+        except IntegrityError:
+            return Response({"error": "Appointment conflict detected"}, status=status.HTTP_409_CONFLICT)
+
+        # Update referral
         referral.appointment = appointment
-        referral.status = "scheduled"
+        referral.status = 'scheduled'
         referral.save()
 
         return Response({
-            "message": "Appointment scheduled successfully.",
+            "message": "Appointment scheduled successfully",
             "appointment_id": appointment.id,
-            "appointment_date": appointment.appointment_date
+            "appointment_date_utc": appointment.appointment_date.isoformat(),
+            "appointment_date_local": appointment_date_doctor.isoformat()
         }, status=status.HTTP_201_CREATED)
         
-
-
 # only referral participants can access this
 class AppointmentReferralViewSet(viewsets.ModelViewSet):
-    """
-    ViewSet for managing doctor referrals.
-    Both the referring doctor (sender) and the receiving doctor (recipient) can view,
-    update, or delete a referral. The receiving doctor also has custom actions to accept
-    or decline the referral.
-    """
-    
+       
     serializer_class = AppointmentReferralSerializer
     permission_classes = [IsAuthenticated, IsReferralParticipant]
     def get_queryset(self):
@@ -216,13 +249,19 @@ class AppointmentReferralViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=['patch'], url_path='decline')
     def decline_referral(self, request, pk=None):
         referral = self.get_object()
-        if referral.receiving_doctor  != request.user:
+        if referral.receiving_doctor != request.user:
             return Response(
-                {'detail': 'Only the receiving doctor can accept this referral.'},
+                {'detail': 'Only the receiving doctor can decline this referral.'},
                 status=status.HTTP_403_FORBIDDEN
             )
         
-        referral.status = 'cancelled'
+        appointment = getattr(referral, 'appointment', None)
+
+        if appointment:
+            appointment.status = 'cancelled'
+            appointment.save()
+        
+        referral.status='cancelled'
         referral.save()
         serializer = self.get_serializer(referral)
         return Response(serializer.data, status=status.HTTP_200_OK)

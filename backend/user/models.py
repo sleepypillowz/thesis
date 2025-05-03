@@ -5,6 +5,7 @@ import string
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
 
+
 class UserAccountManager(BaseUserManager):
     def create_user(self, email, password=None, **kwargs):
         if not email:
@@ -58,6 +59,8 @@ class Doctor(models.Model):
         on_delete=models.CASCADE,
         limit_choices_to={'role':'doctor'}
     )
+    timezone = models.CharField(max_length=50, default='UTC')  # <-- Add this
+
     specialization = models.CharField(max_length=255)
     def __str__(self):
         return f"{self.user.get_full_name()} - {self.specialization}"

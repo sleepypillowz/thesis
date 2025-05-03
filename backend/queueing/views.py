@@ -360,7 +360,8 @@ class PatientTreatmentForm(APIView):
 
         treatment = Treatment.objects.create(
             patient=patient,
-            treatment_notes=treatment_notes
+            treatment_notes=treatment_notes,
+            doctor=request.user
         )
         queue_entry = TemporaryStorageQueue.objects.get(patient=patient, queue_number=queue_number)
 
@@ -426,8 +427,5 @@ class PatientTreatmentForm(APIView):
             except Exception as e:
                 print(f"Debug: Exception occurred while processing prescription: {e}")
                 return Response({"error": "An error occurred while processing the prescription."}, status=status.HTTP_400_BAD_REQUEST)
-
-
-
 
         return Response({"message": "Treatment submitted successfully"}, status=status.HTTP_201_CREATED)

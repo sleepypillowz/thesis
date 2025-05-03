@@ -16,8 +16,9 @@ export default function Page() {
     phone_number: "",
     email: "",
     date_of_birth: "",
-    gender: "Male", // New gender field added to state
+    gender: "Male", 
     complaint: "General Illness",
+    other_complaint: "",  
     priority_level: "Regular",
     street_address: "",
     barangay: "",
@@ -95,6 +96,7 @@ export default function Page() {
           date_of_birth: "",
           gender: "", // Reset gender field
           complaint: "General Illness",
+          other_complaint: "",  
           priority_level: "Regular",
           street_address: "",
           barangay: "",
@@ -337,8 +339,8 @@ export default function Page() {
                   <select
                     id="complaint"
                     value={formData.complaint}
-                    className="card block w-full rounded-lg p-3 text-sm"
                     onChange={handleChange}
+                    className="card block w-full rounded-lg p-3 text-sm"
                     required
                   >
                     <option value="General Illness">General Illness</option>
@@ -347,6 +349,27 @@ export default function Page() {
                     <option value="Other">Other</option>
                   </select>
                 </div>
+
+                {/* Conditionally render custom reason input */}
+                {formData.complaint === "Other" && (
+                  <div>
+                    <label
+                      htmlFor="other_complaint"
+                      className="mb-2 block text-sm font-medium"
+                    >
+                      Please specify <span className="text-red-500">*</span>
+                    </label>
+                    <Input
+                      type="text"
+                      id="other_complaint"
+                      value={formData.other_complaint}
+                      onChange={handleChange}
+                      placeholder="Enter your reason"
+                      required
+                    />
+                  </div>
+                )}
+
                 <div>
                   <label
                     htmlFor="priority_level"
@@ -357,8 +380,8 @@ export default function Page() {
                   <select
                     id="priority_level"
                     value={formData.priority_level}
-                    className="card block w-full rounded-lg p-3 text-sm"
                     onChange={handleChange}
+                    className="card block w-full rounded-lg p-3 text-sm"
                     required
                   >
                     <option value="Regular">Regular</option>

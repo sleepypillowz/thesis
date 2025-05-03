@@ -1,46 +1,43 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { supabase } from "@/config/supabase";
 import {
   Patient,
   columns,
 } from "@/components/molecules/tables/doctor-patient-columns";
 import { DataTable } from "@/components/ui/data-table";
 
-export default function Page() {
+export default function MedicalRecords() {
   const [patients, setPatients] = useState<Patient[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
-    // Fetch patient data from the Django API or Supabase with the token
     const fetchPatients = async () => {
-      try {
-        const accessToken = localStorage.getItem("access");
-        if (!accessToken) {
-          console.error("No access token found");
-          return;
-        }
-        const response = await fetch("http://127.0.0.1:8000/patients/", {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${accessToken}`,
-          },
-        });
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data: Patient[] = await response.json();
-        setPatients(data);
-      } catch (error) {
+      const { data, error } = await supabase
+        .from("patient_patient")
+        .select("*");
+
+      if (error) {
         console.error("Error fetching patients:", error);
+        return;
       }
+
+      console.log("Fetched Patients:", data); // Debugging Output
+
+      // Ensure IDs are numbers (if Supabase returns them as strings)
+      const formattedPatients = data.map((patient) => ({
+        ...patient,
+        id: Number(patient.id),
+      }));
+
+      setPatients(formattedPatients);
     };
 
     fetchPatients();
-  }, []); // Empty dependency array, meaning this runs only once on mount.
+  }, []);
 
-  // Filter patients based on the search term
+  // Filter patients based on search term
   const filteredPatients = patients.filter((patient) => {
     const fullName = `${patient.first_name} ${patient.middle_name || ""} ${
       patient.last_name
@@ -59,10 +56,7 @@ export default function Page() {
         placeholder="Search patient name..."
         className="mb-4 w-full rounded border border-gray-300 p-2"
       />
-      <DataTable
-        columns={columns}
-        data={filteredPatients} // Use the filtered patients data
-      />
+      <DataTable columns={columns} data={filteredPatients} />
     </div>
   );
 }

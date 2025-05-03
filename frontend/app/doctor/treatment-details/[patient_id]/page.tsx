@@ -2,7 +2,7 @@
 import { useRouter, useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import userRole from "@/components/hooks/userRole";
-import { FileText, Eye, Download } from 'lucide-react';
+import { FileText, Eye, Download, PlusCircle } from 'lucide-react';
 interface Diagnosis {
   diagnosis_code: string;
   diagnosis_description: string;
@@ -25,8 +25,17 @@ interface TreatmentRecord {
   treatment_notes: string;
   created_at: string;
   updated_at: string;
+  doctor_info?: DoctorProfile;
   diagnoses: Diagnosis[];
   prescriptions: Prescription[];
+}
+interface QueueData {
+  id: number;
+  priority_level: string;
+  status: string;
+  created_at: string;
+  complaint: string;
+  queue_number: string;
 }
 
 interface PatientInfo {
@@ -35,6 +44,7 @@ interface PatientInfo {
   last_name: string;
   email: string;
   phone_number: string;
+  queue_data?: QueueData
 }
 
 interface TreatmentDetails {
@@ -60,6 +70,7 @@ interface LabResult {
 
 {/* Doctors referral */}
 interface DoctorProfile {
+  name:string,
   specialization: string;
 }
 
@@ -83,6 +94,8 @@ export default function TreatmentDetailsPage() {
   const [labResults, setLabResults] = useState<LabResult[]>([]);
   const [labLoading, setLabLoading] = useState(false);
   const [labError, setLabError] = useState<string | null>(null);
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+
 
   {/*Referral*/}
   const [doctors, setDoctors] = useState<Doctor[]>([]);
@@ -159,6 +172,39 @@ export default function TreatmentDetailsPage() {
       console.error("Download failed:", error);
     }
   };
+  useEffect(() => {
+    const fetchCurrentUser = async () => {
+      try {
+        const token = localStorage.getItem("access");
+        if (!token) {
+          console.warn("No token found");
+          return;
+        }
+  
+        const response = await fetch("http://localhost:8000/user/users/whoami/", {
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`,
+          },
+        });
+  
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error("Failed to fetch user: ", response.status, errorText);
+          return;
+        }
+  
+        const data = await response.json();
+        console.log("Fetched user:", data);
+        setCurrentUserId(data.id);
+      } catch (error) {
+        console.error("Failed to fetch current user", error);
+      }
+    };
+  
+    fetchCurrentUser();
+  }, []);
+  
   useEffect(() => {
     if (activeTab === "laboratory") {
       setLabLoading(true);
@@ -465,20 +511,38 @@ const handleSendReferral = async () => {
                 </h2>
                 <p className="mt-1 text-sm text-gray-500">View and manage patient treatment history</p>
               </div>
-              <button
-            onClick={() => setIsReferModalOpen(true)}
-            className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 px-5 rounded-md shadow-sm transition-all duration-200 hover:shadow"
-          >
-            <svg 
-              xmlns="http://www.w3.org/2000/svg" 
-              className="h-5 w-5" 
-              viewBox="0 0 20 20" 
-              fill="currentColor"
-            >
-              <path d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6zM16 7a1 1 0 10-2 0v1h-1a1 1 0 100 2h1v1a1 1 0 102 0v-1h1a1 1 0 100-2h-1V7z" />
-            </svg>
-            Refer Patient
-          </button>
+              {currentUserId === 'LFG4YJ2P' ? (
+                <button
+                  onClick={() => setIsReferModalOpen(true)}
+                  className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 px-5 rounded-md shadow-sm transition-all duration-200 hover:shadow"
+                >
+                  <svg 
+                    xmlns="http://www.w3.org/2000/svg" 
+                    className="h-5 w-5" 
+                    viewBox="0 0 20 20" 
+                    fill="currentColor"
+                  >
+                    <path d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6zM16 7a1 1 0 10-2 0v1h-1a1 1 0 100 2h1v1a1 1 0 102 0v-1h1a1 1 0 100-2h-1V7z" />
+                  </svg>
+                  Refer Patient
+                </button>
+              ) : (
+                <button
+                  onClick={() => {
+                    if (treatmentDetails?.patient_info?.queue_data?.queue_number) {
+                      router.push(
+                        `/doctor/patient-treatment-form/${patient_id}/${treatmentDetails.patient_info.queue_data.queue_number}`
+                      );
+                    } else {
+                      alert('Queue number not found for this patient');
+                    }
+                  }}
+                  className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white font-medium py-2.5 px-5 rounded-md shadow-sm transition-all duration-200 hover:shadow"
+                >
+                  <PlusCircle className="h-5 w-5" />
+                  Treat Patient
+                </button>
+              )}
             </div>
           </div>
           {/* Tabs */}
@@ -571,18 +635,26 @@ const handleSendReferral = async () => {
                         </svg>
                       </div>
                       <div className="ml-4">
-                        <h2 className="text-lg font-semibold text-gray-900">
-                          Treatment on{" "}
-                          {treatmentDetails.recent_treatment
+                      <h2 className="text-lg font-semibold text-gray-900">
+                        Treatment on{" "}
+                        {treatmentDetails.recent_treatment
                           ? formatDate(treatmentDetails.recent_treatment.created_at)
                           : "No treatment yet"}
-                        </h2>
-                        <p className="text-sm text-gray-500">
-                          Record ID:     
-                          {treatmentDetails.recent_treatment? treatmentDetails.recent_treatment.id
-                            : "N/A"}
-                        </p>
-                      </div>
+                      </h2>
+                      <p className="text-sm text-gray-500">
+                        Record ID:{" "}
+                        {treatmentDetails.recent_treatment
+                          ? treatmentDetails.recent_treatment.id
+                          : "N/A"}
+                      </p>
+                      <p className="text-sm text-gray-500">
+                        Created by:{" "}
+                        {treatmentDetails.recent_treatment?.doctor_info?.name}
+                      </p>
+                      <p className="text-sm text-blue-400">
+                        {treatmentDetails.recent_treatment?.doctor_info?.specialization}
+                      </p>
+                    </div>
                     </div>
 
                     <div className="bg-gray-50 rounded-xl p-6">
@@ -789,146 +861,160 @@ const handleSendReferral = async () => {
                         <h2 className="text-lg font-semibold text-gray-900">
                           Previous Treatments
                         </h2>
-
+                        
                         <div className="relative">
                           <div className="absolute left-5 h-full w-0.5 bg-gray-200"></div>
                           <div className="space-y-8">
-                            {treatmentDetails.previous_treatments.map(
-                              (treatment) => (
-                                <div key={treatment.id} className="relative">
-                                  <div className="absolute -left-1 mt-1.5 h-10 w-10 rounded-full bg-white border-4 border-gray-200"></div>
-                                  <div className="ml-14">
-                                    <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
-                                      <div className="p-5">
-                                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4">
-                                          <div className="flex items-center mb-2 sm:mb-0">
-                                            <svg
-                                              xmlns="http://www.w3.org/2000/svg"
-                                              className="h-5 w-5 text-gray-400 mr-2"
-                                              fill="none"
-                                              viewBox="0 0 24 24"
-                                              stroke="currentColor"
-                                            >
-                                              <path
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                strokeWidth={2}
-                                                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                                              />
-                                            </svg>
-                                            <span className="font-medium text-gray-700">
+                            {treatmentDetails.previous_treatments.map((treatment) => (
+                              <div key={treatment.id} className="relative">
+                                {/* Timeline connector */}
+                                <div className="absolute -left-1 mt-1.5 h-10 w-10 rounded-full bg-white border-4 border-gray-200"></div>
+                                
+                                <div className="ml-14">
+                                  <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+                                    <div className="p-5">
+                                      {/* Treatment Header */}
+                                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4">
+                                        <div className="flex items-center mb-2 sm:mb-0">
+                                          <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            className="h-5 w-5 text-gray-400 mr-2"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            stroke="currentColor"
+                                          >
+                                            <path
+                                              strokeLinecap="round"
+                                              strokeLinejoin="round"
+                                              strokeWidth={2}
+                                              d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                                            />
+                                          </svg>
+                                          <div>
+                                            <span className="font-medium text-gray-700 block">
                                               {formatDate(treatment.created_at)}
                                             </span>
+                                            {treatment.doctor_info && (
+                                              <span className="text-sm text-gray-500">
+                                                Created by: {treatment.doctor_info.name}
+                                              </span>
+                                            )}
+                                              <p className="text-sm text-blue-400">
+                                                {treatmentDetails.recent_treatment?.doctor_info?.specialization}
+                                              </p>
                                           </div>
-                                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                                            ID: {treatment.id}
-                                          </span>
                                         </div>
-
-                                        <div className="bg-gray-50 rounded-lg p-4 mb-4">
-                                          <h3 className="font-medium text-gray-700 mb-2">
-                                            Treatment Notes
-                                          </h3>
-                                          <p className="text-gray-600">
-                                            {treatment.treatment_notes}
-                                          </p>
-                                        </div>
-
-                                        <details className="group">
-                                          <summary className="flex justify-between items-center font-medium cursor-pointer list-none text-blue-600 hover:text-blue-700 p-2 rounded-lg hover:bg-blue-50 transition-colors">
-                                            <span>View Treatment Details</span>
-                                            <svg
-                                              xmlns="http://www.w3.org/2000/svg"
-                                              className="h-5 w-5 transition-transform group-open:rotate-180"
-                                              fill="none"
-                                              viewBox="0 0 24 24"
-                                              stroke="currentColor"
-                                            >
-                                              <path
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                strokeWidth={2}
-                                                d="M19 9l-7 7-7-7"
-                                              />
-                                            </svg>
-                                          </summary>
-                                          <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-                                            <div className="bg-gray-50 rounded-lg p-4">
-                                              <h3 className="font-medium text-gray-700 mb-3">
-                                                Diagnoses
-                                              </h3>
-                                              {treatment.diagnoses.length >
-                                              0 ? (
-                                                <ul className="space-y-2">
-                                                  {treatment.diagnoses.map(
-                                                    (d, idx) => (
-                                                      <li
-                                                        key={`${d.diagnosis_code}-${idx}`}
-                                                        className="bg-white p-2 rounded-lg border border-gray-100"
-                                                      >
-                                                        <div className="flex items-start">
-                                                          <span className="inline-flex items-center justify-center h-6 w-auto min-w-[3rem] px-2 bg-gray-100 text-gray-700 text-xs font-medium rounded mr-2">
-                                                            {d.diagnosis_code}
-                                                          </span>
-                                                          <span className="text-gray-600">
-                                                            {
-                                                              d.diagnosis_description
-                                                            }
-                                                          </span>
-                                                        </div>
-                                                      </li>
-                                                    )
-                                                  )}
-                                                </ul>
-                                              ) : (
-                                                <p className="text-gray-500 italic">
-                                                  No diagnoses recorded
-                                                </p>
-                                              )}
-                                            </div>
-
-                                            <div className="bg-gray-50 rounded-lg p-4">
-                                              <h3 className="font-medium text-gray-700 mb-3">
-                                                Prescriptions
-                                              </h3>
-                                              {treatment.prescriptions.length >
-                                              0 ? (
-                                                <ul className="space-y-2">
-                                                  {treatment.prescriptions.map(
-                                                    (p, idx) => (
-                                                      <li
-                                                        key={`${p.medication}-${idx}`}
-                                                        className="bg-white p-2 rounded-lg border border-gray-100"
-                                                      >
-                                                        <div className="font-medium text-gray-700">
-                                                          {p.medication?.name}
-                                                        </div>
-                                                        <div className="text-sm text-gray-500 flex flex-wrap gap-2 mt-1">
-                                                          <span className="px-2 py-0.5 bg-gray-50 rounded">
-                                                            {p.dosage}
-                                                          </span>
-                                                          <span className="px-2 py-0.5 bg-gray-50 rounded">
-                                                            {p.frequency}
-                                                          </span>
-                                                        </div>
-                                                      </li>
-                                                    )
-                                                  )}
-                                                </ul>
-                                              ) : (
-                                                <p className="text-gray-500 italic">
-                                                  No prescriptions recorded
-                                                </p>
-                                              )}
-                                            </div>
-                                          </div>
-                                        </details>
+                                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                                          ID: {treatment.id}
+                                        </span>
                                       </div>
+
+                                      {/* Treatment Notes */}
+                                      <div className="bg-gray-50 rounded-lg p-4 mb-4">
+                                        <h3 className="font-medium text-gray-700 mb-2">
+                                          Treatment Notes
+                                        </h3>
+                                        <p className="text-gray-600">
+                                          {treatment.treatment_notes || 'No specific notes provided'}
+                                        </p>
+                                      </div>
+
+                                      {/* Expandable Details */}
+                                      <details className="group">
+                                        <summary className="flex justify-between items-center font-medium cursor-pointer list-none text-blue-600 hover:text-blue-700 p-2 rounded-lg hover:bg-blue-50 transition-colors">
+                                          <span>View Treatment Details</span>
+                                          <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            className="h-5 w-5 transition-transform group-open:rotate-180"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            stroke="currentColor"
+                                          >
+                                            <path
+                                              strokeLinecap="round"
+                                              strokeLinejoin="round"
+                                              strokeWidth={2}
+                                              d="M19 9l-7 7-7-7"
+                                            />
+                                          </svg>
+                                        </summary>
+
+                                        {/* Diagnosis and Prescriptions */}
+                                        <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+                                          {/* Diagnoses Section */}
+                                          <div className="bg-gray-50 rounded-lg p-4">
+                                            <h3 className="font-medium text-gray-700 mb-3">
+                                              Diagnoses ({treatment.diagnoses.length})
+                                            </h3>
+                                            {treatment.diagnoses.length > 0 ? (
+                                              <ul className="space-y-2">
+                                                {treatment.diagnoses.map((d, idx) => (
+                                                  <li
+                                                    key={`${d.diagnosis_code}-${idx}`}
+                                                    className="bg-white p-2 rounded-lg border border-gray-100"
+                                                  >
+                                                    <div className="flex items-start">
+                                                      <span className="inline-flex items-center justify-center h-6 w-auto min-w-[3rem] px-2 bg-gray-100 text-gray-700 text-xs font-medium rounded mr-2">
+                                                        {d.diagnosis_code}
+                                                      </span>
+                                                      <span className="text-gray-600">
+                                                        {d.diagnosis_description}
+                                                      </span>
+                                                    </div>
+                                                  </li>
+                                                ))}
+                                              </ul>
+                                            ) : (
+                                              <p className="text-gray-500 italic">
+                                                No diagnoses recorded
+                                              </p>
+                                            )}
+                                          </div>
+
+                                          {/* Prescriptions Section */}
+                                          <div className="bg-gray-50 rounded-lg p-4">
+                                            <h3 className="font-medium text-gray-700 mb-3">
+                                              Prescriptions ({treatment.prescriptions.length})
+                                            </h3>
+                                            {treatment.prescriptions.length > 0 ? (
+                                              <ul className="space-y-2">
+                                                {treatment.prescriptions.map((p, idx) => (
+                                                  <li
+                                                    key={`${p.medication}-${idx}`}
+                                                    className="bg-white p-2 rounded-lg border border-gray-100"
+                                                  >
+                                                    <div className="font-medium text-gray-700">
+                                                      {p.medication?.name || 'Unnamed Medication'}
+                                                    </div>
+                                                    <div className="text-sm text-gray-500 flex flex-wrap gap-2 mt-1">
+                                                      <span className="px-2 py-0.5 bg-gray-50 rounded">
+                                                        Dosage: {p.dosage}
+                                                      </span>
+                                                      <span className="px-2 py-0.5 bg-gray-50 rounded">
+                                                        Frequency: {p.frequency}
+                                                      </span>
+                                                      {p.quantity && (
+                                                        <span className="px-2 py-0.5 bg-gray-50 rounded">
+                                                          Quantity: {p.quantity}
+                                                        </span>
+                                                      )}
+                                                    </div>
+                                                  </li>
+                                                ))}
+                                              </ul>
+                                            ) : (
+                                              <p className="text-gray-500 italic">
+                                                No prescriptions recorded
+                                              </p>
+                                            )}
+                                          </div>
+                                        </div>
+                                      </details>
                                     </div>
                                   </div>
                                 </div>
-                              )
-                            )}
+                              </div>
+                            ))}
                           </div>
                         </div>
                       </div>

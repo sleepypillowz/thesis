@@ -322,11 +322,11 @@ export default function PreliminaryAssessmentPage() {
 
             {/* Pain Scale */}
             <div>
-              <label className="block text-gray-600">Pain Scale (1-10)</label>
+              <label className="block text-gray-600">Pain Scale (0-10)</label>
               <input
                 type="number"
                 name="pain_scale"
-                min="1"
+                min="0"
                 max="10"
                 className="w-full rounded-md border-gray-300 p-2 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 onChange={handleChange}

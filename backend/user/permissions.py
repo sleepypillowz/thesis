@@ -48,14 +48,18 @@ class IsAdminOrGeneralDoctor(BasePermission):
     
 class IsReferralParticipant(BasePermission):
     def has_object_permission(self, request, view, obj):
-        if request.method in permissions.SAFE_METHODS:
-            return obj.referring_doctor == request.user or obj.receiving_doctor == request.user 
-        
-        if request.method in ['PUT', 'PATCH']:
-            return obj.referring_doctor == request.user
         
         if view.action == 'decline_referral':
             return obj.receiving_doctor == request.user
+        
+        if request.method in permissions.SAFE_METHODS:
+            return(
+                obj.referring_doctor == request.user or
+                obj.receiving_doctor == request.user
+            )
+            
+        if request.method in ['PUT', 'PATCH']:
+            return obj.referring_doctor == request.user
 
         return False
 class IsMe(BasePermission):
