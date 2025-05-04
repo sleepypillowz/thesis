@@ -199,7 +199,7 @@ export default function Home() {
             
             <div className="md:w-1/2 relative">
               <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
-                <Image src="https://cdn.pixabay.com/photo/2017/01/31/13/14/line-2029321_1280.png" alt="Medical Professional" className="w-full h-64 object-cover" />
+                <img src="https://cdn.pixabay.com/photo/2017/01/31/13/14/line-2029321_1280.png" alt="Medical Professional" className="w-full h-64 object-cover" />
                 <div className="p-6">
                   <div className="flex items-center justify-between mb-4">
                     <div>

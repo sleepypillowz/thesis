@@ -30,25 +30,27 @@ class DoctorCreateReferralView(APIView):
     permission_classes = [isDoctor]
 
     def post(self, request):
-        serializer = AppointmentReferralSerializer(data=request.data)
-        if serializer.is_valid():
-            try:
-                patient = Patient.objects.get(patient_id=request.data['patient'])
-            except Patient.DoesNotExist:
-                return Response({"error": "Patient not found"}, status=status.HTTP_400_BAD_REQUEST)
-            
-            referral = AppointmentReferral.objects.create(
-                referring_doctor=request.user,
-                patient=patient,
-                receiving_doctor=serializer.validated_data['receiving_doctor'],
-                reason=serializer.validated_data['reason'],
-                notes=serializer.validated_data.get('notes', '')
-            )
-            return Response(AppointmentReferralSerializer(referral).data, status=status.HTTP_201_CREATED)
-        if not serializer.is_valid():
-            print(serializer.errors)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
+        payload = request.data
+        
+        # check if payload is bulk or dict
+        is_bulk = isinstance(payload, list)
+
+        serializer = AppointmentReferralSerializer(
+            data = payload,
+            many=is_bulk,
+            context={'request': request}
+        )
+        
+        serializer.is_valid(raise_exception=True)
+        created = serializer.save()
+        
+        if is_bulk:
+            output = AppointmentReferralSerializer(created, many=True).data
+        else:
+            output = AppointmentReferralSerializer(created).data
+        
+        return Response(output, status=status.HTTP_201_CREATED)
+        
 class ReferralViewList(APIView):
     permission_classes = [isSecretary]
     def get(self, request):

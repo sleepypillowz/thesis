@@ -94,9 +94,6 @@ export default function TreatmentDetailsPage() {
   const [labResults, setLabResults] = useState<LabResult[]>([]);
   const [labLoading, setLabLoading] = useState(false);
   const [labError, setLabError] = useState<string | null>(null);
-  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
-
-
   {/*Referral*/}
   const [doctors, setDoctors] = useState<Doctor[]>([]);
   const [isReferModalOpen, setIsReferModalOpen] = useState(false);
@@ -172,39 +169,7 @@ export default function TreatmentDetailsPage() {
       console.error("Download failed:", error);
     }
   };
-  useEffect(() => {
-    const fetchCurrentUser = async () => {
-      try {
-        const token = localStorage.getItem("access");
-        if (!token) {
-          console.warn("No token found");
-          return;
-        }
-  
-        const response = await fetch("http://localhost:8000/user/users/whoami/", {
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`,
-          },
-        });
-  
-        if (!response.ok) {
-          const errorText = await response.text();
-          console.error("Failed to fetch user: ", response.status, errorText);
-          return;
-        }
-  
-        const data = await response.json();
-        console.log("Fetched user:", data);
-        setCurrentUserId(data.id);
-      } catch (error) {
-        console.error("Failed to fetch current user", error);
-      }
-    };
-  
-    fetchCurrentUser();
-  }, []);
-  
+ 
   useEffect(() => {
     if (activeTab === "laboratory") {
       setLabLoading(true);
@@ -499,52 +464,74 @@ const handleSendReferral = async () => {
             </div>
           )}
 
-          {/* Treatment Title Section */}
-          <div className="bg-gradient-to-r from-white to-blue-50 p-6 md:p-8 border-b border-gray-200 shadow-sm">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-              <div>
-                <h2 className="text-2xl font-bold text-gray-900 flex items-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 mr-2 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                  </svg>
-                  Treatment Records
-                </h2>
-                <p className="mt-1 text-sm text-gray-500">View and manage patient treatment history</p>
-              </div>
-              {currentUserId === 'LFG4YJ2P' ? (
-                <button
-                  onClick={() => setIsReferModalOpen(true)}
-                  className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 px-5 rounded-md shadow-sm transition-all duration-200 hover:shadow"
-                >
-                  <svg 
-                    xmlns="http://www.w3.org/2000/svg" 
-                    className="h-5 w-5" 
-                    viewBox="0 0 20 20" 
-                    fill="currentColor"
-                  >
-                    <path d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6zM16 7a1 1 0 10-2 0v1h-1a1 1 0 100 2h1v1a1 1 0 102 0v-1h1a1 1 0 100-2h-1V7z" />
-                  </svg>
-                  Refer Patient
-                </button>
-              ) : (
-                <button
-                  onClick={() => {
-                    if (treatmentDetails?.patient_info?.queue_data?.queue_number) {
-                      router.push(
-                        `/doctor/patient-treatment-form/${patient_id}/${treatmentDetails.patient_info.queue_data.queue_number}`
-                      );
-                    } else {
-                      alert('Queue number not found for this patient');
-                    }
-                  }}
-                  className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white font-medium py-2.5 px-5 rounded-md shadow-sm transition-all duration-200 hover:shadow"
-                >
-                  <PlusCircle className="h-5 w-5" />
-                  Treat Patient
-                </button>
-              )}
-            </div>
-          </div>
+{/* Treatment Title Section */}
+<div className="bg-gradient-to-r from-white to-blue-50 p-6 md:p-8 border-b border-gray-200 shadow-sm">
+  <div className="flex flex-col sm:flex-row items-start sm:items-center">
+    {/* Title + Subtitle */}
+    <div>
+      <h2 className="text-2xl font-bold text-gray-900 flex items-center">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className="h-6 w-6 mr-2 text-blue-600"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          strokeWidth={2}
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2
+               M9 5a2 2 0 002 2h2a2 2 0 002-2
+               M9 5a2 2 0 012-2h2a2 2 0 012 2"
+          />
+        </svg>
+        Treatment Records
+      </h2>
+      <p className="mt-1 text-sm text-gray-500">
+        View and manage patient treatment history
+      </p>
+    </div>
+
+    {/* Button Group Container – flush right with extra spacing and design */}
+    <div className="ml-auto flex items-center space-x-2 backdrop-blur-sm p-2 rounded-lg">
+      <button
+        onClick={() => setIsReferModalOpen(true)}
+        className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-5 rounded-full transition-shadow duration-200 hover:shadow-lg"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className="h-5 w-5"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+        >
+          <path d="M8 9a3 3 0 100-6 3 3 0 000 6z
+                   M8 11a6 6 0 016 6H2a6 6 0 016-6z
+                   M16 7a1 1 0 10-2 0v1h-1a1 1 
+                   0 100 2h1v1a1 1 0 102 0v-1h1
+                   a1 1 0 100-2h-1V7z" />
+        </svg>
+        Refer Patient
+      </button>
+
+      <button
+        onClick={() => {
+          const q = treatmentDetails?.patient_info?.queue_data?.queue_number;
+          if (q) {
+            router.push(`/doctor/patient-treatment-form/${patient_id}/${q}`);
+          } else {
+            alert('Queue number not found for this patient');
+          }
+        }}
+        className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-5 rounded-full transition-shadow duration-200 hover:shadow-lg"
+      >
+        <PlusCircle className="h-5 w-5" />
+        Treat Patient
+      </button>
+    </div>
+  </div>
+</div>
+
           {/* Tabs */}
           <div className="border-b border-gray-100">
             <div className="flex">
