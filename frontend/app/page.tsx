@@ -11,9 +11,12 @@ import {
   Clock,
 } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 
 // Simulated button variant function since we can't import the actual one
-const buttonVariants = ({ variant }) => {
+type ButtonVariant = "default" | "secondary" | "outline" | undefined;
+
+const buttonVariants = ({ variant }: { variant?: ButtonVariant }): string => {
   const baseClasses =
     "inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background px-4 py-2";
 
@@ -179,8 +182,10 @@ export default function Home() {
                       key={i}
                       className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full border-2 border-white bg-gray-200"
                     >
-                      <img
+                      <Image
                         src={`/api/placeholder/40/40`}
+                        width={500}
+                        height={500}
                         alt="Patient"
                         className="h-full w-full object-cover"
                       />
@@ -209,8 +214,10 @@ export default function Home() {
 
             <div className="relative md:w-1/2">
               <div className="overflow-hidden rounded-2xl bg-white shadow-xl">
-                <img
+                <Image
                   src="https://cdn.pixabay.com/photo/2017/01/31/13/14/line-2029321_1280.png"
+                  width={500}
+                  height={500}
                   alt="Medical Professional"
                   className="h-64 w-full object-cover"
                 />
