@@ -5,7 +5,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import userInfo from "@/components/hooks/userRole";
+import userInfo from "@/hooks/userRole";
 
 export default function Page() {
   const router = useRouter();
@@ -16,9 +16,9 @@ export default function Page() {
     phone_number: "",
     email: "",
     date_of_birth: "",
-    gender: "Male", 
+    gender: "Male",
     complaint: "General Illness",
-    other_complaint: "",  
+    other_complaint: "",
     priority_level: "Regular",
     street_address: "",
     barangay: "",
@@ -96,7 +96,7 @@ export default function Page() {
           date_of_birth: "",
           gender: "", // Reset gender field
           complaint: "General Illness",
-          other_complaint: "",  
+          other_complaint: "",
           priority_level: "Regular",
           street_address: "",
           barangay: "",

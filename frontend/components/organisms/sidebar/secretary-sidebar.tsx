@@ -49,17 +49,17 @@ const menu_items = [
   },
   {
     title: "Patient Portal",
-    url: "/secretary/portal",
+    url: "/staff/patient-portal",
     icon: LayoutDashboard,
   },
   {
     title: "Medicine",
-    url: "/secretary/medicine",
+    url: "/staff/medicine",
     icon: Database,
   },
   {
     title: "Reports",
-    url: "/secretary/reports",
+    url: "/staff/reports",
     icon: ChartArea,
   },
 ];
@@ -67,7 +67,7 @@ const menu_items = [
 const patient_items = [
   {
     title: "Medical Records",
-    url: "/secretary/medical-records",
+    url: "/staff/medical-records",
     icon: ClipboardPlus,
   },
   {

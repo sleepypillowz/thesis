@@ -1,8 +1,8 @@
 "use client";
 import { useRouter, useParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import userRole from "@/components/hooks/userRole";
-import { FileText, Eye, Download, PlusCircle } from 'lucide-react';
+import userRole from "@/hooks/userRole";
+import { FileText, Eye, Download, PlusCircle } from "lucide-react";
 interface Diagnosis {
   diagnosis_code: string;
   diagnosis_description: string;
@@ -11,7 +11,7 @@ interface Diagnosis {
 
 interface Prescription {
   medication: {
-    name: string
+    name: string;
   };
   dosage: string;
   frequency: string;
@@ -44,7 +44,7 @@ interface PatientInfo {
   last_name: string;
   email: string;
   phone_number: string;
-  queue_data?: QueueData
+  queue_data?: QueueData;
 }
 
 interface TreatmentDetails {
@@ -68,9 +68,11 @@ interface LabResult {
   submitted_by?: User;
 }
 
-{/* Doctors referral */}
+{
+  /* Doctors referral */
+}
 interface DoctorProfile {
-  name:string,
+  name: string;
   specialization: string;
 }
 
@@ -89,29 +91,32 @@ export default function TreatmentDetailsPage() {
     useState<TreatmentDetails | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<"latest" | "history" | "laboratory">("latest");
+  const [activeTab, setActiveTab] = useState<
+    "latest" | "history" | "laboratory"
+  >("latest");
 
   const [labResults, setLabResults] = useState<LabResult[]>([]);
   const [labLoading, setLabLoading] = useState(false);
   const [labError, setLabError] = useState<string | null>(null);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
 
-
-  {/*Referral*/}
+  {
+    /*Referral*/
+  }
   const [doctors, setDoctors] = useState<Doctor[]>([]);
   const [isReferModalOpen, setIsReferModalOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [filteredDoctors, setFilteredDoctors] = useState<Doctor[]>([]);
   const [selectedDoctor, setSelectedDoctor] = useState<Doctor | null>(null);
   const [referralNotes, setReferralNotes] = useState("");
-  const [referralReason, setReferralReason] = useState(""); 
+  const [referralReason, setReferralReason] = useState("");
 
   const role = userRole();
-  
+
   const getFileNameFromUrl = (url: string) => {
     try {
       const parsed = new URL(url);
-      return parsed.pathname.split('/').pop() || `lab-result.pdf`;
+      return parsed.pathname.split("/").pop() || `lab-result.pdf`;
     } catch {
       return `lab-result.pdf`;
     }
@@ -123,33 +128,35 @@ export default function TreatmentDetailsPage() {
       console.error("No access token found. Please log in.");
       return;
     }
-  
+
     // Construct the API URL using the lab result's ID
     const apiUrl = `http://127.0.0.1:8000/patient/lab-results/${result.id}/download/`;
-  
+
     try {
       // Call the API endpoint with the Bearer token for authentication
       const response = await fetch(apiUrl, {
         method: "GET",
         headers: {
-          "Authorization": `Bearer ${accessToken}`,
+          Authorization: `Bearer ${accessToken}`,
         },
       });
-  
+
       if (!response.ok) {
-        throw new Error(`HTTP error: ${response.status} ${response.statusText}`);
+        throw new Error(
+          `HTTP error: ${response.status} ${response.statusText}`
+        );
       }
-  
+
       // Get the file as a Blob from the response
       const blob = await response.blob();
-  
+
       // Create an object URL from the Blob
       const url = window.URL.createObjectURL(blob);
-  
+
       // Create a temporary anchor element to trigger the download
       const link = document.createElement("a");
       link.href = url;
-  
+
       // Try to extract filename from the Content-Disposition header; if not available, use a fallback function
       const disposition = response.headers.get("Content-Disposition");
       let filename = getFileNameFromUrl(result.image_url); // Fallback filename
@@ -160,12 +167,12 @@ export default function TreatmentDetailsPage() {
         }
       }
       link.download = filename;
-  
+
       // Append the link, click it, and remove it from the document
       document.body.appendChild(link);
       link.click();
       link.remove();
-  
+
       // Revoke the object URL to free memory
       window.URL.revokeObjectURL(url);
     } catch (error) {
@@ -180,20 +187,23 @@ export default function TreatmentDetailsPage() {
           console.warn("No token found");
           return;
         }
-  
-        const response = await fetch("http://localhost:8000/user/users/whoami/", {
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`,
-          },
-        });
-  
+
+        const response = await fetch(
+          "http://localhost:8000/user/users/whoami/",
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
         if (!response.ok) {
           const errorText = await response.text();
           console.error("Failed to fetch user: ", response.status, errorText);
           return;
         }
-  
+
         const data = await response.json();
         console.log("Fetched user:", data);
         setCurrentUserId(data.id);
@@ -201,10 +211,10 @@ export default function TreatmentDetailsPage() {
         console.error("Failed to fetch current user", error);
       }
     };
-  
+
     fetchCurrentUser();
   }, []);
-  
+
   useEffect(() => {
     if (activeTab === "laboratory") {
       setLabLoading(true);
@@ -217,30 +227,28 @@ export default function TreatmentDetailsPage() {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${accessToken}`,
+          Authorization: `Bearer ${accessToken}`,
         },
       })
-      .then((res) => {
-        if (!res.ok) throw new Error("Failed to fetch lab results");
-        return res.json();
-      })
-      .then((data) => {
-        // Handle array of results from backend
-        if (data.lab_results && Array.isArray(data.lab_results)) {
-          setLabResults(data.lab_results);
-        } else {
-          throw new Error("Invalid lab results data format");
-        }
-        setLabLoading(false);
-      })
-      .catch((err) => {
-        setLabError(err.message || "Something went wrong");
-        setLabLoading(false);
-      });
+        .then((res) => {
+          if (!res.ok) throw new Error("Failed to fetch lab results");
+          return res.json();
+        })
+        .then((data) => {
+          // Handle array of results from backend
+          if (data.lab_results && Array.isArray(data.lab_results)) {
+            setLabResults(data.lab_results);
+          } else {
+            throw new Error("Invalid lab results data format");
+          }
+          setLabLoading(false);
+        })
+        .catch((err) => {
+          setLabError(err.message || "Something went wrong");
+          setLabLoading(false);
+        });
     }
   }, [activeTab, patient_id]);
-  
-  
 
   useEffect(() => {
     if (!patient_id) {
@@ -262,7 +270,7 @@ export default function TreatmentDetailsPage() {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${accessToken}`,
+        Authorization: `Bearer ${accessToken}`,
       },
     })
       .then((res) => {
@@ -292,100 +300,107 @@ export default function TreatmentDetailsPage() {
         // Reset states
         setIsLoading(true);
         setError(null);
-  
+
         // Validate access token
         const accessToken = localStorage.getItem("access");
         if (!accessToken) {
           throw new Error("No access token found. Please log in.");
         }
-  
+
         // Make API call
-        const response = await fetch('http://127.0.0.1:8000/user/users/?role=doctor', {
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${accessToken}`,
-          },
-        });
-  
+        const response = await fetch(
+          "http://127.0.0.1:8000/user/users/?role=doctor",
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
+
         // Handle HTTP errors
         if (!response.ok) {
           const errorData = await response.json();
           throw new Error(errorData.message || "Failed to fetch doctors");
         }
-  
+
         // Process response data
         const data = await response.json();
-        
+
         // Update both doctors and filteredDoctors state
         setDoctors(data);
         setFilteredDoctors(data);
-  
       } catch (error) {
         // Handle errors
-        const errorMessage = error instanceof Error 
-          ? error.message 
-          : "Failed to load doctors list";
+        const errorMessage =
+          error instanceof Error
+            ? error.message
+            : "Failed to load doctors list";
         setError(errorMessage);
         console.error("Doctors fetch error:", error);
-        
       } finally {
         // Update loading state
         setIsLoading(false);
       }
     };
-  
+
     fetchDoctors();
   }, []); // Empty dependency array = runs once on mount
 
   // Filter doctors based on search query
   useEffect(() => {
-    const results = doctors.filter(doctor =>
-      doctor.first_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      doctor.last_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      doctor.doctor_profile.specialization.toLowerCase().includes(searchQuery.toLowerCase())
+    const results = doctors.filter(
+      (doctor) =>
+        doctor.first_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        doctor.last_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        doctor.doctor_profile.specialization
+          .toLowerCase()
+          .includes(searchQuery.toLowerCase())
     );
     setFilteredDoctors(results);
   }, [searchQuery, doctors]);
 
-
-const handleSendReferral = async () => {
-  if (!selectedDoctor || !referralNotes || !referralReason) {
-    alert("Please fill all required fields");
-    return};
-
-  try {
-    const accessToken = localStorage.getItem("access");
-    const response = await fetch("http://127.0.0.1:8000/appointment-referral/", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${accessToken}`,
-      },
-      body: JSON.stringify({
-        receiving_doctor: selectedDoctor.id,  // Changed to match backend field name
-        patient: patient_id,                 // Changed to match backend field name
-        reason: referralReason,              // Added reason field
-        notes: referralNotes
-      }),
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.error || "Failed to send referral");
+  const handleSendReferral = async () => {
+    if (!selectedDoctor || !referralNotes || !referralReason) {
+      alert("Please fill all required fields");
+      return;
     }
-    
-    // Handle success
-    setIsReferModalOpen(false);
-    setSelectedDoctor(null);
-    setReferralNotes("");
-    setReferralReason("");
-    alert("Referral sent successfully");
 
-  } catch (err) {
-    console.error("Referral error:", err);
-    alert(err instanceof Error ? err.message : "Failed to send referral");
-  }
-};
+    try {
+      const accessToken = localStorage.getItem("access");
+      const response = await fetch(
+        "http://127.0.0.1:8000/appointment-referral/",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${accessToken}`,
+          },
+          body: JSON.stringify({
+            receiving_doctor: selectedDoctor.id, // Changed to match backend field name
+            patient: patient_id, // Changed to match backend field name
+            reason: referralReason, // Added reason field
+            notes: referralNotes,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to send referral");
+      }
+
+      // Handle success
+      setIsReferModalOpen(false);
+      setSelectedDoctor(null);
+      setReferralNotes("");
+      setReferralReason("");
+      alert("Referral sent successfully");
+    } catch (err) {
+      console.error("Referral error:", err);
+      alert(err instanceof Error ? err.message : "Failed to send referral");
+    }
+  };
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-US", {
@@ -504,22 +519,35 @@ const handleSendReferral = async () => {
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
               <div>
                 <h2 className="text-2xl font-bold text-gray-900 flex items-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 mr-2 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-6 w-6 mr-2 text-blue-600"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                    />
                   </svg>
                   Treatment Records
                 </h2>
-                <p className="mt-1 text-sm text-gray-500">View and manage patient treatment history</p>
+                <p className="mt-1 text-sm text-gray-500">
+                  View and manage patient treatment history
+                </p>
               </div>
-              {currentUserId === 'LFG4YJ2P' ? (
+              {currentUserId === "LFG4YJ2P" ? (
                 <button
                   onClick={() => setIsReferModalOpen(true)}
                   className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 px-5 rounded-md shadow-sm transition-all duration-200 hover:shadow"
                 >
-                  <svg 
-                    xmlns="http://www.w3.org/2000/svg" 
-                    className="h-5 w-5" 
-                    viewBox="0 0 20 20" 
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5"
+                    viewBox="0 0 20 20"
                     fill="currentColor"
                   >
                     <path d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6zM16 7a1 1 0 10-2 0v1h-1a1 1 0 100 2h1v1a1 1 0 102 0v-1h1a1 1 0 100-2h-1V7z" />
@@ -529,12 +557,14 @@ const handleSendReferral = async () => {
               ) : (
                 <button
                   onClick={() => {
-                    if (treatmentDetails?.patient_info?.queue_data?.queue_number) {
+                    if (
+                      treatmentDetails?.patient_info?.queue_data?.queue_number
+                    ) {
                       router.push(
                         `/doctor/patient-treatment-form/${patient_id}/${treatmentDetails.patient_info.queue_data.queue_number}`
                       );
                     } else {
-                      alert('Queue number not found for this patient');
+                      alert("Queue number not found for this patient");
                     }
                   }}
                   className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white font-medium py-2.5 px-5 rounded-md shadow-sm transition-all duration-200 hover:shadow"
@@ -635,26 +665,31 @@ const handleSendReferral = async () => {
                         </svg>
                       </div>
                       <div className="ml-4">
-                      <h2 className="text-lg font-semibold text-gray-900">
-                        Treatment on{" "}
-                        {treatmentDetails.recent_treatment
-                          ? formatDate(treatmentDetails.recent_treatment.created_at)
-                          : "No treatment yet"}
-                      </h2>
-                      <p className="text-sm text-gray-500">
-                        Record ID:{" "}
-                        {treatmentDetails.recent_treatment
-                          ? treatmentDetails.recent_treatment.id
-                          : "N/A"}
-                      </p>
-                      <p className="text-sm text-gray-500">
-                        Created by:{" "}
-                        {treatmentDetails.recent_treatment?.doctor_info?.name}
-                      </p>
-                      <p className="text-sm text-blue-400">
-                        {treatmentDetails.recent_treatment?.doctor_info?.specialization}
-                      </p>
-                    </div>
+                        <h2 className="text-lg font-semibold text-gray-900">
+                          Treatment on{" "}
+                          {treatmentDetails.recent_treatment
+                            ? formatDate(
+                                treatmentDetails.recent_treatment.created_at
+                              )
+                            : "No treatment yet"}
+                        </h2>
+                        <p className="text-sm text-gray-500">
+                          Record ID:{" "}
+                          {treatmentDetails.recent_treatment
+                            ? treatmentDetails.recent_treatment.id
+                            : "N/A"}
+                        </p>
+                        <p className="text-sm text-gray-500">
+                          Created by:{" "}
+                          {treatmentDetails.recent_treatment?.doctor_info?.name}
+                        </p>
+                        <p className="text-sm text-blue-400">
+                          {
+                            treatmentDetails.recent_treatment?.doctor_info
+                              ?.specialization
+                          }
+                        </p>
+                      </div>
                     </div>
 
                     <div className="bg-gray-50 rounded-xl p-6">
@@ -662,8 +697,8 @@ const handleSendReferral = async () => {
                         Treatment Notes
                       </h3>
                       <p className="text-gray-700 bg-white p-4 rounded-lg border border-gray-100 shadow-sm">
-                      {treatmentDetails.recent_treatment?.treatment_notes || 
-                      "No treatment notes available"}
+                        {treatmentDetails.recent_treatment?.treatment_notes ||
+                          "No treatment notes available"}
                       </p>
                     </div>
 
@@ -693,8 +728,9 @@ const handleSendReferral = async () => {
                         </div>
 
                         <div className="p-5">
-                          {treatmentDetails.recent_treatment?.diagnoses && treatmentDetails.recent_treatment.diagnoses.length >
-                          0 ? (
+                          {treatmentDetails.recent_treatment?.diagnoses &&
+                          treatmentDetails.recent_treatment.diagnoses.length >
+                            0 ? (
                             <ul className="divide-y divide-gray-100">
                               {treatmentDetails.recent_treatment?.diagnoses?.map(
                                 (d, index) => (
@@ -767,7 +803,9 @@ const handleSendReferral = async () => {
                         </div>
 
                         <div className="p-5">
-                          {treatmentDetails.recent_treatment?.prescriptions && treatmentDetails.recent_treatment.prescriptions.length > 0 ? (
+                          {treatmentDetails.recent_treatment?.prescriptions &&
+                          treatmentDetails.recent_treatment.prescriptions
+                            .length > 0 ? (
                             <ul className="divide-y divide-gray-100">
                               {treatmentDetails.recent_treatment?.prescriptions?.map(
                                 (p, index) => (
@@ -861,160 +899,185 @@ const handleSendReferral = async () => {
                         <h2 className="text-lg font-semibold text-gray-900">
                           Previous Treatments
                         </h2>
-                        
+
                         <div className="relative">
                           <div className="absolute left-5 h-full w-0.5 bg-gray-200"></div>
                           <div className="space-y-8">
-                            {treatmentDetails.previous_treatments.map((treatment) => (
-                              <div key={treatment.id} className="relative">
-                                {/* Timeline connector */}
-                                <div className="absolute -left-1 mt-1.5 h-10 w-10 rounded-full bg-white border-4 border-gray-200"></div>
-                                
-                                <div className="ml-14">
-                                  <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
-                                    <div className="p-5">
-                                      {/* Treatment Header */}
-                                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4">
-                                        <div className="flex items-center mb-2 sm:mb-0">
-                                          <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            className="h-5 w-5 text-gray-400 mr-2"
-                                            fill="none"
-                                            viewBox="0 0 24 24"
-                                            stroke="currentColor"
-                                          >
-                                            <path
-                                              strokeLinecap="round"
-                                              strokeLinejoin="round"
-                                              strokeWidth={2}
-                                              d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                                            />
-                                          </svg>
-                                          <div>
-                                            <span className="font-medium text-gray-700 block">
-                                              {formatDate(treatment.created_at)}
-                                            </span>
-                                            {treatment.doctor_info && (
-                                              <span className="text-sm text-gray-500">
-                                                Created by: {treatment.doctor_info.name}
+                            {treatmentDetails.previous_treatments.map(
+                              (treatment) => (
+                                <div key={treatment.id} className="relative">
+                                  {/* Timeline connector */}
+                                  <div className="absolute -left-1 mt-1.5 h-10 w-10 rounded-full bg-white border-4 border-gray-200"></div>
+
+                                  <div className="ml-14">
+                                    <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+                                      <div className="p-5">
+                                        {/* Treatment Header */}
+                                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4">
+                                          <div className="flex items-center mb-2 sm:mb-0">
+                                            <svg
+                                              xmlns="http://www.w3.org/2000/svg"
+                                              className="h-5 w-5 text-gray-400 mr-2"
+                                              fill="none"
+                                              viewBox="0 0 24 24"
+                                              stroke="currentColor"
+                                            >
+                                              <path
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                strokeWidth={2}
+                                                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                                              />
+                                            </svg>
+                                            <div>
+                                              <span className="font-medium text-gray-700 block">
+                                                {formatDate(
+                                                  treatment.created_at
+                                                )}
                                               </span>
-                                            )}
+                                              {treatment.doctor_info && (
+                                                <span className="text-sm text-gray-500">
+                                                  Created by:{" "}
+                                                  {treatment.doctor_info.name}
+                                                </span>
+                                              )}
                                               <p className="text-sm text-blue-400">
-                                                {treatmentDetails.recent_treatment?.doctor_info?.specialization}
+                                                {
+                                                  treatmentDetails
+                                                    .recent_treatment
+                                                    ?.doctor_info
+                                                    ?.specialization
+                                                }
                                               </p>
+                                            </div>
                                           </div>
+                                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                                            ID: {treatment.id}
+                                          </span>
                                         </div>
-                                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                                          ID: {treatment.id}
-                                        </span>
-                                      </div>
 
-                                      {/* Treatment Notes */}
-                                      <div className="bg-gray-50 rounded-lg p-4 mb-4">
-                                        <h3 className="font-medium text-gray-700 mb-2">
-                                          Treatment Notes
-                                        </h3>
-                                        <p className="text-gray-600">
-                                          {treatment.treatment_notes || 'No specific notes provided'}
-                                        </p>
-                                      </div>
-
-                                      {/* Expandable Details */}
-                                      <details className="group">
-                                        <summary className="flex justify-between items-center font-medium cursor-pointer list-none text-blue-600 hover:text-blue-700 p-2 rounded-lg hover:bg-blue-50 transition-colors">
-                                          <span>View Treatment Details</span>
-                                          <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            className="h-5 w-5 transition-transform group-open:rotate-180"
-                                            fill="none"
-                                            viewBox="0 0 24 24"
-                                            stroke="currentColor"
-                                          >
-                                            <path
-                                              strokeLinecap="round"
-                                              strokeLinejoin="round"
-                                              strokeWidth={2}
-                                              d="M19 9l-7 7-7-7"
-                                            />
-                                          </svg>
-                                        </summary>
-
-                                        {/* Diagnosis and Prescriptions */}
-                                        <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-                                          {/* Diagnoses Section */}
-                                          <div className="bg-gray-50 rounded-lg p-4">
-                                            <h3 className="font-medium text-gray-700 mb-3">
-                                              Diagnoses ({treatment.diagnoses.length})
-                                            </h3>
-                                            {treatment.diagnoses.length > 0 ? (
-                                              <ul className="space-y-2">
-                                                {treatment.diagnoses.map((d, idx) => (
-                                                  <li
-                                                    key={`${d.diagnosis_code}-${idx}`}
-                                                    className="bg-white p-2 rounded-lg border border-gray-100"
-                                                  >
-                                                    <div className="flex items-start">
-                                                      <span className="inline-flex items-center justify-center h-6 w-auto min-w-[3rem] px-2 bg-gray-100 text-gray-700 text-xs font-medium rounded mr-2">
-                                                        {d.diagnosis_code}
-                                                      </span>
-                                                      <span className="text-gray-600">
-                                                        {d.diagnosis_description}
-                                                      </span>
-                                                    </div>
-                                                  </li>
-                                                ))}
-                                              </ul>
-                                            ) : (
-                                              <p className="text-gray-500 italic">
-                                                No diagnoses recorded
-                                              </p>
-                                            )}
-                                          </div>
-
-                                          {/* Prescriptions Section */}
-                                          <div className="bg-gray-50 rounded-lg p-4">
-                                            <h3 className="font-medium text-gray-700 mb-3">
-                                              Prescriptions ({treatment.prescriptions.length})
-                                            </h3>
-                                            {treatment.prescriptions.length > 0 ? (
-                                              <ul className="space-y-2">
-                                                {treatment.prescriptions.map((p, idx) => (
-                                                  <li
-                                                    key={`${p.medication}-${idx}`}
-                                                    className="bg-white p-2 rounded-lg border border-gray-100"
-                                                  >
-                                                    <div className="font-medium text-gray-700">
-                                                      {p.medication?.name || 'Unnamed Medication'}
-                                                    </div>
-                                                    <div className="text-sm text-gray-500 flex flex-wrap gap-2 mt-1">
-                                                      <span className="px-2 py-0.5 bg-gray-50 rounded">
-                                                        Dosage: {p.dosage}
-                                                      </span>
-                                                      <span className="px-2 py-0.5 bg-gray-50 rounded">
-                                                        Frequency: {p.frequency}
-                                                      </span>
-                                                      {p.quantity && (
-                                                        <span className="px-2 py-0.5 bg-gray-50 rounded">
-                                                          Quantity: {p.quantity}
-                                                        </span>
-                                                      )}
-                                                    </div>
-                                                  </li>
-                                                ))}
-                                              </ul>
-                                            ) : (
-                                              <p className="text-gray-500 italic">
-                                                No prescriptions recorded
-                                              </p>
-                                            )}
-                                          </div>
+                                        {/* Treatment Notes */}
+                                        <div className="bg-gray-50 rounded-lg p-4 mb-4">
+                                          <h3 className="font-medium text-gray-700 mb-2">
+                                            Treatment Notes
+                                          </h3>
+                                          <p className="text-gray-600">
+                                            {treatment.treatment_notes ||
+                                              "No specific notes provided"}
+                                          </p>
                                         </div>
-                                      </details>
+
+                                        {/* Expandable Details */}
+                                        <details className="group">
+                                          <summary className="flex justify-between items-center font-medium cursor-pointer list-none text-blue-600 hover:text-blue-700 p-2 rounded-lg hover:bg-blue-50 transition-colors">
+                                            <span>View Treatment Details</span>
+                                            <svg
+                                              xmlns="http://www.w3.org/2000/svg"
+                                              className="h-5 w-5 transition-transform group-open:rotate-180"
+                                              fill="none"
+                                              viewBox="0 0 24 24"
+                                              stroke="currentColor"
+                                            >
+                                              <path
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                strokeWidth={2}
+                                                d="M19 9l-7 7-7-7"
+                                              />
+                                            </svg>
+                                          </summary>
+
+                                          {/* Diagnosis and Prescriptions */}
+                                          <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            {/* Diagnoses Section */}
+                                            <div className="bg-gray-50 rounded-lg p-4">
+                                              <h3 className="font-medium text-gray-700 mb-3">
+                                                Diagnoses (
+                                                {treatment.diagnoses.length})
+                                              </h3>
+                                              {treatment.diagnoses.length >
+                                              0 ? (
+                                                <ul className="space-y-2">
+                                                  {treatment.diagnoses.map(
+                                                    (d, idx) => (
+                                                      <li
+                                                        key={`${d.diagnosis_code}-${idx}`}
+                                                        className="bg-white p-2 rounded-lg border border-gray-100"
+                                                      >
+                                                        <div className="flex items-start">
+                                                          <span className="inline-flex items-center justify-center h-6 w-auto min-w-[3rem] px-2 bg-gray-100 text-gray-700 text-xs font-medium rounded mr-2">
+                                                            {d.diagnosis_code}
+                                                          </span>
+                                                          <span className="text-gray-600">
+                                                            {
+                                                              d.diagnosis_description
+                                                            }
+                                                          </span>
+                                                        </div>
+                                                      </li>
+                                                    )
+                                                  )}
+                                                </ul>
+                                              ) : (
+                                                <p className="text-gray-500 italic">
+                                                  No diagnoses recorded
+                                                </p>
+                                              )}
+                                            </div>
+
+                                            {/* Prescriptions Section */}
+                                            <div className="bg-gray-50 rounded-lg p-4">
+                                              <h3 className="font-medium text-gray-700 mb-3">
+                                                Prescriptions (
+                                                {treatment.prescriptions.length}
+                                                )
+                                              </h3>
+                                              {treatment.prescriptions.length >
+                                              0 ? (
+                                                <ul className="space-y-2">
+                                                  {treatment.prescriptions.map(
+                                                    (p, idx) => (
+                                                      <li
+                                                        key={`${p.medication}-${idx}`}
+                                                        className="bg-white p-2 rounded-lg border border-gray-100"
+                                                      >
+                                                        <div className="font-medium text-gray-700">
+                                                          {p.medication?.name ||
+                                                            "Unnamed Medication"}
+                                                        </div>
+                                                        <div className="text-sm text-gray-500 flex flex-wrap gap-2 mt-1">
+                                                          <span className="px-2 py-0.5 bg-gray-50 rounded">
+                                                            Dosage: {p.dosage}
+                                                          </span>
+                                                          <span className="px-2 py-0.5 bg-gray-50 rounded">
+                                                            Frequency:{" "}
+                                                            {p.frequency}
+                                                          </span>
+                                                          {p.quantity && (
+                                                            <span className="px-2 py-0.5 bg-gray-50 rounded">
+                                                              Quantity:{" "}
+                                                              {p.quantity}
+                                                            </span>
+                                                          )}
+                                                        </div>
+                                                      </li>
+                                                    )
+                                                  )}
+                                                </ul>
+                                              ) : (
+                                                <p className="text-gray-500 italic">
+                                                  No prescriptions recorded
+                                                </p>
+                                              )}
+                                            </div>
+                                          </div>
+                                        </details>
+                                      </div>
                                     </div>
                                   </div>
                                 </div>
-                              </div>
-                            ))}
+                              )
+                            )}
                           </div>
                         </div>
                       </div>
@@ -1048,194 +1111,241 @@ const handleSendReferral = async () => {
 
                 {/* Laboratory Results Tab Content */}
                 {activeTab === "laboratory" && (
-  <div className="">
-    
-    <div className="bg-gray-50 p-4 rounded-lg mb-4">
-      <div className="flex items-center text-sm text-gray-500 font-medium">
-        <div className="flex-1">File Name</div>
-        <div className="w-32 text-right">Upload Date</div>
-        <div className="w-24 text-right">Actions</div>
-      </div>
-    </div>
-    
-    <div className="space-y-2">
-      {labLoading && <div className="p-4 text-center text-gray-500">Loading lab results...</div>}
-      
-      {labError && (
-        <div className="p-4 text-center text-red-500">
-          Error: {labError}
-        </div>
-      )}
-
-      {!labLoading && !labError && labResults.length === 0 && (
-        <div className="p-4 text-center text-gray-500">
-          No lab results found for this patient
-        </div>
-      )}
-
-      {labResults.map((result) => (
-        <div key={result.id} className="flex items-center p-4 bg-white border rounded-md hover:bg-gray-50">
-          <div className="flex-1 flex items-center">
-            <FileText size={20} className="text-blue-500 mr-3" />
-            <span className="font-medium">
-              {getFileNameFromUrl(result.image_url)}
-            </span>
-          </div>
-          
-          <div className="w-32 text-sm text-gray-500 text-right">
-            {new Date(result.uploaded_at).toLocaleDateString('en-US', {
-              month: 'short',
-              day: '2-digit',
-              year: 'numeric'
-            })}
-          </div>
-          
-          <div className="w-24 flex justify-end space-x-2">
-            <button 
-              onClick={() => window.open(result.image_url, '_blank')}
-              className="p-2 text-gray-600 hover:text-blue-600 rounded-md hover:bg-blue-50"
-              aria-label="View file"
-            >
-              <Eye size={18} />
-            </button>
-            
-            <button 
-              onClick={() => handleDownload(result)}
-              className="p-2 text-gray-600 hover:text-green-600 rounded-md hover:bg-green-50"
-              aria-label="Download file"
-            >
-              <Download size={18} />
-            </button>
-          </div>
-        </div>
-      ))}
-    </div>
-  </div>
-)}
-{isReferModalOpen && (
-  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
-    <div className="bg-white rounded-lg w-full max-w-2xl">
-      <div className="p-6 border-b border-gray-200">
-        <h3 className="text-lg font-semibold">
-          {selectedDoctor ? "Add Referral Notes" : "Select Specialist"}
-        </h3>
-      </div>
-      
-      <div className="p-6">
-        {!selectedDoctor ? (
-          <>
-            <div className="relative mb-4">
-              <input
-                type="text"
-                placeholder="Search doctors by name or specialization..."
-                className="w-full px-4 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-              <svg className="absolute right-3 top-3 h-5 w-5 text-gray-400" 
-                   fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
-            </div>
-
-            <div className="h-96 overflow-y-auto">
-              {filteredDoctors.length > 0 ? (
-                filteredDoctors.map((doctor) => (
-                  <div
-                    key={doctor.id}
-                    className="flex items-center p-4 hover:bg-gray-50 cursor-pointer border-b border-gray-100"
-                    onClick={() => setSelectedDoctor(doctor)}
-                  >
-                    <div className="flex-1">
-                      <h4 className="font-medium">{doctor.first_name} {doctor.last_name}</h4>
-                      <p className="text-gray-600 text-sm">{doctor.doctor_profile.specialization}</p>
+                  <div className="">
+                    <div className="bg-gray-50 p-4 rounded-lg mb-4">
+                      <div className="flex items-center text-sm text-gray-500 font-medium">
+                        <div className="flex-1">File Name</div>
+                        <div className="w-32 text-right">Upload Date</div>
+                        <div className="w-24 text-right">Actions</div>
+                      </div>
                     </div>
-                    <svg className="h-5 w-5 text-gray-400" 
-                         fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                    </svg>
+
+                    <div className="space-y-2">
+                      {labLoading && (
+                        <div className="p-4 text-center text-gray-500">
+                          Loading lab results...
+                        </div>
+                      )}
+
+                      {labError && (
+                        <div className="p-4 text-center text-red-500">
+                          Error: {labError}
+                        </div>
+                      )}
+
+                      {!labLoading && !labError && labResults.length === 0 && (
+                        <div className="p-4 text-center text-gray-500">
+                          No lab results found for this patient
+                        </div>
+                      )}
+
+                      {labResults.map((result) => (
+                        <div
+                          key={result.id}
+                          className="flex items-center p-4 bg-white border rounded-md hover:bg-gray-50"
+                        >
+                          <div className="flex-1 flex items-center">
+                            <FileText
+                              size={20}
+                              className="text-blue-500 mr-3"
+                            />
+                            <span className="font-medium">
+                              {getFileNameFromUrl(result.image_url)}
+                            </span>
+                          </div>
+
+                          <div className="w-32 text-sm text-gray-500 text-right">
+                            {new Date(result.uploaded_at).toLocaleDateString(
+                              "en-US",
+                              {
+                                month: "short",
+                                day: "2-digit",
+                                year: "numeric",
+                              }
+                            )}
+                          </div>
+
+                          <div className="w-24 flex justify-end space-x-2">
+                            <button
+                              onClick={() =>
+                                window.open(result.image_url, "_blank")
+                              }
+                              className="p-2 text-gray-600 hover:text-blue-600 rounded-md hover:bg-blue-50"
+                              aria-label="View file"
+                            >
+                              <Eye size={18} />
+                            </button>
+
+                            <button
+                              onClick={() => handleDownload(result)}
+                              className="p-2 text-gray-600 hover:text-green-600 rounded-md hover:bg-green-50"
+                              aria-label="Download file"
+                            >
+                              <Download size={18} />
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                ))
-              ) : (
-                <div className="text-center py-8 text-gray-500">
-                  No doctors found matching your search criteria
-                </div>
-              )}
-            </div>
-          </>
-        ) : (
-          <div className="space-y-6">
-            <div className="border rounded-lg p-4">
-              <h4 className="font-medium">{selectedDoctor.first_name} {selectedDoctor.last_name}</h4>
-              <p className="text-gray-600 text-sm">{selectedDoctor.doctor_profile.specialization}</p>
-            </div>
+                )}
+                {isReferModalOpen && (
+                  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
+                    <div className="bg-white rounded-lg w-full max-w-2xl">
+                      <div className="p-6 border-b border-gray-200">
+                        <h3 className="text-lg font-semibold">
+                          {selectedDoctor
+                            ? "Add Referral Notes"
+                            : "Select Specialist"}
+                        </h3>
+                      </div>
 
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-gray-700">
-                Referral Reason
-              </label>
-              <input
-                type="text"
-                value={referralReason}
-                onChange={(e) => setReferralReason(e.target.value)}
-                className="w-full px-4 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500"
-                placeholder="Enter referral reason"
-              />
-            </div>
+                      <div className="p-6">
+                        {!selectedDoctor ? (
+                          <>
+                            <div className="relative mb-4">
+                              <input
+                                type="text"
+                                placeholder="Search doctors by name or specialization..."
+                                className="w-full px-4 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                              />
+                              <svg
+                                className="absolute right-3 top-3 h-5 w-5 text-gray-400"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                                />
+                              </svg>
+                            </div>
 
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-gray-700">
-                Referral Instructions
-              </label>
-              <textarea
-                value={referralNotes}
-                onChange={(e) => setReferralNotes(e.target.value)}
-                className="w-full px-4 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500 h-32"
-                placeholder="Enter specific instructions for the specialist..."
-              />
-            </div>
-          </div>
-        )}
-      </div>
+                            <div className="h-96 overflow-y-auto">
+                              {filteredDoctors.length > 0 ? (
+                                filteredDoctors.map((doctor) => (
+                                  <div
+                                    key={doctor.id}
+                                    className="flex items-center p-4 hover:bg-gray-50 cursor-pointer border-b border-gray-100"
+                                    onClick={() => setSelectedDoctor(doctor)}
+                                  >
+                                    <div className="flex-1">
+                                      <h4 className="font-medium">
+                                        {doctor.first_name} {doctor.last_name}
+                                      </h4>
+                                      <p className="text-gray-600 text-sm">
+                                        {doctor.doctor_profile.specialization}
+                                      </p>
+                                    </div>
+                                    <svg
+                                      className="h-5 w-5 text-gray-400"
+                                      fill="none"
+                                      stroke="currentColor"
+                                      viewBox="0 0 24 24"
+                                    >
+                                      <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth={2}
+                                        d="M9 5l7 7-7 7"
+                                      />
+                                    </svg>
+                                  </div>
+                                ))
+                              ) : (
+                                <div className="text-center py-8 text-gray-500">
+                                  No doctors found matching your search criteria
+                                </div>
+                              )}
+                            </div>
+                          </>
+                        ) : (
+                          <div className="space-y-6">
+                            <div className="border rounded-lg p-4">
+                              <h4 className="font-medium">
+                                {selectedDoctor.first_name}{" "}
+                                {selectedDoctor.last_name}
+                              </h4>
+                              <p className="text-gray-600 text-sm">
+                                {selectedDoctor.doctor_profile.specialization}
+                              </p>
+                            </div>
 
-      <div className="flex justify-between p-6 border-t border-gray-200">
-        {selectedDoctor ? (
-          <button
-            onClick={() => {
-              setSelectedDoctor(null);
-              setReferralNotes("");
-            }}
-            className="px-4 py-2 text-gray-600 hover:text-gray-800"
-          >
-            Back
-          </button>
-        ) : (
-          <div /> // Empty div to maintain space
-        )}
-        <div className="space-x-4">
-          <button
-            onClick={() => {
-              setIsReferModalOpen(false);
-              setSelectedDoctor(null);
-              setReferralNotes("");
-            }}
-            className="px-4 py-2 text-gray-600 hover:text-gray-800"
-          >
-            Cancel
-          </button>
-          {selectedDoctor && (
-            <button
-              onClick={handleSendReferral}
-              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-            >
-              Send Referral
-            </button>
-          )}
-        </div>
-      </div>
-    </div>
-  </div>
-)}
+                            <div className="space-y-2">
+                              <label className="block text-sm font-medium text-gray-700">
+                                Referral Reason
+                              </label>
+                              <input
+                                type="text"
+                                value={referralReason}
+                                onChange={(e) =>
+                                  setReferralReason(e.target.value)
+                                }
+                                className="w-full px-4 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                                placeholder="Enter referral reason"
+                              />
+                            </div>
+
+                            <div className="space-y-2">
+                              <label className="block text-sm font-medium text-gray-700">
+                                Referral Instructions
+                              </label>
+                              <textarea
+                                value={referralNotes}
+                                onChange={(e) =>
+                                  setReferralNotes(e.target.value)
+                                }
+                                className="w-full px-4 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500 h-32"
+                                placeholder="Enter specific instructions for the specialist..."
+                              />
+                            </div>
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="flex justify-between p-6 border-t border-gray-200">
+                        {selectedDoctor ? (
+                          <button
+                            onClick={() => {
+                              setSelectedDoctor(null);
+                              setReferralNotes("");
+                            }}
+                            className="px-4 py-2 text-gray-600 hover:text-gray-800"
+                          >
+                            Back
+                          </button>
+                        ) : (
+                          <div /> // Empty div to maintain space
+                        )}
+                        <div className="space-x-4">
+                          <button
+                            onClick={() => {
+                              setIsReferModalOpen(false);
+                              setSelectedDoctor(null);
+                              setReferralNotes("");
+                            }}
+                            className="px-4 py-2 text-gray-600 hover:text-gray-800"
+                          >
+                            Cancel
+                          </button>
+                          {selectedDoctor && (
+                            <button
+                              onClick={handleSendReferral}
+                              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                            >
+                              Send Referral
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             )
           )}

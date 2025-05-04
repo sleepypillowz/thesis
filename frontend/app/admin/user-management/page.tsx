@@ -29,7 +29,7 @@ import { toast } from "sonner";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import userRole from "@/components/hooks/userRole";
+import userRole from "@/hooks/userRole";
 
 // User Schema for Validation (for editing)
 const UserSchema = z.object({
