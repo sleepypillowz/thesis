@@ -1,20 +1,76 @@
 import Link from "next/link";
+import { buttonVariants } from "../ui/button";
 
 const HeroHeader = () => {
   return (
-    <div className="border border-x-0 bg-card text-card-foreground shadow-sm lg:sticky lg:top-0">
-      <div className="px-3 py-3 lg:px-5 lg:pl-3">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center justify-start rtl:justify-end">
-            <Link href="/" className="ms-2 flex md:me-24">
-              <span className="ms-2 self-center whitespace-nowrap text-2xl font-semibold">
-                Malibiran Medical Clinic
-              </span>
-            </Link>
+    <nav className="bg-white px-6 py-4 shadow-sm">
+      <div className="container mx-auto flex items-center justify-between">
+        <div className="flex items-center">
+          <div className="mr-3 flex h-10 w-10 items-center justify-center rounded-full bg-blue-600 font-bold text-white">
+            M
           </div>
+          <span className="text-xl font-bold text-gray-900">
+            Malibiran Clinic
+          </span>
         </div>
+        <div className="hidden items-center space-x-6 md:flex">
+          <Link
+            href="/"
+            className="text-gray-600 transition-colors hover:text-blue-600"
+          >
+            Home
+          </Link>
+          <Link
+            href="/services"
+            className="text-gray-600 transition-colors hover:text-blue-600"
+          >
+            Services
+          </Link>
+          <Link
+            href="/doctors-list"
+            className="text-gray-600 transition-colors hover:text-blue-600"
+          >
+            Doctors
+          </Link>
+          <Link
+            href="/about"
+            className="text-gray-600 transition-colors hover:text-blue-600"
+          >
+            About
+          </Link>
+          <Link
+            href="/contact"
+            className="text-gray-600 transition-colors hover:text-blue-600"
+          >
+            Contact
+          </Link>
+        </div>
+        <div className="hidden md:block">
+          <Link
+            href="/login"
+            className={buttonVariants({ variant: "default" })}
+          >
+            Login
+          </Link>
+        </div>
+        <button className="text-gray-600 md:hidden">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-6 w-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M4 6h16M4 12h16m-7 6h7"
+            />
+          </svg>
+        </button>
       </div>
-    </div>
+    </nav>
   );
 };
 

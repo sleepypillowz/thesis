@@ -1,7 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
 import {
-  Plus,
   Phone,
   Calendar,
   MapPin,
@@ -12,6 +11,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
+import HeroHeader from "@/components/organisms/hero-header";
 
 // Simulated button variant function since we can't import the actual one
 type ButtonVariant = "default" | "secondary" | "outline" | undefined;
@@ -67,75 +67,7 @@ export default function Home() {
 
   return (
     <main className="flex min-h-screen flex-col bg-gradient-to-br from-blue-50 to-white">
-      {/* Navigation */}
-      <nav className="bg-white px-6 py-4 shadow-sm">
-        <div className="container mx-auto flex items-center justify-between">
-          <div className="flex items-center">
-            <div className="mr-3 flex h-10 w-10 items-center justify-center rounded-full bg-blue-600 font-bold text-white">
-              M
-            </div>
-            <span className="text-xl font-bold text-gray-900">
-              Malibiran Clinic
-            </span>
-          </div>
-          <div className="hidden items-center space-x-6 md:flex">
-            <a
-              href="#"
-              className="text-gray-600 transition-colors hover:text-blue-600"
-            >
-              Home
-            </a>
-            <a
-              href="#"
-              className="text-gray-600 transition-colors hover:text-blue-600"
-            >
-              Services
-            </a>
-            <a
-              href="#"
-              className="text-gray-600 transition-colors hover:text-blue-600"
-            >
-              Doctors
-            </a>
-            <a
-              href="#"
-              className="text-gray-600 transition-colors hover:text-blue-600"
-            >
-              About
-            </a>
-            <a
-              href="#"
-              className="text-gray-600 transition-colors hover:text-blue-600"
-            >
-              Contact
-            </a>
-          </div>
-          <div className="hidden md:block">
-            <Link
-              href="/login"
-              className={buttonVariants({ variant: "default" })}
-            >
-              Login
-            </Link>
-          </div>
-          <button className="text-gray-600 md:hidden">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M4 6h16M4 12h16m-7 6h7"
-              />
-            </svg>
-          </button>
-        </div>
-      </nav>
+      <HeroHeader />
 
       {/* Hero Section */}
       <div
@@ -215,10 +147,10 @@ export default function Home() {
             <div className="relative md:w-1/2">
               <div className="overflow-hidden rounded-2xl bg-white shadow-xl">
                 <Image
-                  src="https://cdn.pixabay.com/photo/2017/01/31/13/14/line-2029321_1280.png"
-                  width={500}
-                  height={500}
-                  alt="Medical Professional"
+                  src="/location.png"
+                  width={1327}
+                  height={717}
+                  alt="location"
                   className="h-64 w-full object-cover"
                 />
                 <div className="p-6">
@@ -282,7 +214,7 @@ export default function Home() {
                 </div>
                 <div>
                   <p className="text-xs text-gray-500">Call us now</p>
-                  <p className="font-bold text-gray-900">+1 (555) 123-4567</p>
+                  <p className="font-bold text-gray-900">0999 820 5684</p>
                 </div>
               </div>
 
@@ -292,59 +224,10 @@ export default function Home() {
                 </div>
                 <div>
                   <p className="text-xs text-gray-500">Our location</p>
-                  <p className="font-bold text-gray-900">123 Health St.</p>
+                  <p className="font-bold text-gray-900">130 Old Samson Rd.</p>
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Quick Access Links */}
-      <div className="border-t border-gray-100 bg-white py-8">
-        <div className="container mx-auto px-6">
-          <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
-            <Link
-              href="/patient"
-              className="flex flex-col items-center rounded-xl border border-gray-100 bg-gray-50 p-6 transition-colors hover:border-blue-100 hover:bg-blue-50"
-            >
-              <Users className="mb-3 h-8 w-8 text-blue-600" />
-              <span className="font-medium text-gray-900">Patient Portal</span>
-            </Link>
-            <Link
-              href="/admin"
-              className="flex flex-col items-center rounded-xl border border-gray-100 bg-gray-50 p-6 transition-colors hover:border-blue-100 hover:bg-blue-50"
-            >
-              <Shield className="mb-3 h-8 w-8 text-blue-600" />
-              <span className="font-medium text-gray-900">Admin Access</span>
-            </Link>
-            <Link
-              href="/login"
-              className="flex flex-col items-center rounded-xl border border-gray-100 bg-gray-50 p-6 transition-colors hover:border-blue-100 hover:bg-blue-50"
-            >
-              <svg
-                className="mb-3 h-8 w-8 text-blue-600"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"
-                />
-              </svg>
-              <span className="font-medium text-gray-900">Login</span>
-            </Link>
-            <Link
-              href="/register"
-              className="flex flex-col items-center rounded-xl border border-gray-100 bg-gray-50 p-6 transition-colors hover:border-blue-100 hover:bg-blue-50"
-            >
-              <Plus className="mb-3 h-8 w-8 text-blue-600" />
-              <span className="font-medium text-gray-900">Register</span>
-            </Link>
           </div>
         </div>
       </div>
