@@ -237,18 +237,18 @@ function CreateUserDialog({ onUserCreated }: { onUserCreated: () => void }) {
 
           <div>
             <label className="block text-sm font-medium">Role</label>
-            <select
-              {...form.register("role")}
-              className="mt-1 block w-full rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-              onChange={(e) => {
-                form.setValue("role", e.target.value);
-                // You might want to show/hide doctor fields based on role selection
-              }}
-            >
-              <option value="doctor">Doctor</option>
-              <option value="admin">Admin</option>
-              <option value="secretary">Medical Secretary</option>
-            </select>
+              <select
+                {...form.register("role")}
+                onChange={(e) => {
+                  const value = e.target.value as "doctor" | "admin" | "secretary";
+                  form.setValue("role", value, { shouldValidate: true });
+                }}
+               >
+                <option value="doctor">Doctor</option>
+                <option value="admin">Admin</option>
+                <option value="secretary">Medical Secretary</option>
+              </select>
+
           </div>
 
           {form.watch("role") === "doctor" && (
