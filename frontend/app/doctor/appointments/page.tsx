@@ -5,9 +5,9 @@ import { useRouter } from "next/navigation";
 import {
   format,
   differenceInCalendarDays,
-  parseISO,
   isValid,
 } from "date-fns";
+import {parseISO} from "date-fns/parseISO";
 
 
 interface Referral {
