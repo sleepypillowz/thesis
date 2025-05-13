@@ -1,7 +1,7 @@
 "use client";
 import { useRouter, useParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import userRole from "@/components/hooks/userRole";
+import userRole from "@/hooks/userRole";
 import { FileText, Eye, Download, PlusCircle } from 'lucide-react';
 interface Diagnosis {
   diagnosis_code: string;
@@ -99,10 +99,7 @@ export default function TreatmentDetailsPage() {
   const [isReferModalOpen, setIsReferModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredDoctors, setFilteredDoctors] = useState<Doctor[]>([]);
-  const [selectedDoctor, setSelectedDoctor] = useState<Doctor | null>(null);
-  const [referralNotes, setReferralNotes] = useState("");
-  const [referralReason, setReferralReason] = useState(""); 
-
+  const [selectedReferrals, setSelectedReferrals] = useState<Record<string, { reason: string; notes: string }>>({})
   const role = userRole();
   
   const getFileNameFromUrl = (url: string) => {
@@ -302,55 +299,59 @@ export default function TreatmentDetailsPage() {
     fetchDoctors();
   }, []); // Empty dependency array = runs once on mount
 
-  // Filter doctors based on search query
   useEffect(() => {
-    const results = doctors.filter(doctor =>
-      doctor.first_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      doctor.last_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      doctor.doctor_profile.specialization.toLowerCase().includes(searchQuery.toLowerCase())
+    const q = searchQuery.toLowerCase();
+    setFilteredDoctors(
+      doctors.filter(d => (`${d.first_name} ${d.last_name}`.toLowerCase().includes(q)) ||
+                           d.doctor_profile.specialization.toLowerCase().includes(q))
     );
-    setFilteredDoctors(results);
   }, [searchQuery, doctors]);
 
-
-const handleSendReferral = async () => {
-  if (!selectedDoctor || !referralNotes || !referralReason) {
-    alert("Please fill all required fields");
-    return};
-
-  try {
-    const accessToken = localStorage.getItem("access");
-    const response = await fetch("http://127.0.0.1:8000/appointment-referral/", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${accessToken}`,
-      },
-      body: JSON.stringify({
-        receiving_doctor: selectedDoctor.id,  // Changed to match backend field name
-        patient: patient_id,                 // Changed to match backend field name
-        reason: referralReason,              // Added reason field
-        notes: referralNotes
-      }),
+  // Toggle doctor selection
+  const toggleDoctor = (id: string) => {
+    setSelectedReferrals(prev => {
+      const next = { ...prev };
+      if (next[id]) delete next[id]; else next[id] = { reason: '', notes: '' };
+      return next;
     });
+  };
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.error || "Failed to send referral");
+  const handleFieldChange = (id: string, field: 'reason' | 'notes', value: string) => {
+    setSelectedReferrals(prev => ({ ...prev, [id]: { ...prev[id], [field]: value } }));
+  };
+
+  // Submit bulk referrals
+  const handleSendReferrals = async () => {
+    const payload = Object.entries(selectedReferrals).map(([receiving_doctor, data]) => ({
+      patient: patient_id,
+      receiving_doctor,
+      reason: data.reason,
+      notes: data.notes
+    }));
+    if (!payload.length) { alert('Select at least one doctor and fill details.'); return; }
+    try {
+      const token = localStorage.getItem('access');
+      const res = await fetch('http://127.0.0.1:8000/appointment-referral/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify(payload)
+      });
+      if (!res.ok) throw new Error((await res.json()).detail || 'Error');
+      setIsReferModalOpen(false);
+      setSelectedReferrals({});
+      setSearchQuery('');
+      alert('Referrals sent');
+    } catch (e) {
+      if (e instanceof Error) {
+        console.error(e);
+        alert(e.message);
+      } else {
+        console.error('Unexpected error', e);
+        alert('An unexpected error occurred.');
+      }
     }
     
-    // Handle success
-    setIsReferModalOpen(false);
-    setSelectedDoctor(null);
-    setReferralNotes("");
-    setReferralReason("");
-    alert("Referral sent successfully");
-
-  } catch (err) {
-    console.error("Referral error:", err);
-    alert(err instanceof Error ? err.message : "Failed to send referral");
-  }
-};
+  };
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-US", {
@@ -887,7 +888,7 @@ const handleSendReferral = async () => {
                                               </span>
                                             )}
                                               <p className="text-sm text-blue-400">
-                                                {treatmentDetails.recent_treatment?.doctor_info?.specialization}
+                                                {treatment.doctor_info?.specialization}
                                               </p>
                                           </div>
                                         </div>
@@ -1099,126 +1100,163 @@ const handleSendReferral = async () => {
     </div>
   </div>
 )}
-{isReferModalOpen && (
-  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
-    <div className="bg-white rounded-lg w-full max-w-2xl">
-      <div className="p-6 border-b border-gray-200">
-        <h3 className="text-lg font-semibold">
-          {selectedDoctor ? "Add Referral Notes" : "Select Specialist"}
-        </h3>
+ {isReferModalOpen && (
+  <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-in fade-in duration-300">
+    <div className="bg-card rounded-xl w-full max-w-2xl shadow-lg border border-border/50 overflow-hidden animate-in zoom-in-95 duration-300">
+      {/* Modal Header */}
+      <div className="p-5 border-b border-border flex items-center justify-between bg-muted/30">
+        <div className="flex items-center gap-3">
+          <div className="bg-primary/10 p-2 rounded-full">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-primary">
+              <path d="M9 6L15 12L9 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </div>
+          <div className="p-1 border-b border-gray-200 ">
+            <h3 className="text-lg font-medium">Referral</h3>
+            <p className="mt-0 text-sm text-gray-400">
+              You can select one or more referral
+            </p>
+          </div>
+
+        </div>
+        <button 
+          onClick={() => setIsReferModalOpen(false)}
+          className="text-muted-foreground hover:text-foreground rounded-full p-1 transition-colors"
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        </button>
       </div>
       
-      <div className="p-6">
-        {!selectedDoctor ? (
-          <>
-            <div className="relative mb-4">
-              <input
-                type="text"
-                placeholder="Search doctors by name or specialization..."
-                className="w-full px-4 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-              <svg className="absolute right-3 top-3 h-5 w-5 text-gray-400" 
-                   fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+      {/* Modal Content */}
+      <div className="p-5 space-y-4">
+        {/* Search Input */}
+        <div className="relative">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
+            <path d="M21 21L15 15M17 10C17 13.866 13.866 17 10 17C6.13401 17 3 13.866 3 10C3 6.13401 6.13401 3 10 3C13.866 3 17 6.13401 17 10Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+          <input 
+            type="text" 
+            placeholder="Search doctors..." 
+            className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-border bg-background focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all"
+            value={searchQuery} 
+            onChange={e => setSearchQuery(e.target.value)} 
+          />
+        </div>
+        
+        {/* Doctors List */}
+        <div className="h-96 overflow-y-auto rounded-lg border border-border">
+          {filteredDoctors.length === 0 ? (
+            <div className="flex flex-col items-center justify-center h-full p-6 text-center">
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-muted-foreground mb-3">
+                <path d="M10 21H14M12 3C7.02944 3 3 7.02944 3 12C3 16.9706 7.02944 21 12 21C16.9706 21 21 16.9706 21 12C21 7.02944 16.9706 3 12 3ZM9 9H9.01M15 9H15.01M9.5 15C9.82379 15.3358 10.7333 16 12 16C13.2667 16 14.1762 15.3358 14.5 15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
+              <p className="text-muted-foreground">No doctors found matching your search.</p>
             </div>
-
-            <div className="h-96 overflow-y-auto">
-              {filteredDoctors.length > 0 ? (
-                filteredDoctors.map((doctor) => (
-                  <div
-                    key={doctor.id}
-                    className="flex items-center p-4 hover:bg-gray-50 cursor-pointer border-b border-gray-100"
-                    onClick={() => setSelectedDoctor(doctor)}
-                  >
-                    <div className="flex-1">
-                      <h4 className="font-medium">{doctor.first_name} {doctor.last_name}</h4>
-                      <p className="text-gray-600 text-sm">{doctor.doctor_profile.specialization}</p>
+          ) : (
+            <div className="divide-y divide-border">
+              {filteredDoctors.map(doctor => {
+                const sel = !!selectedReferrals[doctor.id];
+                return (
+                  <div key={doctor.id} className={`p-4 transition-all ${sel ? 'bg-primary/5' : 'hover:bg-muted/50'}`}>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        {sel ? (
+                          <div className="h-5 w-5 rounded-md border border-primary bg-primary/10 flex items-center justify-center">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-primary">
+                              <path d="M20 6L9 17L4 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                            </svg>
+                          </div>
+                        ) : (
+                          <div className="h-5 w-5 rounded-md border border-border"></div>
+                        )}
+                        <div>
+                          <h4 className="font-medium">{doctor.first_name} {doctor.last_name}</h4>
+                          <p className="text-sm text-muted-foreground">{doctor.doctor_profile.specialization}</p>
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => toggleDoctor(doctor.id)}
+                        className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
+                          sel 
+                            ? 'bg-destructive/10 text-destructive hover:bg-destructive/20' 
+                            : 'bg-primary text-primary-foreground hover:bg-primary/90'
+                        }`}
+                      >
+                        {sel ? 'Deselect' : 'Select'}
+                      </button>
                     </div>
-                    <svg className="h-5 w-5 text-gray-400" 
-                         fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                    </svg>
+                    
+                    {/* Referral Details - Animate in/out */}
+                    {sel && (
+                      <div className="mt-4 pl-8 space-y-4 animate-in slide-in-from-top-2 duration-300">
+                        <div>
+                          <label className="block text-sm font-medium mb-1.5">Referral Reason</label>
+                          <input
+                            type="text"
+                            value={selectedReferrals[doctor.id].reason}
+                            onChange={e => handleFieldChange(doctor.id, 'reason', e.target.value)}
+                            className="w-full px-3 py-2 rounded-lg border border-border bg-background focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all"
+                            placeholder="Enter referral reason..."
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium mb-1.5">Referral Notes</label>
+                          <textarea
+                            value={selectedReferrals[doctor.id].notes}
+                            onChange={e => handleFieldChange(doctor.id, 'notes', e.target.value)}
+                            className="w-full px-3 py-2 rounded-lg border border-border bg-background focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all resize-none h-24"
+                            placeholder="Add any additional notes..."
+                          />
+                        </div>
+                      </div>
+                    )}
                   </div>
-                ))
-              ) : (
-                <div className="text-center py-8 text-gray-500">
-                  No doctors found matching your search criteria
-                </div>
-              )}
+                );
+              })}
             </div>
-          </>
-        ) : (
-          <div className="space-y-6">
-            <div className="border rounded-lg p-4">
-              <h4 className="font-medium">{selectedDoctor.first_name} {selectedDoctor.last_name}</h4>
-              <p className="text-gray-600 text-sm">{selectedDoctor.doctor_profile.specialization}</p>
-            </div>
+          )}
+        </div>
 
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-gray-700">
-                Referral Reason
-              </label>
-              <input
-                type="text"
-                value={referralReason}
-                onChange={(e) => setReferralReason(e.target.value)}
-                className="w-full px-4 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500"
-                placeholder="Enter referral reason"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-gray-700">
-                Referral Instructions
-              </label>
-              <textarea
-                value={referralNotes}
-                onChange={(e) => setReferralNotes(e.target.value)}
-                className="w-full px-4 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500 h-32"
-                placeholder="Enter specific instructions for the specialist..."
-              />
-            </div>
+        {/* Selected Count Banner */}
+        {Object.keys(selectedReferrals).length > 0 && (
+          <div className="bg-primary/10 text-primary rounded-lg p-3 flex items-center justify-between">
+            <span className="font-medium text-sm">
+              {Object.keys(selectedReferrals).length} doctor{Object.keys(selectedReferrals).length !== 1 ? 's' : ''} selected
+            </span>
+            <button 
+              onClick={() => {
+                // Clear all selections
+                setSelectedReferrals({});
+              }}
+              className="text-sm hover:underline"
+            >
+              Clear all
+            </button>
           </div>
         )}
       </div>
-
-      <div className="flex justify-between p-6 border-t border-gray-200">
-        {selectedDoctor ? (
-          <button
-            onClick={() => {
-              setSelectedDoctor(null);
-              setReferralNotes("");
-            }}
-            className="px-4 py-2 text-gray-600 hover:text-gray-800"
-          >
-            Back
-          </button>
-        ) : (
-          <div /> // Empty div to maintain space
-        )}
-        <div className="space-x-4">
-          <button
-            onClick={() => {
-              setIsReferModalOpen(false);
-              setSelectedDoctor(null);
-              setReferralNotes("");
-            }}
-            className="px-4 py-2 text-gray-600 hover:text-gray-800"
-          >
-            Cancel
-          </button>
-          {selectedDoctor && (
-            <button
-              onClick={handleSendReferral}
-              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-            >
-              Send Referral
-            </button>
-          )}
-        </div>
+      
+      {/* Modal Footer */}
+      <div className="flex justify-end p-5 border-t border-border bg-muted/30 gap-3">
+        <button 
+          onClick={() => setIsReferModalOpen(false)} 
+          className="px-4 py-2 rounded-lg border border-border hover:bg-muted transition-colors text-sm font-medium"
+        >
+          Cancel
+        </button>
+        <button 
+          onClick={handleSendReferrals} 
+          disabled={Object.keys(selectedReferrals).length === 0}
+          className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+            Object.keys(selectedReferrals).length === 0 
+              ? 'bg-primary/60 text-primary-foreground cursor-not-allowed' 
+              : 'bg-primary text-primary-foreground hover:bg-primary/90'
+          }`}
+        >
+          Send {Object.keys(selectedReferrals).length > 0 ? `(${Object.keys(selectedReferrals).length})` : ''}
+        </button>
       </div>
     </div>
   </div>

@@ -21,7 +21,8 @@ class AppointmentReferralSerializer(serializers.ModelSerializer):
     )
     appointment_date = serializers.DateTimeField(
         source='appointment.appointment_date',
-        read_only=True
+        read_only=True, 
+        format='%Y-%m-%dT%H:%M:%S'
     )
     
     class Meta:

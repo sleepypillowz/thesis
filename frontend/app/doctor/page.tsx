@@ -8,7 +8,7 @@ import { DataTable } from "@/components/ui/data-table";
 import { VisitorsChart } from "@/components/organisms/visitors-chart";
 import { CommonDiseasesChart } from "@/components/organisms/common-diseases-chart";
 import StatsCard from "@/components/organisms/stats-cards";
-import userInfo from "@/components/hooks/userRole";
+import userInfo from "@/hooks/userRole";
 
 export default function Page() {
   const [patients, setPatients] = useState<Patient[]>([]);

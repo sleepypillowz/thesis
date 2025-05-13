@@ -2,8 +2,6 @@
 import {
   LayoutDashboard,
   ClipboardPlus,
-  Calendar,
-  Bandage,
   ChartArea,
   Database,
   ChevronDown,
@@ -32,18 +30,8 @@ import { useEffect, useState } from "react";
 
 const menu_items = [
   {
-    title: "Dashboard",
-    url: "/doctor",
-    icon: LayoutDashboard,
-  },
-  {
     title: "Patient Portal",
     url: "/staff/patient-portal",
-    icon: LayoutDashboard,
-  },
-  {
-    title: "Doctors List",
-    url: "/doctor/doctors-list",
     icon: LayoutDashboard,
   },
   {
@@ -63,21 +51,6 @@ const patient_items = [
     title: "Medical Records",
     url: "/staff/medical-records",
     icon: ClipboardPlus,
-  },
-  {
-    title: "Appointments",
-    url: "/doctor/appointments",
-    icon: Calendar,
-  },
-  {
-    title: "Treatment",
-    url: "/doctor/treatment",
-    icon: Bandage,
-  },
-  {
-    title: "Treatment Queue",
-    url: "/doctor/treatment-queue",
-    icon: Bandage,
   },
 ];
 

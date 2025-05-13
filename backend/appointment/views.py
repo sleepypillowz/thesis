@@ -16,7 +16,6 @@ from user.models import Doctor, UserAccount, Schedule
 from user.models import UserAccount 
 from user.permissions import IsReferralParticipant
 
-
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from django.db.models import Q

@@ -1,134 +1,109 @@
 "use client";
 
-import { toast } from "sonner";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
-import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { PasswordInput } from "@/components/ui/password-input";
+import { useState, useEffect } from "react";
+import { GalleryVerticalEnd, ChevronRight } from "lucide-react";
 import Link from "next/link";
-import HeroHeader from "@/components/organisms/hero-header";
-import { supabase } from "@/config/supabase";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import Image from "next/image";
+import { LoginForm } from "@/components/organisms/forms/login-form";
 
-const formSchema = z.object({
-  email: z.string().email({ message: "Invalid email address" }),
-  password: z.string().min(1, { message: "Password is required" }),
-});
+export default function Home() {
+  const [loaded, setLoaded] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
 
-export default function LoginForm() {
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      email: "",
-      password: "",
-    },
-  });
-  const router = useRouter();
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-
-  async function onSubmit(values: z.infer<typeof formSchema>) {
-    setLoading(true);
-    setError("");
-
-    const { data, error } = await supabase.auth.signInWithPassword(values);
-
-    if (error) {
-      setError(error.message);
-      toast.error(error.message);
-      setLoading(false);
-      return;
-    }
-
-    if (data.user) {
-      const { data: profile, error: profileError } = await supabase
-        .from("profiles")
-        .select("role")
-        .eq("id", data.user.id)
-        .single();
-
-      if (profileError) {
-        setError("Failed to fetch user role.");
-        setLoading(false);
-        return;
-      }
-
-      const rolePages: Record<string, string> = {
-        doctor: "/doctor",
-        secretary: "/secretary",
-        admin: "/admin",
-        patient: "/patient",
-      };
-      router.push(rolePages[profile?.role] || "/patient");
-    }
-    setLoading(false);
-  }
+  useEffect(() => {
+    setLoaded(true);
+  }, []);
 
   return (
     <>
-      <HeroHeader />
-      <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className="mx-auto max-w-3xl space-y-8 py-10"
-        >
-          {error && <p className="text-red-500">{error}</p>}
-          <FormField
-            control={form.control}
-            name="email"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Email</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="you@example.com"
-                    type="email"
-                    {...field}
-                  />
-                </FormControl>
-                <FormDescription>Enter your email address.</FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
+      <div className="grid min-h-svh lg:grid-cols-2">
+        {/* Left Side - Image Column */}
+        <div className="relative hidden bg-muted lg:block overflow-hidden">
+          <div className={`absolute inset-0 bg-primary/20 backdrop-blur-sm z-10 transition-opacity duration-1000 ${imageLoaded ? 'opacity-0' : 'opacity-100'}`} />
+          
+          <Image
+            src="/malibiran-medical-clinic.jpg"
+            width={918}
+            height={1632}
+            alt="malibiran-medical-clinic"
+            className={`
+              absolute inset-0 h-full w-full object-cover 
+              dark:brightness-[0.3] dark:grayscale
+              transition-all duration-1000 ease-out 
+              ${imageLoaded ? 'scale-100 blur-0' : 'scale-110 blur-md'}
+            `}
+            onLoadingComplete={() => setTimeout(() => setImageLoaded(true), 300)}
+            priority
           />
-
-          <FormField
-            control={form.control}
-            name="password"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Password</FormLabel>
-                <FormControl>
-                  <PasswordInput placeholder="******" {...field} />
-                </FormControl>
-                <FormDescription>Enter your password.</FormDescription>
-                <FormDescription>
-                  <Link href="/register" className="text-blue-500">
-                    Not Registered?
+          
+          <div className="absolute inset-0 z-10 flex flex-col justify-between p-10 text-white">
+            <div></div>
+            <div className={`max-w-md transition-all duration-1000 delay-500 ${imageLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+              <h2 className="text-3xl font-bold mb-3">Streamline Your Medical Practice</h2>
+              <p className="text-white/80">MediTrakk helps you manage patient records, appointments, and billing all in one place.</p>
+              
+              <div className="mt-8 flex gap-4">
+                <div className="flex items-center gap-2">
+                  <div className="bg-white/20 h-2 w-2 rounded-full"></div>
+                  <p className="text-sm text-white/70">Patient Management</p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="bg-white/20 h-2 w-2 rounded-full"></div>
+                  <p className="text-sm text-white/70">Secure Data</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        {/* Right Side - Login Column */}
+        <div className="flex flex-col p-6 md:p-10">
+          {/* Logo Header */}
+          <div className={`transition-all duration-700 ${loaded ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'}`}>
+            <Link href="/" className="inline-flex items-center gap-2 font-medium hover:opacity-80 transition-opacity">
+              <div className="flex h-8 w-8 items-center justify-center rounded-md bg-primary text-primary-foreground">
+                <GalleryVerticalEnd className="size-4" />
+              </div>
+              <span className="text-lg font-semibold">MediTrakk</span>
+            </Link>
+          </div>
+          
+          {/* Content Area */}
+          <div className="flex flex-1 items-center justify-center">
+            <div className={`w-full max-w-sm transition-all duration-700 delay-300 ${loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+              <LoginForm />
+              
+              {/* Additional Links */}
+              <div className={`mt-8 space-y-4 transition-all duration-700 delay-500 ${loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+                <div className="rounded-xl border border-border/40 p-4 hover:border-border hover:bg-muted/50 transition-all duration-300">
+                  <Link href="/tour" className="flex items-center justify-between">
+                    <div>
+                      <h3 className="font-medium">New to MediTrakk?</h3>
+                      <p className="text-sm text-muted-foreground">Take a tour of our features</p>
+                    </div>
+                    <ChevronRight className="h-5 w-5 text-muted-foreground" />
                   </Link>
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <Button type="submit" disabled={loading}>
-            {loading ? "Logging in..." : "Login"}
-          </Button>
-        </form>
-      </Form>
+                </div>
+                
+                <div className="rounded-xl border border-border/40 p-4 hover:border-border hover:bg-muted/50 transition-all duration-300">
+                  <Link href="/help" className="flex items-center justify-between">
+                    <div>
+                      <h3 className="font-medium">Need Help?</h3>
+                      <p className="text-sm text-muted-foreground">Contact our support team</p>
+                    </div>
+                    <ChevronRight className="h-5 w-5 text-muted-foreground" />
+                  </Link>
+                </div>
+              </div>
+              
+              {/* Footer */}
+              <div className={`mt-8 text-center text-sm text-muted-foreground transition-all duration-700 delay-700 ${loaded ? 'opacity-100' : 'opacity-0'}`}>
+                © 2025 MediTrakk. All rights reserved.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </>
   );
 }

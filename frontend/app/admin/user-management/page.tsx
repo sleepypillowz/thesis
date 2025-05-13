@@ -29,7 +29,7 @@ import { toast } from "sonner";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import userRole from "@/components/hooks/userRole";
+import userRole from "@/hooks/userRole";
 
 // User Schema for Validation (for editing)
 const UserSchema = z.object({
@@ -219,85 +219,93 @@ function CreateUserDialog({ onUserCreated }: { onUserCreated: () => void }) {
 
   return (
     <Dialog
-  open={open}
-  onOpenChange={(open) => {
-    if (!open) form.reset();
-    setOpen(open);
-  }}
->
-  <DialogTrigger asChild>
-    <Button className="card">Create New User</Button>
-  </DialogTrigger>
-  <DialogContent className="sm:max-w-[425px]">
-    <DialogHeader>
-      <DialogTitle>Create New User</DialogTitle>
-    </DialogHeader>
-    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-      {/* Existing fields (first_name, last_name, email) */}
-      
-      <div>
-        <label className="block text-sm font-medium">Role</label>
-        <select
-          {...form.register("role")}
-          className="mt-1 block w-full rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-          onChange={(e) => {
-            form.setValue("role", e.target.value);
-            // You might want to show/hide doctor fields based on role selection
-          }}
-        >
-          <option value="doctor">Doctor</option>
-          <option value="admin">Admin</option>
-          <option value="secretary">Medical Secretary</option>
-        </select>
-      </div>
+      open={open}
+      onOpenChange={(open) => {
+        if (!open) form.reset();
+        setOpen(open);
+      }}
+    >
+      <DialogTrigger asChild>
+        <Button className="card">Create New User</Button>
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-[425px]">
+        <DialogHeader>
+          <DialogTitle>Create New User</DialogTitle>
+        </DialogHeader>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          {/* Existing fields (first_name, last_name, email) */}
 
-      {form.watch("role") === "doctor" && (
-        <>
           <div>
-            <label className="block text-sm font-medium">Specialization</label>
-            <Input 
-              {...form.register("doctor_profile.specialization")} 
-              className="mt-1" 
+            <label className="block text-sm font-medium">Role</label>
+            <select
+              {...form.register("role")}
+              className="mt-1 block w-full rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+              onChange={(e) => {
+                form.setValue("role", e.target.value);
+                // You might want to show/hide doctor fields based on role selection
+              }}
+            >
+              <option value="doctor">Doctor</option>
+              <option value="admin">Admin</option>
+              <option value="secretary">Medical Secretary</option>
+            </select>
+          </div>
+
+          {form.watch("role") === "doctor" && (
+            <>
+              <div>
+                <label className="block text-sm font-medium">
+                  Specialization
+                </label>
+                <Input
+                  {...form.register("doctor_profile.specialization")}
+                  className="mt-1"
+                />
+              </div>
+              {/* You can add schedule fields here if needed */}
+            </>
+          )}
+
+          {/* Password fields */}
+          <div>
+            <label className="block text-sm font-medium">Password</label>
+            <Input
+              type="password"
+              {...form.register("password")}
+              className="mt-1"
             />
           </div>
-          {/* You can add schedule fields here if needed */}
-        </>
-      )}
+          <div>
+            <label className="block text-sm font-medium">
+              Confirm Password
+            </label>
+            <Input
+              type="password"
+              {...form.register("re_password")}
+              className="mt-1"
+            />
+          </div>
 
-      {/* Password fields */}
-      <div>
-        <label className="block text-sm font-medium">Password</label>
-        <Input
-          type="password"
-          {...form.register("password")}
-          className="mt-1"
-        />
-      </div>
-      <div>
-        <label className="block text-sm font-medium">Confirm Password</label>
-        <Input
-          type="password"
-          {...form.register("re_password")}
-          className="mt-1"
-        />
-      </div>
+          <div className="flex items-center">
+            <input
+              type="checkbox"
+              {...form.register("is_active")}
+              className="rounded text-indigo-600 focus:ring-indigo-500"
+              defaultChecked
+            />
+            <label className="ml-2 block text-sm">Active Account</label>
+          </div>
 
-      <div className="flex items-center">
-        <input
-          type="checkbox"
-          {...form.register("is_active")}
-          className="rounded text-indigo-600 focus:ring-indigo-500"
-          defaultChecked
-        />
-        <label className="ml-2 block text-sm">Active Account</label>
-      </div>
-
-      <Button type="submit" disabled={isSubmitting} className="w-full">
-        {isSubmitting ? <Loader2 className="animate-spin" /> : "Create User"}
-      </Button>
-    </form>
-  </DialogContent>
-</Dialog>
+          <Button type="submit" disabled={isSubmitting} className="w-full">
+            {isSubmitting ? (
+              <Loader2 className="animate-spin" />
+            ) : (
+              "Create User"
+            )}
+          </Button>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 }
 
