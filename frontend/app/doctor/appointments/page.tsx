@@ -64,7 +64,7 @@ export default function ReferralsPage() {
 
   useEffect(() => {
     fetchReferrals();
-  }, []); // prevent infinite fetching
+  }); // prevent infinite fetching
 
   useEffect(() => {
     const fetchCurrentUser = async () => {
@@ -101,6 +101,10 @@ export default function ReferralsPage() {
 
     fetchCurrentUser();
   }, []);
+  const handleEdit = (referralId: number) => {
+    router.push(`/referrals/edit/${referralId}`);
+  };
+
 
   const handleCancel = async (id: number) => {
     try {

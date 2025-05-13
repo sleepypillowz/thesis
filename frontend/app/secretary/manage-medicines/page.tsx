@@ -132,10 +132,8 @@ export default function PrescribedMedicines() {
         },
         body: JSON.stringify(payload),
       }).then(res => res.json());
-      setMedicines(newData.map((item: any) => ({
-        ...item,
-        taken: 0 // Reset taken values after confirmation
-      })));
+    setMedicines(newData.map((item: Prescription) => ({ ...item, taken: 0 })));
+
       
       toast.success("Dispense confirmed and stocks updated");
     } catch (error) {
