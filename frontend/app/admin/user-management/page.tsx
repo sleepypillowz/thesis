@@ -57,10 +57,20 @@ const CreateUserSchema = z
     is_active: z.boolean().default(true),
     password: z.string().min(6, "Password must be at least 6 characters"),
     re_password: z.string().min(6, "Password must be at least 6 characters"),
+    specialization: z.string().optional(),
   })
   .refine((data) => data.password === data.re_password, {
     message: "Passwords do not match",
     path: ["re_password"],
+  })
+  .superRefine((data, ctx) => {
+    if (data.role === "doctor" && (!data.specialization || data.specialization.trim() === "")) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Specialization is required for doctors",
+        path: ["specialization"],
+      });
+    }
   });
 
 type User = z.infer<typeof UserSchema>;
@@ -191,6 +201,7 @@ function CreateUserDialog({ onUserCreated }: { onUserCreated: () => void }) {
       is_active: true,
       password: "",
       re_password: "",
+      specialization: "",
     },
   });
 
@@ -243,7 +254,7 @@ function CreateUserDialog({ onUserCreated }: { onUserCreated: () => void }) {
                   const value = e.target.value as "doctor" | "admin" | "secretary";
                   form.setValue("role", value, { shouldValidate: true });
                 }}
-               >
+             >
                 <option value="doctor">Doctor</option>
                 <option value="admin">Admin</option>
                 <option value="secretary">Medical Secretary</option>
@@ -258,7 +269,7 @@ function CreateUserDialog({ onUserCreated }: { onUserCreated: () => void }) {
                   Specialization
                 </label>
                 <Input
-                  {...form.register("doctor_profile.specialization")}
+                  {...form.register("specialization")}
                   className="mt-1"
                 />
               </div>
