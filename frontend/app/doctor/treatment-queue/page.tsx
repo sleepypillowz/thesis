@@ -109,7 +109,7 @@ export default function Page() {
                     return;
                   }
                   router.push(
-                    `/doctor/patient-treatment-form/${queueItem.patient_id}/${queueItem.queue_number}/`
+                    `/doctor/treatment-form/${queueItem.patient_id}/${queueItem.queue_number}/`
                   );
                 }}
                 className={buttonVariants({ variant: "outline" })}

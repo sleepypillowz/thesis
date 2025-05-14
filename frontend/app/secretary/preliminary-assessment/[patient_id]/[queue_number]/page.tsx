@@ -3,10 +3,17 @@
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import userRole from "@/hooks/userRole";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 // Define the expected structure for patient data.
 interface Patient {
   first_name: string;
   last_name: string;
+  allergies?: string;
+  medical_history?: string;
+  current_medications?: string;
   // Add additional fields if needed.
 }
 
@@ -28,7 +35,7 @@ interface FormData {
   assessment: string;
 }
 
-export default function PreliminaryAssessmentPage() {
+export default function PreliminaryAssessmentID() {
   // Extract parameters from the URL.
   const params = useParams();
   const { patient_id, queue_number } = params as {
@@ -84,6 +91,17 @@ export default function PreliminaryAssessmentPage() {
       .catch((error) => console.error("Error fetching patient:", error));
   }, [patient_id, queue_number]);
 
+  useEffect(() => {
+    if (patient) {
+      setFormData((prev) => ({
+        ...prev,
+        allergies: patient.allergies || "",
+        medical_history: patient.medical_history || "",
+        current_medications: patient.current_medications || "",
+      }));
+    }
+  }, [patient]);
+
   // Handle changes for form inputs.
   const handleChange = (
     e: React.ChangeEvent<
@@ -131,67 +149,67 @@ export default function PreliminaryAssessmentPage() {
   }
   return (
     <div className="flex-1 px-4 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-4xl rounded-lg bg-white p-6 shadow-lg">
-        <h2 className="mb-6 text-2xl font-semibold text-gray-700">
-          Preliminary Assessment for {patient.first_name} {patient.last_name}
-        </h2>
-        <p className="text-gray-600">
-          <strong>Patient ID:</strong> {patient_id}
-        </p>
-        <p className="mb-4 text-gray-600">
-          <strong>Queue Number:</strong> {queue_number}
-        </p>
+      <div className="card mx-auto max-w-4xl rounded-lg shadow-lg">
+        <div className="border-b border-gray-200 bg-blue-50 px-6 py-4">
+          <h2 className="mb-6 text-2xl font-semibold">
+            Preliminary Assessment for {patient.first_name} {patient.last_name}
+          </h2>
+          <p>
+            <strong>Patient ID:</strong> {patient_id}
+          </p>
+          <p className="mb-4">
+            <strong>Queue Number:</strong> {queue_number}
+          </p>
+        </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Vital Signs */}
-          <fieldset className="rounded-lg border border-gray-300 p-4">
-            <legend className="text-lg font-semibold text-gray-700">
-              Vital Signs
-            </legend>
+          <fieldset className="rounded-lg border p-4">
+            <legend className="text-lg font-semibold">Vital Signs</legend>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div>
-                <label className="block text-gray-600">Temperature (°C)</label>
-                <input
+                <label className="block">Temperature (°C)</label>
+                <Input
                   type="number"
                   name="temperature"
                   step="0.1"
                   required
-                  className="w-full rounded-md border-gray-300 p-2 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   onChange={handleChange}
                 />
               </div>
               <div>
-                <label className="block text-gray-600">Heart Rate (bpm)</label>
-                <input
+                <label className="block">Heart Rate (bpm)</label>
+                <Input
                   type="number"
                   name="heart_rate"
                   required
-                  className="w-full rounded-md border-gray-300 p-2 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   onChange={handleChange}
                 />
               </div>
               <div>
-                <label className="block text-gray-600">
-                  Blood Pressure (mmHg)
-                </label>
-                <input
+                <label className="block">Blood Pressure (mmHg)</label>
+                <Input
                   type="text"
                   name="blood_pressure"
-                  placeholder="e.g., 120/80"
                   required
-                  className="w-full rounded-md border-gray-300 p-2 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   onChange={handleChange}
                 />
               </div>
               <div>
-                <label className="block text-gray-600">
-                  Respiratory Rate (breaths/min)
-                </label>
-                <input
+                <label className="block">Respiratory Rate (breaths/min)</label>
+                <Input
                   type="number"
                   name="respiratory_rate"
                   required
-                  className="w-full rounded-md border-gray-300 p-2 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  onChange={handleChange}
+                />
+              </div>
+              <div>
+                <label className="block">Pulse Rate</label>
+                <Input
+                  type="number"
+                  name="pulse_rate"
+                  required
                   onChange={handleChange}
                 />
               </div>
@@ -205,86 +223,58 @@ export default function PreliminaryAssessmentPage() {
             </legend>
             <div className="grid grid-cols-1 gap-4">
               {/* Allergies */}
-              <div className="relative">
-                <textarea
+              <div className="grid w-full gap-1.5">
+                <Label htmlFor="allergies">Allergies</Label>
+                <Textarea
                   name="allergies"
                   id="allergies"
-                  className="peer w-full rounded-md border border-gray-300 p-3 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder=" "
                   onChange={handleChange}
+                  value={formData.allergies}
                 />
-                <label
-                  htmlFor="allergies"
-                  className="absolute left-3 top-3 bg-white px-1 text-sm text-gray-500 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-focus:-top-3 peer-focus:px-1 peer-focus:text-sm peer-focus:text-blue-600"
-                >
-                  Allergies
-                </label>
               </div>
 
               {/* Medical History */}
-              <div className="relative">
-                <textarea
+              <div className="grid w-full gap-1.5">
+                <Label htmlFor="medical_history">Medical History</Label>
+                <Textarea
                   name="medical_history"
                   id="medical_history"
-                  className="peer w-full rounded-md border border-gray-300 p-3 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder=" "
                   onChange={handleChange}
+                  value={formData.medical_history}
                 />
-                <label
-                  htmlFor="medical_history"
-                  className="absolute left-3 top-3 bg-white px-1 text-sm text-gray-500 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-focus:-top-3 peer-focus:px-1 peer-focus:text-sm peer-focus:text-blue-600"
-                >
-                  Medical History
-                </label>
               </div>
 
               {/* Current Medications */}
-              <div className="relative">
-                <textarea
+              <div className="grid w-full gap-1.5">
+                <Label htmlFor="current_medications">Current Medications</Label>
+                <Textarea
                   name="current_medications"
                   id="current_medications"
-                  className="peer w-full rounded-md border border-gray-300 p-3 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder=" "
                   onChange={handleChange}
+                  value={formData.current_medications}
                 />
-                <label
-                  htmlFor="current_medications"
-                  className="absolute left-3 top-3 bg-white px-1 text-sm text-gray-500 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-focus:-top-3 peer-focus:px-1 peer-focus:text-sm peer-focus:text-blue-600"
-                >
-                  Current Medications
-                </label>
               </div>
-
               {/* Symptoms */}
-              <div className="relative">
-                <textarea
+              <div className="grid w-full gap-1.5">
+                <Label htmlFor="message">Symptoms</Label>
+                <Textarea
                   name="symptoms"
                   id="symptoms"
-                  className="peer w-full rounded-md border border-gray-300 p-3 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder=" "
                   onChange={handleChange}
                 />
-                <label
-                  htmlFor="symptoms"
-                  className="absolute left-3 top-3 bg-white px-1 text-sm text-gray-500 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-focus:-top-3 peer-focus:px-1 peer-focus:text-sm peer-focus:text-blue-600"
-                >
-                  Symptoms
-                </label>
               </div>
             </div>
           </fieldset>
 
           {/* Lifestyle Information */}
-          <fieldset className="rounded-lg border border-gray-300 p-4">
-            <legend className="text-lg font-semibold text-gray-700">
-              Lifestyle
-            </legend>
+          <fieldset className="rounded-lg border p-4">
+            <legend className="text-lg font-semibold">Lifestyle</legend>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div>
-                <label className="block text-gray-600">Smoking Status</label>
+                <label className="block">Smoking Status</label>
                 <select
                   name="smoking_status"
-                  className="w-full rounded-md border-gray-300 p-2 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="card w-full"
                   onChange={handleChange}
                 >
                   <option value="non-smoker">Non-smoker</option>
@@ -293,10 +283,10 @@ export default function PreliminaryAssessmentPage() {
                 </select>
               </div>
               <div>
-                <label className="block text-gray-600">Alcohol Use</label>
+                <label className="block">Alcohol Use</label>
                 <select
                   name="alcohol_use"
-                  className="w-full rounded-md border-gray-300 p-2 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="card w-full"
                   onChange={handleChange}
                 >
                   <option value="none">None</option>
@@ -308,76 +298,68 @@ export default function PreliminaryAssessmentPage() {
           </fieldset>
 
           {/* Assessment */}
-          <fieldset className="rounded-lg border border-gray-300 p-4">
-            <legend className="text-lg font-semibold text-gray-700">
-              Assessment
-            </legend>
-            <textarea
-              name="assessment"
-              id="assessment"
-              className="w-full rounded-md border border-gray-300 p-3 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Enter the assessment here"
-              onChange={handleChange}
-            />
+          <fieldset className="rounded-lg border p-4">
+            <legend className="text-lg font-semibold">Assesssment</legend>
+            <div className="grid w-full gap-1.5">
+              <Textarea
+                name="assessment"
+                id="assessment"
+                onChange={handleChange}
+              />
+            </div>
 
             {/* Pain Scale */}
             <div>
-              <label className="block text-gray-600">Pain Scale (1-10)</label>
-              <input
+              <label className="block">Pain Scale (1-10)</label>
+              <Input
                 type="number"
                 name="pain_scale"
                 min="1"
                 max="10"
-                className="w-full rounded-md border-gray-300 p-2 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 onChange={handleChange}
               />
             </div>
 
             {/* Pain Location */}
             <div>
-              <label className="block text-gray-600">Pain Location</label>
-              <input
-                type="text"
-                name="pain_location"
-                className="w-full rounded-md border-gray-300 p-2 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                onChange={handleChange}
-              />
+              <label className="block">Pain Location</label>
+              <Input type="text" name="pain_location" onChange={handleChange} />
             </div>
           </fieldset>
 
           <div className="flex justify-end">
-            <button
+            <Button
               type="submit"
-              className="rounded-md bg-blue-600 px-6 py-2 text-white shadow-md hover:bg-blue-700"
+              className="rounded-md px-6 py-2 text-white shadow-md"
             >
               Submit
-            </button>
+            </Button>
           </div>
         </form>
         {/* Modal */}
         {showModal && (
           <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-            <div className="w-1/3 rounded-lg bg-white p-4">
+            <div className="card w-1/3 rounded-lg p-4">
               <h2 className="text-xl font-semibold">Submitted Successfully!</h2>
-              <div className="mt-4 flex justify-around">
-                <button
-                  className="text-blue-500"
+              <div className="mt-4 flex justify-around space-x-4">
+                <Button
+                  className="w-full border border-blue-900 text-blue-900"
+                  variant="outline"
                   onClick={() => {
                     setShowModal(false);
-                    router.push("/secretary/patient-assessment-queue");
+                    router.push("/secretary/assessment-queue");
+
                     //setFormData({ ...formData, priority: "Regular" });  // reset priority explicitly
                   }}
                 >
                   Go to Assessment Queue
-                </button>
-                <button
-                  className="text-blue-500"
-                  onClick={() =>
-                    router.push("/secretary/patient-registration-queue")
-                  }
+                </Button>
+                <Button
+                  className="w-full"
+                  onClick={() => router.push("/secretary/registration-queue")}
                 >
                   Go to Registration Queue
-                </button>
+                </Button>
               </div>
             </div>
           </div>

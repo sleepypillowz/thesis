@@ -143,11 +143,7 @@ export default function PrescribedMedicines() {
         }
       ).then((res) => res.json());
       setMedicines(
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        newData.map((item: any) => ({
-          ...item,
-          taken: 0, // Reset taken values after confirmation
-        }))
+        newData.map((item: Prescription) => ({ ...item, taken: 0 }))
       );
 
       toast.success("Dispense confirmed and stocks updated");

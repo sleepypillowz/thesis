@@ -57,10 +57,20 @@ const CreateUserSchema = z
     is_active: z.boolean().default(true),
     password: z.string().min(6, "Password must be at least 6 characters"),
     re_password: z.string().min(6, "Password must be at least 6 characters"),
+    specialization: z.string().optional(),
   })
   .refine((data) => data.password === data.re_password, {
     message: "Passwords do not match",
     path: ["re_password"],
+  })
+  .superRefine((data, ctx) => {
+    if (data.role === "doctor" && (!data.specialization || data.specialization.trim() === "")) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Specialization is required for doctors",
+        path: ["specialization"],
+      });
+    }
   });
 
 type User = z.infer<typeof UserSchema>;
@@ -191,6 +201,7 @@ function CreateUserDialog({ onUserCreated }: { onUserCreated: () => void }) {
       is_active: true,
       password: "",
       re_password: "",
+      specialization: "",
     },
   });
 
@@ -237,18 +248,18 @@ function CreateUserDialog({ onUserCreated }: { onUserCreated: () => void }) {
 
           <div>
             <label className="block text-sm font-medium">Role</label>
-            <select
-              {...form.register("role")}
-              className="mt-1 block w-full rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-              onChange={(e) => {
-                form.setValue("role", e.target.value);
-                // You might want to show/hide doctor fields based on role selection
-              }}
-            >
-              <option value="doctor">Doctor</option>
-              <option value="admin">Admin</option>
-              <option value="secretary">Medical Secretary</option>
-            </select>
+              <select
+                {...form.register("role")}
+                onChange={(e) => {
+                  const value = e.target.value as "doctor" | "admin" | "secretary";
+                  form.setValue("role", value, { shouldValidate: true });
+                }}
+             >
+                <option value="doctor">Doctor</option>
+                <option value="admin">Admin</option>
+                <option value="secretary">Medical Secretary</option>
+              </select>
+
           </div>
 
           {form.watch("role") === "doctor" && (
@@ -258,7 +269,7 @@ function CreateUserDialog({ onUserCreated }: { onUserCreated: () => void }) {
                   Specialization
                 </label>
                 <Input
-                  {...form.register("doctor_profile.specialization")}
+                  {...form.register("specialization")}
                   className="mt-1"
                 />
               </div>

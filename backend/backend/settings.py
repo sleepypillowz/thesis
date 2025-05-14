@@ -30,6 +30,7 @@ ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "127.0.0.1,localhost").split("
 
 
 INSTALLED_APPS = [
+    'whitenoise.runserver_nostatic',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -55,6 +56,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -103,13 +105,14 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'postgres',
-        'USER': 'postgres.wczowfydbgmwbotbxaxa',
-        'PASSWORD': '10200922',
-        'HOST': 'aws-0-ap-southeast-1.pooler.supabase.com',
-        'PORT': '5432',
+        'NAME': os.environ.get('DB_NAME', 'postgres'),
+        'USER': os.environ.get('DB_USER', 'postgres.wczowfydbgmwbotbxaxa'),
+        'PASSWORD': os.environ.get('DB_PASSWORD', '10200922'),
+        'HOST': os.environ.get('DB_HOST', 'aws-0-ap-southeast-1.pooler.supabase.com'),
+        'PORT': os.environ.get('DB_PORT', '5432'),
     }
 }
+
 # email settings
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
@@ -185,6 +188,7 @@ DJOSER = {
 }
 
 STATIC_URL = 'static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 # REST_FRAMEWORK = {
 #     'DEFAULT_PERMISSION_CLASSES': [
 #         'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
