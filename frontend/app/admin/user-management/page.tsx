@@ -217,6 +217,12 @@ function CreateUserDialog({ onUserCreated }: { onUserCreated: () => void }) {
     }
   }
 
+  enum UserRole {
+    Admin = "admin",
+    Doctor = "doctor",
+    Secretary = "secretary",
+  }
+
   return (
     <Dialog
       open={open}
@@ -241,7 +247,8 @@ function CreateUserDialog({ onUserCreated }: { onUserCreated: () => void }) {
               {...form.register("role")}
               className="mt-1 block w-full rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
               onChange={(e) => {
-                form.setValue("role", e.target.value);
+                const selectedRole: UserRole = e.target.value as UserRole;
+                form.setValue("role", selectedRole);
                 // You might want to show/hide doctor fields based on role selection
               }}
             >
