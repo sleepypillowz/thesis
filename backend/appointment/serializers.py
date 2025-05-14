@@ -4,6 +4,16 @@ from user.models import Doctor, UserAccount
 from patient.serializers import PatientSerializer
 
 # In your serializers.py
+
+class BulkReferralListSerializer(serializers.ListSerializer):
+    
+    def create(self, validated_data):
+        user = self.context['request'].user
+        instances = [
+            AppointmentReferral(referring_doctor=user, **item)
+            for item in validated_data
+        ]
+        return AppointmentReferral.objects.bulk_create(instances)
 class AppointmentReferralSerializer(serializers.ModelSerializer):
     referring_doctor = serializers.PrimaryKeyRelatedField(read_only=True)
     receiving_doctor = serializers.PrimaryKeyRelatedField(
@@ -11,7 +21,8 @@ class AppointmentReferralSerializer(serializers.ModelSerializer):
     )
     appointment_date = serializers.DateTimeField(
         source='appointment.appointment_date',
-        read_only=True
+        read_only=True, 
+        format='%Y-%m-%dT%H:%M:%S'
     )
     
     class Meta:
@@ -20,6 +31,11 @@ class AppointmentReferralSerializer(serializers.ModelSerializer):
             'id', 'patient', 'receiving_doctor', 'reason', 'notes', 'referring_doctor', 'status', 'created_at', 'appointment_date'
         ]
         read_only_fields = ['id', 'referring_doctor']
+        list_serializer_class = BulkReferralListSerializer
+        
+    def create(self, validated_data):
+        validated_data['referring_doctor'] = self.context['request'].user
+        return super().create(validated_data)
 
 class AppointmentSerializer(serializers.ModelSerializer):
     class Meta:

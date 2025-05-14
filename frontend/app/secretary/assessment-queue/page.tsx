@@ -115,7 +115,7 @@ export default function Page() {
                     return;
                   }
                   router.push(
-                    `/secretary/patient-preliminary-assessment/${queueItem.patient_id}/${queueItem.queue_number}/`
+                    `/secretary/preliminary-assessment/${queueItem.patient_id}/${queueItem.queue_number}/`
                   );
                 }}
                 className={buttonVariants({ variant: "outline" })}
