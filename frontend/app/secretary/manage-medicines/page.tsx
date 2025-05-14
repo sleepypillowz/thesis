@@ -29,7 +29,9 @@ interface Prescription {
 export default function PrescribedMedicines() {
   const router = useRouter();
   const [medicines, setMedicines] = useState<Prescription[]>([]);
-  const [selectedMedicine, setSelectedMedicine] = useState<Prescription | null>(null);
+  const [selectedMedicine, setSelectedMedicine] = useState<Prescription | null>(
+    null
+  );
   const [inputTaken, setInputTaken] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -37,13 +39,16 @@ export default function PrescribedMedicines() {
   useEffect(() => {
     const fetchMedicines = async () => {
       try {
-        const res = await fetch("http://localhost:8000/medicine-prescription-display/", {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("access")}`,
-            "Content-Type": "application/json",
-          },
-        });
+        const res = await fetch(
+          "http://localhost:8000/medicine-prescription-display/",
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("access")}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
 
         if (!res.ok) throw new Error("Failed to fetch prescribed medicines");
 
@@ -80,12 +85,10 @@ export default function PrescribedMedicines() {
       Number(inputTaken),
       selectedMedicine.medication.stocks // Use actual stock for validation
     );
-    
-    setMedicines(prev =>
-      prev.map(med =>
-        med.id === selectedMedicine.id 
-          ? { ...med, taken: takenValue } 
-          : med
+
+    setMedicines((prev) =>
+      prev.map((med) =>
+        med.id === selectedMedicine.id ? { ...med, taken: takenValue } : med
       )
     );
     toast.success("Updated taken quantity");
@@ -93,53 +96,65 @@ export default function PrescribedMedicines() {
   };
 
   const handleRemove = (id: number) => {
-    setMedicines(prev => prev.filter(med => med.id !== id));
+    setMedicines((prev) => prev.filter((med) => med.id !== id));
     toast.success("Medicine removed from list");
   };
 
   const handleManageAll = async () => {
-    if (!window.confirm("Are you sure you want to confirm all updates?")) return;
+    if (!window.confirm("Are you sure you want to confirm all updates?"))
+      return;
 
     setLoading(true);
     try {
       const payload = {
-        prescriptions: medicines.map(med => ({
+        prescriptions: medicines.map((med) => ({
           id: med.id,
           confirmed: med.taken,
         })),
       };
 
-      const res = await fetch("http://localhost:8000/medicine/confirm-dispense/", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access")}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      });
+      const res = await fetch(
+        "http://localhost:8000/medicine/confirm-dispense/",
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access")}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+        }
+      );
 
       if (!res.ok) {
         const errorData = await res.json();
         throw new Error(errorData.message || "Failed to confirm dispense");
       }
-      
+
       // Refresh data after successful confirmation
-      const newData = await fetch("http://localhost:8000/medicine-prescription-display/",{
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access")}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      }).then(res => res.json());
-      setMedicines(newData.map((item: any) => ({
-        ...item,
-        taken: 0 // Reset taken values after confirmation
-      })));
-      
+      const newData = await fetch(
+        "http://localhost:8000/medicine-prescription-display/",
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access")}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+        }
+      ).then((res) => res.json());
+      setMedicines(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        newData.map((item: any) => ({
+          ...item,
+          taken: 0, // Reset taken values after confirmation
+        }))
+      );
+
       toast.success("Dispense confirmed and stocks updated");
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Failed to update stocks");
+      toast.error(
+        error instanceof Error ? error.message : "Failed to update stocks"
+      );
     } finally {
       setLoading(false);
     }
@@ -162,7 +177,9 @@ export default function PrescribedMedicines() {
           <ChevronLeft size={18} />
           Back to Medicines
         </Button>
-        <h1 className="text-3xl font-bold text-gray-900">Prescribed Medicines</h1>
+        <h1 className="text-3xl font-bold text-gray-900">
+          Prescribed Medicines
+        </h1>
         <div className="w-24" /> {/* Spacer for alignment */}
       </div>
 
@@ -175,7 +192,9 @@ export default function PrescribedMedicines() {
             <div className="flex items-center justify-between">
               <div className="space-y-2">
                 <div className="flex items-center gap-4">
-                  <h2 className="text-xl font-semibold">{med.medication.name}</h2>
+                  <h2 className="text-xl font-semibold">
+                    {med.medication.name}
+                  </h2>
                   <span
                     className={`px-3 py-1 rounded-full text-sm font-medium ${
                       getStockStatus(med.medication.stocks) === "In Stock"
@@ -202,8 +221,12 @@ export default function PrescribedMedicines() {
                     <p className="font-medium">{med.taken}</p>
                   </div>
                   <div>
-                    <Label className="text-sm text-gray-500">Remaining Stock</Label>
-                    <p className="font-medium">{med.medication.stocks - med.taken}</p>
+                    <Label className="text-sm text-gray-500">
+                      Remaining Stock
+                    </Label>
+                    <p className="font-medium">
+                      {med.medication.stocks - med.taken}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -250,7 +273,11 @@ export default function PrescribedMedicines() {
                   variant="destructive"
                   size="sm"
                   onClick={() => {
-                    if (window.confirm("Are you sure you want to remove this medicine?")) {
+                    if (
+                      window.confirm(
+                        "Are you sure you want to remove this medicine?"
+                      )
+                    ) {
                       handleRemove(med.id);
                     }
                   }}
@@ -265,9 +292,9 @@ export default function PrescribedMedicines() {
       </div>
 
       <div className="flex justify-end">
-        <Button 
-          onClick={handleManageAll} 
-          className="bg-indigo-600 hover:bg-indigo-700 px-8 py-4 text-lg"
+        <Button
+          onClick={handleManageAll}
+          className="bg-indigo-600 px-8 py-4 text-lg hover:bg-indigo-700"
           disabled={loading}
         >
           {loading ? "Updating..." : "Confirm All Updates"}
