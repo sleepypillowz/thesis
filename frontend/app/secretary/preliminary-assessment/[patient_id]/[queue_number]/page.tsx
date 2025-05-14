@@ -246,9 +246,7 @@ export default function PreliminaryAssessmentID() {
 
               {/* Current Medications */}
               <div className="grid w-full gap-1.5">
-                <Label htmlFor="current_medications">
-                  Current Medications
-                </Label>
+                <Label htmlFor="current_medications">Current Medications</Label>
                 <Textarea
                   name="current_medications"
                   id="current_medications"

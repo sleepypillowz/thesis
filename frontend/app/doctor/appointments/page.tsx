@@ -2,13 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import {
-  format,
-  differenceInCalendarDays,
-  isValid,
-} from "date-fns";
-import {parseISO} from "date-fns/parseISO";
-
+import { format, differenceInCalendarDays, isValid } from "date-fns";
+import { parseISO } from "date-fns/parseISO";
 
 interface Referral {
   id: number;
@@ -36,16 +31,13 @@ export default function ReferralsPage() {
         router.push("/login");
         return;
       }
-      const res = await fetch(
-        "http://localhost:8000/appointment/referrals/",
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const res = await fetch("http://localhost:8000/appointment/referrals/", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
       if (!res.ok) {
         throw new Error("Failed to fetch referrals");
       }
@@ -105,7 +97,6 @@ export default function ReferralsPage() {
     router.push(`/referrals/edit/${referralId}`);
   };
 
-
   const handleCancel = async (id: number) => {
     try {
       const token = localStorage.getItem("access");
@@ -150,11 +141,11 @@ export default function ReferralsPage() {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-screen bg-slate-50 w-full">
-        <div className="animate-pulse flex space-x-2">
-          <div className="h-3 w-3 bg-blue-600 rounded-full"></div>
-          <div className="h-3 w-3 bg-blue-600 rounded-full"></div>
-          <div className="h-3 w-3 bg-blue-600 rounded-full"></div>
+      <div className="flex min-h-screen w-full items-center justify-center bg-slate-50">
+        <div className="flex animate-pulse space-x-2">
+          <div className="h-3 w-3 rounded-full bg-blue-600"></div>
+          <div className="h-3 w-3 rounded-full bg-blue-600"></div>
+          <div className="h-3 w-3 rounded-full bg-blue-600"></div>
         </div>
       </div>
     );
@@ -162,8 +153,8 @@ export default function ReferralsPage() {
 
   if (error) {
     return (
-      <div className="flex justify-center items-center min-h-screen bg-slate-50 w-full">
-        <div className="p-6 w-full max-w-3xl mx-auto bg-white rounded-xl shadow-md flex items-center space-x-4">
+      <div className="flex min-h-screen w-full items-center justify-center bg-slate-50">
+        <div className="mx-auto flex w-full max-w-3xl items-center space-x-4 rounded-xl bg-white p-6 shadow-md">
           <div className="flex-shrink-0">
             <svg
               className="h-12 w-12 text-red-500"
@@ -192,18 +183,18 @@ export default function ReferralsPage() {
   }
 
   return (
-    <div className="w-full bg-slate-50 min-h-screen px-6 py-8">
-      <div className="max-w-full mx-auto mb-8">
+    <div className="min-h-screen w-full bg-slate-50 px-6 py-8">
+      <div className="mx-auto mb-8 max-w-full">
         <h1 className="text-3xl font-bold text-gray-900">Your Referrals</h1>
-        <p className="text-gray-500 mt-2">
+        <p className="mt-2 text-gray-500">
           Manage your patient referrals and appointments
         </p>
       </div>
 
       {referrals.length === 0 ? (
-        <div className="flex flex-col items-center justify-center p-12 bg-white rounded-xl shadow-sm w-full">
+        <div className="flex w-full flex-col items-center justify-center rounded-xl bg-white p-12 shadow-sm">
           <svg
-            className="h-24 w-24 text-gray-300 mb-4"
+            className="mb-4 h-24 w-24 text-gray-300"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -220,10 +211,10 @@ export default function ReferralsPage() {
                  a2 2 0 01-2 2z"
             />
           </svg>
-          <p className="text-gray-500 text-lg">No referrals found</p>
+          <p className="text-lg text-gray-500">No referrals found</p>
         </div>
       ) : (
-        <div className="space-y-6 w-full">
+        <div className="w-full space-y-6">
           {referrals.map((referral) => {
             // Parse dates safely
             const createdAt = parseISO(referral.created_at || "");
@@ -259,9 +250,9 @@ export default function ReferralsPage() {
               }
 
               appointmentSection = (
-                <div className="bg-blue-50 p-4 rounded-lg h-min">
+                <div className="h-min rounded-lg bg-blue-50 p-4">
                   <div className="flex items-start">
-                    <div className="flex-shrink-0 mt-1">
+                    <div className="mt-1 flex-shrink-0">
                       <svg
                         className="h-5 w-5 text-blue-500"
                         fill="none"
@@ -286,9 +277,7 @@ export default function ReferralsPage() {
                         <p>
                           {formattedWhen} at {formattedTime}
                         </p>
-                        <p className="font-semibold mt-1">
-                          {countdownText}
-                        </p>
+                        <p className="mt-1 font-semibold">{countdownText}</p>
                       </div>
                     </div>
                   </div>
@@ -299,10 +288,10 @@ export default function ReferralsPage() {
             return (
               <div
                 key={referral.id}
-                className="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100 w-full"
+                className="w-full overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm"
               >
                 <div className="p-6">
-                  <div className="flex flex-wrap justify-between items-center mb-4">
+                  <div className="mb-4 flex flex-wrap items-center justify-between">
                     <div className="flex items-center space-x-3">
                       <h2 className="text-xl font-semibold text-gray-900">
                         {referral.patient}
@@ -317,7 +306,7 @@ export default function ReferralsPage() {
                     </div>
                     <div className="flex items-center text-sm text-gray-500">
                       <svg
-                        className="h-4 w-4 mr-1 text-gray-400"
+                        className="mr-1 h-4 w-4 text-gray-400"
                         fill="none"
                         viewBox="0 0 24 24"
                         stroke="currentColor"
@@ -338,15 +327,13 @@ export default function ReferralsPage() {
                     </div>
                   </div>
 
-                  <div className="grid md:grid-cols-3 gap-6">
+                  <div className="grid gap-6 md:grid-cols-3">
                     <div className="space-y-3">
                       <div>
                         <p className="text-sm text-gray-500">
                           Reason for referral
                         </p>
-                        <p className="text-gray-700">
-                          {referral.reason}
-                        </p>
+                        <p className="text-gray-700">{referral.reason}</p>
                       </div>
 
                       {referral.notes && (
@@ -354,9 +341,7 @@ export default function ReferralsPage() {
                           <p className="text-sm text-gray-500">
                             Additional notes
                           </p>
-                          <p className="text-gray-700">
-                            {referral.notes}
-                          </p>
+                          <p className="text-gray-700">{referral.notes}</p>
                         </div>
                       )}
                     </div>
@@ -385,24 +370,24 @@ export default function ReferralsPage() {
                 </div>
 
                 {referral.status === "scheduled" && (
-                  <div className="bg-gray-50 px-6 py-4 flex justify-end space-x-3">
+                  <div className="flex justify-end space-x-3 bg-gray-50 px-6 py-4">
                     {currentUserId === "LFG4YJ2P" && (
                       <button
                         onClick={() => handleEdit(referral.id)}
-                        className="px-4 py-2 border border-blue-600 text-blue-600 rounded-md hover:bg-blue-50 transition-colors text-sm font-medium"
+                        className="rounded-md border border-blue-600 px-4 py-2 text-sm font-medium text-blue-600 transition-colors hover:bg-blue-50"
                       >
                         Edit
                       </button>
                     )}
                     <button
                       onClick={() => handleCancel(referral.id)}
-                      className="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-100 transition-colors text-sm font-medium"
+                      className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100"
                     >
                       Cancel
                     </button>
                     <button
                       onClick={() => handleProceed(referral.patient)}
-                      className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-sm font-medium"
+                      className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700"
                     >
                       Proceed to Treatment
                     </button>

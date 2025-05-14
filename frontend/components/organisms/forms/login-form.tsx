@@ -36,7 +36,7 @@ export function LoginForm({
   const [isLoading, setIsLoading] = useState(false);
   const [focused, setFocused] = useState<string | null>(null);
   const [animateIn, setAnimateIn] = useState(false);
-  
+
   useEffect(() => {
     setAnimateIn(true);
   }, []);
@@ -75,9 +75,9 @@ export function LoginForm({
       localStorage.setItem("refresh", data.refresh);
 
       toast.success("Login successful!");
-      
+
       const decoded: DecodedToken = jwtDecode(data.access);
-      
+
       if (decoded.is_superuser || decoded.role?.toLowerCase() === "admin") {
         window.location.href = "/admin";
       } else if (decoded.role?.toLowerCase() === "doctor") {
@@ -96,58 +96,69 @@ export function LoginForm({
   }
 
   return (
-    <div 
+    <div
       className={cn(
         "w-full max-w-md mx-auto rounded-2xl overflow-hidden transition-all duration-500 transform",
         animateIn ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0",
         className
-      )} 
+      )}
       {...props}
     >
       <div className="bg-gradient-to-br from-primary/80 to-primary p-6 text-white">
         <h1 className="text-2xl font-bold">Welcome Back</h1>
-        <p className="text-primary-foreground/80 mt-1 text-sm">
+        <p className="mt-1 text-sm text-primary-foreground/80">
           Sign in to continue to your account
         </p>
       </div>
 
-      <div className="p-6 bg-card shadow-lg">
+      <div className="bg-card p-6 shadow-lg">
         <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(onSubmit)}
-            className="space-y-5"
-          >
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
             <FormField
               control={form.control}
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <div 
+                  <div
                     className={cn(
                       "group relative border rounded-xl transition-all duration-300",
-                      focused === "email" ? "border-primary shadow-sm ring-1 ring-primary/20" : "border-border",
+                      focused === "email"
+                        ? "border-primary shadow-sm ring-1 ring-primary/20"
+                        : "border-border",
                       form.formState.errors.email ? "border-destructive" : ""
                     )}
                   >
                     <FormControl>
-                      <Input 
-                        placeholder="Email" 
-                        type="email" 
-                        className="border-0 h-12 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0" 
+                      <Input
+                        placeholder="Email"
+                        type="email"
+                        className="h-12 border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0"
                         onFocus={() => setFocused("email")}
                         onBlur={() => setFocused(null)}
-                        {...field} 
+                        {...field}
                       />
                     </FormControl>
                     {field.value && (
-                      <div className="absolute right-3 top-4 text-green-500 transition-opacity duration-300 opacity-100">
-                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <path d="M13.5 4.5L6.5 11.5L2.5 7.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                      <div className="absolute right-3 top-4 text-green-500 opacity-100 transition-opacity duration-300">
+                        <svg
+                          width="16"
+                          height="16"
+                          viewBox="0 0 16 16"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M13.5 4.5L6.5 11.5L2.5 7.5"
+                            stroke="currentColor"
+                            strokeWidth="1.5"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
                         </svg>
                       </div>
                     )}
                   </div>
-                  <FormMessage className="text-xs mt-1 px-1" />
+                  <FormMessage className="mt-1 px-1 text-xs" />
                 </FormItem>
               )}
             />
@@ -157,28 +168,30 @@ export function LoginForm({
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <div 
+                  <div
                     className={cn(
                       "group relative border rounded-xl transition-all duration-300",
-                      focused === "password" ? "border-primary shadow-sm ring-1 ring-primary/20" : "border-border",
+                      focused === "password"
+                        ? "border-primary shadow-sm ring-1 ring-primary/20"
+                        : "border-border",
                       form.formState.errors.password ? "border-destructive" : ""
                     )}
                   >
                     <FormControl>
-                      <PasswordInput 
-                        placeholder="Password" 
-                        className="border-0 h-12 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0" 
+                      <PasswordInput
+                        placeholder="Password"
+                        className="h-12 border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0"
                         onFocus={() => setFocused("password")}
                         onBlur={() => setFocused(null)}
-                        {...field} 
+                        {...field}
                       />
                     </FormControl>
                   </div>
-                  <FormMessage className="text-xs mt-1 px-1" />
-                  <div className="flex justify-end mt-1">
+                  <FormMessage className="mt-1 px-1 text-xs" />
+                  <div className="mt-1 flex justify-end">
                     <a
                       href="/forgot-password"
-                      className="text-xs text-primary hover:text-primary/80 transition-colors font-medium"
+                      className="text-xs font-medium text-primary transition-colors hover:text-primary/80"
                     >
                       Forgot password?
                     </a>
@@ -187,11 +200,13 @@ export function LoginForm({
               )}
             />
 
-            <Button 
-              type="submit" 
+            <Button
+              type="submit"
               className={cn(
                 "w-full h-12 mt-2 rounded-xl transition-all duration-300 flex items-center justify-center gap-2",
-                isFormFilled && !isLoading ? "bg-primary hover:bg-primary/90" : "bg-primary/80"
+                isFormFilled && !isLoading
+                  ? "bg-primary hover:bg-primary/90"
+                  : "bg-primary/80"
               )}
               disabled={isLoading}
             >
@@ -203,17 +218,19 @@ export function LoginForm({
               ) : (
                 <>
                   <span>Sign in</span>
-                  <ArrowRight className={cn(
-                    "h-4 w-4 transition-transform duration-300",
-                    isFormFilled ? "translate-x-1" : ""
-                  )} />
+                  <ArrowRight
+                    className={cn(
+                      "h-4 w-4 transition-transform duration-300",
+                      isFormFilled ? "translate-x-1" : ""
+                    )}
+                  />
                 </>
               )}
             </Button>
           </form>
         </Form>
 
-        <div className="relative mt-8 mb-4">
+        <div className="relative mb-4 mt-8">
           <div className="absolute inset-0 flex items-center">
             <div className="w-full border-t border-border/30" />
           </div>
@@ -224,9 +241,9 @@ export function LoginForm({
           </div>
         </div>
 
-        <Button 
-          variant="outline" 
-          className="w-full h-12 rounded-xl border-border/50 hover:bg-accent/50 transition-all duration-300" 
+        <Button
+          variant="outline"
+          className="h-12 w-full rounded-xl border-border/50 transition-all duration-300 hover:bg-accent/50"
           type="button"
         >
           <Github className="mr-2 h-4 w-4" />
@@ -237,7 +254,7 @@ export function LoginForm({
           Don&apos;t have an account?{" "}
           <a
             href="/register"
-            className="font-medium text-primary hover:text-primary/80 transition-colors"
+            className="font-medium text-primary transition-colors hover:text-primary/80"
           >
             Sign up
           </a>

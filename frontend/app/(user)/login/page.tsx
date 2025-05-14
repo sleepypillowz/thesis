@@ -1,4 +1,4 @@
-"use client";
+import { GalleryVerticalEnd } from "lucide-react";
 
 import { useState, useEffect } from "react";
 import { GalleryVerticalEnd, ChevronRight } from "lucide-react";
@@ -14,6 +14,7 @@ export default function Home() {
     setLoaded(true);
   }, []);
 
+export default function Home() {
   return (
     <>
       <div className="grid min-h-svh lg:grid-cols-2">

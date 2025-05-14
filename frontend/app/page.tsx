@@ -12,23 +12,7 @@ import {
 import Link from "next/link";
 import Image from "next/image";
 import HeroHeader from "@/components/organisms/hero-header";
-
-// Simulated button variant function since we can't import the actual one
-type ButtonVariant = "default" | "secondary" | "outline" | undefined;
-
-const buttonVariants = ({ variant }: { variant?: ButtonVariant }): string => {
-  const baseClasses =
-    "inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background px-4 py-2";
-
-  if (variant === "default") {
-    return `${baseClasses} bg-blue-600 text-white hover:bg-blue-700`;
-  } else if (variant === "secondary") {
-    return `${baseClasses} bg-gray-100 text-gray-900 hover:bg-gray-200`;
-  } else if (variant === "outline") {
-    return `${baseClasses} border border-gray-300 hover:bg-gray-100`;
-  }
-  return baseClasses;
-};
+import { Button } from "@/components/ui/button";
 
 export default function Home() {
   const [isVisible, setIsVisible] = useState(false);
@@ -83,7 +67,7 @@ export default function Home() {
               </p>
               <h1 className="mb-6 text-4xl font-extrabold leading-tight text-gray-900 md:text-5xl lg:text-6xl">
                 Malibiran <br />
-                <span className="text-blue-600">Medical Clinic</span>
+                <span className="text-primary">Medical Clinic</span>
               </h1>
               <p className="mb-8 max-w-lg text-lg text-gray-600">
                 Providing quality healthcare services with compassion and
@@ -91,20 +75,17 @@ export default function Home() {
                 all your medical needs.
               </p>
               <div className="flex flex-wrap gap-4">
-                <Link
-                  href="/appointment"
-                  className={buttonVariants({ variant: "default" }) + " group"}
-                >
-                  <Calendar className="mr-2 h-4 w-4" />
-                  Book Appointment
-                  <ChevronRight className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-1" />
-                </Link>
-                <Link
-                  href="/services"
-                  className={buttonVariants({ variant: "outline" })}
-                >
-                  Our Services
-                </Link>
+                <Button asChild>
+                  <Link href="/login">
+                    <Calendar className="mr-2 h-4 w-4" />
+                    Book Appointment
+                    <ChevronRight className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                  </Link>
+                </Button>
+
+                <Button asChild variant="outline">
+                  <Link href="/services">Our Services</Link>
+                </Button>
               </div>
 
               <div className="mt-12 flex items-center">
@@ -157,7 +138,6 @@ export default function Home() {
                   <div className="mb-4 flex items-center justify-between">
                     <div>
                       <h3 className="text-lg font-bold">Medical Services</h3>
-                      <p className="text-sm text-gray-600">Available 24/7</p>
                     </div>
                     <span className="rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
                       Open Now
@@ -197,12 +177,9 @@ export default function Home() {
                         View all services
                         <ChevronRight className="ml-1 h-4 w-4" />
                       </Link>
-                      <Link
-                        href="/appointment"
-                        className={buttonVariants({ variant: "default" })}
-                      >
-                        Book Now
-                      </Link>
+                      <Button asChild>
+                        <Link href="/login">Book Now</Link>
+                      </Button>
                     </div>
                   </div>
                 </div>
