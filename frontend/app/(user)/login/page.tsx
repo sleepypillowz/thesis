@@ -1,34 +1,106 @@
 import { GalleryVerticalEnd } from "lucide-react";
 
-import { LoginForm } from "@/components/organisms/forms/login-form";
+import { useState, useEffect } from "react";
+import { GalleryVerticalEnd, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
+import { LoginForm } from "@/components/organisms/forms/login-form";
+
+export default function Home() {
+  const [loaded, setLoaded] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
+
+  useEffect(() => {
+    setLoaded(true);
+  }, []);
 
 export default function Home() {
   return (
     <>
       <div className="grid min-h-svh lg:grid-cols-2">
-        <div className="relative hidden bg-muted lg:block">
+        {/* Left Side - Image Column */}
+        <div className="relative hidden bg-muted lg:block overflow-hidden">
+          <div className={`absolute inset-0 bg-primary/20 backdrop-blur-sm z-10 transition-opacity duration-1000 ${imageLoaded ? 'opacity-0' : 'opacity-100'}`} />
+          
           <Image
             src="/malibiran-medical-clinic.jpg"
             width={918}
             height={1632}
             alt="malibiran-medical-clinic"
-            className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
+            className={`
+              absolute inset-0 h-full w-full object-cover 
+              dark:brightness-[0.3] dark:grayscale
+              transition-all duration-1000 ease-out 
+              ${imageLoaded ? 'scale-100 blur-0' : 'scale-110 blur-md'}
+            `}
+            onLoadingComplete={() => setTimeout(() => setImageLoaded(true), 300)}
+            priority
           />
+          
+          <div className="absolute inset-0 z-10 flex flex-col justify-between p-10 text-white">
+            <div></div>
+            <div className={`max-w-md transition-all duration-1000 delay-500 ${imageLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+              <h2 className="text-3xl font-bold mb-3">Streamline Your Medical Practice</h2>
+              <p className="text-white/80">MediTrakk helps you manage patient records, appointments, and billing all in one place.</p>
+              
+              <div className="mt-8 flex gap-4">
+                <div className="flex items-center gap-2">
+                  <div className="bg-white/20 h-2 w-2 rounded-full"></div>
+                  <p className="text-sm text-white/70">Patient Management</p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="bg-white/20 h-2 w-2 rounded-full"></div>
+                  <p className="text-sm text-white/70">Secure Data</p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-        <div className="flex flex-col gap-4 p-6 md:p-10">
-          <div className="flex justify-center gap-2 md:justify-start">
-            <Link href="/" className="flex items-center gap-2 font-medium">
-              <div className="flex h-6 w-6 items-center justify-center rounded-md bg-primary text-primary-foreground">
+        
+        {/* Right Side - Login Column */}
+        <div className="flex flex-col p-6 md:p-10">
+          {/* Logo Header */}
+          <div className={`transition-all duration-700 ${loaded ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'}`}>
+            <Link href="/" className="inline-flex items-center gap-2 font-medium hover:opacity-80 transition-opacity">
+              <div className="flex h-8 w-8 items-center justify-center rounded-md bg-primary text-primary-foreground">
                 <GalleryVerticalEnd className="size-4" />
               </div>
-              MediTrakk
+              <span className="text-lg font-semibold">MediTrakk</span>
             </Link>
           </div>
+          
+          {/* Content Area */}
           <div className="flex flex-1 items-center justify-center">
-            <div className="w-full max-w-xs">
+            <div className={`w-full max-w-sm transition-all duration-700 delay-300 ${loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
               <LoginForm />
+              
+              {/* Additional Links */}
+              <div className={`mt-8 space-y-4 transition-all duration-700 delay-500 ${loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+                <div className="rounded-xl border border-border/40 p-4 hover:border-border hover:bg-muted/50 transition-all duration-300">
+                  <Link href="/tour" className="flex items-center justify-between">
+                    <div>
+                      <h3 className="font-medium">New to MediTrakk?</h3>
+                      <p className="text-sm text-muted-foreground">Take a tour of our features</p>
+                    </div>
+                    <ChevronRight className="h-5 w-5 text-muted-foreground" />
+                  </Link>
+                </div>
+                
+                <div className="rounded-xl border border-border/40 p-4 hover:border-border hover:bg-muted/50 transition-all duration-300">
+                  <Link href="/help" className="flex items-center justify-between">
+                    <div>
+                      <h3 className="font-medium">Need Help?</h3>
+                      <p className="text-sm text-muted-foreground">Contact our support team</p>
+                    </div>
+                    <ChevronRight className="h-5 w-5 text-muted-foreground" />
+                  </Link>
+                </div>
+              </div>
+              
+              {/* Footer */}
+              <div className={`mt-8 text-center text-sm text-muted-foreground transition-all duration-700 delay-700 ${loaded ? 'opacity-100' : 'opacity-0'}`}>
+                © 2025 MediTrakk. All rights reserved.
+              </div>
             </div>
           </div>
         </div>
