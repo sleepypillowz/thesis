@@ -1,0 +1,116 @@
+### Register a new user
+POST http://127.0.0.1:8000/user/register/ 
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzUwNDA4NzQyLCJpYXQiOjE3NDI2MzI3NDIsImp0aSI6IjY5Yjk3YWI3NDY2MjQ1MjJhYzNhZGM4NWFkOGIyMzI0IiwidXNlcl9pZCI6IjUiLCJpc19zdGFmZiI6dHJ1ZSwiaXNfc3VwZXJ1c2VyIjp0cnVlLCJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsInJvbGUiOiJhZG1pbiIsImZpcnN0X25hbWUiOiJBZG1pbiJ9.rx2coVwqmYNtT7indqtvkr4bp3qiwJ0WQSau7Zj9b4s
+
+{
+  "email": "entddoctor@hospital.com",
+  "first_name": "John",
+  "last_name": "Smith",
+  "password": "securepassword456",
+  "re_password": "securepassword456",
+  "role": "doctor",
+  "doctor_profile": {
+      "specialization": "ENT",
+      "schedules": [
+          {
+              "day_of_week": "Wednesday",
+              "start_time": "08:30:00",
+              "end_time": "10:30:00"
+          },
+          {
+              "day_of_week": "Friday",
+              "start_time": "08:30:00",
+              "end_time": "10:30:00"
+          }
+      ]
+  }
+}
+### admin request
+GET http://127.0.0.1:8000/user/users/?role=doctor
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzUwNDA4NzQyLCJpYXQiOjE3NDI2MzI3NDIsImp0aSI6IjY5Yjk3YWI3NDY2MjQ1MjJhYzNhZGM4NWFkOGIyMzI0IiwidXNlcl9pZCI6IjUiLCJpc19zdGFmZiI6dHJ1ZSwiaXNfc3VwZXJ1c2VyIjp0cnVlLCJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsInJvbGUiOiJhZG1pbiIsImZpcnN0X25hbWUiOiJBZG1pbiJ9.rx2coVwqmYNtT7indqtvkr4bp3qiwJ0WQSau7Zj9b4s
+
+
+
+### admin request
+GET  http://127.0.0.1:8000/user/doctors/ 
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzUwNDA4NzQyLCJpYXQiOjE3NDI2MzI3NDIsImp0aSI6IjY5Yjk3YWI3NDY2MjQ1MjJhYzNhZGM4NWFkOGIyMzI0IiwidXNlcl9pZCI6IjUiLCJpc19zdGFmZiI6dHJ1ZSwiaXNfc3VwZXJ1c2VyIjp0cnVlLCJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsInJvbGUiOiJhZG1pbiIsImZpcnN0X25hbWUiOiJBZG1pbiJ9.rx2coVwqmYNtT7indqtvkr4bp3qiwJ0WQSau7Zj9b4s
+
+### Login to obtain JWT tokens
+POST http://127.0.0.1:8000/auth/jwt/create/  
+Content-Type: application/json
+
+{
+  "email": "secretaryaccount@gmail.com",
+  "password": "nVmTfEkCFeB3APi"
+}
+###
+
+### Login Secretary
+POST http://127.0.0.1:8000/auth/jwt/create/
+Content-Type: application/json
+
+{
+  "email": "ent@hospital.com",
+  "password": "securepassword123"
+}
+
+### Login Doctor
+POST http://127.0.0.1:8000/auth/jwt/create/
+Content-Type: application/json
+
+{
+  "email": "generaldoctor@hospital.com",
+  "password": "securepassword123"
+}
+
+### secretary request
+GET  http://localhost:8000/user/users/whoami/
+Content-Type: application/json  
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzUyNzY3NzQ4LCJpYXQiOjE3NDQ5OTE3NDgsImp0aSI6ImYyMDEzMjkzNzlmYjRmNGNiYzM1OTkyZGY1N2YzNDc2IiwidXNlcl9pZCI6IkxGRzRZSjJQIiwiaXNfc3RhZmYiOmZhbHNlLCJpc19zdXBlcnVzZXIiOmZhbHNlLCJlbWFpbCI6ImdlbmVyYWxkb2N0b3JAaG9zcGl0YWwuY29tIiwicm9sZSI6ImRvY3RvciIsImZpcnN0X25hbWUiOiJKYW5lIn0.ZbwXGznu9L0kWwD-DkZG6YPeMociOq68aAAeakM7r3o
+### secretary request
+GET  http://127.0.0.1:8000/appointment/doctor-schedule/PDINRVY9/
+Content-Type: application/json  
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzUxNDE3MTgxLCJpYXQiOjE3NDM2NDExODEsImp0aSI6Ijc0ZjEwYzQ0ZWI0MTQxODc5ZjE3N2QyMDc0MDAzOWU1IiwidXNlcl9pZCI6IkVFMkRZWFlZIiwiaXNfc3RhZmYiOmZhbHNlLCJpc19zdXBlcnVzZXIiOmZhbHNlLCJlbWFpbCI6InNlY3JldGFyeWFjY291bnRAZ21haWwuY29tIiwicm9sZSI6InNlY3JldGFyeSIsImZpcnN0X25hbWUiOiJTZWNyZXRhcnkifQ.8ss0JwXKUdxOMfCJqmUdLqqafupBhSG2aqNrDid410E
+
+
+### lab result upload 
+POST http://127.0.0.1:8000/patient/lab-result/
+Content-Type: application/json  
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ5MDUwNjEzLCJpYXQiOjE3NDEyNzQ2MTMsImp0aSI6ImY2YmVjMzZlMDAwOTRjZDZiNzY0MzdiYzYyNjQwNTE5IiwidXNlcl9pZCI6IlFZQUVNTzFTIiwiaXNfc3RhZmYiOmZhbHNlLCJpc19zdXBlcnVzZXIiOmZhbHNlLCJlbWFpbCI6ImxhbmFyb2Fkc0BnbWFpbC5jb20iLCJyb2xlIjoic2VjcmV0YXJ5IiwiZmlyc3RfbmFtZSI6IkxhbmEifQ.yvWdYyi0wIEQzPH0yx76idufa7wNO54_tnMtv5EHO6E
+
+{
+  "lab_request": "V2QXR4TL",
+  "image": "penis-fracture.png",
+}
+
+### Secretary req
+GET http://127.0.0.1:8000/appointment/doctor-schedule/KWPBL7OT
+Content-Type: application/json  
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzUwOTAyNDUxLCJpYXQiOjE3NDMxMjY0NTEsImp0aSI6ImYwM2U5N2Q4N2RkMjRjYjBiOWViODBkNGY0MjYzODEzIiwidXNlcl9pZCI6IkVFMkRZWFlZIiwiaXNfc3RhZmYiOmZhbHNlLCJpc19zdXBlcnVzZXIiOmZhbHNlLCJlbWFpbCI6InNlY3JldGFyeWFjY291bnRAZ21haWwuY29tIiwicm9sZSI6InNlY3JldGFyeSIsImZpcnN0X25hbWUiOiJTZWNyZXRhcnkifQ.fmqLJ07u7BSLqLruWF8EwMrAzem-O5UZJidmG--uB6k
+
+
+### doctor request
+GET http://localhost:8000/user/users/current-email/
+Content-Type: application/json  
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzUxMzg1OTgxLCJpYXQiOjE3NDM2MDk5ODEsImp0aSI6IjlmZTM3ZjI0NzVmNTRhMmE5YjQ3OTExYWQ4YmU5MGY1IiwidXNlcl9pZCI6IkxGRzRZSjJQIiwiaXNfc3RhZmYiOmZhbHNlLCJpc19zdXBlcnVzZXIiOmZhbHNlLCJlbWFpbCI6ImdlbmVyYWxkb2N0b3JAaG9zcGl0YWwuY29tIiwicm9sZSI6ImRvY3RvciIsImZpcnN0X25hbWUiOiJKYW5lIn0.FPl899vtSr7AxruhwO9WmjWtbyNmFYdlcACIZCWmXzg
+
+{
+  "patient": "6ND1F8G3",
+  "receiving_doctor": "P0BH5G3X",
+  "reason": "Specialized cardiology consultation required.",
+  "notes": "Patient has a history of heart disease and requires further evaluation."
+}
+
+
+### Batch Confirm Dispense for Multiple Prescriptions
+
+GET  http://localhost:8000/patient/patient-info/6ND1F8G3
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ5NjQxNjYyLCJpYXQiOjE3NDE4NjU2NjIsImp0aSI6ImU3MTU3NGI3YWI5NTQ5ZjA5ZDA5Y2VjZjVjODE3OWJjIiwidXNlcl9pZCI6IkVFMkRZWFlZIiwiaXNfc3RhZmYiOmZhbHNlLCJpc19zdXBlcnVzZXIiOmZhbHNlLCJlbWFpbCI6InNlY3JldGFyeWFjY291bnRAZ21haWwuY29tIiwicm9sZSI6InNlY3JldGFyeSIsImZpcnN0X25hbWUiOiJTZWNyZXRhcnkifQ.2sJNq-_qg0xbv4AYlnY-LXMUSZXCTh9dY3L33drXbtM
+
+### Get referrals
+PATCH  http://localhost:8000/user/users/WD49V73T/restore/
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzUzNjQ1NDYzLCJpYXQiOjE3NDU4Njk0NjMsImp0aSI6IjAyYWM4NjJlZTk2ZDQ4NmFhZjM1NWQzMzQzZGJjMTkwIiwidXNlcl9pZCI6IkxGRzRZSjJQIiwiaXNfc3RhZmYiOmZhbHNlLCJpc19zdXBlcnVzZXIiOmZhbHNlLCJlbWFpbCI6ImdlbmVyYWxkb2N0b3JAaG9zcGl0YWwuY29tIiwicm9sZSI6ImRvY3RvciIsImZpcnN0X25hbWUiOiJKYW5lIn0.CtCBKKY8uPtCq_u2V4oScC5vRQDtNTEc-nWxVsd2R9s

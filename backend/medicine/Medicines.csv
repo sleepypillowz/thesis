@@ -1,0 +1,41 @@
+Name,Category,Dosage Form,Strength,Manufacturer,Indication,Classification,Stock,Expiration Date
+Acetocillin,Antidiabetic,Cream,938 mg,Roche Holding AG,Virus,Over-the-Counter,420,2025-06-30
+Ibuprocillin,Antiviral,Injection,337 mg,CSL Limited,Infection,Over-the-Counter,185,2024-09-15
+Dextrophen,Antibiotic,Ointment,333 mg,Johnson & Johnson,Wound,Prescription,75,2026-02-28
+Clarinazole,Antifungal,Syrup,362 mg,AbbVie Inc.,Pain,Prescription,110,2025-12-31
+Amoxicillin,Antifungal,Tablet,802 mg,Teva Pharmaceutical Industries Ltd.,Wound,Over-the-Counter,680,2025-08-15
+Ibupromycin,Antibiotic,Injection,140 mg,Takeda Pharmaceutical Company Limited,Infection,Prescription,90,2024-11-30
+Metovir,Antipyretic,Ointment,641 mg,Takeda Pharmaceutical Company Limited,Infection,Over-the-Counter,320,2025-05-01
+Ibuprovir,Antidepressant,Syrup,758 mg,Eli Lilly and Company,Fungus,Over-the-Counter,255,2024-07-01
+Cefcillin,Antipyretic,Tablet,954 mg,Takeda Pharmaceutical Company Limited,Fungus,Over-the-Counter,410,2026-01-15
+Acetomycin,Analgesic,Inhaler,838 mg,Novo Nordisk A/S,Wound,Prescription,65,2025-03-31
+Ibuprocillin,Antifungal,Ointment,422 mg,AbbVie Inc.,Wound,Prescription,88,2024-12-01
+Acetonazole,Antipyretic,Ointment,575 mg,Bayer AG,Wound,Prescription,150,2025-09-30
+Dolocillin,Antiviral,Ointment,451 mg,Novo Nordisk A/S,Diabetes,Prescription,95,2025-07-15
+Cefmet,Antifungal,Tablet,440 mg,AstraZeneca plc,Depression,Prescription,200,2026-03-15
+Dolophen,Antibiotic,Capsule,469 mg,Johnson & Johnson,Depression,Prescription,180,2025-11-30
+Ibupronazole,Analgesic,Injection,720 mg,Novartis AG,Fungus,Prescription,45,2024-10-31
+Amoxiprofen,Antiviral,Ointment,861 mg,Novo Nordisk A/S,Diabetes,Prescription,300,2025-08-01
+Acetomycin,Antiviral,Drops,978 mg,Roche Holding AG,Virus,Over-the-Counter,550,2026-02-28
+Amoxistatin,Antiviral,Inhaler,46 mg,Sanofi S.A.,Fever,Over-the-Counter,720,2025-10-15
+Dextrocillin,Antidiabetic,Inhaler,392 mg,Sanofi S.A.,Pain,Over-the-Counter,320,2025-04-30
+Metovir,Antifungal,Injection,124 mg,"Merck & Co., Inc.",Diabetes,Prescription,60,2024-08-15
+Cefmet,Analgesic,Cream,649 mg,"Merck & Co., Inc.",Fungus,Over-the-Counter,420,2025-12-01
+Clariphen,Antidiabetic,Syrup,300 mg,GlaxoSmithKline plc,Fungus,Over-the-Counter,850,2026-01-31
+Ibuprocillin,Antibiotic,Inhaler,86 mg,Bristol-Myers Squibb Company,Diabetes,Prescription,95,2024-06-30
+Dolomet,Antifungal,Drops,335 mg,Amgen Inc.,Diabetes,Prescription,120,2025-07-01
+Acetoprofen,Antibiotic,Inhaler,909 mg,CSL Limited,Fever,Prescription,200,2025-09-15
+Amoximet,Analgesic,Ointment,795 mg,"Gilead Sciences, Inc.",Pain,Prescription,180,2025-10-31
+Cefmet,Antidepressant,Injection,512 mg,Boehringer Ingelheim GmbH,Fever,Over-the-Counter,650,2026-02-15
+Doloprofen,Antibiotic,Inhaler,981 mg,Eli Lilly and Company,Fungus,Over-the-Counter,380,2025-11-30
+Clariprofen,Antifungal,Tablet,123 mg,Pfizer Inc.,Infection,Prescription,220,2025-08-15
+Metocillin,Analgesic,Tablet,892 mg,Eli Lilly and Company,Pain,Over-the-Counter,950,2026-03-31
+Ibupromycin,Analgesic,Capsule,97 mg,Roche Holding AG,Diabetes,Over-the-Counter,720,2025-12-31
+Cefstatin,Antipyretic,Ointment,19 mg,Roche Holding AG,Fever,Prescription,85,2024-09-30
+Metomycin,Antifungal,Capsule,718 mg,Pfizer Inc.,Wound,Over-the-Counter,420,2025-07-15
+Acetomycin,Antifungal,Syrup,605 mg,Bayer AG,Virus,Over-the-Counter,580,2026-01-31
+Metoprofen,Antiseptic,Capsule,319 mg,Novartis AG,Wound,Prescription,160,2025-06-30
+Clarivir,Analgesic,Tablet,14 mg,Bristol-Myers Squibb Company,Pain,Prescription,75,2024-12-15
+Ibuproprofen,Analgesic,Cream,178 mg,CSL Limited,Pain,Over-the-Counter,920,2026-02-28
+Metocillin,Antibiotic,Cream,106 mg,Amgen Inc.,Depression,Over-the-Counter,680,2025-10-31
+Cefprofen,Antiseptic,Tablet,245 mg,Novartis AG,Pain,Over-the-Counter,850,2026-03-15
