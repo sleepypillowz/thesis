@@ -20,7 +20,7 @@ SECRET_KEY = '4THuuuW08eGLG3VsT8Ey4clCk43YlYMeUbTuukJmuvgFCm3SorHaCiupv5uf5J87N2
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get("DEBUG", "False") == "True"
 
 ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
 
@@ -70,7 +70,7 @@ MIDDLEWARE = [
 ]
 # settings.py
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
+    'https://thesis-one-pi.vercel.app',
 ]
 CORS_ALLOW_HEADERS = [
     'authorization',  # Allow Authorization header
@@ -102,16 +102,18 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+import os
+import dj_database_url
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': os.environ.get('DB_NAME', 'postgres'),
-        'USER': os.environ.get('DB_USER', 'postgres.wczowfydbgmwbotbxaxa'),
-        'PASSWORD': os.environ.get('DB_PASSWORD', '10200922'),
-        'HOST': os.environ.get('DB_HOST', 'aws-0-ap-southeast-1.pooler.supabase.com'),
-        'PORT': os.environ.get('DB_PORT', '5432'),
-    }
+    'default': dj_database_url.config(
+        default=os.environ.get('DATABASE_URL'),
+        conn_max_age=600,
+        conn_health_checks=True,
+    )
 }
+
+
 
 # email settings
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
