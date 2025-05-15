@@ -1,7 +1,6 @@
 "use client";
 
-import type React from "react";
-
+import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -13,194 +12,224 @@ import {
   FormControl,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
+import { Github, ArrowRight, Loader2 } from "lucide-react";
 
-// Update the formSchema to include confirmPassword with validation
 const formSchema = z
   .object({
-    username: z.string().min(1, "Username is required"),
-    firstName: z.string().min(1, "First name is required"),
-    lastName: z.string().min(1, "Last name is required"),
-    email: z.string().email("Invalid email format"),
-    password: z.string().min(1, "Password is required"),
-    confirmPassword: z.string().min(1, "Please confirm your password"),
+    first_name: z.string().min(1, { message: "Required" }),
+    last_name: z.string().min(1, { message: "Required" }),
+    username: z.string().min(1, { message: "Required" }),
+    email: z.string().email({ message: "Invalid email" }),
+    password: z.string().min(6, { message: "Minimum 6 characters" }),
+    confirm_password: z.string().min(1, { message: "Required" }),
   })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords don't match",
-    path: ["confirmPassword"],
+  .refine((data) => data.password === data.confirm_password, {
+    message: "Passwords do not match",
+    path: ["confirm_password"],
   });
 
 export function RegisterForm({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<"div">) {
-  // Update the defaultValues in useForm to include confirmPassword
+  const [isLoading, setIsLoading] = useState(false);
+  const [focused, setFocused] = useState<string | null>(null);
+  const [animateIn, setAnimateIn] = useState(false);
+
+  useEffect(() => {
+    setAnimateIn(true);
+  }, []);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      first_name: "",
+      last_name: "",
       username: "",
-      firstName: "",
-      lastName: "",
       email: "",
       password: "",
-      confirmPassword: "",
+      confirm_password: "",
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    setIsLoading(true);
     try {
-      console.log(values);
-      toast(
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(values, null, 2)}</code>
-        </pre>
-      );
+      const response = await fetch("http://127.0.0.1:8000/auth/users/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: values.email,
+          username: values.username,
+          password: values.password,
+          first_name: values.first_name,
+          last_name: values.last_name,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.detail || "Registration failed");
+      }
+
+      toast.success("Registration successful!");
+      window.location.href = "/login";
     } catch (error) {
-      console.error("Form submission error", error);
-      toast.error("Failed to submit the form. Please try again.");
+      console.error("Registration error", error);
+      toast.error("Something went wrong during registration.");
+    } finally {
+      setIsLoading(false);
     }
   }
 
   return (
-    <div className={cn("w-full", className)} {...props}>
-      <div className="flex flex-col items-center gap-2 text-center">
-        <h1 className="text-2xl font-bold">Create an account</h1>
-        <p className="text-balance text-sm text-muted-foreground">
-          Enter your information below to create your account
+    <div
+      className={cn(
+        "w-full max-w-md mx-auto rounded-2xl overflow-hidden transition-all duration-500 transform",
+        animateIn ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0",
+        className
+      )}
+      {...props}
+    >
+      <div className="bg-gradient-to-br from-primary/80 to-primary p-6 text-white">
+        <h1 className="text-2xl font-bold">Create an Account</h1>
+        <p className="mt-1 text-sm text-primary-foreground/80">
+          Register to get started
         </p>
       </div>
 
-      <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className="mt-6 grid gap-4"
-        >
-          <div className="grid gap-4 sm:grid-cols-2">
-            <FormField
-              control={form.control}
-              name="firstName"
-              render={({ field }) => (
-                <FormItem className="grid gap-2">
-                  <FormLabel>First Name</FormLabel>
-                  <FormControl>
-                    <Input placeholder="John" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+      <div className="bg-card p-6 shadow-lg">
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+            {["first_name", "last_name", "username", "email"].map(
+              (fieldName) => (
+                <FormField
+                  key={fieldName}
+                  control={form.control}
+                  name={fieldName as keyof z.infer<typeof formSchema>}
+                  render={({ field }) => (
+                    <FormItem>
+                      <div
+                        className={cn(
+                          "group relative border rounded-xl transition-all duration-300",
+                          focused === field.name
+                            ? "border-primary shadow-sm ring-1 ring-primary/20"
+                            : "border-border",
+                          form.formState.errors[field.name]
+                            ? "border-destructive"
+                            : ""
+                        )}
+                      >
+                        <FormControl>
+                          <Input
+                            placeholder={
+                              field.name
+                                .replace("_", " ")
+                                .replace(/^\w/, (c) => c.toUpperCase()) || ""
+                            }
+                            className="h-12 border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0"
+                            onFocus={() => setFocused(field.name)}
+                            {...field}
+                          />
+                        </FormControl>
+                      </div>
+                      <FormMessage className="mt-1 px-1 text-xs" />
+                    </FormItem>
+                  )}
+                />
+              )
+            )}
 
-            <FormField
-              control={form.control}
-              name="lastName"
-              render={({ field }) => (
-                <FormItem className="grid gap-2">
-                  <FormLabel>Last Name</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Doe" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
+            {["password", "confirm_password"].map((fieldName) => (
+              <FormField
+                key={fieldName}
+                control={form.control}
+                name={fieldName as keyof z.infer<typeof formSchema>}
+                render={({ field }) => (
+                  <FormItem>
+                    <div
+                      className={cn(
+                        "group relative border rounded-xl transition-all duration-300",
+                        focused === field.name
+                          ? "border-primary shadow-sm ring-1 ring-primary/20"
+                          : "border-border",
+                        form.formState.errors[field.name]
+                          ? "border-destructive"
+                          : ""
+                      )}
+                    >
+                      <FormControl>
+                        <PasswordInput
+                          placeholder={
+                            field.name === "confirm_password"
+                              ? "Confirm Password"
+                              : "Password"
+                          }
+                          className="h-12 border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0"
+                          onFocus={() => setFocused(field.name)}
+                          {...field}
+                        />
+                      </FormControl>
+                    </div>
+                    <FormMessage className="mt-1 px-1 text-xs" />
+                  </FormItem>
+                )}
+              />
+            ))}
+
+            <Button
+              type="submit"
+              className="mt-2 flex h-12 w-full items-center justify-center gap-2 rounded-xl"
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  <span>Creating account...</span>
+                </>
+              ) : (
+                <>
+                  <span>Sign up</span>
+                  <ArrowRight className="h-4 w-4" />
+                </>
               )}
-            />
+            </Button>
+          </form>
+        </Form>
+
+        <div className="relative mb-4 mt-8">
+          <div className="absolute inset-0 flex items-center">
+            <div className="w-full border-t border-border/30" />
           </div>
-
-          <FormField
-            control={form.control}
-            name="username"
-            render={({ field }) => (
-              <FormItem className="grid gap-2">
-                <FormLabel>Username</FormLabel>
-                <FormControl>
-                  <Input placeholder="yourusername" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="email"
-            render={({ field }) => (
-              <FormItem className="grid gap-2">
-                <FormLabel>Email</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="example@mail.com"
-                    type="email"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          {/* Add the confirmPassword field after the password field in the form */}
-          <FormField
-            control={form.control}
-            name="password"
-            render={({ field }) => (
-              <FormItem className="grid gap-2">
-                <FormLabel>Password</FormLabel>
-                <FormControl>
-                  <PasswordInput placeholder="******" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="confirmPassword"
-            render={({ field }) => (
-              <FormItem className="grid gap-2">
-                <FormLabel>Confirm Password</FormLabel>
-                <FormControl>
-                  <PasswordInput placeholder="******" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <Button type="submit" className="mt-2 w-full">
-            Register
-          </Button>
-
-          <div className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">
-            <span className="relative z-10 bg-background px-2 text-muted-foreground">
+          <div className="relative flex justify-center text-xs uppercase">
+            <span className="bg-card px-3 text-muted-foreground">
               Or continue with
             </span>
           </div>
+        </div>
 
-          <Button variant="outline" className="w-full" type="button">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              className="mr-2 h-4 w-4"
-            >
-              <path
-                d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"
-                fill="currentColor"
-              />
-            </svg>
-            Register with GitHub
-          </Button>
-        </form>
-      </Form>
+        <Button
+          variant="outline"
+          className="h-12 w-full rounded-xl border-border/50 transition-all duration-300 hover:bg-accent/50"
+          type="button"
+        >
+          <Github className="mr-2 h-4 w-4" />
+          <span>GitHub</span>
+        </Button>
 
-      <div className="mt-6 text-center text-sm">
-        Already have an account?{" "}
-        <a href="/login" className="underline underline-offset-4">
-          Login
-        </a>
+        <p className="mt-6 text-center text-sm text-muted-foreground">
+          Already have an account?{" "}
+          <a
+            href="/login"
+            className="font-medium text-primary transition-colors hover:text-primary/80"
+          >
+            Sign in
+          </a>
+        </p>
       </div>
     </div>
   );
