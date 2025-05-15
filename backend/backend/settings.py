@@ -3,6 +3,7 @@ from os import getenv, path
 from pathlib import Path
 import dotenv   
 from datetime import timedelta
+from corsheaders.defaults import default_headers
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -22,7 +23,7 @@ SECRET_KEY = '4THuuuW08eGLG3VsT8Ey4clCk43YlYMeUbTuukJmuvgFCm3SorHaCiupv5uf5J87N2
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get("DEBUG", "False") == "True"
 
-ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
+ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "127.0.0.1,localhost,thesis-one-pi.vercel.app,onrender.com").split(",")
 
 
 
@@ -41,6 +42,7 @@ INSTALLED_APPS = [
     # third apps
     'rest_framework',
     'corsheaders',
+    'rest_framework_simplejwt',
     'rest_framework.authtoken',
     'djoser',
 
@@ -56,11 +58,10 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -71,10 +72,11 @@ MIDDLEWARE = [
 # settings.py
 CORS_ALLOWED_ORIGINS = [
     'https://thesis-one-pi.vercel.app',
+    'http://localhost:3000'
 ]
-CORS_ALLOW_HEADERS = [
-    'authorization',  # Allow Authorization header
-    'content-type',
+
+CORS_ALLOW_HEADERS = list(default_headers) + [
+    'authorization',   # allow your Bearer token header
 ]
 CORS_ALLOW_CREDENTIALS = True
 
