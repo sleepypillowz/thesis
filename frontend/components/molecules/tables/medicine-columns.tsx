@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { MoreHorizontal } from "lucide-react"
 import { format } from 'date-fns';
-import { enGB } from 'date-fns/locale'
+
 import Link from "next/link"
 
 export type Patient = {
@@ -75,7 +75,7 @@ export const columns: ColumnDef<Patient>[] = [
     header: "Created Date",
     cell: ({ row }) => {
       const createdAt = row.original.queue_data?.created_at;
-      return createdAt ? format(new Date(createdAt), "d MMMM yyyy", { locale: enGB }) : "N/A";
+      return createdAt ? format(new Date(createdAt), "d MMMM yyyy") : "N/A";
     },
   },
   {
@@ -83,7 +83,7 @@ export const columns: ColumnDef<Patient>[] = [
     header: "Time",
     cell: ({ row }) => {
       const createdAt = row.original.queue_data?.created_at;
-      return createdAt ? format(new Date(createdAt), "HH:mm:ss", { locale: enGB }) : "N/A";
+      return createdAt ? format(new Date(createdAt), "HH:mm:ss") : "N/A";
     },
   },
   {
