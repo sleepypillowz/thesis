@@ -13,7 +13,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { MoreHorizontal } from "lucide-react";
 import { format } from "date-fns";
-import { enGB } from "date-fns/locale";
 import Link from "next/link";
 
 
@@ -90,9 +89,7 @@ export const columns: ColumnDef<Patient>[] = [
           (a, b) =>
             new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
         )[0];
-        return format(new Date(latestQueue.created_at), "d MMMM yyyy", {
-          locale: enGB,
-        });
+        return format(new Date(latestQueue.created_at), "d MMMM yyyy");
       }
       return "N/A";
     },
