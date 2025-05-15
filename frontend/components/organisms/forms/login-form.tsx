@@ -134,7 +134,6 @@ export function LoginForm({
                         type="email"
                         className="h-12 border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0"
                         onFocus={() => setFocused("email")}
-                        onBlur={() => setFocused(null)}
                         {...field}
                       />
                     </FormControl>
@@ -182,7 +181,6 @@ export function LoginForm({
                         placeholder="Password"
                         className="h-12 border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0"
                         onFocus={() => setFocused("password")}
-                        onBlur={() => setFocused(null)}
                         {...field}
                       />
                     </FormControl>
