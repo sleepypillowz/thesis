@@ -1,7 +1,7 @@
 // app/reports/page.tsx
 
 "use client";
-import { useState, useEffect } from 'react';
+// import { useState, useEffect } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, PieChart, Pie, Cell } from 'recharts';
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#AF19FF'];
