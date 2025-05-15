@@ -21,18 +21,27 @@ SECRET_KEY = '4THuuuW08eGLG3VsT8Ey4clCk43YlYMeUbTuukJmuvgFCm3SorHaCiupv5uf5J87N2
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get("DEBUG", "False") == "True"
+DEBUG = True
+
+if DEBUG:
+    CORS_ALLOWED_ORIGINS = ['http://localhost:3000']
+    CSRF_TRUSTED_ORIGINS = ['http://localhost:3000']
+    SECURE_SSL_REDIRECT = False
+    
+SECURE_CONTENT_TYPE_NOSNIFF = True
+SECURE_BROWSER_XSS_FILTER = True
+
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+SECURE_SSL_REDIRECT = True
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+CSRF_TRUSTED_ORIGINS = ['https://thesis-sg26.onrender.com', 'https://thesis-c1rq.vercel.app']
 
 ALLOWED_HOSTS = os.getenv(
     "DJANGO_ALLOWED_HOSTS", 
     "127.0.0.1,localhost,thesis-sg26.onrender.com"  # No protocol/slash!
 ).split(",")
 
-# Application definitionpip install django-cors-headers
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-SECURE_SSL_REDIRECT = True
-SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SECURE = True
 
 INSTALLED_APPS = [
     'whitenoise.runserver_nostatic',
@@ -75,14 +84,22 @@ MIDDLEWARE = [
 ]
 # settings.py
 CORS_ALLOWED_ORIGINS = [
-    'https://thesis-one-pi.vercel.app',
+    'https://thesis-c1rq.vercel.app',
     'http://localhost:3000'
 ]
 
 CORS_ALLOW_HEADERS = list(default_headers) + [
-    'authorization',   # allow your Bearer token header
+    'authorization',
+    'content-type',
 ]
 CORS_ALLOW_CREDENTIALS = True
+# settings.py
+AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
+AWS_STORAGE_BUCKET_NAME = 'your-bucket'
+AWS_S3_REGION_NAME = 'your-region'
+AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
 ROOT_URLCONF = 'backend.urls'
 
