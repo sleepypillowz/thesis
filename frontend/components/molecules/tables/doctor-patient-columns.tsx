@@ -15,7 +15,6 @@ import { MoreHorizontal } from "lucide-react";
 import { format } from "date-fns";
 import Link from "next/link";
 
-
 // Update the Patient type to reflect that queue data is a separate model (an array of entries)
 export type Patient = {
   patient_id: string;
@@ -29,7 +28,6 @@ export type Patient = {
     status: string;
     complaint: string;
   }[];
-  
 };
 
 export const columns: ColumnDef<Patient>[] = [
@@ -130,7 +128,6 @@ export const columns: ColumnDef<Patient>[] = [
       const patient = row.original;
 
       return (
-        
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="h-8 w-8 p-0">
@@ -146,9 +143,8 @@ export const columns: ColumnDef<Patient>[] = [
               Copy patient ID
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <Link href= {`/doctor/patient-information/${patient.patient_id}`}>
-              <DropdownMenuItem
-              >View</DropdownMenuItem>
+            <Link href={`/doctor/patient-information/${patient.patient_id}`}>
+              <DropdownMenuItem>View</DropdownMenuItem>
             </Link>
             <Link href="/doctor/medical-records">
               <DropdownMenuItem>Edit</DropdownMenuItem>

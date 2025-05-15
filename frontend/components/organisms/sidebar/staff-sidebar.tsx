@@ -30,6 +30,11 @@ import { useEffect, useState } from "react";
 
 const menu_items = [
   {
+    title: "Doctors List",
+    url: "/doctor/doctors-list",
+    icon: LayoutDashboard,
+  },
+  {
     title: "Patient Portal",
     url: "/staff/patient-portal",
     icon: LayoutDashboard,
