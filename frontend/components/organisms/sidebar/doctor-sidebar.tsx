@@ -53,7 +53,7 @@ const menu_items = [
   },
   {
     title: "Reports",
-    url: "/staff/reports",
+    url: "/doctor/reports",
     icon: ChartArea,
   },
 ];
@@ -61,7 +61,7 @@ const menu_items = [
 const patient_items = [
   {
     title: "Medical Records",
-    url: "/staff/medical-records",
+    url: "/doctor/medical-records",
     icon: ClipboardPlus,
   },
   {

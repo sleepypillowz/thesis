@@ -31,7 +31,9 @@ urlpatterns = [
     path('patient/lab-result/', views.LabResultCreateView.as_view(), name='lab-result'),
     path('patient/lab-results/<str:patient_id>/', views.LabResultListView.as_view(), name='lab-result-detail'),
     
-    
+    #patientreports
+    path('patient/patient-report/<str:patient_id>/', views.PatientReportview.as_view(), name='patient-report'),
+
     # download file
     path('patient/lab-results/<str:result_id>/download/', views.download_lab_result, name='download_lab_result'),
 

@@ -551,7 +551,7 @@ export default function TreatmentDetailsPage() {
                       treatmentDetails?.patient_info?.queue_data?.queue_number;
                     if (q) {
                       router.push(
-                        `/doctor/patient-treatment-form/${patient_id}/${q}`
+                        `/doctor/treatment-form/${patient_id}/${q}`
                       );
                     } else {
                       alert("Queue number not found for this patient");
