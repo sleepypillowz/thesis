@@ -110,6 +110,7 @@ export default function Page() {
               "Content-Type": "application/json",
               Authorization: `Bearer ${accessToken}`,
             },
+            credentials: 'include'
           }
         );
         if (!response.ok) {

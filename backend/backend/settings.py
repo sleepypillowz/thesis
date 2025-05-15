@@ -22,20 +22,27 @@ SECRET_KEY = '4THuuuW08eGLG3VsT8Ey4clCk43YlYMeUbTuukJmuvgFCm3SorHaCiupv5uf5J87N2
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-
+PRODUCTION = not DEBUG
 if DEBUG:
     CORS_ALLOWED_ORIGINS = ['http://localhost:3000']
     CSRF_TRUSTED_ORIGINS = ['http://localhost:3000']
     SECURE_SSL_REDIRECT = False
     
-SECURE_CONTENT_TYPE_NOSNIFF = True
-SECURE_BROWSER_XSS_FILTER = True
-
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-SECURE_SSL_REDIRECT = True
-SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SECURE = True
-CSRF_TRUSTED_ORIGINS = ['https://thesis-sg26.onrender.com', 'https://thesis-c1rq.vercel.app']
+if PRODUCTION:
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+else:
+    SECURE_SSL_REDIRECT = False
+    SESSION_COOKIE_SECURE = False
+    CSRF_COOKIE_SECURE = False
+    
+CORS_ALLOW_HEADERS = [
+    'authorization',
+    'content-type',
+]
+CORS_ALLOW_CREDENTIALS = True
 
 ALLOWED_HOSTS = os.getenv(
     "DJANGO_ALLOWED_HOSTS", 
@@ -84,8 +91,10 @@ MIDDLEWARE = [
 ]
 # settings.py
 CORS_ALLOWED_ORIGINS = [
+    'http://localhost:3000',
+    "http://127.0.0.1:3000",
     'https://thesis-c1rq.vercel.app',
-    'http://localhost:3000'
+
 ]
 
 CORS_ALLOW_HEADERS = list(default_headers) + [

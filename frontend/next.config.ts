@@ -25,10 +25,11 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
   // Optional: Add environment variables
     env: {
-      NEXT_PUBLIC_API_BASE_URL: process.env.NODE_ENV === 'development' 
-        ? 'http://localhost:8000'
-        : 'https://thesis-sg26.onrender.com'
-    }
+      NEXT_PUBLIC_API_BASE: process.env.NODE_ENV === 'production'
+        ? 'https://thesis-sg26.onrender.com'
+        : 'http://127.0.0.1:8000/',
+      NEXT_PUBLIC_USE_HTTPS: process.env.NODE_ENV === 'production' ? 'true' : 'false'
+    },
     }
 
 export default nextConfig

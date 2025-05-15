@@ -91,53 +91,47 @@ const data = {
 export function AppSidebar() {
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetchCurrentUser = async () => {
-      try {
-        const token = localStorage.getItem("access");
-        if (!token) {
-          console.warn("No token found");
-          // Consider redirecting to login here
-          return;
-        }
-
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_BASE_URL}/user/users/whoami/`,
-          {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-            credentials: 'include'
-          }
-        );
-
-        console.log("API Response:", response);  // Add debug log
-
-        if (response.status === 401) {
-          // Handle token expiration
-          localStorage.removeItem("access");
-          window.location.href = "/login";
-          return;
-        }
-
-        if (!response.ok) {
-          const errorData = await response.json();
-          console.error("API Error:", errorData);
-          return;
-        }
-
-        const data = await response.json();
-        console.log("User Data:", data);  // Verify response structure
-        setCurrentUserId(data.id);
-
-      } catch (error) {
-        console.error("Failed to fetch current user", error);
-        // Consider showing error to user
+useEffect(() => {
+  const fetchCurrentUser = async () => {
+    try {
+      const token = localStorage.getItem("access");
+      if (!token) {
+        console.warn("No token found");
+        window.location.href = "/login";  // Immediate redirect
+        return;
       }
-    };
 
-    fetchCurrentUser();
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE}/user/users/whoami/`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          credentials: process.env.NODE_ENV === 'development' ? 'same-origin' : 'include'
+        }
+      );
+
+      if (response.status === 401) {
+        localStorage.removeItem("access");
+        window.location.href = "/login";
+        return;
+      }
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      setCurrentUserId(data.id);
+
+    } catch (error) {
+      console.error("Failed to fetch current user", error);
+      // Show user-friendly error message
+    }
+  };
+
+  fetchCurrentUser();
 }, []);
 
   const filteredMenuItems = currentUserId === "LFG4YJ2P"
