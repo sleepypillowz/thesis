@@ -143,7 +143,7 @@ export const columns: ColumnDef<Patient>[] = [
               Copy patient ID
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <Link href={`/doctor/information/${patient.patient_id}`}>
+            <Link href={`/doctor/patient-information/${patient.patient_id}`}>
               <DropdownMenuItem>View</DropdownMenuItem>
             </Link>
             <Link href="/doctor/medical-records">

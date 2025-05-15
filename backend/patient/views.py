@@ -6,7 +6,7 @@ from django.shortcuts import get_object_or_404
 
 
 from queueing.serializers import PreliminaryAssessmentBasicSerializer
-from .serializers import PatientSerializer, PatientRegistrationSerializer, LabRequestSerializer, LabResultSerializer
+from .serializers import PatientSerializer, PatientRegistrationSerializer, LabRequestSerializer, LabResultSerializer, PatientReportSerializer
 from queueing.models import Patient, PreliminaryAssessment, TemporaryStorageQueue
 from datetime import datetime
 from django.db.models import Max
@@ -841,3 +841,21 @@ def download_lab_result(request, result_id):
     
     return response
     
+    
+class PatientReportview(APIView):
+    permission_classes = [IsMedicalStaff]
+
+    def get(self, request, patient_id):
+        try:
+            response = supabase.table("patient_patient").select("*").eq("patient_id",patient_id).execute()
+
+            if hasattr(response, 'error') and response.error:
+                error_msg = getattr(response.error, 'message', 'Unknown error')
+                return Response({"error": error_msg}, status=status.HTTP_400_BAD_REQUEST)
+            patient_report = response.data[0] if response.data else None
+            serializer = PatientReportSerializer(patient_report, many=False)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            print("Exception ", e)
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
