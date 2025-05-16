@@ -56,7 +56,7 @@ export function LoginForm({
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
     try {
-      const response = await fetch(`https://thesis-sg26.onrender.com/auth/jwt/create/`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE}/auth/jwt/create/`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
