@@ -89,8 +89,8 @@ CORS_ALLOWED_ORIGINS = [
 ]
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:3000",
-    "http://127.0.0.1:8000",  # Add this
-    "https://thesis-c1rq.vercel.app",
+    "http://127.0.0.1:8000", 
+    "https://thesis-one-pi.vercel.app/",
 ]
 
 CORS_ALLOW_HEADERS = list(default_headers) + [
