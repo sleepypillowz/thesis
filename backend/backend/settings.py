@@ -19,7 +19,8 @@ if path.isfile(dotenv_file):
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = '4THuuuW08eGLG3VsT8Ey4clCk43YlYMeUbTuukJmuvgFCm3SorHaCiupv5uf5J87N2wFUzen+evrQ5qnrm+buQ=='
 
-DEBUG = False
+DEBUG = os.getenv('DJANGO_DEBUG', 'False') == 'True'
+
 SECURE_SSL_REDIRECT = False
 SESSION_COOKIE_SECURE = False
 CSRF_COOKIE_SECURE = False
@@ -83,8 +84,9 @@ CORS_ALLOWED_ORIGINS = [
 
 ]
 ALLOWED_HOSTS = [
-  'thesis-sg26.onrender.com',
-  'thesis-one-pi.vercel.app',
+    "thesis-sg26.onrender.com",
+    "thesis-c1rq.vercel.app",
+    'localhost'
 ]
 
 CSRF_TRUSTED_ORIGINS = [
