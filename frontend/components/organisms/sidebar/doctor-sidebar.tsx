@@ -91,54 +91,60 @@ const data = {
 export function AppSidebar() {
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetchCurrentUser = async () => {
-      try {
-        const token = localStorage.getItem("access");
-        if (!token) {
-          console.warn("No token found");
-          return;
-        }
-
-        const response = await fetch(
-          "http://localhost:8000/user/users/whoami/",
-          {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        if (!response.ok) {
-          const errorText = await response.text();
-          console.error("Failed to fetch user: ", response.status, errorText);
-          return;
-        }
-
-        const data = await response.json();
-        setCurrentUserId(data.id);
-      } catch (error) {
-        console.error("Failed to fetch current user", error);
+useEffect(() => {
+  const fetchCurrentUser = async () => {
+    try {
+      const token = localStorage.getItem("access");
+      if (!token) {
+        console.warn("No token found");
+        window.location.href = "/login";  // Immediate redirect
+        return;
       }
-    };
 
-    fetchCurrentUser();
-  }, []);
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE}/user/users/whoami/`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          credentials: 'include'
+        }
+      );
 
-  const filteredMenuItems =
-    currentUserId === "LFG4YJ2P"
-      ? menu_items
-      : menu_items.filter((item) =>
-          ["Dashboard", "Doctors"].includes(item.title)
-        );
+      if (response.status === 401) {
+        localStorage.removeItem("access");
+        window.location.href = "/login";
+        return;
+      }
 
-  const filteredPatientItems =
-    currentUserId === "LFG4YJ2P"
-      ? patient_items
-      : patient_items.filter((item) =>
-          ["Appointments", "Treatment"].includes(item.title)
-        );
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      setCurrentUserId(data.id);
+
+    } catch (error) {
+      console.error("Failed to fetch current user", error);
+      // Show user-friendly error message
+    }
+  };
+
+  fetchCurrentUser();
+}, []);
+
+  const filteredMenuItems = currentUserId === "LFG4YJ2P"
+    ? menu_items
+    : menu_items.filter(item => 
+        ["Dashboard", "Doctors List"].includes(item.title)  // Fixed typo
+      );
+
+  const filteredPatientItems = currentUserId === "LFG4YJ2P"
+    ? patient_items
+    : patient_items.filter(item => 
+        ["Appointments", "Treatment"].includes(item.title)
+      );
 
   return (
     <Sidebar>

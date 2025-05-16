@@ -31,7 +31,7 @@ export default function ProfilePage() {
     const fetchProfile = async () => {
       try {
         const token = localStorage.getItem('access');
-        const response = await fetch('http://localhost:8000/user/users/current-profile/', {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE}/user/users/current-profile/`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',

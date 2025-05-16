@@ -31,7 +31,7 @@ export default function ReferralsPage() {
         router.push("/login");
         return;
       }
-      const res = await fetch("http://localhost:8000/appointment/referrals/", {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE}/appointment/referrals/`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
