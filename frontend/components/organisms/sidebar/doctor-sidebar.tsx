@@ -108,7 +108,7 @@ useEffect(() => {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-          credentials: process.env.NODE_ENV === 'development' ? 'same-origin' : 'include'
+          credentials: 'include'
         }
       );
 

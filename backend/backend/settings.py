@@ -19,24 +19,16 @@ if path.isfile(dotenv_file):
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = '4THuuuW08eGLG3VsT8Ey4clCk43YlYMeUbTuukJmuvgFCm3SorHaCiupv5uf5J87N2wFUzen+evrQ5qnrm+buQ=='
 
-
-# SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-PRODUCTION = not DEBUG
-if DEBUG:
-    CORS_ALLOWED_ORIGINS = ['http://localhost:3000']
-    CSRF_TRUSTED_ORIGINS = ['http://localhost:3000']
-    SECURE_SSL_REDIRECT = False
-    
-if PRODUCTION:
+SECURE_SSL_REDIRECT = False
+SESSION_COOKIE_SECURE = False
+CSRF_COOKIE_SECURE = False
+
+if not DEBUG:
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
     SECURE_SSL_REDIRECT = True
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
-else:
-    SECURE_SSL_REDIRECT = False
-    SESSION_COOKIE_SECURE = False
-    CSRF_COOKIE_SECURE = False
     
 CORS_ALLOW_HEADERS = [
     'authorization',
@@ -46,7 +38,7 @@ CORS_ALLOW_CREDENTIALS = True
 
 ALLOWED_HOSTS = os.getenv(
     "DJANGO_ALLOWED_HOSTS", 
-    "127.0.0.1,localhost,thesis-sg26.onrender.com"  # No protocol/slash!
+    "127.0.0.1,localhost,thesis-sg26.onrender.com"
 ).split(",")
 
 
@@ -78,8 +70,9 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
-    'django.middleware.common.CommonMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'django.middleware.common.CommonMiddleware',
+
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -91,24 +84,31 @@ MIDDLEWARE = [
 ]
 # settings.py
 CORS_ALLOWED_ORIGINS = [
-    'http://localhost:3000',
+    "http://localhost:3000",
     "http://127.0.0.1:3000",
-    'https://thesis-c1rq.vercel.app',
-
+]
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:3000",
+    "http://127.0.0.1:8000",  # Add this
+    "https://thesis-c1rq.vercel.app",
 ]
 
 CORS_ALLOW_HEADERS = list(default_headers) + [
     'authorization',
     'content-type',
 ]
+CORS_ALLOW_METHODS = [
+    'GET',
+    'POST',
+    'PUT',
+    'PATCH', 
+    'DELETE',
+    'OPTIONS'
+]
+
 CORS_ALLOW_CREDENTIALS = True
-# settings.py
-AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
-AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
-AWS_STORAGE_BUCKET_NAME = 'your-bucket'
-AWS_S3_REGION_NAME = 'your-region'
-AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
-DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+
+
 
 ROOT_URLCONF = 'backend.urls'
 
