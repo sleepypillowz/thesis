@@ -25,7 +25,7 @@ interface Medicine {
   expiration_date: string;
 }
 
-export default function MedicineList() {
+export default function Medicine() {
   const [medicines, setMedicines] = useState<Medicine[]>([]);
   const [filteredMedicines, setFilteredMedicines] = useState<Medicine[]>([]);
   const [isLoading, setIsLoading] = useState(true);

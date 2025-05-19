@@ -1,10 +1,22 @@
-import DoctorsList from "@/components/pages/doctors-list";
+"use client";
 
-export default function Page() {
-  return <DoctorsList />;
+import React, { useState, useEffect, ChangeEvent, FormEvent } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import Image from "next/image";
+import { Button } from "@/components/ui/button";
+interface Schedule {
+  day_of_week: string;
+  start_time: string;
+  end_time: string;
 }
-<<<<<<< Updated upstream
-import { useRouter } from 'next/navigation';
+import { useRouter } from "next/navigation";
 interface DoctorProfile {
   specialization: string;
   schedules: Schedule[];
@@ -101,7 +113,7 @@ const DoctorCard: React.FC<DoctorCardComponentProps> = ({
         {/* Doctor Info Section */}
         <div className="p-6 md:w-3/4">
           <div className="flex items-start">
-            <div className="w-16 h-16 rounded-full bg-gray-200 mr-4 flex-shrink-0">
+            <div className="mr-4 h-16 w-16 flex-shrink-0 rounded-full bg-gray-200">
               {imageUrl ? (
                 <Image
                   src={imageUrl}
@@ -112,20 +124,18 @@ const DoctorCard: React.FC<DoctorCardComponentProps> = ({
                   priority
                 />
               ) : (
-                <div className="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center text-blue-500 text-xl font-bold">
+                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-blue-100 text-xl font-bold text-blue-500">
                   {name.charAt(0)}
                 </div>
               )}
             </div>
             <div className="flex-grow">
               <h2 className="text-xl font-bold text-blue-800">{name}</h2>
-              <p className="text-gray-600 text-sm mb-2">{qualifications}</p>
-              <div className="flex items-center mb-3">
-                <span className="font-medium mr-1">
-                  {rating.toFixed(1)}
-                </span>
-                <div className="text-sm mr-2">{renderStars()}</div>
-                <span className="text-gray-500 text-sm">
+              <p className="mb-2 text-sm text-gray-600">{qualifications}</p>
+              <div className="mb-3 flex items-center">
+                <span className="mr-1 font-medium">{rating.toFixed(1)}</span>
+                <div className="mr-2 text-sm">{renderStars()}</div>
+                <span className="text-sm text-gray-500">
                   ({reviewCount.toLocaleString()} ratings)
                 </span>
               </div>
@@ -133,36 +143,34 @@ const DoctorCard: React.FC<DoctorCardComponentProps> = ({
           </div>
           <div className="mt-2">
             {specialties.length > 0 && (
-              <div className="flex flex-wrap gap-2 mb-3">
+              <div className="mb-3 flex flex-wrap gap-2">
                 {specialties.map((specialty, index) => (
                   <span
                     key={index}
-                    className="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs"
+                    className="rounded-full bg-blue-100 px-2 py-1 text-xs text-blue-800"
                   >
                     {specialty}
                   </span>
                 ))}
               </div>
             )}
-            <p className="text-gray-700 text-sm">
-              {expanded
-                ? description
-                : `${description.substring(0, 100)}...`}
+            <p className="text-sm text-gray-700">
+              {expanded ? description : `${description.substring(0, 100)}...`}
             </p>
             <button
               onClick={() => setExpanded(!expanded)}
-              className="text-blue-600 text-sm mt-2 hover:underline focus:outline-none"
+              className="mt-2 text-sm text-blue-600 hover:underline focus:outline-none"
             >
               {expanded ? "Show less" : "Read more"}
             </button>
           </div>
         </div>
         {/* Clinic Info Section */}
-        <div className="bg-gray-50 p-6 md:w-1/4 flex flex-col justify-between border-t md:border-t-0 md:border-l border-gray-200">
+        <div className="flex flex-col justify-between border-t border-gray-200 bg-gray-50 p-6 md:w-1/4 md:border-l md:border-t-0">
           <div>
             <div className="mb-4">
-              <p className="text-gray-700 text-sm">{address}</p>
-              <p className="text-gray-500 text-sm mt-1">
+              <p className="text-sm text-gray-700">{address}</p>
+              <p className="mt-1 text-sm text-gray-500">
                 {feedbackCount} Feedbacks
               </p>
             </div>
@@ -170,7 +178,7 @@ const DoctorCard: React.FC<DoctorCardComponentProps> = ({
               <p className="font-semibold text-green-700">{price}</p>
             </div>
             <div>
-              <p className="text-gray-700 text-sm whitespace-pre-line">
+              <p className="whitespace-pre-line text-sm text-gray-700">
                 {availability}
               </p>
             </div>
@@ -180,31 +188,34 @@ const DoctorCard: React.FC<DoctorCardComponentProps> = ({
             <div className="mt-4 flex justify-end gap-2">
               <button
                 onClick={onEdit}
-                className="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600 text-xs"
+                className="rounded bg-yellow-500 px-3 py-1 text-xs text-white hover:bg-yellow-600"
               >
                 Edit
               </button>
-              
+
               <Dialog>
                 <DialogTrigger asChild>
-                  <button
-                    className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 text-xs"
-                  >
+                  <button className="rounded bg-red-500 px-3 py-1 text-xs text-white hover:bg-red-600">
                     Delete
                   </button>
                 </DialogTrigger>
-                
+
                 <DialogContent className="sm:max-w-[425px]">
                   <DialogHeader>
                     <DialogTitle>Confirm Delete</DialogTitle>
                     <DialogDescription>
-                      Are you sure you want to delete this item? Deleted data goes to Archive and it will be deleted within 30 days.
+                      Are you sure you want to delete this item? Deleted data
+                      goes to Archive and it will be deleted within 30 days.
                     </DialogDescription>
                   </DialogHeader>
-                  <div className="flex justify-end gap-2 mt-4">
+                  <div className="mt-4 flex justify-end gap-2">
                     <Button
                       variant="outline"
-                      onClick={() => document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }))}
+                      onClick={() =>
+                        document.dispatchEvent(
+                          new KeyboardEvent("keydown", { key: "Escape" })
+                        )
+                      }
                     >
                       Cancel
                     </Button>
@@ -212,10 +223,12 @@ const DoctorCard: React.FC<DoctorCardComponentProps> = ({
                       variant="destructive"
                       onClick={() => {
                         onDelete();
-                        document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
+                        document.dispatchEvent(
+                          new KeyboardEvent("keydown", { key: "Escape" })
+                        );
                       }}
                     >
-                      Confirm 
+                      Confirm
                     </Button>
                   </div>
                 </DialogContent>
@@ -241,44 +254,47 @@ interface NewDoctorData {
 
 // --- Main DoctorsPage Component ---
 const DoctorsPage: React.FC = () => {
-  const [userEmail, setUserEmail] = useState<string>('');
+  const [userEmail, setUserEmail] = useState<string>("");
   const router = useRouter();
 
   useEffect(() => {
     const fetchUserEmail = async () => {
       try {
-        const token = localStorage.getItem('access'); // Retrieve token from localStorage
+        const token = localStorage.getItem("access"); // Retrieve token from localStorage
         if (!token) {
-          console.error('No access token found');
+          console.error("No access token found");
           return;
         }
 
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE}/user/users/current-email/`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
-          },
-        });
+        const response = await fetch(
+          "http://localhost:8000/user/users/current-email/",
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
         if (!response.ok) {
-          console.error('Failed to fetch user email');
+          console.error("Failed to fetch user email");
           return;
         }
 
         const data = await response.json();
         setUserEmail(data.email);
-        console.log('Retrieved userEmail:', data.email);
+        console.log("Retrieved userEmail:", data.email);
       } catch (error) {
-        console.error('Error fetching user email:', error);
+        console.error("Error fetching user email:", error);
       }
     };
 
     fetchUserEmail();
   }, []);
-  
 
-  const isGeneralDoctor = userEmail.toLowerCase() === 'generaldoctor@hospital.com'; // or another admin email check
+  const isGeneralDoctor =
+    userEmail.toLowerCase() === "generaldoctor@hospital.com"; // or another admin email check
 
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedSpecialty, setSelectedSpecialty] = useState("All");
@@ -287,9 +303,10 @@ const DoctorsPage: React.FC = () => {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   // currentDoctor holds the id and prefilled data for editing.
-  const [currentDoctor, setCurrentDoctor] = useState<
-    { id: string; data: NewDoctorData } | null
-  >(null);
+  const [currentDoctor, setCurrentDoctor] = useState<{
+    id: string;
+    data: NewDoctorData;
+  } | null>(null);
 
   // For the add form.
   const [newDoctor, setNewDoctor] = useState<NewDoctorData>({
@@ -317,7 +334,7 @@ const DoctorsPage: React.FC = () => {
     try {
       const token = localStorage.getItem("access");
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE}/user/users/?role=doctor`,
+        "http://127.0.0.1:8000/user/users/?role=doctor",
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -433,7 +450,11 @@ const DoctorsPage: React.FC = () => {
                 ...prev.data,
                 schedules: [
                   ...prev.data.schedules,
-                  { day_of_week: "Monday", start_time: "09:00", end_time: "17:00" },
+                  {
+                    day_of_week: "Monday",
+                    start_time: "09:00",
+                    end_time: "17:00",
+                  },
                 ],
               },
             }
@@ -463,7 +484,7 @@ const DoctorsPage: React.FC = () => {
           schedules: newDoctor.schedules,
         },
       };
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE}/user/users/`, {
+      const response = await fetch("http://127.0.0.1:8000/user/users/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -509,7 +530,7 @@ const DoctorsPage: React.FC = () => {
         },
       };
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE}/user/users/${currentDoctor.id}/`,
+        `http://127.0.0.1:8000/user/users/${currentDoctor.id}/`,
         {
           method: "PATCH",
           headers: {
@@ -533,27 +554,27 @@ const DoctorsPage: React.FC = () => {
   };
 
   // --- Delete Doctor ---
-// Update the delete handler function
-const handleArchiveDoctor = async (doctorId: string) => {
-  try {
-    const token = localStorage.getItem("access");
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_BASE}0/user/users/${doctorId}/`,
-      {
-        method: "DELETE",  // Still using DELETE method but backend archives
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-    if (!response.ok) throw new Error("Failed to archive doctor");
-    fetchDoctors();
-    alert("Doctor archived successfully");
-  } catch (err) {
-    console.error(err);
-    alert("Failed to archive doctor");
-  }
-};
+  // Update the delete handler function
+  const handleArchiveDoctor = async (doctorId: string) => {
+    try {
+      const token = localStorage.getItem("access");
+      const response = await fetch(
+        `http://127.0.0.1:8000/user/users/${doctorId}/`,
+        {
+          method: "DELETE", // Still using DELETE method but backend archives
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (!response.ok) throw new Error("Failed to archive doctor");
+      fetchDoctors();
+      alert("Doctor archived successfully");
+    } catch (err) {
+      console.error(err);
+      alert("Failed to archive doctor");
+    }
+  };
   // --- Prepare Edit Modal ---
   const openEditModal = (doctor: ExtendedDoctorCardProps) => {
     const nameParts = doctor.name.split(" ");
@@ -592,23 +613,25 @@ const handleArchiveDoctor = async (doctorId: string) => {
       if (sortBy === "reviews") return b.reviewCount - a.reviewCount;
       return 0;
     });
-    const handleArchivesClick = () => {
-      router.push('/doctor/archives');
-    };
+  const handleArchivesClick = () => {
+    router.push("/doctor/archives");
+  };
   return (
-    <div className="container mx-auto px-6 py-8 max-w-6xl">
-      <div className="flex items-center gap-4 mb-6">
-      <h1 className="text-3xl font-bold text-blue-800 flex-1">Find Doctors</h1>
+    <div className="container mx-auto max-w-6xl px-6 py-8">
+      <div className="mb-6 flex items-center gap-4">
+        <h1 className="flex-1 text-3xl font-bold text-blue-800">
+          Find Doctors
+        </h1>
         <button
-            onClick={handleArchivesClick}
-            className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-blue-700"
-          >
-            Archives
-          </button>
+          onClick={handleArchivesClick}
+          className="rounded bg-gray-500 px-4 py-2 text-white hover:bg-blue-700"
+        >
+          Archives
+        </button>
         {isGeneralDoctor && (
           <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
             <DialogTrigger asChild>
-              <button className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+              <button className="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700">
                 Add Doctor
               </button>
             </DialogTrigger>
@@ -616,7 +639,7 @@ const handleArchiveDoctor = async (doctorId: string) => {
               <DialogHeader>
                 <DialogTitle>Add Doctor</DialogTitle>
               </DialogHeader>
-              <form onSubmit={handleAddDoctor} className="space-y-4 mt-4">
+              <form onSubmit={handleAddDoctor} className="mt-4 space-y-4">
                 {/* Form fields for adding a doctor */}
                 <div className="grid grid-cols-2 gap-4">
                   <div>
@@ -628,7 +651,7 @@ const handleArchiveDoctor = async (doctorId: string) => {
                       name="first_name"
                       value={newDoctor.first_name}
                       onChange={(e) => handleDoctorChange(e, "add")}
-                      className="w-full p-2 border rounded"
+                      className="w-full rounded border p-2"
                       required
                     />
                   </div>
@@ -641,7 +664,7 @@ const handleArchiveDoctor = async (doctorId: string) => {
                       name="last_name"
                       value={newDoctor.last_name}
                       onChange={(e) => handleDoctorChange(e, "add")}
-                      className="w-full p-2 border rounded"
+                      className="w-full rounded border p-2"
                       required
                     />
                   </div>
@@ -653,7 +676,7 @@ const handleArchiveDoctor = async (doctorId: string) => {
                     name="email"
                     value={newDoctor.email}
                     onChange={(e) => handleDoctorChange(e, "add")}
-                    className="w-full p-2 border rounded"
+                    className="w-full rounded border p-2"
                     required
                   />
                 </div>
@@ -667,7 +690,7 @@ const handleArchiveDoctor = async (doctorId: string) => {
                       name="password"
                       value={newDoctor.password}
                       onChange={(e) => handleDoctorChange(e, "add")}
-                      className="w-full p-2 border rounded"
+                      className="w-full rounded border p-2"
                       required
                     />
                   </div>
@@ -680,7 +703,7 @@ const handleArchiveDoctor = async (doctorId: string) => {
                       name="confirm_password"
                       value={newDoctor.confirm_password}
                       onChange={(e) => handleDoctorChange(e, "add")}
-                      className="w-full p-2 border rounded"
+                      className="w-full rounded border p-2"
                       required
                     />
                   </div>
@@ -694,19 +717,19 @@ const handleArchiveDoctor = async (doctorId: string) => {
                     name="specialization"
                     value={newDoctor.specialization}
                     onChange={(e) => handleDoctorChange(e, "add")}
-                    className="w-full p-2 border rounded"
+                    className="w-full rounded border p-2"
                     required
                   />
                 </div>
                 <div className="space-y-4">
-                  <div className="flex justify-between items-center">
+                  <div className="flex items-center justify-between">
                     <label className="block text-sm font-medium">
                       Schedules
                     </label>
                     <button
                       type="button"
                       onClick={() => addNewSchedule("add")}
-                      className="bg-green-600 text-white px-2 py-1 rounded text-sm hover:bg-green-700"
+                      className="rounded bg-green-600 px-2 py-1 text-sm text-white hover:bg-green-700"
                     >
                       Add Schedule
                     </button>
@@ -714,7 +737,7 @@ const handleArchiveDoctor = async (doctorId: string) => {
                   {newDoctor.schedules.map((schedule, index) => (
                     <div
                       key={index}
-                      className="grid grid-cols-3 gap-2 items-center"
+                      className="grid grid-cols-3 items-center gap-2"
                     >
                       <select
                         value={schedule.day_of_week}
@@ -726,7 +749,7 @@ const handleArchiveDoctor = async (doctorId: string) => {
                             "add"
                           )
                         }
-                        className="p-2 border rounded"
+                        className="rounded border p-2"
                       >
                         {[
                           "Monday",
@@ -753,7 +776,7 @@ const handleArchiveDoctor = async (doctorId: string) => {
                             "add"
                           )
                         }
-                        className="p-2 border rounded"
+                        className="rounded border p-2"
                         required
                       />
                       <input
@@ -767,7 +790,7 @@ const handleArchiveDoctor = async (doctorId: string) => {
                             "add"
                           )
                         }
-                        className="p-2 border rounded"
+                        className="rounded border p-2"
                         required
                       />
                     </div>
@@ -777,13 +800,13 @@ const handleArchiveDoctor = async (doctorId: string) => {
                   <button
                     type="button"
                     onClick={() => setIsAddModalOpen(false)}
-                    className="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500"
+                    className="rounded bg-gray-400 px-4 py-2 text-white hover:bg-gray-500"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+                    className="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
                   >
                     Add Doctor
                   </button>
@@ -802,7 +825,7 @@ const handleArchiveDoctor = async (doctorId: string) => {
               <DialogTitle>Edit Doctor</DialogTitle>
             </DialogHeader>
             {currentDoctor && (
-              <form onSubmit={handleEditDoctor} className="space-y-4 mt-4">
+              <form onSubmit={handleEditDoctor} className="mt-4 space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium">
@@ -813,7 +836,7 @@ const handleArchiveDoctor = async (doctorId: string) => {
                       name="first_name"
                       value={currentDoctor.data.first_name}
                       onChange={(e) => handleDoctorChange(e, "edit")}
-                      className="w-full p-2 border rounded"
+                      className="w-full rounded border p-2"
                       required
                     />
                   </div>
@@ -826,7 +849,7 @@ const handleArchiveDoctor = async (doctorId: string) => {
                       name="last_name"
                       value={currentDoctor.data.last_name}
                       onChange={(e) => handleDoctorChange(e, "edit")}
-                      className="w-full p-2 border rounded"
+                      className="w-full rounded border p-2"
                       required
                     />
                   </div>
@@ -838,7 +861,7 @@ const handleArchiveDoctor = async (doctorId: string) => {
                     name="email"
                     value={currentDoctor.data.email}
                     onChange={(e) => handleDoctorChange(e, "edit")}
-                    className="w-full p-2 border rounded"
+                    className="w-full rounded border p-2"
                     required
                   />
                 </div>
@@ -851,19 +874,19 @@ const handleArchiveDoctor = async (doctorId: string) => {
                     name="specialization"
                     value={currentDoctor.data.specialization}
                     onChange={(e) => handleDoctorChange(e, "edit")}
-                    className="w-full p-2 border rounded"
+                    className="w-full rounded border p-2"
                     required
                   />
                 </div>
                 <div className="space-y-4">
-                  <div className="flex justify-between items-center">
+                  <div className="flex items-center justify-between">
                     <label className="block text-sm font-medium">
                       Schedules
                     </label>
                     <button
                       type="button"
                       onClick={() => addNewSchedule("edit")}
-                      className="bg-green-600 text-white px-2 py-1 rounded text-sm hover:bg-green-700"
+                      className="rounded bg-green-600 px-2 py-1 text-sm text-white hover:bg-green-700"
                     >
                       Add Schedule
                     </button>
@@ -871,7 +894,7 @@ const handleArchiveDoctor = async (doctorId: string) => {
                   {currentDoctor.data.schedules.map((schedule, index) => (
                     <div
                       key={index}
-                      className="grid grid-cols-3 gap-2 items-center"
+                      className="grid grid-cols-3 items-center gap-2"
                     >
                       <select
                         value={schedule.day_of_week}
@@ -883,7 +906,7 @@ const handleArchiveDoctor = async (doctorId: string) => {
                             "edit"
                           )
                         }
-                        className="p-2 border rounded"
+                        className="rounded border p-2"
                       >
                         {[
                           "Monday",
@@ -910,7 +933,7 @@ const handleArchiveDoctor = async (doctorId: string) => {
                             "edit"
                           )
                         }
-                        className="p-2 border rounded"
+                        className="rounded border p-2"
                         required
                       />
                       <input
@@ -924,7 +947,7 @@ const handleArchiveDoctor = async (doctorId: string) => {
                             "edit"
                           )
                         }
-                        className="p-2 border rounded"
+                        className="rounded border p-2"
                         required
                       />
                     </div>
@@ -937,13 +960,13 @@ const handleArchiveDoctor = async (doctorId: string) => {
                       setIsEditModalOpen(false);
                       setCurrentDoctor(null);
                     }}
-                    className="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500"
+                    className="rounded bg-gray-400 px-4 py-2 text-white hover:bg-gray-500"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+                    className="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
                   >
                     Save Changes
                   </button>
@@ -955,10 +978,10 @@ const handleArchiveDoctor = async (doctorId: string) => {
       </div>
 
       {/* Search & Filter Section */}
-      <div className="bg-white p-6 rounded-lg shadow-md mb-8">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="mb-8 rounded-lg bg-white p-6 shadow-md">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="mb-1 block text-sm font-medium text-gray-700">
               Search
             </label>
             <input
@@ -966,17 +989,17 @@ const handleArchiveDoctor = async (doctorId: string) => {
               placeholder="Search by name or qualification"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full rounded border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="mb-1 block text-sm font-medium text-gray-700">
               Specialty
             </label>
             <select
               value={selectedSpecialty}
               onChange={(e) => setSelectedSpecialty(e.target.value)}
-              className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full rounded border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               {specialties.map((specialty) => (
                 <option key={specialty} value={specialty}>
@@ -986,13 +1009,13 @@ const handleArchiveDoctor = async (doctorId: string) => {
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="mb-1 block text-sm font-medium text-gray-700">
               Sort By
             </label>
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full rounded border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="rating">Rating (High to Low)</option>
               <option value="price">Price (Low to High)</option>
@@ -1003,7 +1026,7 @@ const handleArchiveDoctor = async (doctorId: string) => {
       </div>
 
       {/* Results Count */}
-      <p className="text-gray-600 mb-4">
+      <p className="mb-4 text-gray-600">
         Showing {filteredDoctors.length} doctors
       </p>
 
@@ -1014,13 +1037,15 @@ const handleArchiveDoctor = async (doctorId: string) => {
             key={doctor.id}
             {...doctor}
             onEdit={isGeneralDoctor ? () => openEditModal(doctor) : undefined}
-            onDelete={isGeneralDoctor ? () => handleArchiveDoctor(doctor.id) : undefined}
+            onDelete={
+              isGeneralDoctor ? () => handleArchiveDoctor(doctor.id) : undefined
+            }
           />
         ))}
       </div>
 
       {filteredDoctors.length === 0 && (
-        <div className="text-center py-12">
+        <div className="py-12 text-center">
           <p className="text-lg text-gray-600">
             No doctors found matching your criteria.
           </p>
@@ -1035,11 +1060,8 @@ const handleArchiveDoctor = async (doctorId: string) => {
           </button>
         </div>
       )}
-      
     </div>
   );
 };
 
 export default DoctorsPage;
-=======
->>>>>>> Stashed changes

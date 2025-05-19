@@ -7,8 +7,6 @@ import {
   ChevronDown,
   User,
   List,
-  Pill,
-  Bandage,
 } from "lucide-react";
 
 import {
@@ -35,27 +33,22 @@ import Link from "next/link";
 const menu_items = [
   {
     title: "Dashboard",
-    url: "/doctor",
+    url: "/oncall-doctors",
     icon: LayoutDashboard,
   },
   {
     title: "Patient Portal",
-    url: "/doctor/patient-portal",
+    url: "/oncall-doctors/patient-portal",
     icon: User,
   },
   {
     title: "Doctors List",
-    url: "/doctor/doctors-list",
+    url: "/oncall-doctors/doctors-list",
     icon: List,
   },
   {
-    title: "Medicine",
-    url: "/doctor/medicine",
-    icon: Pill,
-  },
-  {
     title: "Reports",
-    url: "/doctor/reports",
+    url: "/oncall-doctors/reports",
     icon: ChartArea,
   },
 ];
@@ -63,22 +56,17 @@ const menu_items = [
 const patient_items = [
   {
     title: "Medical Records",
-    url: "/doctor/medical-records",
+    url: "/oncall-doctors/medical-records",
     icon: ClipboardPlus,
   },
   {
     title: "Appointments",
-    url: "/doctor/appointments",
+    url: "/oncall-doctors",
     icon: Calendar,
   },
   {
-    title: "Treatment",
-    url: "/doctor/treatment",
-    icon: Bandage,
-  },
-  {
-    title: "Treatment Queue",
-    url: "/doctor/treatment-queue",
+    title: "Registration Queue",
+    url: "/oncall-doctors",
     icon: Clock,
   },
 ];
@@ -91,66 +79,6 @@ const data = {
 };
 
 export function AppSidebar() {
-<<<<<<< Updated upstream
-  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
-
-useEffect(() => {
-  const fetchCurrentUser = async () => {
-    try {
-      const token = localStorage.getItem("access");
-      if (!token) {
-        console.warn("No token found");
-        window.location.href = "/login";  // Immediate redirect
-        return;
-      }
-
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE}/user/users/whoami/`,
-        {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-          credentials: 'include'
-        }
-      );
-
-      if (response.status === 401) {
-        localStorage.removeItem("access");
-        window.location.href = "/login";
-        return;
-      }
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data = await response.json();
-      setCurrentUserId(data.id);
-
-    } catch (error) {
-      console.error("Failed to fetch current user", error);
-      // Show user-friendly error message
-    }
-  };
-
-  fetchCurrentUser();
-}, []);
-
-  const filteredMenuItems = currentUserId === "LFG4YJ2P"
-    ? menu_items
-    : menu_items.filter(item => 
-        ["Dashboard", "Doctors List"].includes(item.title)  // Fixed typo
-      );
-
-  const filteredPatientItems = currentUserId === "LFG4YJ2P"
-    ? patient_items
-    : patient_items.filter(item => 
-        ["Appointments", "Treatment"].includes(item.title)
-      );
-
-=======
->>>>>>> Stashed changes
   return (
     <Sidebar>
       <SidebarHeader>

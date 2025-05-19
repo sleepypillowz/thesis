@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import {
   Patient,
   columns,
-} from "@/components/molecules/tables/doctor-patient-columns";
+} from "@/components/molecules/tables/patient-columns";
 import { DataTable } from "@/components/ui/data-table";
 import { VisitorsChart } from "@/components/organisms/visitors-chart";
 import { CommonDiseasesChart } from "@/components/organisms/common-diseases-chart";

@@ -23,14 +23,13 @@ export default function Page() {
           console.error("No access token found");
           return;
         }
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE}/patients/`, {
+        const response = await fetch("http://127.0.0.1:8000/patients/", {
           method: "GET",
           headers: {
+            "Content-Type": "application/json",
             Authorization: `Bearer ${accessToken}`,
           },
-          credentials: 'include'
         });
-        console.log('API Base:', process.env.NEXT_PUBLIC_API_BASE);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }

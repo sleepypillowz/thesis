@@ -1,13 +1,7 @@
-"use client";
-
-import { useEffect, useState } from "react";
-import {
-  Patient,
-  columns,
-} from "@/components/molecules/tables/doctor-patient-columns";
-import { DataTable } from "@/components/ui/data-table";
+import MedicalRecords from "@/components/pages/medical-records";
 
 export default function Page() {
+<<<<<<< Updated upstream
   const [patients, setPatients] = useState<Patient[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -65,4 +59,7 @@ export default function Page() {
       />
     </div>
   );
+=======
+  return <MedicalRecords />;
+>>>>>>> Stashed changes
 }
