@@ -51,7 +51,7 @@ export default function ReferralsPage() {
 
   useEffect(() => {
     fetchReferrals();
-  }, []);
+  });
 
   useEffect(() => {
     const fetchCurrentUser = async () => {
