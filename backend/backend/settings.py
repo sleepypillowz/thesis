@@ -53,7 +53,6 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'djoser',
 
-
     # installed apps
     'api.apps.ApiConfig',
     'patient.apps.PatientConfig',
