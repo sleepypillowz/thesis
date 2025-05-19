@@ -63,7 +63,7 @@ export default function ReferralScheduler() {
   React.useEffect(() => {
     const token = localStorage.getItem("access");
     setLoadingReferrals(true);
-    fetch("http://127.0.0.1:8000/appointment-referral-list/", {
+    fetch(`${process.env.NEXT_PUBLIC_API_BASE}/appointment-referral-list/`, {
       headers: {
         Authorization: token ? `Bearer ${token}` : "",
         "Content-Type": "application/json",
@@ -86,7 +86,7 @@ export default function ReferralScheduler() {
     setLoadingDoctor(true);
 
     fetch(
-      `http://127.0.0.1:8000/appointment/doctor-schedule/${selectedReferral.receiving_doctor}`,
+      `${process.env.NEXT_PUBLIC_API_BASE}/appointment/doctor-schedule/${selectedReferral.receiving_doctor}`,
       {
         headers: {
           Authorization: token ? `Bearer ${token}` : "",
@@ -130,7 +130,7 @@ export default function ReferralScheduler() {
     if (!slot) return;
 
     setIsScheduling(true);
-    fetch("http://127.0.0.1:8000/appointment/schedule-appointment/", {
+    fetch(`${process.env.NEXT_PUBLIC_API_BASE}/appointment/schedule-appointment/`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

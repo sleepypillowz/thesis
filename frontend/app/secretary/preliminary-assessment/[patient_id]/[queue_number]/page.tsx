@@ -69,7 +69,7 @@ export default function PreliminaryAssessmentID() {
   useEffect(() => {
     if (!patient_id || !queue_number) return;
     const token = localStorage.getItem("access");
-    const apiUrl = `http://127.0.0.1:8000/queueing/patient-preliminary-assessment/${patient_id}/${queue_number}/`;
+    const apiUrl = `${process.env.NEXT_PUBLIC_API_BASE}/queueing/patient-preliminary-assessment/${patient_id}/${queue_number}/`;
 
     fetch(apiUrl, {
       method: "GET",
@@ -117,7 +117,7 @@ export default function PreliminaryAssessmentID() {
     e.preventDefault();
     if (!patient_id || !queue_number) return;
 
-    const apiUrl = `http://127.0.0.1:8000/queueing/patient-preliminary-assessment/${patient_id}/${queue_number}/`;
+    const apiUrl = `${process.env.NEXT_PUBLIC_API_BASE}/queueing/patient-preliminary-assessment/${patient_id}/${queue_number}/`;
     try {
       const token = localStorage.getItem("access");
       const response = await fetch(apiUrl, {

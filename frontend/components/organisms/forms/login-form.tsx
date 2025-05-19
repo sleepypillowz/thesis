@@ -56,7 +56,7 @@ export function LoginForm({
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
     try {
-      const response = await fetch("http://127.0.0.1:8000/auth/jwt/create/", {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE}/auth/jwt/create/`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -64,6 +64,7 @@ export function LoginForm({
           password: values.password,
         }),
       });
+      console.log("API",process.env.NEXT_PUBLIC_API_BASE)
 
       if (!response.ok) {
         const errorData = await response.json();

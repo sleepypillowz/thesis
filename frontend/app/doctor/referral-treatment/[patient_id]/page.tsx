@@ -1,4 +1,4 @@
-// pages/treatment/[patientId].tsx
+
 'use client'
 import React, { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
@@ -60,7 +60,7 @@ const TreatmentPage: React.FC = () => {
     const fetchPatient = async () => {
       try {
         const response = await fetch(
-          `http://localhost:8000/api/patients/${patientId}/`,
+          `${process.env.NEXT_PUBLIC_API_BASE}/api/patients/${patientId}/`,
           {
             headers: {
               'Authorization': `Bearer ${localStorage.getItem('access')}`,

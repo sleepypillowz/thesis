@@ -270,7 +270,7 @@ const DoctorsPage: React.FC = () => {
           return;
         }
 
-        const response = await fetch('http://localhost:8000/user/users/current-email/', {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE}/user/users/current-email/`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -334,7 +334,7 @@ const DoctorsPage: React.FC = () => {
     try {
       const token = localStorage.getItem("access");
       const response = await fetch(
-        "http://127.0.0.1:8000/user/users/?role=doctor",
+        `${process.env.NEXT_PUBLIC_API_BASE}/user/users/?role=doctor`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -480,7 +480,7 @@ const DoctorsPage: React.FC = () => {
           schedules: newDoctor.schedules,
         },
       };
-      const response = await fetch("http://127.0.0.1:8000/user/users/", {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE}/user/users/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -526,7 +526,7 @@ const DoctorsPage: React.FC = () => {
         },
       };
       const response = await fetch(
-        `http://127.0.0.1:8000/user/users/${currentDoctor.id}/`,
+        `${process.env.NEXT_PUBLIC_API_BASE}/user/users/${currentDoctor.id}/`,
         {
           method: "PATCH",
           headers: {
@@ -555,7 +555,7 @@ const handleArchiveDoctor = async (doctorId: string) => {
   try {
     const token = localStorage.getItem("access");
     const response = await fetch(
-      `http://127.0.0.1:8000/user/users/${doctorId}/`,
+      `${process.env.NEXT_PUBLIC_API_BASE}0/user/users/${doctorId}/`,
       {
         method: "DELETE",  // Still using DELETE method but backend archives
         headers: {

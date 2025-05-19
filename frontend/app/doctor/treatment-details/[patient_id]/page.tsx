@@ -127,7 +127,7 @@ export default function TreatmentDetailsPage() {
     }
 
     // Construct the API URL using the lab result's ID
-    const apiUrl = `http://127.0.0.1:8000/patient/lab-results/${result.id}/download/`;
+    const apiUrl = `${process.env.NEXT_PUBLIC_API_BASE}/patient/lab-results/${result.id}/download/`;
 
     try {
       // Call the API endpoint with the Bearer token for authentication
@@ -185,7 +185,7 @@ export default function TreatmentDetailsPage() {
         console.error("No access token found");
         return;
       }
-      fetch(`http://127.0.0.1:8000/patient/lab-results/${patient_id}/`, {
+      fetch(`${process.env.NEXT_PUBLIC_API_BASE}/patient/lab-results/${patient_id}/`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -219,7 +219,7 @@ export default function TreatmentDetailsPage() {
       return;
     }
 
-    const apiUrl = `http://127.0.0.1:8000/patient/patient-treatment-view-details/${patient_id}/`;
+    const apiUrl = `${process.env.NEXT_PUBLIC_API_BASE}/patient/patient-treatment-view-details/${patient_id}/`;
     const accessToken = localStorage.getItem("access");
 
     if (!accessToken) {
@@ -271,7 +271,7 @@ export default function TreatmentDetailsPage() {
 
         // Make API call
         const response = await fetch(
-          "http://127.0.0.1:8000/user/users/?role=doctor",
+          `${process.env.NEXT_PUBLIC_API_BASE}/user/users/?role=doctor`,
           {
             headers: {
               "Content-Type": "application/json",
@@ -357,7 +357,7 @@ export default function TreatmentDetailsPage() {
     }
     try {
       const token = localStorage.getItem("access");
-      const res = await fetch("http://127.0.0.1:8000/appointment-referral/", {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE}/appointment-referral/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

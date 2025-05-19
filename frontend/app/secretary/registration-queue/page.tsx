@@ -36,7 +36,7 @@ export default function RegistrationQueue() {
 
   useEffect(() => {
     const token = localStorage.getItem("access");
-    fetch("http://127.0.0.1:8000/queueing/registration_queueing/", {
+    fetch(`${process.env.NEXT_PUBLIC_API_BASE}/queueing/registration_queueing/`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -95,7 +95,7 @@ export default function RegistrationQueue() {
     try {
       const token = localStorage.getItem("access");
       const response = await fetch(
-        "http://127.0.0.1:8000/patient/update-status/",
+        `${process.env.NEXT_PUBLIC_API_BASE}/patient/update-status/`,
         {
           method: "POST",
           headers: {

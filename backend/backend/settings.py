@@ -19,7 +19,8 @@ if path.isfile(dotenv_file):
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = '4THuuuW08eGLG3VsT8Ey4clCk43YlYMeUbTuukJmuvgFCm3SorHaCiupv5uf5J87N2wFUzen+evrQ5qnrm+buQ=='
 
-DEBUG = True
+DEBUG = True # for production - os.getenv('DJANGO_DEBUG', 'False') == 'True'
+
 SECURE_SSL_REDIRECT = False
 SESSION_COOKIE_SECURE = False
 CSRF_COOKIE_SECURE = False
@@ -35,12 +36,6 @@ CORS_ALLOW_HEADERS = [
     'content-type',
 ]
 CORS_ALLOW_CREDENTIALS = True
-
-ALLOWED_HOSTS = os.getenv(
-    "DJANGO_ALLOWED_HOSTS", 
-    "127.0.0.1,localhost,thesis-sg26.onrender.com"
-).split(",")
-
 
 INSTALLED_APPS = [
     'whitenoise.runserver_nostatic',
@@ -84,14 +79,22 @@ MIDDLEWARE = [
 ]
 # settings.py
 CORS_ALLOWED_ORIGINS = [
+    "https://thesis-c1rq.vercel.app",
     "http://localhost:3000",
-    "http://127.0.0.1:3000",
+
 ]
+ALLOWED_HOSTS = [
+    "thesis-sg26.onrender.com",
+    "thesis-c1rq.vercel.app",
+    'localhost'
+]
+
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:3000",
     "http://127.0.0.1:8000", 
-    "https://thesis-one-pi.vercel.app/",
+    "https://thesis-c1rq.vercel.app",
 ]
+CORS_ALLOW_ALL_ORIGINS = True
 
 CORS_ALLOW_HEADERS = list(default_headers) + [
     'authorization',
