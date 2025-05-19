@@ -1,16 +1,13 @@
+"use client";
 import {
   LayoutDashboard,
   ClipboardPlus,
   Calendar,
-  Clock,
-  ChartArea,
-  ChevronDown,
-  User,
-  List,
-  Pill,
   Bandage,
+  ChartArea,
+  Database,
+  ChevronDown,
 } from "lucide-react";
-
 import {
   Sidebar,
   SidebarContent,
@@ -23,7 +20,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { NavUser } from "../../molecules/nav-user";
+import { NavUser } from "@/components/molecules/nav-user";
 import Image from "next/image";
 import {
   Collapsible,
@@ -31,6 +28,7 @@ import {
   CollapsibleTrigger,
 } from "../../ui/collapsible";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
 const menu_items = [
   {
@@ -40,18 +38,18 @@ const menu_items = [
   },
   {
     title: "Patient Portal",
-    url: "/doctor/patient-portal",
-    icon: User,
+    url: "/staff/patient-portal",
+    icon: LayoutDashboard,
   },
   {
     title: "Doctors List",
     url: "/doctor/doctors-list",
-    icon: List,
+    icon: LayoutDashboard,
   },
   {
     title: "Medicine",
-    url: "/doctor/medicine",
-    icon: Pill,
+    url: "/staff/medicine",
+    icon: Database,
   },
   {
     title: "Reports",
@@ -79,7 +77,7 @@ const patient_items = [
   {
     title: "Treatment Queue",
     url: "/doctor/treatment-queue",
-    icon: Clock,
+    icon: Bandage,
   },
 ];
 
@@ -91,7 +89,6 @@ const data = {
 };
 
 export function AppSidebar() {
-<<<<<<< Updated upstream
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
 
 useEffect(() => {
@@ -149,8 +146,6 @@ useEffect(() => {
         ["Appointments", "Treatment"].includes(item.title)
       );
 
-=======
->>>>>>> Stashed changes
   return (
     <Sidebar>
       <SidebarHeader>
@@ -173,7 +168,7 @@ useEffect(() => {
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarGroup>
-                {menu_items.map((item) => (
+                {filteredMenuItems.map((item) => (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton asChild>
                       <Link href={item.url}>
@@ -188,34 +183,36 @@ useEffect(() => {
           </SidebarGroupContent>
         </SidebarGroup>
 
-        <Collapsible defaultOpen className="group/collapsible">
-          <SidebarGroup>
-            <SidebarGroupLabel asChild>
-              <CollapsibleTrigger>
-                Patients
-                <ChevronDown className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180" />
-              </CollapsibleTrigger>
-            </SidebarGroupLabel>
-            <SidebarGroupContent>
-              <SidebarMenu>
-                <SidebarGroup>
-                  <CollapsibleContent>
-                    {patient_items.map((item) => (
-                      <SidebarMenuItem key={item.title}>
-                        <SidebarMenuButton asChild>
-                          <a href={item.url}>
-                            <item.icon />
-                            <span>{item.title}</span>
-                          </a>
-                        </SidebarMenuButton>
-                      </SidebarMenuItem>
-                    ))}
-                  </CollapsibleContent>
-                </SidebarGroup>
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
-        </Collapsible>
+        {filteredPatientItems.length > 0 && (
+          <Collapsible defaultOpen className="group/collapsible">
+            <SidebarGroup>
+              <SidebarGroupLabel asChild>
+                <CollapsibleTrigger>
+                  Patients
+                  <ChevronDown className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180" />
+                </CollapsibleTrigger>
+              </SidebarGroupLabel>
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  <SidebarGroup>
+                    <CollapsibleContent>
+                      {filteredPatientItems.map((item) => (
+                        <SidebarMenuItem key={item.title}>
+                          <SidebarMenuButton asChild>
+                            <Link href={item.url}>
+                              <item.icon />
+                              <span>{item.title}</span>
+                            </Link>
+                          </SidebarMenuButton>
+                        </SidebarMenuItem>
+                      ))}
+                    </CollapsibleContent>
+                  </SidebarGroup>
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </SidebarGroup>
+          </Collapsible>
+        )}
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={data.user} />

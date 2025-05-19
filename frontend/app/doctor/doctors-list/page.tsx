@@ -1,9 +1,26 @@
-import DoctorsList from "@/components/pages/doctors-list";
+"use client";
 
-export default function Page() {
-  return <DoctorsList />;
+import React, {
+  useState,
+  useEffect,
+  ChangeEvent,
+  FormEvent,
+} from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import Image from 'next/image';
+import { Button } from "@/components/ui/button"
+interface Schedule {
+  day_of_week: string;
+  start_time: string;
+  end_time: string;
 }
-<<<<<<< Updated upstream
 import { useRouter } from 'next/navigation';
 interface DoctorProfile {
   specialization: string;
@@ -1041,5 +1058,3 @@ const handleArchiveDoctor = async (doctorId: string) => {
 };
 
 export default DoctorsPage;
-=======
->>>>>>> Stashed changes

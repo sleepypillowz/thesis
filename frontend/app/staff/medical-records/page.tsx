@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import {
   Patient,
   columns,
-} from "@/components/molecules/tables/patient-columns";
+} from "@/components/molecules/tables/doctor-patient-columns";
 import { DataTable } from "@/components/ui/data-table";
 
 export default function Page() {
@@ -20,7 +20,6 @@ export default function Page() {
           console.error("No access token found");
           return;
         }
-<<<<<<< Updated upstream:frontend/app/staff/medical-records/page.tsx
         const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE}/patients/`, {
           method: "GET",
           headers: {
@@ -28,18 +27,6 @@ export default function Page() {
             Authorization: `Bearer ${accessToken}`,
           },
         });
-=======
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_BASE}/patients/`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${accessToken}`,
-            },
-          }
-        );
->>>>>>> Stashed changes:frontend/components/pages/medical-records.tsx
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
