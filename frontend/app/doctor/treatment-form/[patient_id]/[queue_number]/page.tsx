@@ -120,7 +120,7 @@ export default function TreatmentForm() {
       try {
         const token = localStorage.getItem("access");
         const response = await fetch(
-          `http://127.0.0.1:8000/patient/patient-preliminary-assessment/${patient_id}/${queue_number}/`,
+          `${process.env.NEXT_PUBLIC_API_BASE}/patient/patient-preliminary-assessment/${patient_id}/${queue_number}/`,
           {
             method: "GET",
             headers: {
@@ -161,7 +161,7 @@ export default function TreatmentForm() {
     setIsMedicineLoading(true);
     try {
       const token = localStorage.getItem("access");
-      const url = `http://127.0.0.1:8000/medicine/medicine-search/?q=${encodeURIComponent(
+      const url = `${process.env.NEXT_PUBLIC_API_BASE}/medicine/medicine-search/?q=${encodeURIComponent(
         query
       )}`;
       const res = await fetch(url, {
@@ -262,7 +262,7 @@ export default function TreatmentForm() {
     console.log("Data to serialize (JSON):", treatmentData);
     const token = localStorage.getItem("access");
     const response = await fetch(
-      `http://127.0.0.1:8000/queueing/patient-treatment/${patient_id}/${queue_number}/`,
+      `${process.env.NEXT_PUBLIC_API_BASE}/queueing/patient-treatment/${patient_id}/${queue_number}/`,
       {
         method: "POST",
         headers: {
@@ -317,7 +317,7 @@ export default function TreatmentForm() {
     try {
       // Submit the lab request
       const labResponse = await fetch(
-        "http://127.0.0.1:8000/patient/lab-request/",
+        `${process.env.NEXT_PUBLIC_API_BASE}/patient/lab-request/`,
         {
           method: "POST",
           headers: {

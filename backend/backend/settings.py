@@ -19,7 +19,7 @@ if path.isfile(dotenv_file):
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = '4THuuuW08eGLG3VsT8Ey4clCk43YlYMeUbTuukJmuvgFCm3SorHaCiupv5uf5J87N2wFUzen+evrQ5qnrm+buQ=='
 
-DEBUG = os.getenv('DJANGO_DEBUG', 'False') == 'True'
+DEBUG = True # for production - os.getenv('DJANGO_DEBUG', 'False') == 'True'
 
 SECURE_SSL_REDIRECT = False
 SESSION_COOKIE_SECURE = False

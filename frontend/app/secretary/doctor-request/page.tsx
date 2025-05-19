@@ -65,7 +65,7 @@ const LabRequestsPage = () => {
           return;
         }
         const response = await fetch(
-          "http://127.0.0.1:8000/patient/lab-request/list/",
+          `${process.env.NEXT_PUBLIC_API_BASE}/patient/lab-request/list/`,
           {
             method: "GET",
             headers: {
@@ -101,7 +101,7 @@ const LabRequestsPage = () => {
     try {
       const token = localStorage.getItem("access");
       const response = await fetch(
-        "http://127.0.0.1:8000/patient/lab-result/",
+        `${process.env.NEXT_PUBLIC_API_BASE}/patient/lab-result/`,
         {
           method: "POST",
           headers: {

@@ -79,7 +79,7 @@ export function AppSidebar() {
         }
 
         const response = await fetch(
-          "http://localhost:8000/user/users/whoami/",
+          `${process.env.NEXT_PUBLIC_API_BASE}/user/users/whoami/`,
           {
             headers: {
               "Content-Type": "application/json",

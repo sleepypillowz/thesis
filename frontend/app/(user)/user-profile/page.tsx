@@ -67,7 +67,7 @@ export default function ProfilePage() {
     
     try {
       const token = localStorage.getItem('access');
-      const response = await fetch('http://localhost:8000/user/users/update-me/', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE}/user/users/update-me/`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',

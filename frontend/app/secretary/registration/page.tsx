@@ -71,7 +71,7 @@ export default function Page() {
       const token = localStorage.getItem("access");
 
       const response = await fetch(
-        "http://127.0.0.1:8000/patient/patient-register/",
+        `${process.env.NEXT_PUBLIC_API_BASE}/patient/patient-register/`,
         {
           method: "POST",
           headers: {

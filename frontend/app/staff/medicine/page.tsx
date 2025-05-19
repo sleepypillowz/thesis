@@ -40,7 +40,7 @@ export default function MedicineList() {
     const token = localStorage.getItem("access");
 
     setIsLoading(true);
-    fetch("http://127.0.0.1:8000/medicine/medicines", {
+    fetch(`${process.env.NEXT_PUBLIC_API_BASE}/medicine/medicines`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

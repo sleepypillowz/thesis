@@ -31,7 +31,7 @@ export default function Page() {
 
   useEffect(() => {
     const token = localStorage.getItem("access");
-    fetch("http://127.0.0.1:8000/queueing/treatment_queueing/", {
+    fetch(`${process.env.NEXT_PUBLIC_API_BASE}/queueing/treatment_queueing/`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

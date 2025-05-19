@@ -51,7 +51,7 @@ const PatientRegistrationForm: React.FC = () => {
     try {
       const token = localStorage.getItem("access");
       const res = await fetch(
-        `http://127.0.0.1:8000/patient/get-queue/?patient_id=${patient_id}`, {
+        `${process.env.NEXT_PUBLIC_API_BASE}/patient/get-queue/?patient_id=${patient_id}`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -82,7 +82,7 @@ const PatientRegistrationForm: React.FC = () => {
       };
       const token = localStorage.getItem('access');
       const res = await fetch(
-        "http://127.0.0.1:8000/patient/patient-register/",
+        `${process.env.NEXT_PUBLIC_API_BASE}/patient/patient-register/`,
         {
           method: "POST",
           headers: {
@@ -114,7 +114,7 @@ const PatientRegistrationForm: React.FC = () => {
     setIsLoading(true);
     try {
       const token = localStorage.getItem("access");
-      const url = `http://127.0.0.1:8000/patient/search-patients/?q=${encodeURIComponent(query)}`;
+      const url = `${process.env.NEXT_PUBLIC_API_BASE}/patient/search-patients/?q=${encodeURIComponent(query)}`;
       const res = await fetch(url, {
         method: "GET",
         headers: {

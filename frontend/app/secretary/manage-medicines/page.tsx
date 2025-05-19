@@ -40,7 +40,7 @@ export default function PrescribedMedicines() {
     const fetchMedicines = async () => {
       try {
         const res = await fetch(
-          "http://localhost:8000/medicine-prescription-display/",
+          `${process.env.NEXT_PUBLIC_API_BASE}/medicine-prescription-display/`,
           {
             method: "GET",
             headers: {
@@ -114,7 +114,7 @@ export default function PrescribedMedicines() {
       };
 
       const res = await fetch(
-        "http://localhost:8000/medicine/confirm-dispense/",
+        `${process.env.NEXT_PUBLIC_API_BASE}/medicine/confirm-dispense/`,
         {
           method: "POST",
           headers: {
@@ -132,7 +132,7 @@ export default function PrescribedMedicines() {
 
       // Refresh data after successful confirmation
       const newData = await fetch(
-        "http://localhost:8000/medicine-prescription-display/",
+        `${process.env.NEXT_PUBLIC_API_BASE}/medicine-prescription-display/`,
         {
           method: "GET",
           headers: {

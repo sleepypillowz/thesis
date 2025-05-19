@@ -118,7 +118,7 @@ export default function DoctorManagement() {
   const fetchDoctors = async () => {
     try {
       const token = localStorage.getItem("access");
-      const res = await fetch("http://127.0.0.1:8000/user/users/?role=doctor", {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE}/user/users/?role=doctor`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
@@ -148,8 +148,8 @@ export default function DoctorManagement() {
       const token = localStorage.getItem("access");
       const method = currentDoctor ? "PATCH" : "POST";
       const url = currentDoctor 
-        ? `http://127.0.0.1:8000/user/users/${currentDoctor.id}/`
-        : "http://127.0.0.1:8000/user/users/";
+        ? `${process.env.NEXT_PUBLIC_API_BASE}/user/users/${currentDoctor.id}/`
+        : `${process.env.NEXT_PUBLIC_API_BASE}/user/users/`;
 
       const body = {
         email: data.email,
@@ -201,7 +201,7 @@ export default function DoctorManagement() {
     setDeleteLoading(id);
     try {
       const token = localStorage.getItem("access");
-      const response = await fetch(`http://127.0.0.1:8000/user/users/${id}/`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE}/user/users/${id}/`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });

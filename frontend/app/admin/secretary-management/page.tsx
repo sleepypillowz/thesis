@@ -24,7 +24,7 @@ export default function SecretariesTable() {
   const fetchSecretaries = async () => {
     try {
       const accessToken = localStorage.getItem("access");
-      const response = await fetch('http://127.0.0.1:8000/user/users/?role=secretary', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE}/user/users/?role=secretary`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${accessToken}`,
@@ -54,7 +54,7 @@ export default function SecretariesTable() {
     if (window.confirm('Are you sure you want to delete this secretary?')) {
       try {
         const accessToken = localStorage.getItem("access");
-        const response = await fetch(`http://127.0.0.1:8000/user/secretaries/${secretaryId}/`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE}/user/secretaries/${secretaryId}/`, {
           method: 'DELETE',
           headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -73,7 +73,7 @@ export default function SecretariesTable() {
 
     try {
       const accessToken = localStorage.getItem("access");
-      const response = await fetch(`http://127.0.0.1:8000/user/secretaries/${editingSecretary.id}/`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE}/user/secretaries/${editingSecretary.id}/`, {
         method: 'PATCH',
         headers: {
           "Content-Type": "application/json",

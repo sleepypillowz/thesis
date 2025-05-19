@@ -101,7 +101,7 @@ function EditUserDialog({
     try {
       setIsSubmitting(true);
       const response = await fetch(
-        `http://127.0.0.1:8000/auth/users/${user.id}/`,
+        `${process.env.NEXT_PUBLIC_API_BASE}/auth/users/${user.id}/`,
         {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
@@ -209,7 +209,7 @@ function CreateUserDialog({ onUserCreated }: { onUserCreated: () => void }) {
     try {
       setIsSubmitting(true);
       const accessToken = localStorage.getItem("access");
-      const response = await fetch("http://127.0.0.1:8000/user/register/", {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE}/user/register/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -358,7 +358,7 @@ export default function UserManagementDashboard() {
     try {
       setIsLoading(true);
       const accessToken = localStorage.getItem("access");
-      const response = await fetch("http://127.0.0.1:8000/auth/users/", {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE}/auth/users/`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${accessToken}`,
@@ -386,7 +386,7 @@ export default function UserManagementDashboard() {
       setDeletingId(userId);
       const accessToken = localStorage.getItem("access");
       const response = await fetch(
-        `http://127.0.0.1:8000/auth/users/${userId}/`,
+        `${process.env.NEXT_PUBLIC_API_BASE}/auth/users/${userId}/`,
         {
           method: "DELETE",
           headers: {

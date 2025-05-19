@@ -31,7 +31,7 @@ export default function Page() {
   useEffect(() => {
     const token = localStorage.getItem("access");
     fetch(
-      `http://127.0.0.1:8000/queueing/preliminary_assessment_queueing/?t=${Date.now()}`,
+      `${process.env.NEXT_PUBLIC_API_BASE}/queueing/preliminary_assessment_queueing/?t=${Date.now()}`,
       {
         cache: "no-cache",
         method: "GET",

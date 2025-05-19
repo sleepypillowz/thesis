@@ -31,7 +31,7 @@ export default function ArchivedDoctors() {
   const fetchArchivedDoctors = async () => {
     try {
       const token = localStorage.getItem('access');
-      const response = await fetch('http://localhost:8000/user/users/archived/?role=doctor', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE}/user/users/archived/?role=doctor`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -62,7 +62,7 @@ export default function ArchivedDoctors() {
     try {
       const token = localStorage.getItem('access');
       const response = await fetch(
-        `http://localhost:8000/user/users/${doctorId}/restore/`,  // Keep existing URL structure
+        `${process.env.NEXT_PUBLIC_API_BASE}/user/users/${doctorId}/restore/`,  // Keep existing URL structure
         {
           method: 'PATCH',  // Must match backend method
           headers: {
