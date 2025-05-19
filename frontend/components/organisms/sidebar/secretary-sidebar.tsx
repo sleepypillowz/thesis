@@ -5,9 +5,10 @@ import {
   Clock,
   ClipboardPenLine,
   ChartArea,
-  Database,
   UserPlus,
   ChevronDown,
+  BriefcaseMedical,
+  Pill,
 } from "lucide-react";
 
 import {
@@ -45,21 +46,21 @@ const menu_items = [
   {
     title: "Doctors Request",
     url: "/secretary/doctor-request",
-    icon: UserPlus,
+    icon: BriefcaseMedical,
   },
   {
     title: "Patient Portal",
-    url: "/staff/patient-portal",
+    url: "/secretary/patient-portal",
     icon: LayoutDashboard,
   },
   {
     title: "Medicine",
-    url: "/staff/medicine",
-    icon: Database,
+    url: "/secretary/medicine",
+    icon: Pill,
   },
   {
     title: "Reports",
-    url: "/staff/reports",
+    url: "/secretary/reports",
     icon: ChartArea,
   },
 ];
@@ -67,7 +68,7 @@ const menu_items = [
 const patient_items = [
   {
     title: "Medical Records",
-    url: "/staff/medical-records",
+    url: "/secretary/medical-records",
     icon: ClipboardPlus,
   },
   {

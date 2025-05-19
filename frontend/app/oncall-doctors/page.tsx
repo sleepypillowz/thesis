@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import {
   Patient,
   columns,
-} from "@/components/molecules/tables/doctor-patient-columns";
+} from "@/components/molecules/tables/patient-columns";
 import { DataTable } from "@/components/ui/data-table";
 import { VisitorsChart } from "@/components/organisms/visitors-chart";
 import { CommonDiseasesChart } from "@/components/organisms/common-diseases-chart";
@@ -23,14 +23,17 @@ export default function Page() {
           console.error("No access token found");
           return;
         }
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE}/patients/`, {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-          credentials: 'include'
-        });
-        console.log('API Base:', process.env.NEXT_PUBLIC_API_BASE);
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_BASE}/patients/`,
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+            credentials: "include",
+          }
+        );
+        console.log("API Base:", process.env.NEXT_PUBLIC_API_BASE);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }

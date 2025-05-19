@@ -2,7 +2,6 @@ import {
   LayoutDashboard,
   ClipboardPlus,
   Calendar,
-  Clock,
   ChartArea,
   ChevronDown,
   User,
@@ -63,11 +62,6 @@ const patient_items = [
     title: "Appointments",
     url: "/oncall-doctors",
     icon: Calendar,
-  },
-  {
-    title: "Registration Queue",
-    url: "/oncall-doctors",
-    icon: Clock,
   },
 ];
 
