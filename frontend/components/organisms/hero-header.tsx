@@ -3,7 +3,7 @@ import { buttonVariants } from "../ui/button";
 
 const HeroHeader = () => {
   return (
-    <nav className="bg-white px-6 py-4 shadow-sm">
+    <nav className="z-50 bg-card px-6 py-4 shadow-sm">
       <div className="container mx-auto flex items-center justify-between">
         <div className="flex items-center">
           <div className="mr-3 flex h-10 w-10 items-center justify-center rounded-full bg-blue-600 font-bold text-white">
