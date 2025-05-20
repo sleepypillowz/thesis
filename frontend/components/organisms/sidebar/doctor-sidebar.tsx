@@ -9,6 +9,7 @@ import {
   List,
   Pill,
   Clock,
+  Settings,
 } from "lucide-react";
 
 import {
@@ -57,6 +58,11 @@ const menu_items = [
     title: "Reports",
     url: "/doctor/reports",
     icon: ChartArea,
+  },
+  {
+    title: "Settings",
+    url: "/doctor/settings",
+    icon: Settings,
   },
 ];
 
