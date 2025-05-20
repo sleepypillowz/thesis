@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { jwtDecode } from "jwt-decode";
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -18,12 +17,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
 import { Github, ArrowRight, Loader2 } from "lucide-react";
-
-interface DecodedToken {
-  is_superuser?: boolean;
-  role?: string;
-}
-
 const formSchema = z.object({
   email: z.string().email({ message: "Invalid email" }),
   password: z.string().min(1, { message: "Required" }),
@@ -52,54 +45,11 @@ export function LoginForm({
   const watchEmail = form.watch("email");
   const watchPassword = form.watch("password");
   const isFormFilled = watchEmail.length > 0 && watchPassword.length > 0;
-  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchCurrentUser = async () => {
-      try {
-        const token = localStorage.getItem("access");
-        if (!token) {
-          console.warn("No token found");
-          window.location.href = "/login";  // Immediate redirect
-          return;
-        }
-
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_BASE}/user/users/whoami/`,
-          {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-            credentials: 'include'
-          }
-        );
-
-        if (response.status === 401) {
-          localStorage.removeItem("access");
-          window.location.href = "/login";
-          return;
-        }
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const data = await response.json();
-        setCurrentUserId(data.id);
-
-      } catch (error) {
-        console.error("Failed to fetch current user", error);
-        // Show user-friendly error message
-      }
-    };
-
-    fetchCurrentUser();
-  }, []);
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE}/auth/jwt/create/`, {
+      // 1) Log in and get tokens
+      const loginRes = await fetch(`${process.env.NEXT_PUBLIC_API_BASE}/auth/jwt/create/`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -107,38 +57,40 @@ export function LoginForm({
           password: values.password,
         }),
       });
-      console.log("API",process.env.NEXT_PUBLIC_API_BASE)
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.detail || "Login failed");
+      if (!loginRes.ok) {
+        const { detail } = await loginRes.json();
+        throw new Error(detail || "Login failed");
       }
+      const { access, refresh } = await loginRes.json();
+      localStorage.setItem("access", access);
+      localStorage.setItem("refresh", refresh);
 
-      const data = await response.json();
-      localStorage.setItem("access", data.access);
-      localStorage.setItem("refresh", data.refresh);
+      // 2) Fetch the current user’s info _synchronously_ before redirect
+      const userRes = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE}/user/users/whoami/`,
+        { headers: { Authorization: `Bearer ${access}` } }
+      );
+      if (!userRes.ok) throw new Error("Failed to fetch user");
+      const { id, role, is_superuser } = await userRes.json();
 
-      toast.success("Login successful!");
-
-      const decoded: DecodedToken = jwtDecode(data.access);
-
-      if (decoded.is_superuser || decoded.role?.toLowerCase() === "admin") {
+      // 3) Redirect based on role and ID
+      if (is_superuser || role?.toLowerCase() === "admin") {
         window.location.href = "/admin";
-      } else if (decoded.role?.toLowerCase() === "doctor") {
-      window.location.href = currentUserId === "LFG4YJ2P" ? "/doctor" : "/oncall-doctors";
-      } else if (decoded.role?.toLowerCase() === "secretary") {
+      } else if (role?.toLowerCase() === "doctor") {
+        window.location.href = id === "LFG4YJ2P" ? "/doctor" : "/oncall-doctors";
+      } else if (role?.toLowerCase() === "secretary") {
         window.location.href = "/secretary";
       } else {
         window.location.href = "/dashboard";
       }
     } catch (error: unknown) {
-      console.error("Login error", error);
-      toast.error("Invalid credentials");
+      console.error("Login or user fetch error", error);
+      toast.error("Invalid credentials or network error");
     } finally {
       setIsLoading(false);
     }
-    
   }
+
   return (
     <div
       className={cn(
