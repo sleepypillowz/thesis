@@ -6,6 +6,7 @@ import {
   ChevronDown,
   User,
   List,
+  Settings,
 } from "lucide-react";
 
 import {
@@ -62,6 +63,11 @@ const patient_items = [
     title: "Appointments",
     url: "/oncall-doctors",
     icon: Calendar,
+  },
+  {
+    title: "Settings",
+    url: "/doctor/settings",
+    icon: Settings,
   },
 ];
 
