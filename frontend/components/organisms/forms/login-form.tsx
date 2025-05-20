@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
-import { Github, ArrowRight, Loader2 } from "lucide-react";
+import { ArrowRight, Loader2 } from "lucide-react";
 
 interface DecodedToken {
   is_superuser?: boolean;
@@ -60,7 +60,7 @@ export function LoginForm({
         const token = localStorage.getItem("access");
         if (!token) {
           console.warn("No token found");
-          window.location.href = "/login";  // Immediate redirect
+          window.location.href = "/login"; // Immediate redirect
           return;
         }
 
@@ -71,7 +71,7 @@ export function LoginForm({
             headers: {
               Authorization: `Bearer ${token}`,
             },
-            credentials: 'include'
+            credentials: "include",
           }
         );
 
@@ -87,7 +87,6 @@ export function LoginForm({
 
         const data = await response.json();
         setCurrentUserId(data.id);
-
       } catch (error) {
         console.error("Failed to fetch current user", error);
         // Show user-friendly error message
@@ -99,15 +98,18 @@ export function LoginForm({
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE}/auth/jwt/create/`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email: values.email,
-          password: values.password,
-        }),
-      });
-      console.log("API",process.env.NEXT_PUBLIC_API_BASE)
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE}/auth/jwt/create/`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email: values.email,
+            password: values.password,
+          }),
+        }
+      );
+      console.log("API", process.env.NEXT_PUBLIC_API_BASE);
 
       if (!response.ok) {
         const errorData = await response.json();
@@ -125,7 +127,8 @@ export function LoginForm({
       if (decoded.is_superuser || decoded.role?.toLowerCase() === "admin") {
         window.location.href = "/admin";
       } else if (decoded.role?.toLowerCase() === "doctor") {
-      window.location.href = currentUserId === "LFG4YJ2P" ? "/doctor" : "/oncall-doctors";
+        window.location.href =
+          currentUserId === "LFG4YJ2P" ? "/doctor" : "/oncall-doctors";
       } else if (decoded.role?.toLowerCase() === "secretary") {
         window.location.href = "/secretary";
       } else {
@@ -137,7 +140,6 @@ export function LoginForm({
     } finally {
       setIsLoading(false);
     }
-    
   }
   return (
     <div
@@ -271,26 +273,6 @@ export function LoginForm({
             </Button>
           </form>
         </Form>
-
-        <div className="relative mb-4 mt-8">
-          <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-border/30" />
-          </div>
-          <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-card px-3 text-muted-foreground">
-              Or continue with
-            </span>
-          </div>
-        </div>
-
-        <Button
-          variant="outline"
-          className="h-12 w-full rounded-xl border-border/50 transition-all duration-300 hover:bg-accent/50"
-          type="button"
-        >
-          <Github className="mr-2 h-4 w-4" />
-          <span>GitHub</span>
-        </Button>
 
         <p className="mt-6 text-center text-sm text-muted-foreground">
           Don&apos;t have an account?{" "}
