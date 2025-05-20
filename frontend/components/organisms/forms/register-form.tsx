@@ -210,7 +210,7 @@ export function RegisterForm({
             href="/login"
             className="font-medium text-primary transition-colors hover:text-primary/80"
           >
-            Sign in
+            Login
           </a>
         </p>
       </div>

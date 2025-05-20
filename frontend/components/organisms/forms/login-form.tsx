@@ -280,7 +280,7 @@ export function LoginForm({
             href="/register"
             className="font-medium text-primary transition-colors hover:text-primary/80"
           >
-            Sign up
+            Register
           </a>
         </p>
       </div>
