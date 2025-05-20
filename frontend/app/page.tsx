@@ -75,7 +75,7 @@ export default function Home() {
                   {[1, 2, 3].map((i) => (
                     <div
                       key={i}
-                      className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full bg-card"
+                      className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full border-2 border-solid border-primary bg-card"
                     >
                       <User className="h-5 w-5 text-primary" />
                     </div>
@@ -151,7 +151,7 @@ export default function Home() {
               </div>
 
               <div className="absolute -bottom-4 -left-4 flex items-center rounded-lg bg-card p-4 shadow-lg md:hidden lg:flex">
-                <div className="mr-3 rounded-full bg-secondary p-2">
+                <div className="mr-3 rounded-full border-2 border-solid border-primary bg-secondary p-2">
                   <Phone className="h-5 w-5 text-primary" />
                 </div>
                 <div>
@@ -161,7 +161,7 @@ export default function Home() {
               </div>
 
               <div className="absolute -right-4 -top-4 flex items-center rounded-lg bg-card p-4 shadow-lg md:hidden lg:flex">
-                <div className="mr-3 rounded-full bg-secondary p-2">
+                <div className="mr-3 rounded-full border-2 border-solid border-primary bg-secondary p-2">
                   <MapPin className="h-5 w-5 text-primary" />
                 </div>
                 <div>
