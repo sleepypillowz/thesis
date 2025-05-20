@@ -66,7 +66,7 @@ const patient_items = [
   },
   {
     title: "Settings",
-    url: "/doctor/settings",
+    url: "/oncall-doctors/settings",
     icon: Settings,
   },
 ];
