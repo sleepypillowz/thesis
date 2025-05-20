@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
-import { Github, ArrowRight, Loader2 } from "lucide-react";
+import { ArrowRight, Loader2 } from "lucide-react";
 
 const formSchema = z
   .object({
@@ -59,17 +59,20 @@ export function RegisterForm({
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE}/auth/users/`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email: values.email,
-          username: values.username,
-          password: values.password,
-          first_name: values.first_name,
-          last_name: values.last_name,
-        }),
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE}/auth/users/`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email: values.email,
+            username: values.username,
+            password: values.password,
+            first_name: values.first_name,
+            last_name: values.last_name,
+          }),
+        }
+      );
 
       if (!response.ok) {
         const errorData = await response.json();
@@ -200,26 +203,6 @@ export function RegisterForm({
             </Button>
           </form>
         </Form>
-
-        <div className="relative mb-4 mt-8">
-          <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-border/30" />
-          </div>
-          <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-card px-3 text-muted-foreground">
-              Or continue with
-            </span>
-          </div>
-        </div>
-
-        <Button
-          variant="outline"
-          className="h-12 w-full rounded-xl border-border/50 transition-all duration-300 hover:bg-accent/50"
-          type="button"
-        >
-          <Github className="mr-2 h-4 w-4" />
-          <span>GitHub</span>
-        </Button>
 
         <p className="mt-6 text-center text-sm text-muted-foreground">
           Already have an account?{" "}
