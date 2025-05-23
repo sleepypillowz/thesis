@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import { GalleryVerticalEnd, ChevronRight } from "lucide-react";
+import { GalleryVerticalEnd } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { LoginForm } from "@/components/organisms/forms/login-form";
@@ -98,45 +98,6 @@ export default function Home() {
               }`}
             >
               <LoginForm />
-
-              {/* Additional Links */}
-              <div
-                className={`mt-8 space-y-4 transition-all duration-700 delay-500 ${
-                  loaded
-                    ? "opacity-100 translate-y-0"
-                    : "opacity-0 translate-y-4"
-                }`}
-              >
-                <div className="rounded-xl border border-border/40 p-4 transition-all duration-300 hover:border-border hover:bg-muted/50">
-                  <Link
-                    href="/tour"
-                    className="flex items-center justify-between"
-                  >
-                    <div>
-                      <h3 className="font-medium">New to MediTrakk?</h3>
-                      <p className="text-sm text-muted-foreground">
-                        Take a tour of our features
-                      </p>
-                    </div>
-                    <ChevronRight className="h-5 w-5 text-muted-foreground" />
-                  </Link>
-                </div>
-
-                <div className="rounded-xl border border-border/40 p-4 transition-all duration-300 hover:border-border hover:bg-muted/50">
-                  <Link
-                    href="/help"
-                    className="flex items-center justify-between"
-                  >
-                    <div>
-                      <h3 className="font-medium">Need Help?</h3>
-                      <p className="text-sm text-muted-foreground">
-                        Contact our support team
-                      </p>
-                    </div>
-                    <ChevronRight className="h-5 w-5 text-muted-foreground" />
-                  </Link>
-                </div>
-              </div>
 
               {/* Footer */}
               <div

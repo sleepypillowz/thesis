@@ -2,11 +2,11 @@ import {
   LayoutDashboard,
   ClipboardPlus,
   Calendar,
-  Clock,
   ChartArea,
   ChevronDown,
   User,
   List,
+  Settings,
 } from "lucide-react";
 
 import {
@@ -65,9 +65,9 @@ const patient_items = [
     icon: Calendar,
   },
   {
-    title: "Registration Queue",
-    url: "/oncall-doctors",
-    icon: Clock,
+    title: "Settings",
+    url: "/oncall-doctors/settings",
+    icon: Settings,
   },
 ];
 

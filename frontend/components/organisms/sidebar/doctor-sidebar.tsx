@@ -1,13 +1,17 @@
-"use client";
 import {
   LayoutDashboard,
   ClipboardPlus,
   Calendar,
-  Bandage,
   ChartArea,
-  Database,
   ChevronDown,
+  Bandage,
+  User,
+  List,
+  Pill,
+  Clock,
+  Settings,
 } from "lucide-react";
+
 import {
   Sidebar,
   SidebarContent,
@@ -20,7 +24,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { NavUser } from "@/components/molecules/nav-user";
+import { NavUser } from "../../molecules/nav-user";
 import Image from "next/image";
 import {
   Collapsible,
@@ -28,7 +32,6 @@ import {
   CollapsibleTrigger,
 } from "../../ui/collapsible";
 import Link from "next/link";
-import { useEffect, useState } from "react";
 
 const menu_items = [
   {
@@ -38,23 +41,28 @@ const menu_items = [
   },
   {
     title: "Patient Portal",
-    url: "/staff/patient-portal",
-    icon: LayoutDashboard,
+    url: "/doctor/patient-portal",
+    icon: User,
   },
   {
     title: "Doctors List",
     url: "/doctor/doctors-list",
-    icon: LayoutDashboard,
+    icon: List,
   },
   {
     title: "Medicine",
-    url: "/staff/medicine",
-    icon: Database,
+    url: "/doctor/medicine",
+    icon: Pill,
   },
   {
     title: "Reports",
     url: "/doctor/reports",
     icon: ChartArea,
+  },
+  {
+    title: "Settings",
+    url: "/doctor/settings",
+    icon: Settings,
   },
 ];
 
@@ -77,7 +85,7 @@ const patient_items = [
   {
     title: "Treatment Queue",
     url: "/doctor/treatment-queue",
-    icon: Bandage,
+    icon: Clock,
   },
 ];
 
@@ -89,63 +97,6 @@ const data = {
 };
 
 export function AppSidebar() {
-  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
-
-useEffect(() => {
-  const fetchCurrentUser = async () => {
-    try {
-      const token = localStorage.getItem("access");
-      if (!token) {
-        console.warn("No token found");
-        window.location.href = "/login";  // Immediate redirect
-        return;
-      }
-
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE}/user/users/whoami/`,
-        {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-          credentials: 'include'
-        }
-      );
-
-      if (response.status === 401) {
-        localStorage.removeItem("access");
-        window.location.href = "/login";
-        return;
-      }
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data = await response.json();
-      setCurrentUserId(data.id);
-
-    } catch (error) {
-      console.error("Failed to fetch current user", error);
-      // Show user-friendly error message
-    }
-  };
-
-  fetchCurrentUser();
-}, []);
-
-  const filteredMenuItems = currentUserId === "LFG4YJ2P"
-    ? menu_items
-    : menu_items.filter(item => 
-        ["Dashboard", "Doctors List"].includes(item.title)  // Fixed typo
-      );
-
-  const filteredPatientItems = currentUserId === "LFG4YJ2P"
-    ? patient_items
-    : patient_items.filter(item => 
-        ["Appointments", "Treatment"].includes(item.title)
-      );
-
   return (
     <Sidebar>
       <SidebarHeader>
@@ -168,7 +119,7 @@ useEffect(() => {
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarGroup>
-                {filteredMenuItems.map((item) => (
+                {menu_items.map((item) => (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton asChild>
                       <Link href={item.url}>
@@ -183,36 +134,34 @@ useEffect(() => {
           </SidebarGroupContent>
         </SidebarGroup>
 
-        {filteredPatientItems.length > 0 && (
-          <Collapsible defaultOpen className="group/collapsible">
-            <SidebarGroup>
-              <SidebarGroupLabel asChild>
-                <CollapsibleTrigger>
-                  Patients
-                  <ChevronDown className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180" />
-                </CollapsibleTrigger>
-              </SidebarGroupLabel>
-              <SidebarGroupContent>
-                <SidebarMenu>
-                  <SidebarGroup>
-                    <CollapsibleContent>
-                      {filteredPatientItems.map((item) => (
-                        <SidebarMenuItem key={item.title}>
-                          <SidebarMenuButton asChild>
-                            <Link href={item.url}>
-                              <item.icon />
-                              <span>{item.title}</span>
-                            </Link>
-                          </SidebarMenuButton>
-                        </SidebarMenuItem>
-                      ))}
-                    </CollapsibleContent>
-                  </SidebarGroup>
-                </SidebarMenu>
-              </SidebarGroupContent>
-            </SidebarGroup>
-          </Collapsible>
-        )}
+        <Collapsible defaultOpen className="group/collapsible">
+          <SidebarGroup>
+            <SidebarGroupLabel asChild>
+              <CollapsibleTrigger>
+                Patients
+                <ChevronDown className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180" />
+              </CollapsibleTrigger>
+            </SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                <SidebarGroup>
+                  <CollapsibleContent>
+                    {patient_items.map((item) => (
+                      <SidebarMenuItem key={item.title}>
+                        <SidebarMenuButton asChild>
+                          <a href={item.url}>
+                            <item.icon />
+                            <span>{item.title}</span>
+                          </a>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                    ))}
+                  </CollapsibleContent>
+                </SidebarGroup>
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        </Collapsible>
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={data.user} />

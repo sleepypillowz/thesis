@@ -161,9 +161,9 @@ export default function TreatmentForm() {
     setIsMedicineLoading(true);
     try {
       const token = localStorage.getItem("access");
-      const url = `${process.env.NEXT_PUBLIC_API_BASE}/medicine/medicine-search/?q=${encodeURIComponent(
-        query
-      )}`;
+      const url = `${
+        process.env.NEXT_PUBLIC_API_BASE
+      }/medicine/medicine-search/?q=${encodeURIComponent(query)}`;
       const res = await fetch(url, {
         method: "GET",
         headers: {
@@ -1080,9 +1080,7 @@ export default function TreatmentForm() {
                   </button>
                   <button
                     className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                    onClick={() =>
-                      router.push("/doctor/patient-treatment-queue")
-                    }
+                    onClick={() => router.push("/doctor/treatment-queue")}
                   >
                     Treatment Queue
                   </button>

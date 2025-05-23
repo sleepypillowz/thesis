@@ -1,10 +1,9 @@
-"use client";
-import { useState, useEffect } from "react";
 import {
   Phone,
   Calendar,
   MapPin,
   ChevronRight,
+  User,
   Users,
   Shield,
   Clock,
@@ -15,67 +14,50 @@ import HeroHeader from "@/components/organisms/hero-header";
 import { Button } from "@/components/ui/button";
 
 export default function Home() {
-  const [isVisible, setIsVisible] = useState(false);
-  const [activeService, setActiveService] = useState(0);
-
-  useEffect(() => {
-    setIsVisible(true);
-
-    const interval = setInterval(() => {
-      setActiveService((prev) => (prev + 1) % 3);
-    }, 5000);
-
-    return () => clearInterval(interval);
-  }, []);
-
   const services = [
     {
       title: "Family Medicine",
       description:
         "Comprehensive healthcare for patients of all ages, focusing on prevention and treatment of common illnesses.",
-      icon: <Users className="h-8 w-8 text-blue-500" />,
+      icon: <Users className="h-8 w-8 text-primary" />,
     },
     {
       title: "Preventive Care",
       description:
         "Regular check-ups and screenings to maintain your health and detect issues before they become serious.",
-      icon: <Shield className="h-8 w-8 text-blue-500" />,
+      icon: <Shield className="h-8 w-8 text-primary" />,
     },
     {
       title: "Urgent Care",
       description:
         "Immediate treatment for non-life-threatening injuries and illnesses when you need it most.",
-      icon: <Clock className="h-8 w-8 text-blue-500" />,
+      icon: <Clock className="h-8 w-8 text-primary" />,
     },
   ];
 
   return (
-    <main className="flex min-h-screen flex-col bg-gradient-to-br from-blue-50 to-white">
+    <main className="flex min-h-screen flex-col">
       <HeroHeader />
 
       {/* Hero Section */}
-      <div
-        className={`flex-1 pt-16 pb-24 px-6 transition-opacity duration-1000 ${
-          isVisible ? "opacity-100" : "opacity-0"
-        }`}
-      >
+      <div className="flex-1 px-6 pb-24 pt-16 transition-opacity duration-1000">
         <div className="container mx-auto">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between">
             <div className="mb-12 md:mb-0 md:w-1/2">
-              <p className="mb-6 inline-block rounded-full bg-blue-100 px-4 py-1 text-sm font-medium text-blue-700">
+              <p className="mb-6 inline-block rounded-full bg-primary px-4 py-1 text-sm font-medium text-primary-foreground">
                 Your Health, Our Priority
               </p>
-              <h1 className="mb-6 text-4xl font-extrabold leading-tight text-gray-900 md:text-5xl lg:text-6xl">
+              <h1 className="mb-6 text-4xl font-extrabold leading-tight md:text-5xl lg:text-6xl">
                 Malibiran <br />
                 <span className="text-primary">Medical Clinic</span>
               </h1>
-              <p className="mb-8 max-w-lg text-lg text-gray-600">
+              <p className="mb-8 max-w-lg text-lg">
                 Providing quality healthcare services with compassion and
                 expertise. Visit our clinic to experience personalized care for
                 all your medical needs.
               </p>
               <div className="flex flex-wrap gap-4">
-                <Button asChild>
+                <Button asChild className="rounded-full">
                   <Link href="/login">
                     <Calendar className="mr-2 h-4 w-4" />
                     Book Appointment
@@ -83,7 +65,7 @@ export default function Home() {
                   </Link>
                 </Button>
 
-                <Button asChild variant="outline">
+                <Button asChild variant="outline" className="rounded-full">
                   <Link href="/services">Our Services</Link>
                 </Button>
               </div>
@@ -93,15 +75,9 @@ export default function Home() {
                   {[1, 2, 3].map((i) => (
                     <div
                       key={i}
-                      className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full border-2 border-white bg-gray-200"
+                      className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full border-2 border-solid border-primary bg-card"
                     >
-                      <Image
-                        src={`/api/placeholder/40/40`}
-                        width={500}
-                        height={500}
-                        alt="Patient"
-                        className="h-full w-full object-cover"
-                      />
+                      <User className="h-5 w-5 text-primary" />
                     </div>
                   ))}
                 </div>
@@ -118,15 +94,13 @@ export default function Home() {
                       </svg>
                     ))}
                   </div>
-                  <p className="text-sm text-gray-600">
-                    Trusted by 2,000+ patients
-                  </p>
+                  <p className="text-sm">Trusted by 2,000+ patients</p>
                 </div>
               </div>
             </div>
 
             <div className="relative md:w-1/2">
-              <div className="overflow-hidden rounded-2xl bg-white shadow-xl">
+              <div className="overflow-hidden rounded-2xl bg-card shadow-xl">
                 <Image
                   src="/location.png"
                   width={1327}
@@ -148,21 +122,12 @@ export default function Home() {
                     {services.map((service, index) => (
                       <div
                         key={index}
-                        className={`flex items-start p-3 rounded-lg transition-all duration-300 ${
-                          activeService === index
-                            ? "bg-blue-50 shadow-sm"
-                            : "hover:bg-gray-50"
-                        }`}
-                        onMouseEnter={() => setActiveService(index)}
+                        className="flex items-start rounded-lg p-3 transition-all duration-300"
                       >
                         <div className="mr-4 shrink-0">{service.icon}</div>
                         <div>
-                          <h4 className="font-medium text-gray-900">
-                            {service.title}
-                          </h4>
-                          <p className="text-sm text-gray-600">
-                            {service.description}
-                          </p>
+                          <h4 className="font-medium">{service.title}</h4>
+                          <p className="text-sm">{service.description}</p>
                         </div>
                       </div>
                     ))}
@@ -177,7 +142,7 @@ export default function Home() {
                         View all services
                         <ChevronRight className="ml-1 h-4 w-4" />
                       </Link>
-                      <Button asChild>
+                      <Button asChild className="rounded-xl">
                         <Link href="/login">Book Now</Link>
                       </Button>
                     </div>
@@ -185,23 +150,23 @@ export default function Home() {
                 </div>
               </div>
 
-              <div className="absolute -bottom-4 -left-4 flex items-center rounded-lg bg-white p-4 shadow-lg md:hidden lg:flex">
-                <div className="mr-3 rounded-full bg-blue-100 p-2">
-                  <Phone className="h-5 w-5 text-blue-600" />
+              <div className="absolute -bottom-4 -left-4 flex items-center rounded-lg bg-card p-4 shadow-lg md:hidden lg:flex">
+                <div className="mr-3 rounded-full border-2 border-solid border-primary bg-secondary p-2">
+                  <Phone className="h-5 w-5 text-primary" />
                 </div>
                 <div>
-                  <p className="text-xs text-gray-500">Call us now</p>
-                  <p className="font-bold text-gray-900">0999 820 5684</p>
+                  <p className="text-xs">Call us now</p>
+                  <p className="font-bold">0999 820 5684</p>
                 </div>
               </div>
 
-              <div className="absolute -right-4 -top-4 flex items-center rounded-lg bg-white p-4 shadow-lg md:hidden lg:flex">
-                <div className="mr-3 rounded-full bg-blue-100 p-2">
-                  <MapPin className="h-5 w-5 text-blue-600" />
+              <div className="absolute -right-4 -top-4 flex items-center rounded-lg bg-card p-4 shadow-lg md:hidden lg:flex">
+                <div className="mr-3 rounded-full border-2 border-solid border-primary bg-secondary p-2">
+                  <MapPin className="h-5 w-5 text-primary" />
                 </div>
                 <div>
-                  <p className="text-xs text-gray-500">Our location</p>
-                  <p className="font-bold text-gray-900">130 Old Samson Rd.</p>
+                  <p className="text-xs">Our location</p>
+                  <p className="font-bold">130 Old Samson Rd.</p>
                 </div>
               </div>
             </div>

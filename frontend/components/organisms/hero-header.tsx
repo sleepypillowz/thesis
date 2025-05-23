@@ -1,59 +1,44 @@
+"use client";
 import Link from "next/link";
-import { buttonVariants } from "../ui/button";
+import { Button } from "../ui/button";
+import { usePathname } from "next/navigation";
+import clsx from "clsx";
 
 const HeroHeader = () => {
+  const pathname = usePathname();
+
+  const navLinks = [
+    { href: "/", label: "Home" },
+    { href: "/services", label: "Services" },
+    { href: "/doctors-list", label: "Doctors" },
+    { href: "/about", label: "About" },
+    { href: "/contact", label: "Contact" },
+  ];
+
   return (
-    <nav className="bg-white px-6 py-4 shadow-sm">
+    <nav className="z-50 bg-card px-6 py-4 shadow-sm">
       <div className="container mx-auto flex items-center justify-between">
         <div className="flex items-center">
-          <div className="mr-3 flex h-10 w-10 items-center justify-center rounded-full bg-blue-600 font-bold text-white">
-            M
-          </div>
-          <span className="text-xl font-bold text-gray-900">
-            Malibiran Clinic
-          </span>
+          <span className="text-xl font-bold">Malibiran Clinic</span>
         </div>
         <div className="hidden items-center space-x-6 md:flex">
-          <Link
-            href="/"
-            className="text-gray-600 transition-colors hover:text-blue-600"
-          >
-            Home
-          </Link>
-          <Link
-            href="/services"
-            className="text-gray-600 transition-colors hover:text-blue-600"
-          >
-            Services
-          </Link>
-          <Link
-            href="/doctors-list"
-            className="text-gray-600 transition-colors hover:text-blue-600"
-          >
-            Doctors
-          </Link>
-          <Link
-            href="/about"
-            className="text-gray-600 transition-colors hover:text-blue-600"
-          >
-            About
-          </Link>
-          <Link
-            href="/contact"
-            className="text-gray-600 transition-colors hover:text-blue-600"
-          >
-            Contact
-          </Link>
+          {navLinks.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className={clsx(
+                "nav-link",
+                pathname === link.href && "text-primary font-semibold"
+              )}
+            >
+              {link.label}
+            </Link>
+          ))}
         </div>
-        <div className="hidden md:block">
-          <Link
-            href="/login"
-            className={buttonVariants({ variant: "default" })}
-          >
-            Login
-          </Link>
-        </div>
-        <button className="text-gray-600 md:hidden">
+        <Button className="rounded-xl transition-transform duration-200 hover:scale-105 hover:shadow-md">
+          <Link href="/login">Login</Link>
+        </Button>
+        <button className="md:hidden">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className="h-6 w-6"
