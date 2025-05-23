@@ -562,7 +562,7 @@ const DoctorsPage: React.FC = () => {
     try {
       const token = localStorage.getItem("access");
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE}0/user/users/${doctorId}/`,
+        `${process.env.NEXT_PUBLIC_API_BASE}/user/users/${doctorId}/`,
         {
           method: "DELETE", // Still using DELETE method but backend archives
           headers: {

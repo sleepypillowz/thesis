@@ -109,7 +109,10 @@ export function LoginForm({
 
       <div className="bg-card p-6 shadow-lg">
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+          <form onSubmit={(e) => {
+            e.preventDefault();
+            form.handleSubmit(onSubmit)();
+            }} className="space-y-5">
             <FormField
               control={form.control}
               name="email"

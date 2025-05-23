@@ -61,7 +61,7 @@ const patient_items = [
   },
   {
     title: "Appointments",
-    url: "/oncall-doctors",
+    url: "/oncall-doctors/appointments",
     icon: Calendar,
   },
   {

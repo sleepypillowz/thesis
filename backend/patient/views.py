@@ -847,14 +847,97 @@ class PatientReportview(APIView):
 
     def get(self, request, patient_id):
         try:
+            #fetch patient
             response = supabase.table("patient_patient").select("*").eq("patient_id",patient_id).execute()
 
             if hasattr(response, 'error') and response.error:
                 error_msg = getattr(response.error, 'message', 'Unknown error')
                 return Response({"error": error_msg}, status=status.HTTP_400_BAD_REQUEST)
-            patient_report = response.data[0] if response.data else None
-            serializer = PatientReportSerializer(patient_report, many=False)
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            patient_info = response.data[0] if response.data else None
+            #fetch patient latest preliminary assessment 
+            assessment_obj = PreliminaryAssessment.objects.filter(patient__patient_id=patient_id).order_by("-assessment_date").first()
+            if assessment_obj:
+                assessment_data = PreliminaryAssessmentBasicSerializer(assessment_obj).data
+            else:
+                assessment_data = None
+            
+            #fetch recent medications
+            treatment_response = supabase.table("queueing_treatment").select(
+                """
+                id, 
+                treatment_notes, 
+                created_at, 
+                updated_at, 
+                patient_id,             
+                doctor_id(
+                    id,
+                    first_name,
+                    last_name,
+                    user_doctor(specialization)
+                ),
+                queueing_treatment_diagnoses(
+                    id,
+                    treatment_id,
+                    diagnosis_id,
+                    patient_diagnosis(*)
+                ),
+                queueing_treatment_prescriptions(
+                    id,
+                    treatment_id,
+                    prescription_id,
+                    patient_prescription(*, medicine_medicine(id, name))
+                )
+            """
+            ).eq("patient_id", patient_id).order("created_at", desc=True).execute() 
+            treatments = treatment_response.data
+            
+            patient_report = {
+                "patient": patient_info,
+                "preliminary_assessment": assessment_data,
+                "recent_treatment": None,
+                "all_prescriptions": None
+            }
+            
+            if treatments:
+                transformed_treatments = []
+                
+                for item in treatments:
+                    raw_doc     = item.get("doctor_id") or {}
+                    raw_profile = raw_doc.get("user_doctor") or {}                    
+
+                    doctor_info = {
+                        "id": raw_doc.get("id"),
+                        "name": " ".join(filter(None, [raw_doc.get("first_name"), raw_doc.get("last_name")])),
+                        "specialization": raw_profile.get("specialization")
+                    }
+                    
+                    diagnoses = [
+                        d["patient_diagnosis"]
+                        for d in item.get("queueing_treatment_diagnoses", [])
+                        if d.get("patient_diagnosis")
+                    ]
+                    
+                    prescriptions = []
+                    for p in item.get("queueing_treatment_prescriptions", []):
+                        presc = p.get("patient_prescription")
+                        if not presc:
+                            continue
+                        med = presc.pop("medicine_medicine", None)
+                        prescriptions.append({ **presc, "medication": med })
+
+                    transformed_treatments.append({
+                        "id":             item.get("id"),
+                        "treatment_notes":item.get("treatment_notes"),
+                        "created_at":     item.get("created_at"),
+                        "updated_at":     item.get("updated_at"),
+                        "doctor_info":    doctor_info,
+                        "diagnoses":      diagnoses,
+                        "prescriptions":  prescriptions
+                    })
+                patient_report["recent_treatment"] = transformed_treatments[0]
+                patient_report["all_prescriptions"] = prescriptions
+
+            return Response(patient_report, status=status.HTTP_200_OK)
 
         except Exception as e:
             print("Exception ", e)
