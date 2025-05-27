@@ -1,7 +1,7 @@
-// app/reports/page.tsx
-
 "use client";
-// import { useState, useEffect } from 'react';
+
+import { useEffect, useState } from "react";
+import axios from "axios";
 import {
   BarChart,
   Bar,
@@ -17,15 +17,46 @@ import {
 
 const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#AF19FF"];
 
-export default function ReportDashboard() {
-  // Mock data
-  const patientVisitsData = [
-    { month: "Jan", count: 65 },
-    { month: "Feb", count: 85 },
-    { month: "Mar", count: 95 },
-    { month: "Apr", count: 78 },
-    { month: "May", count: 88 },
-  ];
+interface MonthlyVisit {
+  month: string;
+  count: number;
+}
+
+export default function ReportDashboard()  {
+  const [isClient, setIsClient] = useState(false);
+  const [patientVisitsData, setPatientVisitsData] = useState<MonthlyVisit[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  useEffect(() => {
+    const fetchPatientVisits = async () => {
+      try {
+        const accessToken = localStorage.getItem("access");
+        const response = await axios.get<MonthlyVisit[]>(
+          `${process.env.NEXT_PUBLIC_API_BASE}/patient/reports/monthly-visits/`,
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+            
+          }
+        );
+        setPatientVisitsData(response.data);
+      } catch (error) {
+        console.error("Error fetching patient visits:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPatientVisits();
+  }, []);
+  if (!isClient) return null;
+
+  const totalVisits = patientVisitsData.reduce((sum, entry) => sum + entry.count, 0);
 
   const commonDiseases = [
     { name: "Hypertension", value: 45 },
@@ -63,7 +94,7 @@ export default function ReportDashboard() {
         </div>
         <div className="rounded-lg bg-white p-6 shadow-sm">
           <h3 className="text-gray-500">Monthly Visits</h3>
-          <p className="text-3xl font-bold">245</p>
+          <p className="text-3xl font-bold">{loading ? "Loading..." : totalVisits}</p>
         </div>
         <div className="rounded-lg bg-white p-6 shadow-sm">
           <h3 className="text-gray-500">Lab Tests (May)</h3>
@@ -77,17 +108,21 @@ export default function ReportDashboard() {
 
       {/* Charts Grid */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        {/* Patient Visits Chart */}
+        {/* Monthly Visits Chart */}
         <div className="rounded-lg bg-white p-6 shadow-sm">
           <h2 className="mb-4 text-xl font-semibold">Monthly Patient Visits</h2>
-          <BarChart width={500} height={300} data={patientVisitsData}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="month" />
-            <YAxis />
-            <Tooltip />
-            <Legend />
-            <Bar dataKey="count" fill="#8884d8" />
-          </BarChart>
+          {loading ? (
+            <p className="text-gray-500">Loading chart...</p>
+          ) : (
+            <BarChart width={500} height={300} data={patientVisitsData}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="month" />
+              <YAxis />
+              <Tooltip />
+              <Legend />
+              <Bar dataKey="count" fill="#8884d8" />
+            </BarChart>
+          )}
         </div>
 
         {/* Lab Tests Chart */}
@@ -151,16 +186,11 @@ export default function ReportDashboard() {
       <div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2">
         <div className="rounded-lg bg-white p-6 shadow-sm">
           <h2 className="mb-4 text-xl font-semibold">Patient Demographics</h2>
-          <div className="text-gray-500">
-            Age/Gender distribution chart placeholder
-          </div>
+          <div className="text-gray-500">Age/Gender distribution chart placeholder</div>
         </div>
-
         <div className="rounded-lg bg-white p-6 shadow-sm">
           <h2 className="mb-4 text-xl font-semibold">Diagnosis Trends</h2>
-          <div className="text-gray-500">
-            Diagnosis patterns over time placeholder
-          </div>
+          <div className="text-gray-500">Diagnosis patterns over time placeholder</div>
         </div>
       </div>
     </div>

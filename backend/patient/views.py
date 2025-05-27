@@ -24,9 +24,13 @@ from rest_framework import status
 from user.permissions import IsMedicalStaff, isDoctor, isSecretary, isAdmin
 
 from rest_framework import generics
-from .models import LabRequest, LabResult
+from .models import LabRequest, LabResult, Diagnosis
 from rest_framework.parsers import MultiPartParser, FormParser
 
+#reports
+from django.db.models import Count
+from django.db.models.functions import TruncMonth
+from django.utils.dateparse import parse_date
 
 class PatientListView(APIView):
     permission_classes = [IsMedicalStaff]
@@ -891,11 +895,30 @@ class PatientReportview(APIView):
             ).eq("patient_id", patient_id).order("created_at", desc=True).execute() 
             treatments = treatment_response.data
             
+            # laboratory fetch
+            lab_results_qs = LabResult.objects.filter(
+                lab_request__patient__patient_id=patient_id
+            )
+            lab_results_serialized = []
+            if lab_results_qs.exists():
+                lab_results_serialized = LabResultSerializer(
+                    lab_results_qs, many=True, context={'request': request}
+                ).data
+            else:
+                lab_results_serialized = []
+                
+            all_diagnoses = []
+            all_prescriptions = []
+            all_treatment_notes = []
+            
             patient_report = {
                 "patient": patient_info,
                 "preliminary_assessment": assessment_data,
                 "recent_treatment": None,
-                "all_prescriptions": None
+                "all_treatment_notes": None,
+                "all_prescriptions": None,
+                "all_diagnoses": None,
+                "laboratories":  lab_results_serialized
             }
             
             if treatments:
@@ -916,6 +939,7 @@ class PatientReportview(APIView):
                         for d in item.get("queueing_treatment_diagnoses", [])
                         if d.get("patient_diagnosis")
                     ]
+                    all_diagnoses.extend(diagnoses)
                     
                     prescriptions = []
                     for p in item.get("queueing_treatment_prescriptions", []):
@@ -924,7 +948,12 @@ class PatientReportview(APIView):
                             continue
                         med = presc.pop("medicine_medicine", None)
                         prescriptions.append({ **presc, "medication": med })
-
+                    all_prescriptions.extend(prescriptions)
+                    
+                    treatment_notes = item.get("treatment_notes")
+                    if treatment_notes:
+                        all_treatment_notes.append(treatment_notes)
+                    
                     transformed_treatments.append({
                         "id":             item.get("id"),
                         "treatment_notes":item.get("treatment_notes"),
@@ -935,10 +964,102 @@ class PatientReportview(APIView):
                         "prescriptions":  prescriptions
                     })
                 patient_report["recent_treatment"] = transformed_treatments[0]
-                patient_report["all_prescriptions"] = prescriptions
+                patient_report["all_treatment_notes"] = all_treatment_notes
+                patient_report["all_prescriptions"] = all_prescriptions
+                patient_report["all_diagnoses"] = all_diagnoses
 
             return Response(patient_report, status=status.HTTP_200_OK)
 
         except Exception as e:
             print("Exception ", e)
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+class MonthlyVisitsAPIView(APIView):
+    permission_classes = [IsMedicalStaff]
+    def get(self, request):
+        start_raw = request.query_params.get("start")
+        end_raw = request.query_params.get("end")
+
+        start_date = parse_date(str(start_raw)) if start_raw else None
+        end_date = parse_date(str(end_raw)) if end_raw else None
+
+
+        queryset = TemporaryStorageQueue.objects.all()
+
+        if start_date and end_date:
+            queryset = queryset.filter(created_at__date__range=(start_date, end_date))
+        elif start_date:
+            queryset = queryset.filter(created_at__date__gte=start_date)
+        elif end_date:
+            queryset = queryset.filter(created_at__date__lte=end_date)
+
+        # Annotate with truncated month (creates a temporary alias, not a model field)
+        monthly_data = (
+            queryset
+            .annotate(report_month=TruncMonth('created_at'))
+            .values('report_month')
+            .annotate(count=Count('id'))
+            .order_by('report_month')
+        )
+
+        result = [
+            {
+                "month": entry["report_month"].strftime("%b %Y"),
+                "count": entry["count"]
+            }
+            for entry in monthly_data if entry["report_month"]
+        ]
+
+        return Response(result)
+
+class MonthlyLabResultAPIView(APIView):
+    permission_classes = [IsMedicalStaff]
+    def get(self, request):
+        start_raw = request.query_params.get("start")
+        end_raw = request.query_params.get("end")
+
+        start_date = parse_date(str(start_raw)) if start_raw else None
+        end_date = parse_date(str(end_raw)) if end_raw else None
+
+
+        queryset = LabResult.objects.all()
+
+        if start_date and end_date:
+            queryset = queryset.filter(created_at__date__range=(start_date, end_date))
+        elif start_date:
+            queryset = queryset.filter(created_at__date__gte=start_date)
+        elif end_date:
+            queryset = queryset.filter(created_at__date__lte=end_date)
+
+        # Annotate with truncated month (creates a temporary alias, not a model field)
+        monthly_data = (
+            queryset
+            .annotate(report_month=TruncMonth('uploaded_at'))
+            .values('report_month')
+            .annotate(count=Count('id'))
+            .order_by('report_month')
+        )
+
+        result = [
+            {
+                "month": entry["report_month"].strftime("%b %Y"),
+                "count": entry["count"]
+            }
+            for entry in monthly_data if entry["report_month"]
+        ]
+
+        return Response(result)
+    
+class CommonDiseasesReportAPIView(APIView):
+    permission_classes = [IsMedicalStaff]
+
+    def get(self, request):
+        # Group by diagnosis_description and count occurrences
+        common_diseases = (
+            Diagnosis.objects
+            .values("diagnosis_description")
+            .annotate(count=Count("id"))
+            .order_by("-count")[:10]  # Top 10 most common diagnoses
+        )
+
+        return Response(common_diseases)

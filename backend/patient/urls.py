@@ -33,6 +33,10 @@ urlpatterns = [
     
     #patientreports
     path('patient/patient-report/<str:patient_id>/', views.PatientReportview.as_view(), name='patient-report'),
+    path('patient/reports/monthly-visits/', views.MonthlyVisitsAPIView.as_view(), name='monthly-visits'),
+    path("patient/reports/monthly-lab-results/", views.MonthlyLabResultAPIView.as_view(), name="monthly-lab-results"),
+    path("patient/reports/common-diseases/", views.CommonDiseasesReportAPIView.as_view(), name="common-diseases"),
+
 
     # download file
     path('patient/lab-results/<str:result_id>/download/', views.download_lab_result, name='download_lab_result'),

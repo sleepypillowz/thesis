@@ -32,6 +32,7 @@ export interface QueueData {
   complaint: string;
   // Removed priority_level input from the queue data because it will be auto-determined
 }
+
 const PatientRegistrationForm: React.FC = () => {
   const [selectedPatient, setSelectedPatient] = useState<PatientData | null>(
     null
@@ -420,7 +421,7 @@ export default function Page() {
           className="mb-6 flex items-center rounded-lg bg-white px-4 py-2 text-slate-600 shadow-sm transition-colors hover:text-blue-600"
         >
           <FaArrowLeft className="mr-2" />
-          Back 
+          Back to Dashboard
         </button>
         <PatientRegistrationForm />
       </div>
