@@ -21,6 +21,10 @@ interface MonthlyVisit {
   month: string;
   count: number;
 }
+interface MonthlyLabTest {
+  month: string;
+  count: number;
+}
 
 interface CommonDisease {
   diagnosis_description: string;
@@ -30,60 +34,58 @@ interface CommonDisease {
 export default function ReportDashboard() {
   const [isClient, setIsClient] = useState(false);
   const [patientVisitsData, setPatientVisitsData] = useState<MonthlyVisit[]>([]);
+  const [labTestsData, setLabTestsData] = useState<MonthlyLabTest[]>([]);
   const [commonDiseases, setCommonDiseases] = useState<CommonDisease[]>([]);
   const [loadingVisits, setLoadingVisits] = useState(true);
+  const [loadingLabTests, setLoadingLabTests] = useState(true);
   const [loadingDiseases, setLoadingDiseases] = useState(true);
 
   useEffect(() => {
     setIsClient(true);
-  }, []);
 
-  useEffect(() => {
-    const fetchPatientVisits = async () => {
+    const fetchAllData = async () => {
+      const accessToken = localStorage.getItem("access");
+
+      if (!accessToken) {
+        console.error("Access token not found in localStorage.");
+        return;
+      }
+
       try {
-        const accessToken = localStorage.getItem("access");
-        const response = await axios.get<MonthlyVisit[]>(
-          `${process.env.NEXT_PUBLIC_API_BASE}/patient/reports/monthly-visits/`,
-          {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
-          }
-        );
-        setPatientVisitsData(response.data);
+        const [visitsRes, labRes, diseaseRes] = await Promise.all([
+          axios.get<MonthlyVisit[]>(
+            `${process.env.NEXT_PUBLIC_API_BASE}/patient/reports/monthly-visits/`,
+            { headers: { Authorization: `Bearer ${accessToken}` } }
+          ),
+          axios.get<MonthlyLabTest[]>(
+            `${process.env.NEXT_PUBLIC_API_BASE}/patient/reports/monthly-lab-results/`,
+            { headers: { Authorization: `Bearer ${accessToken}` } }
+          ),
+          axios.get<CommonDisease[]>(
+            `${process.env.NEXT_PUBLIC_API_BASE}/patient/reports/common-diseases/`,
+            { headers: { Authorization: `Bearer ${accessToken}` } }
+          ),
+        ]);
+
+        setPatientVisitsData(visitsRes.data);
+        setLabTestsData(labRes.data);
+        setCommonDiseases(diseaseRes.data);
       } catch (error) {
-        console.error("Error fetching patient visits:", error);
+        console.error("Error fetching dashboard data:", error);
       } finally {
         setLoadingVisits(false);
-      }
-    };
-
-    const fetchCommonDiseases = async () => {
-      try {
-        const accessToken = localStorage.getItem("access");
-        const response = await axios.get<CommonDisease[]>(
-          `${process.env.NEXT_PUBLIC_API_BASE}/patient/reports/common-diseases/`,
-          {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
-          }
-        );
-        setCommonDiseases(response.data);
-      } catch (error) {
-        console.error("Error fetching common diseases:", error);
-      } finally {
+        setLoadingLabTests(false);
         setLoadingDiseases(false);
       }
     };
 
-    fetchPatientVisits();
-    fetchCommonDiseases();
+    fetchAllData();
   }, []);
 
   if (!isClient) return null;
 
   const totalVisits = patientVisitsData.reduce((sum, entry) => sum + entry.count, 0);
+  const totalLabTests = labTestsData.reduce((sum, entry) => sum + entry.count, 0);
 
   const commonMedicines = [
     { medicine: "Paracetamol", count: 120 },
@@ -92,19 +94,10 @@ export default function ReportDashboard() {
     { medicine: "Metformin", count: 58 },
   ];
 
-  const labTestsData = [
-    { month: "Jan", count: 45 },
-    { month: "Feb", count: 55 },
-    { month: "Mar", count: 60 },
-    { month: "Apr", count: 52 },
-    { month: "May", count: 65 },
-  ];
-
   return (
     <div className="min-h-screen bg-gray-50 p-8">
       <h1 className="mb-8 text-3xl font-bold text-gray-800">Medical Reports Dashboard</h1>
 
-      {/* Stats Cards */}
       <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
         <div className="rounded-lg bg-white p-6 shadow-sm">
           <h3 className="text-gray-500">Total Patients</h3>
@@ -115,8 +108,8 @@ export default function ReportDashboard() {
           <p className="text-3xl font-bold">{loadingVisits ? "Loading..." : totalVisits}</p>
         </div>
         <div className="rounded-lg bg-white p-6 shadow-sm">
-          <h3 className="text-gray-500">Lab Tests (May)</h3>
-          <p className="text-3xl font-bold">89</p>
+          <h3 className="text-gray-500">Lab Tests (Total)</h3>
+          <p className="text-3xl font-bold">{loadingLabTests ? "Loading..." : totalLabTests}</p>
         </div>
         <div className="rounded-lg bg-white p-6 shadow-sm">
           <h3 className="text-gray-500">Active Prescriptions</h3>
@@ -124,9 +117,7 @@ export default function ReportDashboard() {
         </div>
       </div>
 
-      {/* Charts Grid */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        {/* Monthly Visits Chart */}
         <div className="rounded-lg bg-white p-6 shadow-sm">
           <h2 className="mb-4 text-xl font-semibold">Monthly Patient Visits</h2>
           {loadingVisits ? (
@@ -143,20 +134,22 @@ export default function ReportDashboard() {
           )}
         </div>
 
-        {/* Laboratory Tests Chart */}
         <div className="rounded-lg bg-white p-6 shadow-sm">
           <h2 className="mb-4 text-xl font-semibold">Laboratory Tests</h2>
-          <BarChart width={500} height={300} data={labTestsData}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="month" />
-            <YAxis />
-            <Tooltip />
-            <Legend />
-            <Bar dataKey="count" fill="#82ca9d" />
-          </BarChart>
+          {loadingLabTests ? (
+            <p className="text-gray-500">Loading chart...</p>
+          ) : (
+            <BarChart width={500} height={300} data={labTestsData}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="month" />
+              <YAxis />
+              <Tooltip />
+              <Legend />
+              <Bar dataKey="count" fill="#82ca9d" />
+            </BarChart>
+          )}
         </div>
 
-        {/* Common Diseases Pie Chart */}
         <div className="rounded-lg bg-white p-6 shadow-sm">
           <h2 className="mb-4 text-xl font-semibold">Common Diseases</h2>
           {loadingDiseases ? (
@@ -183,7 +176,6 @@ export default function ReportDashboard() {
           )}
         </div>
 
-        {/* Common Medications List */}
         <div className="rounded-lg bg-white p-6 shadow-sm">
           <h2 className="mb-4 text-xl font-semibold">Frequent Medications</h2>
           <div className="space-y-3">
@@ -202,7 +194,6 @@ export default function ReportDashboard() {
         </div>
       </div>
 
-      {/* Additional Reports */}
       <div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2">
         <div className="rounded-lg bg-white p-6 shadow-sm">
           <h2 className="mb-4 text-xl font-semibold">Patient Demographics</h2>
