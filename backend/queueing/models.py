@@ -74,7 +74,9 @@ class PreliminaryAssessment(models.Model):
     assessment = models.TextField(max_length=200,blank=True, null=True)
     assessment_date = models.DateTimeField(auto_now_add=True)
     
-
+class TreatmentManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().select_related('patient', 'doctor')
 class Treatment(models.Model):
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name="treatments")
     doctor = models.ForeignKey(
@@ -90,6 +92,6 @@ class Treatment(models.Model):
     treatment_notes = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)  
     updated_at = models.DateTimeField(auto_now=True)  
-
+    objects = TreatmentManager()
     def __str__(self):
         return f"Treatment for {self.patient.first_name} {self.patient.last_name}"

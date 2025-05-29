@@ -128,6 +128,6 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiY
 
 
 ### Get referrals
-GET http://localhost:8000/patient/reports/monthly-visits/?start=2025-01-01&end=2025-05-31
+GET http://localhost:8000/patient/reports/frequent-medicines/
 Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzUzNjQ1NDYzLCJpYXQiOjE3NDU4Njk0NjMsImp0aSI6IjAyYWM4NjJlZTk2ZDQ4NmFhZjM1NWQzMzQzZGJjMTkwIiwidXNlcl9pZCI6IkxGRzRZSjJQIiwiaXNfc3RhZmYiOmZhbHNlLCJpc19zdXBlcnVzZXIiOmZhbHNlLCJlbWFpbCI6ImdlbmVyYWxkb2N0b3JAaG9zcGl0YWwuY29tIiwicm9sZSI6ImRvY3RvciIsImZpcnN0X25hbWUiOiJKYW5lIn0.CtCBKKY8uPtCq_u2V4oScC5vRQDtNTEc-nWxVsd2R9s

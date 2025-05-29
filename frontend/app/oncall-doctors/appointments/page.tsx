@@ -126,7 +126,7 @@ export default function ReferralsPage() {
     }
   };
 
-  const handleProceed = (patient: string) => router.push(`/doctor/treatment-details/${patient}/`);
+  const handleProceed = (patient: string) => router.push(`/oncall-doctors/treatment-details/${patient}/`);
 
   const getStatusColor = (status: string) => {
     switch (status) {

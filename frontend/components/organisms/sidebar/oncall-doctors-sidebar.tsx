@@ -2,7 +2,7 @@ import {
   LayoutDashboard,
   ClipboardPlus,
   Calendar,
-  ChartArea,
+  // ChartArea,
   ChevronDown,
   User,
   List,
@@ -46,11 +46,11 @@ const menu_items = [
     url: "/oncall-doctors/doctors-list",
     icon: List,
   },
-  {
-    title: "Reports",
-    url: "/oncall-doctors/reports",
-    icon: ChartArea,
-  },
+  // {
+  //   title: "Reports",
+  //   url: "/oncall-doctors/reports",
+  //   icon: ChartArea,
+  // },
 ];
 
 const patient_items = [

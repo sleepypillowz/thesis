@@ -12,6 +12,8 @@ from rest_framework import serializers
 from .models import Patient  # Adjust as needed
 from medicine.serializers import MedicineSerializer
 
+from queueing.models import TemporaryStorageQueue, Treatment
+
 class PatientSerializer(serializers.Serializer):
     patient_id = serializers.CharField(max_length=8)
     first_name = serializers.CharField(max_length=200, allow_blank=True, required=False)
@@ -245,3 +247,67 @@ class PatientReportSerializer(serializers.Serializer):
                 return None
         today = date.today()
         return today.year - dob.year - ((today.month, today.day) < (dob.month, dob.day))
+    
+class PatientVisitSerializer(serializers.ModelSerializer):
+    visit_date = serializers.DateField(source='queue_date')
+    patient_name = serializers.CharField(source='patient.first_name')
+    visit_created_at = serializers.DateTimeField(source='created_at')
+    treatment_created_at = serializers.SerializerMethodField()
+
+    class Meta:
+        model = TemporaryStorageQueue
+        fields = [
+            'id', 'patient_name', 'priority_level', 'status',
+            'complaint', 'queue_number', 'visit_date',
+            'visit_created_at', 'treatment_created_at',
+        ]
+
+    def get_treatment_created_at(self, obj):
+        # Assuming the latest treatment corresponds to this queue
+        treatment = Treatment.objects.filter(patient=obj.patient).order_by('-created_at').first()
+        return treatment.created_at if treatment else None
+
+class PatientLabTestSerializer(serializers.ModelSerializer):
+    requested_by = serializers.SerializerMethodField()
+    submitted_by = serializers.SerializerMethodField()
+    class Meta:
+        model = LabResult
+        fields = [
+            'id', 'requested_by', 'uploaded_at', 'submitted_by'
+        ]
+        
+    def get_requested_by(self, obj):
+        if obj.lab_request and obj.lab_request.requested_by:
+            return obj.lab_request.requested_by.get_full_name() or obj.lab_request.requested_by.username
+        return None
+    
+    def get_submitted_by(self, obj):
+        if obj.submitted_by:
+            return obj.submitted_by.get_full_name() or obj.submitted_by.username
+        return None
+
+class CommonDiseasesSerializer(serializers.ModelSerializer):
+    patient_name = serializers.SerializerMethodField()
+    doctor_name = serializers.SerializerMethodField()
+    diagnoses = DiagnosisSerializer(many=True, read_only=True)  # Use your custom serializer
+    
+    class Meta:
+        model = Treatment
+        fields = [
+            'patient_name', 
+            'doctor_name', 
+            'diagnoses', 
+            'created_at', 
+            'updated_at'
+        ]
+        
+    def get_patient_name(self, obj):
+        # Format patient name
+        names = [obj.patient.first_name, obj.patient.middle_name, obj.patient.last_name]
+        return " ".join(filter(None, names))  # Handles missing middle name
+    
+    def get_doctor_name(self, obj):
+        # Handle case where doctor might be null
+        if obj.doctor:
+            return f"{obj.doctor.first_name} {obj.doctor.last_name}"
+        return "Unassigned"

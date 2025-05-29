@@ -3,14 +3,18 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.http import Http404, FileResponse
 from django.shortcuts import get_object_or_404
+from django.db.models.functions import Lower
 
 
 from queueing.serializers import PreliminaryAssessmentBasicSerializer
-from .serializers import PatientSerializer, PatientRegistrationSerializer, LabRequestSerializer, LabResultSerializer, PatientReportSerializer
-from queueing.models import Patient, PreliminaryAssessment, TemporaryStorageQueue
+from .serializers import PatientSerializer, PatientRegistrationSerializer, LabRequestSerializer, LabResultSerializer, PatientVisitSerializer, PatientLabTestSerializer, CommonDiseasesSerializer
+from queueing.models import  PreliminaryAssessment, TemporaryStorageQueue
+from queueing.models import Treatment as TreatmentModel
+
 from datetime import datetime
 from django.db.models import Max
 from django.db.models import Q, Prefetch
+from patient.models import Patient, Prescription
 
 # Supabase credentials
 from rest_framework.views import APIView
@@ -28,9 +32,10 @@ from .models import LabRequest, LabResult, Diagnosis
 from rest_framework.parsers import MultiPartParser, FormParser
 
 #reports
-from django.db.models import Count
+from django.db.models import Count, Sum
 from django.db.models.functions import TruncMonth
 from django.utils.dateparse import parse_date
+from collections import defaultdict
 
 class PatientListView(APIView):
     permission_classes = [IsMedicalStaff]
@@ -178,8 +183,7 @@ class PatientInfoView(APIView):
 
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-            
+         
 class PreliminaryAssessmentView(APIView):
     permission_classes = [IsMedicalStaff]
     def get(self, request, patient_id, queue_number):
@@ -1012,6 +1016,36 @@ class MonthlyVisitsAPIView(APIView):
 
         return Response(result)
 
+class MonthlyPatientVisitsDetailedView(APIView):
+    def get(self, request):
+        visits = TemporaryStorageQueue.objects.all().order_by('queue_date')
+        serializer = PatientVisitSerializer(visits, many=True)
+
+        grouped_visits = defaultdict(list)
+
+        for visit in serializer.data:
+            visit_date = visit.get('visit_date')
+            treatment_created_at = visit.get('treatment_created_at')
+            visit_created_at = visit.get('visit_created_at')
+
+            try:
+                if treatment_created_at and visit_created_at:
+                    # Ensure both are strings before processing
+                    if isinstance(treatment_created_at, str) and isinstance(visit_created_at, str):
+                        treatment_dt = datetime.fromisoformat(treatment_created_at.replace("Z", "+00:00"))
+                        visit_dt = datetime.fromisoformat(visit_created_at.replace("Z", "+00:00"))
+                        if treatment_dt < visit_dt:
+                            continue  # skip invalid record
+            except Exception:
+                continue  # skip on any parsing error
+
+            if visit_date:
+                month = visit_date[:7]
+                grouped_visits[month].append(visit)
+
+        return Response(dict(grouped_visits))
+
+    
 class MonthlyLabResultAPIView(APIView):
     permission_classes = [IsMedicalStaff]
     def get(self, request):
@@ -1054,12 +1088,91 @@ class CommonDiseasesReportAPIView(APIView):
     permission_classes = [IsMedicalStaff]
 
     def get(self, request):
-        # Group by diagnosis_description and count occurrences
         common_diseases = (
             Diagnosis.objects
-            .values("diagnosis_description")
+            .annotate(diagnosis_descriptions=Lower("diagnosis_description"))
+            .values("diagnosis_descriptions")
             .annotate(count=Count("id"))
-            .order_by("-count")[:10]  # Top 10 most common diagnoses
+            .order_by("-count")[:10]
         )
 
         return Response(common_diseases)
+    
+class TotalPatientsAPIView(APIView):
+    permission_classes = [IsMedicalStaff]
+
+    def get(self, request):
+        try:
+            response = supabase.table("patient_patient").select("*").execute()
+
+            if not hasattr(response, 'data') or not isinstance(response.data, list):
+                return Response(
+                    {"error": "Failed to fetch patient data"},
+                    status=status.HTTP_500_INTERNAL_SERVER_ERROR
+                )
+
+            patients = response.data
+            serializer = PatientSerializer(patients, many=True)
+
+            return Response({
+                "count": len(patients),
+                "patients": serializer.data
+            }, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+class MonthlyLabTestView(generics.ListAPIView):
+    permission_classes = [IsMedicalStaff]
+    serializer_class = PatientLabTestSerializer
+    
+    def get_queryset(self):
+        queryset = LabResult.objects.all()
+        if not queryset.exists():
+            raise Http404("No Lab Results found for the given patient.")
+        return queryset
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True)
+        return Response({"lab_results": serializer.data})
+
+class CommonDiseasesView(generics.ListAPIView):
+    permission_classes = [IsMedicalStaff]
+    serializer_class = CommonDiseasesSerializer
+
+    def get_queryset(self):
+        return TreatmentModel.objects.select_related(
+            'patient', 'doctor'
+        ).prefetch_related(
+            'diagnoses'  
+        ).all()
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        
+        if not queryset.exists():
+            return Response(
+                {"detail": "No treatment records found."},
+                status=status.HTTP_404_NOT_FOUND
+            )
+            
+        serializer = self.get_serializer(queryset, many=True)
+        return Response({'treatments': serializer.data})
+    
+class FrequentMedicationsView(generics.ListAPIView):
+    permission_classes = [IsMedicalStaff]
+
+    def get_queryset(self):
+        return (
+            Prescription.objects
+            .values('medication__name')
+            .annotate(prescription_count=Sum('quantity'))
+            .order_by('-prescription_count')[:10]
+        )
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        return Response({"medicines": queryset}, status=status.HTTP_200_OK)
+        
+    
