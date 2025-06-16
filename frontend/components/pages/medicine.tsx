@@ -123,7 +123,7 @@ export default function MedicineList() {
         <div className="mb-6 flex items-center justify-between">
           <h1 className="text-2xl font-bold">Medicines Management</h1>
           <Button>
-            <Link href="/doctor/manage-medicines">
+            <Link href="/secretary/manage-medicines">
               View Prescribed Medicines
             </Link>
           </Button>
