@@ -144,38 +144,40 @@ export default function Page() {
     queueItem: PatientQueueItem | null;
     label: string;
     status: "current" | "next";
-  }) => (
-    <div
-      className={`flex flex-col items-center justify-center rounded-xl border
-        ${
-          status === "current"
-            ? "border-blue-500 bg-blue-50 shadow-lg"
-            : "border-gray-300 bg-white hover:shadow-md transition-shadow duration-300"
-        }
-        w-64 h-72 p-6 cursor-default select-none`}
-      title={
-        queueItem
-          ? `${queueItem.first_name} ${queueItem.last_name} - ${queueItem.complaint}`
-          : undefined
-      }
-    >
-      <p
-        className={`text-7xl font-extrabold mb-4 ${
-          status === "current" ? "text-blue-600" : "text-gray-400"
+  }) => {
+    if (!queueItem) return null; // Hide card if queueItem is null
+
+    return (
+      <div
+        className={`flex flex-col items-center justify-center rounded-xl border
+          ${
+            status === "current"
+              ? "border-blue-500 bg-blue-50 shadow-lg"
+              : "border-gray-300 bg-white hover:shadow-md transition-shadow duration-300"
+          }
+          w-64 h-72 p-6 cursor-default select-none`}
+        title={`${queueItem.first_name} ${queueItem.last_name} - ${
+          queueItem.complaint || "No complaint"
         }`}
       >
-        {queueItem ? `#${queueItem.queue_number}` : "N/A"}
-      </p>
-      <span className="text-lg font-semibold text-gray-800">{label}</span>
-      <span
-        className={`text-sm mt-1 ${
-          status === "current" ? "text-blue-600" : "text-gray-500"
-        }`}
-      >
-        {status === "current" ? "Current Patient" : "Next in Queue"}
-      </span>
-    </div>
-  );
+        <p
+          className={`text-7xl font-extrabold mb-4 ${
+            status === "current" ? "text-blue-600" : "text-gray-400"
+          }`}
+        >
+          #{queueItem.queue_number}
+        </p>
+        <span className="text-lg font-semibold text-gray-800">{label}</span>
+        <span
+          className={`text-sm mt-1 ${
+            status === "current" ? "text-blue-600" : "text-gray-500"
+          }`}
+        >
+          {status === "current" ? "Current Patient" : "Next in Queue"}
+        </span>
+      </div>
+    );
+  };
 
   return (
     <main className="flex min-h-screen flex-col gap-12 bg-gray-50 px-10 py-10">
