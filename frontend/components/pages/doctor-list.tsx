@@ -17,6 +17,15 @@ interface Schedule {
   end_time: string;
 }
 import { useRouter } from "next/navigation";
+import { Input } from "../ui/input";
+import { Select } from "@radix-ui/react-select";
+import {
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
 interface DoctorProfile {
   specialization: string;
   schedules: Schedule[];
@@ -106,7 +115,7 @@ const DoctorCard: React.FC<DoctorCardComponentProps> = ({
   return (
     <div
       className={`flex flex-col border rounded-lg overflow-hidden shadow-md mb-6 transition-all duration-300 hover:shadow-lg ${
-        expanded ? "bg-blue-50" : "bg-white"
+        expanded ? "bg-blue-50" : "bg-card"
       }`}
     >
       <div className="flex flex-col md:flex-row">
@@ -131,11 +140,11 @@ const DoctorCard: React.FC<DoctorCardComponentProps> = ({
             </div>
             <div className="flex-grow">
               <h2 className="text-xl font-bold text-blue-800">{name}</h2>
-              <p className="mb-2 text-sm text-gray-600">{qualifications}</p>
+              <p className="mb-2 text-sm">{qualifications}</p>
               <div className="mb-3 flex items-center">
                 <span className="mr-1 font-medium">{rating.toFixed(1)}</span>
                 <div className="mr-2 text-sm">{renderStars()}</div>
-                <span className="text-sm text-gray-500">
+                <span className="text-sm">
                   ({reviewCount.toLocaleString()} ratings)
                 </span>
               </div>
@@ -154,7 +163,7 @@ const DoctorCard: React.FC<DoctorCardComponentProps> = ({
                 ))}
               </div>
             )}
-            <p className="text-sm text-gray-700">
+            <p className="text-sm">
               {expanded ? description : `${description.substring(0, 100)}...`}
             </p>
             <button
@@ -166,38 +175,34 @@ const DoctorCard: React.FC<DoctorCardComponentProps> = ({
           </div>
         </div>
         {/* Clinic Info Section */}
-        <div className="flex flex-col justify-between border-t border-gray-200 bg-gray-50 p-6 md:w-1/4 md:border-l md:border-t-0">
+        <div className="flex flex-col justify-between border-t bg-card p-6 md:w-1/4 md:border-l md:border-t-0">
           <div>
             <div className="mb-4">
-              <p className="text-sm text-gray-700">{address}</p>
-              <p className="mt-1 text-sm text-gray-500">
-                {feedbackCount} Feedbacks
-              </p>
+              <p className="text-sm">{address}</p>
+              <p className="mt-1 text-sm">{feedbackCount} Feedbacks</p>
             </div>
             <div className="mb-4">
               <p className="font-semibold text-green-700">{price}</p>
             </div>
             <div>
-              <p className="whitespace-pre-line text-sm text-gray-700">
-                {availability}
-              </p>
+              <p className="whitespace-pre-line text-sm">{availability}</p>
             </div>
           </div>
           {/* Edit & Delete Actions (conditionally rendered) */}
           {onEdit && onDelete && (
             <div className="mt-4 flex justify-end gap-2">
-              <button
-                onClick={onEdit}
-                className="rounded bg-yellow-500 px-3 py-1 text-xs text-white hover:bg-yellow-600"
-              >
+              <Button onClick={onEdit} className="rounded px-3 py-1 text-xs">
                 Edit
-              </button>
+              </Button>
 
               <Dialog>
                 <DialogTrigger asChild>
-                  <button className="rounded bg-red-500 px-3 py-1 text-xs text-white hover:bg-red-600">
+                  <Button
+                    variant="destructive"
+                    className="rounded px-3 py-1 text-xs"
+                  >
                     Delete
-                  </button>
+                  </Button>
                 </DialogTrigger>
 
                 <DialogContent className="sm:max-w-[425px]">
@@ -622,21 +627,14 @@ const DoctorsPage: React.FC = () => {
   return (
     <div className="container mx-auto max-w-6xl px-6 py-8">
       <div className="mb-6 flex items-center gap-4">
-        <h1 className="flex-1 text-3xl font-bold text-blue-800">
-          Find Doctors
-        </h1>
-        <button
-          onClick={handleArchivesClick}
-          className="rounded bg-gray-500 px-4 py-2 text-white hover:bg-blue-700"
-        >
+        <h1 className="flex-1 text-3xl font-bold text-primary">Find Doctors</h1>
+        <Button onClick={handleArchivesClick} variant="secondary">
           Archives
-        </button>
+        </Button>
         {isGeneralDoctor && (
           <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
             <DialogTrigger asChild>
-              <button className="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700">
-                Add Doctor
-              </button>
+              <Button>Add Doctor</Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[600px]">
               <DialogHeader>
@@ -981,57 +979,58 @@ const DoctorsPage: React.FC = () => {
       </div>
 
       {/* Search & Filter Section */}
-      <div className="mb-8 rounded-lg bg-white p-6 shadow-md">
+      <div className="card mb-8 rounded-lg p-6 shadow-md">
         <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
           <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700">
-              Search
-            </label>
-            <input
+            <label className="mb-1 block text-sm font-medium">Search</label>
+            <Input
               type="text"
               placeholder="Search by name or qualification"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full rounded border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full rounded border p-2"
             />
           </div>
           <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700">
-              Specialty
-            </label>
-            <select
+            <label className="mb-1 block text-sm font-medium">Specialty</label>
+            <Select
               value={selectedSpecialty}
-              onChange={(e) => setSelectedSpecialty(e.target.value)}
-              className="w-full rounded border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              onValueChange={setSelectedSpecialty}
             >
-              {specialties.map((specialty) => (
-                <option key={specialty} value={specialty}>
-                  {specialty}
-                </option>
-              ))}
-            </select>
+              <SelectTrigger className="w-full rounded p-2">
+                <SelectValue placeholder="Select a Doctor" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  {specialties.map((specialty) => (
+                    <SelectItem key={specialty} value={specialty}>
+                      {specialty}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
           </div>
           <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700">
-              Sort By
-            </label>
-            <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
-              className="w-full rounded border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="rating">Rating (High to Low)</option>
-              <option value="price">Price (Low to High)</option>
-              <option value="reviews">Number of Reviews</option>
-            </select>
+            <label className="mb-1 block text-sm font-medium">Sort By</label>
+            <Select value={sortBy} onValueChange={setSortBy}>
+              <SelectTrigger className="w-full rounded p-2">
+                <SelectValue placeholder="Select a Doctor" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectItem value="rating">Rating (High to Low)</SelectItem>
+                  <SelectItem value="price">Price (Low to High)</SelectItem>
+                  <SelectItem value="reviews">Number of Reviews</SelectItem>
+                </SelectGroup>
+              </SelectContent>
+            </Select>
           </div>
         </div>
       </div>
 
       {/* Results Count */}
-      <p className="mb-4 text-gray-600">
-        Showing {filteredDoctors.length} doctors
-      </p>
+      <p className="mb-4">Showing {filteredDoctors.length} doctors</p>
 
       {/* Render Doctor Cards */}
       <div className="space-y-6">
@@ -1049,9 +1048,7 @@ const DoctorsPage: React.FC = () => {
 
       {filteredDoctors.length === 0 && (
         <div className="py-12 text-center">
-          <p className="text-lg text-gray-600">
-            No doctors found matching your criteria.
-          </p>
+          <p className="text-lg">No doctors found matching your criteria.</p>
           <button
             onClick={() => {
               setSearchTerm("");
