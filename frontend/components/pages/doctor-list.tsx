@@ -12,7 +12,6 @@ import {
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 
-
 interface Schedule {
   day_of_week: string;
   start_time: string;
@@ -212,8 +211,8 @@ const DoctorCard: React.FC<DoctorCardComponentProps> = ({
                   <DialogHeader>
                     <DialogTitle>Confirm Archive</DialogTitle>
                     <DialogDescription>
-                      Are you sure you want to archive this doctor? Archived doctors
-                      will be moved to the archive section.
+                      Are you sure you want to archive this doctor? Archived
+                      doctors will be moved to the archive section.
                     </DialogDescription>
                   </DialogHeader>
                   <div className="mt-4 flex justify-end gap-2">
@@ -227,10 +226,7 @@ const DoctorCard: React.FC<DoctorCardComponentProps> = ({
                     >
                       Cancel
                     </Button>
-                    <Button
-                      variant="destructive"
-                      onClick={onArchive}
-                    >
+                    <Button variant="destructive" onClick={onArchive}>
                       Confirm
                     </Button>
                   </div>
@@ -288,9 +284,10 @@ const DoctorsPage: React.FC = () => {
 
         const data = await response.json();
         setUserEmail(data.email);
-        
+
         // Check if user is General Doctor
-        const isGenDoc = userEmail.toLowerCase() === "generaldoctor@hospital.com";
+        const isGenDoc =
+          userEmail.toLowerCase() === "generaldoctor@hospital.com";
         setIsGeneralDoctor(isGenDoc);
         console.log("User is General Doctor:", isGenDoc);
       } catch (error) {
@@ -300,7 +297,7 @@ const DoctorsPage: React.FC = () => {
 
     fetchUserEmail();
   });
- 
+
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedSpecialty, setSelectedSpecialty] = useState("All");
   const [sortBy, setSortBy] = useState("rating");
@@ -562,7 +559,7 @@ const DoctorsPage: React.FC = () => {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_BASE}/user/users/${doctorId}/`,
         {
-          method: "DELETE", 
+          method: "DELETE",
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -575,7 +572,7 @@ const DoctorsPage: React.FC = () => {
       alert("Failed to archive doctor");
     }
   };
-  
+
   // --- Prepare Edit Modal ---
   const openEditModal = (doctor: ExtendedDoctorCardProps) => {
     const nameParts = doctor.name.split(" ");
@@ -614,18 +611,21 @@ const DoctorsPage: React.FC = () => {
       if (sortBy === "reviews") return b.reviewCount - a.reviewCount;
       return 0;
     });
-    
+
   const handleArchivesClick = () => {
     router.push("/doctor/archives");
   };
-  
+
   return (
     <div className="container mx-auto max-w-6xl px-6 py-8">
       <div className="mb-6 flex items-center gap-4">
         <h1 className="flex-1 text-3xl font-bold text-primary">Find Doctors</h1>
-        <Button onClick={handleArchivesClick} variant="secondary">
-          Archives
-        </Button>
+        {isGeneralDoctor && (
+          <Button onClick={handleArchivesClick} variant="secondary">
+            Archives
+          </Button>
+        )}
+
         {isGeneralDoctor && (
           <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
             <DialogTrigger asChild>
@@ -811,7 +811,7 @@ const DoctorsPage: React.FC = () => {
             </DialogContent>
           </Dialog>
         )}
-        
+
         {/* Edit Doctor Modal */}
         <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
           <DialogTrigger asChild>
@@ -1035,7 +1035,9 @@ const DoctorsPage: React.FC = () => {
             key={doctor.id}
             {...doctor}
             onEdit={isGeneralDoctor ? () => openEditModal(doctor) : undefined}
-            onArchive={isGeneralDoctor ? () => handleArchiveDoctor(doctor.id) : undefined}
+            onArchive={
+              isGeneralDoctor ? () => handleArchiveDoctor(doctor.id) : undefined
+            }
           />
         ))}
       </div>
