@@ -1,21 +1,27 @@
-"use client"
+"use client";
 
-import { FaUser, FaUserClock, FaCodePullRequest, FaClockRotateLeft, type Fa6 } from "react-icons/fa6"
-import { FaEllipsis } from "react-icons/fa6"
+import {
+  FaUser,
+  FaUserClock,
+  FaCodePullRequest,
+  FaClockRotateLeft,
+  type Fa6,
+} from "react-icons/fa6";
+import { FaEllipsis } from "react-icons/fa6";
 import { FiChevronsDown } from "react-icons/fi";
 
 interface StatsCardProps {
-  icon: typeof Fa6
-  title: string
-  value: string | number
+  icon: typeof Fa6;
+  title: string;
+  value: string | number;
   footer: {
-    text: string
-    highlight?: string
+    text: string;
+    highlight?: string;
     trend?: {
-      value: string
-      isPositive: boolean
-    }
-  }
+      value: string;
+      isPositive: boolean;
+    };
+  };
 }
 
 const statsData = [
@@ -61,7 +67,7 @@ const statsData = [
       },
     },
   },
-]
+];
 
 function StatsCard({ icon: Icon, title, value, footer }: StatsCardProps) {
   return (
@@ -77,23 +83,31 @@ function StatsCard({ icon: Icon, title, value, footer }: StatsCardProps) {
       <p className="flex items-center justify-center md:justify-normal">
         {footer.trend ? (
           <>
-            <span className={footer.trend.isPositive ? "text-green-500" : "text-red-500"}>
-              <FiChevronsDown className={footer.trend.isPositive ? "rotate-180" : ""} />
+            <span
+              className={
+                footer.trend.isPositive ? "text-green-500" : "text-red-500"
+              }
+            >
+              <FiChevronsDown
+                className={footer.trend.isPositive ? "rotate-180" : ""}
+              />
             </span>
-            <span className={`me-1 ${footer.trend.isPositive ? "text-green-500" : "text-red-500"}`}>
+            <span
+              className={`me-1 ${
+                footer.trend.isPositive ? "text-green-500" : "text-red-500"
+              }`}
+            >
               {footer.trend.value}
             </span>
           </>
         ) : null}
         {footer.highlight && (
-
           <span className="pe-2 text-blue-500"> {footer.highlight}</span>
-
         )}
         {footer.text}
       </p>
     </div>
-  )
+  );
 }
 
 export default function StatsCards() {
@@ -103,6 +117,5 @@ export default function StatsCards() {
         <StatsCard key={index} {...stat} />
       ))}
     </div>
-  )
+  );
 }
-

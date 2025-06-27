@@ -7,7 +7,7 @@ import {
 import { DataTable } from "@/components/ui/data-table";
 import { VisitorsChart } from "@/components/organisms/visitors-chart";
 import { CommonDiseasesChart } from "@/components/organisms/common-diseases-chart";
-import StatsCard from "@/components/organisms/stats-cards";
+import StatsCard from "@/components/organisms/admin-stats-cards";
 import userInfo from "@/hooks/userRole";
 
 export default function Page() {
@@ -23,13 +23,16 @@ export default function Page() {
           console.error("No access token found");
           return;
         }
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE}/patients/`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${accessToken}`,
-          },
-        });
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_BASE}/patients/`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }

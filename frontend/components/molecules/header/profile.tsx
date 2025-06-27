@@ -24,7 +24,7 @@ const Profile = () => {
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
-        const token = localStorage.getItem('access'); // Retrieve token from localStorage
+        const token = localStorage.getItem("access"); // Retrieve token from localStorage
         if (!token) {
           console.error("No access token found");
           setLoading(false);
@@ -32,13 +32,16 @@ const Profile = () => {
         }
 
         // Use your custom endpoint that returns the full profile info
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE}/user/users/current-profile/`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
-          },
-        });
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_BASE}/user/users/current-profile/`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
         if (!response.ok) {
           console.error("Failed to fetch user profile");
@@ -74,11 +77,13 @@ const Profile = () => {
           {loading ? "Loading..." : userName || "Profile"}
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => router.push('/user-profile')}>
-          <User className="mr-2 h-4 w-4" />
-          View Profile
+        <DropdownMenuItem onClick={() => router.push("/user-profile")}>
+          <User className="h-4 w-4" />
+          Account
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme(theme === "light" ? "dark" : "light")}>
+        <DropdownMenuItem
+          onClick={() => setTheme(theme === "light" ? "dark" : "light")}
+        >
           <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
           <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
           Toggle Theme

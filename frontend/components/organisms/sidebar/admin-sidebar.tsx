@@ -4,7 +4,6 @@ import { LayoutDashboard, ChartNoAxesGantt } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
@@ -13,7 +12,6 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { NavUser } from "@/components/molecules/nav-user";
 import Image from "next/image";
 
 import Link from "next/link";
@@ -40,12 +38,6 @@ const menu_items = [
   },
 ];
 
-const data = {
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-  },
-};
 export function AppSidebar() {
   return (
     <Sidebar>
@@ -85,9 +77,6 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter>
-        <NavUser user={data.user} />
-      </SidebarFooter>
     </Sidebar>
   );
 }

@@ -90,7 +90,7 @@ body {
 
 @layer components {
   .card {
-    @apply rounded-xl border bg-card text-card-foreground shadow-sm p-4;
+    @apply rounded-xl bg-card text-card-foreground shadow-md p-4;
   }
 }
 
