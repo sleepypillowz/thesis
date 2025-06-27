@@ -33,6 +33,15 @@ urlpatterns = [
     
     #patientreports
     path('patient/patient-report/<str:patient_id>/', views.PatientReportview.as_view(), name='patient-report'),
+    path('patient/reports/monthly-visits/', views.MonthlyVisitsAPIView.as_view(), name='monthly-visits'),
+    path("patient/reports/total-patients/", views.TotalPatientsAPIView.as_view(), name="total-patients"),
+    path("patient/reports/monthly-lab-results/", views.MonthlyLabResultAPIView.as_view(), name="monthly-lab-results"),
+    path("patient/reports/common-diseases/", views.CommonDiseasesReportAPIView.as_view(), name="common-diseases"),
+    path("patient/reports/visits/monthly-details/", views.MonthlyPatientVisitsDetailedView.as_view(), name="total-patients"),
+    path("patient/reports/lab-results/monthly-details/", views.MonthlyLabTestView.as_view(), name="lab-results"),
+    path("patient/reports/common-diseases/monthly-details/", views.CommonDiseasesView.as_view(), name="common-diseases-details"),
+    path("patient/reports/frequent-medicines/", views.FrequentMedicationsView.as_view(), name="common-medicine"),
+
 
     # download file
     path('patient/lab-results/<str:result_id>/download/', views.download_lab_result, name='download_lab_result'),

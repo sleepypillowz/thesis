@@ -26,6 +26,7 @@ export default function Page() {
     agree_terms: false,
   });
   const [showModal, setShowModal] = useState(false);
+  const [showTermsModal, setShowTermsModal] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const user = userInfo();
   const userRole = user?.role;
@@ -43,7 +44,6 @@ export default function Page() {
     return <div>Loading...</div>;
   }
 
-  // Handle Input changes
   const handleChange = (
     event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
@@ -61,22 +61,18 @@ export default function Page() {
     }
   };
 
-  // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
 
     try {
-      // Retrieve token from localStorage
       const token = localStorage.getItem("access");
-
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_BASE}/patient/patient-register/`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            // Include the token in the Authorization header
             Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify(formData),
@@ -86,7 +82,6 @@ export default function Page() {
       if (response.ok) {
         const responseBody = await response.json();
         console.log("Response Body:", responseBody);
-
         setFormData({
           first_name: "",
           middle_name: "",
@@ -94,7 +89,7 @@ export default function Page() {
           phone_number: "",
           email: "",
           date_of_birth: "",
-          gender: "", // Reset gender field
+          gender: "Male",
           complaint: "General Illness",
           other_complaint: "",
           priority_level: "Regular",
@@ -114,6 +109,8 @@ export default function Page() {
       setIsSubmitting(false);
     }
   };
+
+  const toggleTermsModal = () => setShowTermsModal(!showTermsModal);
 
   return (
     <div className="min-h-screen py-8">
@@ -191,7 +188,6 @@ export default function Page() {
                     required
                   />
                 </div>
-                {/* Date of Birth and Gender grouped together */}
                 <div className="flex flex-col gap-4 md:flex-row md:items-end">
                   <div className="flex-1">
                     <label
@@ -350,7 +346,6 @@ export default function Page() {
                   </select>
                 </div>
 
-                {/* Conditionally render custom reason input */}
                 {formData.complaint === "Other" && (
                   <div>
                     <label
@@ -408,7 +403,12 @@ export default function Page() {
                 </div>
                 <div className="ml-3 text-sm">
                   <label htmlFor="agree_terms" className="font-medium">
-                    I agree to the terms and conditions{" "}
+                    <span 
+                      onClick={toggleTermsModal}
+                      className="cursor-pointer hover:text-blue-700 hover:underline"
+                    >
+                      I agree to the terms and conditions
+                    </span>{" "}
                     <span className="text-red-500">*</span>
                   </label>
                   <p className="mt-1 text-xs">
@@ -466,6 +466,66 @@ export default function Page() {
               >
                 View Queue
               </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Terms and Conditions Modal */}
+      {showTermsModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="card w-full max-w-2xl rounded-lg p-6 shadow-xl">
+            <div className="mb-4 flex items-center justify-between">
+              <h2 className="text-xl font-bold">Terms and Conditions</h2>
+              <button
+                onClick={toggleTermsModal}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                ✕
+              </button>
+            </div>
+            
+            <div className="prose max-h-[60vh] overflow-y-auto">
+              <h3 className="text-lg font-semibold">Patient Agreement</h3>
+              <p className="text-sm">
+                By registering with our healthcare facility, you agree to the following terms:
+              </p>
+              
+              <ol className="mt-4 list-decimal pl-6 text-sm">
+                <li className="mb-3">
+                  <strong>Accuracy of Information:</strong> You certify that all provided 
+                  personal and medical information is complete and accurate to the best 
+                  of your knowledge.
+                </li>
+                <li className="mb-3">
+                  <strong>Privacy Consent:</strong> You consent to the collection, use, 
+                  and disclosure of your personal health information for the purposes 
+                  of treatment, payment, and healthcare operations.
+                </li>
+                <li className="mb-3">
+                  <strong>Financial Responsibility:</strong> You understand and agree 
+                  to be financially responsible for any services received.
+                </li>
+                <li className="mb-3">
+                  <strong>Treatment Consent:</strong> You consent to medical treatment 
+                  deemed necessary by healthcare providers, understanding that all 
+                  procedures carry inherent risks.
+                </li>
+                <li className="mb-3">
+                  <strong>Communication:</strong> You agree to receive communications 
+                  regarding your care via the contact information provided.
+                </li>
+              </ol>
+
+              <p className="mt-4 text-xs text-gray-600">
+                This agreement is effective upon registration and remains valid 
+                throughout your care at this facility. You may request a full copy 
+                of our privacy policy at any time.
+              </p>
+            </div>
+
+            <div className="mt-6 flex justify-end">
+              <Button onClick={toggleTermsModal}>Close</Button>
             </div>
           </div>
         </div>

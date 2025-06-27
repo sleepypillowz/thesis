@@ -420,7 +420,7 @@ export default function Page() {
           className="mb-6 flex items-center rounded-lg bg-white px-4 py-2 text-slate-600 shadow-sm transition-colors hover:text-blue-600"
         >
           <FaArrowLeft className="mr-2" />
-          Back to Dashboard
+          Back 
         </button>
         <PatientRegistrationForm />
       </div>

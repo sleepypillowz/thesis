@@ -7,17 +7,15 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-// Define the expected structure for patient data.
+
 interface Patient {
   first_name: string;
   last_name: string;
   allergies?: string;
   medical_history?: string;
   current_medications?: string;
-  // Add additional fields if needed.
 }
 
-// Define the structure for form input values based on your Django model.
 interface FormData {
   temperature: string;
   heart_rate: string;
@@ -36,19 +34,15 @@ interface FormData {
 }
 
 export default function PreliminaryAssessmentID() {
-  // Extract parameters from the URL.
   const params = useParams();
   const { patient_id, queue_number } = params as {
     patient_id: string;
     queue_number: string;
   };
 
-  // State to hold fetched patient data.
   const [patient, setPatient] = useState<Patient | null>(null);
-  // Modal
   const [showModal, setShowModal] = useState(false);
   const router = useRouter();
-  // State for the form data.
   const [formData, setFormData] = useState<FormData>({
     temperature: "",
     heart_rate: "",
@@ -66,6 +60,7 @@ export default function PreliminaryAssessmentID() {
     assessment: "",
   });
   const role = userRole();
+
   useEffect(() => {
     if (!patient_id || !queue_number) return;
     const token = localStorage.getItem("access");
@@ -85,7 +80,6 @@ export default function PreliminaryAssessmentID() {
         return res.json();
       })
       .then((data) => {
-        console.log("Fetched patient data:", data);
         setPatient(data);
       })
       .catch((error) => console.error("Error fetching patient:", error));
@@ -102,7 +96,6 @@ export default function PreliminaryAssessmentID() {
     }
   }, [patient]);
 
-  // Handle changes for form inputs.
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
@@ -112,7 +105,6 @@ export default function PreliminaryAssessmentID() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Handle form submission.
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!patient_id || !queue_number) return;
@@ -137,9 +129,7 @@ export default function PreliminaryAssessmentID() {
     }
   };
 
-  if (!patient) {
-    return <div>Loading patient data...</div>;
-  }
+  if (!patient) return <div>Loading patient data...</div>;
   if (!role || role.role !== "secretary") {
     return (
       <div className="flex min-h-screen items-center justify-center text-xl font-semibold">
@@ -147,6 +137,7 @@ export default function PreliminaryAssessmentID() {
       </div>
     );
   }
+
   return (
     <div className="flex-1 px-4 sm:px-6 lg:px-8">
       <div className="card mx-auto max-w-4xl rounded-lg shadow-lg">
@@ -163,12 +154,11 @@ export default function PreliminaryAssessmentID() {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Vital Signs */}
           <fieldset className="rounded-lg border p-4">
             <legend className="text-lg font-semibold">Vital Signs</legend>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div>
-                <label className="block">Temperature (°C)</label>
+                <Label htmlFor="temperature">Temperature (°C)</Label>
                 <Input
                   type="number"
                   name="temperature"
@@ -178,7 +168,7 @@ export default function PreliminaryAssessmentID() {
                 />
               </div>
               <div>
-                <label className="block">Heart Rate (bpm)</label>
+                <Label htmlFor="heart_rate">Heart Rate (bpm)</Label>
                 <Input
                   type="number"
                   name="heart_rate"
@@ -187,7 +177,7 @@ export default function PreliminaryAssessmentID() {
                 />
               </div>
               <div>
-                <label className="block">Blood Pressure (mmHg)</label>
+                <Label htmlFor="blood_pressure">Blood Pressure (mmHg)</Label>
                 <Input
                   type="text"
                   name="blood_pressure"
@@ -196,7 +186,7 @@ export default function PreliminaryAssessmentID() {
                 />
               </div>
               <div>
-                <label className="block">Respiratory Rate (breaths/min)</label>
+                <Label htmlFor="respiratory_rate">Respiratory Rate</Label>
                 <Input
                   type="number"
                   name="respiratory_rate"
@@ -205,7 +195,7 @@ export default function PreliminaryAssessmentID() {
                 />
               </div>
               <div>
-                <label className="block">Pulse Rate</label>
+                <Label htmlFor="pulse_rate">Pulse Rate</Label>
                 <Input
                   type="number"
                   name="pulse_rate"
@@ -216,13 +206,9 @@ export default function PreliminaryAssessmentID() {
             </div>
           </fieldset>
 
-          {/* Medical Information */}
-          <fieldset className="relative rounded-lg border border-gray-300 p-4">
-            <legend className="text-lg font-semibold text-gray-700">
-              Medical Information
-            </legend>
+          <fieldset className="rounded-lg border p-4">
+            <legend className="text-lg font-semibold">Medical Information</legend>
             <div className="grid grid-cols-1 gap-4">
-              {/* Allergies */}
               <div className="grid w-full gap-1.5">
                 <Label htmlFor="allergies">Allergies</Label>
                 <Textarea
@@ -232,8 +218,6 @@ export default function PreliminaryAssessmentID() {
                   value={formData.allergies}
                 />
               </div>
-
-              {/* Medical History */}
               <div className="grid w-full gap-1.5">
                 <Label htmlFor="medical_history">Medical History</Label>
                 <Textarea
@@ -243,8 +227,6 @@ export default function PreliminaryAssessmentID() {
                   value={formData.medical_history}
                 />
               </div>
-
-              {/* Current Medications */}
               <div className="grid w-full gap-1.5">
                 <Label htmlFor="current_medications">Current Medications</Label>
                 <Textarea
@@ -254,9 +236,8 @@ export default function PreliminaryAssessmentID() {
                   value={formData.current_medications}
                 />
               </div>
-              {/* Symptoms */}
               <div className="grid w-full gap-1.5">
-                <Label htmlFor="message">Symptoms</Label>
+                <Label htmlFor="symptoms">Symptoms</Label>
                 <Textarea
                   name="symptoms"
                   id="symptoms"
@@ -266,12 +247,11 @@ export default function PreliminaryAssessmentID() {
             </div>
           </fieldset>
 
-          {/* Lifestyle Information */}
           <fieldset className="rounded-lg border p-4">
             <legend className="text-lg font-semibold">Lifestyle</legend>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div>
-                <label className="block">Smoking Status</label>
+                <Label htmlFor="smoking_status">Smoking Status</Label>
                 <select
                   name="smoking_status"
                   className="card w-full"
@@ -283,7 +263,7 @@ export default function PreliminaryAssessmentID() {
                 </select>
               </div>
               <div>
-                <label className="block">Alcohol Use</label>
+                <Label htmlFor="alcohol_use">Alcohol Use</Label>
                 <select
                   name="alcohol_use"
                   className="card w-full"
@@ -297,46 +277,43 @@ export default function PreliminaryAssessmentID() {
             </div>
           </fieldset>
 
-          {/* Assessment */}
           <fieldset className="rounded-lg border p-4">
-            <legend className="text-lg font-semibold">Assesssment</legend>
+            <legend className="text-lg font-semibold">Patient Assessment</legend>
             <div className="grid w-full gap-1.5">
+              <Label htmlFor="assessment">Assessment</Label>
               <Textarea
                 name="assessment"
                 id="assessment"
                 onChange={handleChange}
               />
             </div>
-
-            {/* Pain Scale */}
             <div>
-              <label className="block">Pain Scale (1-10)</label>
+              <Label htmlFor="pain_scale">Pain Scale (0-10)</Label>
               <Input
                 type="number"
                 name="pain_scale"
-                min="1"
+                min="0"
                 max="10"
                 onChange={handleChange}
               />
             </div>
-
-            {/* Pain Location */}
             <div>
-              <label className="block">Pain Location</label>
-              <Input type="text" name="pain_location" onChange={handleChange} />
+              <Label htmlFor="pain_location">Pain Location</Label>
+              <Input
+                type="text"
+                name="pain_location"
+                onChange={handleChange}
+              />
             </div>
           </fieldset>
 
           <div className="flex justify-end">
-            <Button
-              type="submit"
-              className="rounded-md px-6 py-2 text-white shadow-md"
-            >
+            <Button type="submit" className="rounded-md px-6 py-2 text-white shadow-md">
               Submit
             </Button>
           </div>
         </form>
-        {/* Modal */}
+
         {showModal && (
           <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
             <div className="card w-1/3 rounded-lg p-4">
@@ -348,8 +325,6 @@ export default function PreliminaryAssessmentID() {
                   onClick={() => {
                     setShowModal(false);
                     router.push("/secretary/assessment-queue");
-
-                    //setFormData({ ...formData, priority: "Regular" });  // reset priority explicitly
                   }}
                 >
                   Go to Assessment Queue

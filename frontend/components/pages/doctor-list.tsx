@@ -11,6 +11,8 @@ import {
 } from "@/components/ui/dialog";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
+
+
 interface Schedule {
   day_of_week: string;
   start_time: string;
@@ -63,7 +65,7 @@ interface ExtendedDoctorCardProps {
 // --- DoctorCard Component ---
 interface DoctorCardComponentProps extends ExtendedDoctorCardProps {
   onEdit?: () => void;
-  onDelete?: () => void;
+  onArchive?: () => void;
 }
 
 const DoctorCard: React.FC<DoctorCardComponentProps> = ({
@@ -79,7 +81,7 @@ const DoctorCard: React.FC<DoctorCardComponentProps> = ({
   specialties,
   imageUrl,
   onEdit,
-  onDelete,
+  onArchive,
 }) => {
   const [expanded, setExpanded] = useState(false);
 
@@ -188,8 +190,9 @@ const DoctorCard: React.FC<DoctorCardComponentProps> = ({
               <p className="whitespace-pre-line text-sm">{availability}</p>
             </div>
           </div>
-          {/* Edit & Delete Actions (conditionally rendered) */}
-          {onEdit && onDelete && (
+
+          {/* Conditionally show Edit/Archive buttons if callbacks are provided */}
+          {onEdit && onArchive && (
             <div className="mt-4 flex justify-end gap-2">
               <Button onClick={onEdit} className="rounded px-3 py-1 text-xs">
                 Edit
@@ -207,10 +210,10 @@ const DoctorCard: React.FC<DoctorCardComponentProps> = ({
 
                 <DialogContent className="sm:max-w-[425px]">
                   <DialogHeader>
-                    <DialogTitle>Confirm Delete</DialogTitle>
+                    <DialogTitle>Confirm Archive</DialogTitle>
                     <DialogDescription>
-                      Are you sure you want to delete this item? Deleted data
-                      goes to Archive and it will be deleted within 30 days.
+                      Are you sure you want to archive this doctor? Archived doctors
+                      will be moved to the archive section.
                     </DialogDescription>
                   </DialogHeader>
                   <div className="mt-4 flex justify-end gap-2">
@@ -226,12 +229,7 @@ const DoctorCard: React.FC<DoctorCardComponentProps> = ({
                     </Button>
                     <Button
                       variant="destructive"
-                      onClick={() => {
-                        onDelete();
-                        document.dispatchEvent(
-                          new KeyboardEvent("keydown", { key: "Escape" })
-                        );
-                      }}
+                      onClick={onArchive}
                     >
                       Confirm
                     </Button>
@@ -260,12 +258,13 @@ interface NewDoctorData {
 // --- Main DoctorsPage Component ---
 const DoctorsPage: React.FC = () => {
   const [userEmail, setUserEmail] = useState<string>("");
+  const [isGeneralDoctor, setIsGeneralDoctor] = useState<boolean>(false);
   const router = useRouter();
 
   useEffect(() => {
     const fetchUserEmail = async () => {
       try {
-        const token = localStorage.getItem("access"); // Retrieve token from localStorage
+        const token = localStorage.getItem("access");
         if (!token) {
           console.error("No access token found");
           return;
@@ -289,31 +288,29 @@ const DoctorsPage: React.FC = () => {
 
         const data = await response.json();
         setUserEmail(data.email);
-        console.log("Retrieved userEmail:", data.email);
+        
+        // Check if user is General Doctor
+        const isGenDoc = userEmail.toLowerCase() === "generaldoctor@hospital.com";
+        setIsGeneralDoctor(isGenDoc);
+        console.log("User is General Doctor:", isGenDoc);
       } catch (error) {
         console.error("Error fetching user email:", error);
       }
     };
 
     fetchUserEmail();
-  }, []);
-
-  const isGeneralDoctor =
-    userEmail.toLowerCase() === "generaldoctor@hospital.com"; // or another admin email check
-
+  });
+ 
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedSpecialty, setSelectedSpecialty] = useState("All");
   const [sortBy, setSortBy] = useState("rating");
   const [doctors, setDoctors] = useState<ExtendedDoctorCardProps[]>([]);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  // currentDoctor holds the id and prefilled data for editing.
   const [currentDoctor, setCurrentDoctor] = useState<{
     id: string;
     data: NewDoctorData;
   } | null>(null);
-
-  // For the add form.
   const [newDoctor, setNewDoctor] = useState<NewDoctorData>({
     first_name: "",
     last_name: "",
@@ -327,8 +324,6 @@ const DoctorsPage: React.FC = () => {
   const specialties = [
     "All",
     "Cardiologist",
-    "Dermatology",
-    "Dentistry",
     "General Doctor",
     "ENT",
     "Pediatrics",
@@ -561,15 +556,13 @@ const DoctorsPage: React.FC = () => {
     }
   };
 
-  // --- Delete Doctor ---
-  // Update the delete handler function
   const handleArchiveDoctor = async (doctorId: string) => {
     try {
       const token = localStorage.getItem("access");
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE}0/user/users/${doctorId}/`,
+        `${process.env.NEXT_PUBLIC_API_BASE}/user/users/${doctorId}/`,
         {
-          method: "DELETE", // Still using DELETE method but backend archives
+          method: "DELETE", 
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -577,12 +570,12 @@ const DoctorsPage: React.FC = () => {
       );
       if (!response.ok) throw new Error("Failed to archive doctor");
       fetchDoctors();
-      alert("Doctor archived successfully");
     } catch (err) {
       console.error(err);
       alert("Failed to archive doctor");
     }
   };
+  
   // --- Prepare Edit Modal ---
   const openEditModal = (doctor: ExtendedDoctorCardProps) => {
     const nameParts = doctor.name.split(" ");
@@ -621,9 +614,11 @@ const DoctorsPage: React.FC = () => {
       if (sortBy === "reviews") return b.reviewCount - a.reviewCount;
       return 0;
     });
+    
   const handleArchivesClick = () => {
     router.push("/doctor/archives");
   };
+  
   return (
     <div className="container mx-auto max-w-6xl px-6 py-8">
       <div className="mb-6 flex items-center gap-4">
@@ -816,6 +811,7 @@ const DoctorsPage: React.FC = () => {
             </DialogContent>
           </Dialog>
         )}
+        
         {/* Edit Doctor Modal */}
         <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
           <DialogTrigger asChild>
@@ -1039,9 +1035,7 @@ const DoctorsPage: React.FC = () => {
             key={doctor.id}
             {...doctor}
             onEdit={isGeneralDoctor ? () => openEditModal(doctor) : undefined}
-            onDelete={
-              isGeneralDoctor ? () => handleArchiveDoctor(doctor.id) : undefined
-            }
+            onArchive={isGeneralDoctor ? () => handleArchiveDoctor(doctor.id) : undefined}
           />
         ))}
       </div>

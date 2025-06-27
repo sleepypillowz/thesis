@@ -3,14 +3,18 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.http import Http404, FileResponse
 from django.shortcuts import get_object_or_404
+from django.db.models.functions import Lower
 
 
 from queueing.serializers import PreliminaryAssessmentBasicSerializer
-from .serializers import PatientSerializer, PatientRegistrationSerializer, LabRequestSerializer, LabResultSerializer, PatientReportSerializer
-from queueing.models import Patient, PreliminaryAssessment, TemporaryStorageQueue
+from .serializers import PatientSerializer, PatientRegistrationSerializer, LabRequestSerializer, LabResultSerializer, PatientVisitSerializer, PatientLabTestSerializer, CommonDiseasesSerializer
+from queueing.models import  PreliminaryAssessment, TemporaryStorageQueue
+from queueing.models import Treatment as TreatmentModel
+
 from datetime import datetime
 from django.db.models import Max
 from django.db.models import Q, Prefetch
+from patient.models import Patient, Prescription
 
 # Supabase credentials
 from rest_framework.views import APIView
@@ -24,9 +28,14 @@ from rest_framework import status
 from user.permissions import IsMedicalStaff, isDoctor, isSecretary, isAdmin
 
 from rest_framework import generics
-from .models import LabRequest, LabResult
+from .models import LabRequest, LabResult, Diagnosis
 from rest_framework.parsers import MultiPartParser, FormParser
 
+#reports
+from django.db.models import Count, Sum
+from django.db.models.functions import TruncMonth
+from django.utils.dateparse import parse_date
+from collections import defaultdict
 
 class PatientListView(APIView):
     permission_classes = [IsMedicalStaff]
@@ -174,8 +183,7 @@ class PatientInfoView(APIView):
 
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-            
+         
 class PreliminaryAssessmentView(APIView):
     permission_classes = [IsMedicalStaff]
     def get(self, request, patient_id, queue_number):
@@ -847,15 +855,324 @@ class PatientReportview(APIView):
 
     def get(self, request, patient_id):
         try:
+            #fetch patient
             response = supabase.table("patient_patient").select("*").eq("patient_id",patient_id).execute()
 
             if hasattr(response, 'error') and response.error:
                 error_msg = getattr(response.error, 'message', 'Unknown error')
                 return Response({"error": error_msg}, status=status.HTTP_400_BAD_REQUEST)
-            patient_report = response.data[0] if response.data else None
-            serializer = PatientReportSerializer(patient_report, many=False)
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            patient_info = response.data[0] if response.data else None
+            #fetch patient latest preliminary assessment 
+            assessment_obj = PreliminaryAssessment.objects.filter(patient__patient_id=patient_id).order_by("-assessment_date").first()
+            if assessment_obj:
+                assessment_data = PreliminaryAssessmentBasicSerializer(assessment_obj).data
+            else:
+                assessment_data = None
+            
+            #fetch recent medications
+            treatment_response = supabase.table("queueing_treatment").select(
+                """
+                id, 
+                treatment_notes, 
+                created_at, 
+                updated_at, 
+                patient_id,             
+                doctor_id(
+                    id,
+                    first_name,
+                    last_name,
+                    user_doctor(specialization)
+                ),
+                queueing_treatment_diagnoses(
+                    id,
+                    treatment_id,
+                    diagnosis_id,
+                    patient_diagnosis(*)
+                ),
+                queueing_treatment_prescriptions(
+                    id,
+                    treatment_id,
+                    prescription_id,
+                    patient_prescription(*, medicine_medicine(id, name))
+                )
+            """
+            ).eq("patient_id", patient_id).order("created_at", desc=True).execute() 
+            treatments = treatment_response.data
+            
+            # laboratory fetch
+            lab_results_qs = LabResult.objects.filter(
+                lab_request__patient__patient_id=patient_id
+            )
+            lab_results_serialized = []
+            if lab_results_qs.exists():
+                lab_results_serialized = LabResultSerializer(
+                    lab_results_qs, many=True, context={'request': request}
+                ).data
+            else:
+                lab_results_serialized = []
+                
+            all_diagnoses = []
+            all_prescriptions = []
+            all_treatment_notes = []
+            
+            patient_report = {
+                "patient": patient_info,
+                "preliminary_assessment": assessment_data,
+                "recent_treatment": None,
+                "all_treatment_notes": None,
+                "all_prescriptions": None,
+                "all_diagnoses": None,
+                "laboratories":  lab_results_serialized
+            }
+            
+            if treatments:
+                transformed_treatments = []
+                
+                for item in treatments:
+                    raw_doc     = item.get("doctor_id") or {}
+                    raw_profile = raw_doc.get("user_doctor") or {}                    
+
+                    doctor_info = {
+                        "id": raw_doc.get("id"),
+                        "name": " ".join(filter(None, [raw_doc.get("first_name"), raw_doc.get("last_name")])),
+                        "specialization": raw_profile.get("specialization")
+                    }
+                    
+                    diagnoses = [
+                        d["patient_diagnosis"]
+                        for d in item.get("queueing_treatment_diagnoses", [])
+                        if d.get("patient_diagnosis")
+                    ]
+                    all_diagnoses.extend(diagnoses)
+                    
+                    prescriptions = []
+                    for p in item.get("queueing_treatment_prescriptions", []):
+                        presc = p.get("patient_prescription")
+                        if not presc:
+                            continue
+                        med = presc.pop("medicine_medicine", None)
+                        prescriptions.append({ **presc, "medication": med })
+                    all_prescriptions.extend(prescriptions)
+                    
+                    treatment_notes = item.get("treatment_notes")
+                    if treatment_notes:
+                        all_treatment_notes.append(treatment_notes)
+                    
+                    transformed_treatments.append({
+                        "id":             item.get("id"),
+                        "treatment_notes":item.get("treatment_notes"),
+                        "created_at":     item.get("created_at"),
+                        "updated_at":     item.get("updated_at"),
+                        "doctor_info":    doctor_info,
+                        "diagnoses":      diagnoses,
+                        "prescriptions":  prescriptions
+                    })
+                patient_report["recent_treatment"] = transformed_treatments[0]
+                patient_report["all_treatment_notes"] = all_treatment_notes
+                patient_report["all_prescriptions"] = all_prescriptions
+                patient_report["all_diagnoses"] = all_diagnoses
+
+            return Response(patient_report, status=status.HTTP_200_OK)
 
         except Exception as e:
             print("Exception ", e)
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+class MonthlyVisitsAPIView(APIView):
+    permission_classes = [IsMedicalStaff]
+    def get(self, request):
+        start_raw = request.query_params.get("start")
+        end_raw = request.query_params.get("end")
+
+        start_date = parse_date(str(start_raw)) if start_raw else None
+        end_date = parse_date(str(end_raw)) if end_raw else None
+
+
+        queryset = TemporaryStorageQueue.objects.all()
+
+        if start_date and end_date:
+            queryset = queryset.filter(created_at__date__range=(start_date, end_date))
+        elif start_date:
+            queryset = queryset.filter(created_at__date__gte=start_date)
+        elif end_date:
+            queryset = queryset.filter(created_at__date__lte=end_date)
+
+        # Annotate with truncated month (creates a temporary alias, not a model field)
+        monthly_data = (
+            queryset
+            .annotate(report_month=TruncMonth('created_at'))
+            .values('report_month')
+            .annotate(count=Count('id'))
+            .order_by('report_month')
+        )
+
+        result = [
+            {
+                "month": entry["report_month"].strftime("%b %Y"),
+                "count": entry["count"]
+            }
+            for entry in monthly_data if entry["report_month"]
+        ]
+
+        return Response(result)
+
+class MonthlyPatientVisitsDetailedView(APIView):
+    def get(self, request):
+        visits = TemporaryStorageQueue.objects.all().order_by('queue_date')
+        serializer = PatientVisitSerializer(visits, many=True)
+
+        grouped_visits = defaultdict(list)
+
+        for visit in serializer.data:
+            visit_date = visit.get('visit_date')
+            treatment_created_at = visit.get('treatment_created_at')
+            visit_created_at = visit.get('visit_created_at')
+
+            try:
+                if treatment_created_at and visit_created_at:
+                    # Ensure both are strings before processing
+                    if isinstance(treatment_created_at, str) and isinstance(visit_created_at, str):
+                        treatment_dt = datetime.fromisoformat(treatment_created_at.replace("Z", "+00:00"))
+                        visit_dt = datetime.fromisoformat(visit_created_at.replace("Z", "+00:00"))
+                        if treatment_dt < visit_dt:
+                            continue  # skip invalid record
+            except Exception:
+                continue  # skip on any parsing error
+
+            if visit_date:
+                month = visit_date[:7]
+                grouped_visits[month].append(visit)
+
+        return Response(dict(grouped_visits))
+
+    
+class MonthlyLabResultAPIView(APIView):
+    permission_classes = [IsMedicalStaff]
+    def get(self, request):
+        start_raw = request.query_params.get("start")
+        end_raw = request.query_params.get("end")
+
+        start_date = parse_date(str(start_raw)) if start_raw else None
+        end_date = parse_date(str(end_raw)) if end_raw else None
+
+
+        queryset = LabResult.objects.all()
+
+        if start_date and end_date:
+            queryset = queryset.filter(created_at__date__range=(start_date, end_date))
+        elif start_date:
+            queryset = queryset.filter(created_at__date__gte=start_date)
+        elif end_date:
+            queryset = queryset.filter(created_at__date__lte=end_date)
+
+        # Annotate with truncated month (creates a temporary alias, not a model field)
+        monthly_data = (
+            queryset
+            .annotate(report_month=TruncMonth('uploaded_at'))
+            .values('report_month')
+            .annotate(count=Count('id'))
+            .order_by('report_month')
+        )
+
+        result = [
+            {
+                "month": entry["report_month"].strftime("%b %Y"),
+                "count": entry["count"]
+            }
+            for entry in monthly_data if entry["report_month"]
+        ]
+
+        return Response(result)
+    
+class CommonDiseasesReportAPIView(APIView):
+    permission_classes = [IsMedicalStaff]
+
+    def get(self, request):
+        common_diseases = (
+            Diagnosis.objects
+            .annotate(diagnosis_descriptions=Lower("diagnosis_description"))
+            .values("diagnosis_descriptions")
+            .annotate(count=Count("id"))
+            .order_by("-count")[:10]
+        )
+
+        return Response(common_diseases)
+    
+class TotalPatientsAPIView(APIView):
+    permission_classes = [IsMedicalStaff]
+
+    def get(self, request):
+        try:
+            response = supabase.table("patient_patient").select("*").execute()
+
+            if not hasattr(response, 'data') or not isinstance(response.data, list):
+                return Response(
+                    {"error": "Failed to fetch patient data"},
+                    status=status.HTTP_500_INTERNAL_SERVER_ERROR
+                )
+
+            patients = response.data
+            serializer = PatientSerializer(patients, many=True)
+
+            return Response({
+                "count": len(patients),
+                "patients": serializer.data
+            }, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+class MonthlyLabTestView(generics.ListAPIView):
+    permission_classes = [IsMedicalStaff]
+    serializer_class = PatientLabTestSerializer
+    
+    def get_queryset(self):
+        queryset = LabResult.objects.all()
+        if not queryset.exists():
+            raise Http404("No Lab Results found for the given patient.")
+        return queryset
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True)
+        return Response({"lab_results": serializer.data})
+
+class CommonDiseasesView(generics.ListAPIView):
+    permission_classes = [IsMedicalStaff]
+    serializer_class = CommonDiseasesSerializer
+
+    def get_queryset(self):
+        return TreatmentModel.objects.select_related(
+            'patient', 'doctor'
+        ).prefetch_related(
+            'diagnoses'  
+        ).all()
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        
+        if not queryset.exists():
+            return Response(
+                {"detail": "No treatment records found."},
+                status=status.HTTP_404_NOT_FOUND
+            )
+            
+        serializer = self.get_serializer(queryset, many=True)
+        return Response({'treatments': serializer.data})
+    
+class FrequentMedicationsView(generics.ListAPIView):
+    permission_classes = [IsMedicalStaff]
+
+    def get_queryset(self):
+        return (
+            Prescription.objects
+            .values('medication__name')
+            .annotate(prescription_count=Sum('quantity'))
+            .order_by('-prescription_count')[:10]
+        )
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        return Response({"medicines": queryset}, status=status.HTTP_200_OK)
+        
+    

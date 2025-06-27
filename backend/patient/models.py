@@ -5,12 +5,13 @@ from datetime import date
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
 from django.conf import settings
+from django.utils.text import slugify
 
 from medicine.models import Medicine
 
 # Create your models here.'
 class Patient(models.Model):
-    patient_id = models.CharField(max_length=8, unique=True, primary_key=True, editable=False)
+    patient_id = models.CharField(max_length=50, unique=True, primary_key=True, editable=False)
     first_name = models.CharField(max_length=200, blank=True, null=True)
     middle_name = models.CharField(max_length=100, blank=True, null=True)
     last_name = models.CharField(max_length=200)
@@ -24,6 +25,7 @@ class Patient(models.Model):
        
     def get_complaint(self):
         return dict(self.COMPLAINT_CHOICES).get(self.complaint, ' ')
+    
     def get_age(self):
         today = date.today()
         age = today.year - self.date_of_birth.year - ((today.month, today.day) < (self.date_of_birth.month, self.date_of_birth.day))
@@ -54,15 +56,16 @@ class Prescription(models.Model):
 class LabRequest(models.Model):
     
     STATUS_CHOICE = [
-        {'Pending', 'Pending'},
-        {'Submitted', 'Submitted'},
+        ('Pending', 'Pending'),
+        ('Submitted', 'Submitted'),
     ]
+
     id = models.CharField(max_length=8, unique=True, primary_key=True, editable=False)
     requested_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="lab_request")
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='lab_request')
     test_name = models.CharField(max_length=255, blank=True)  # For pre-defined tests
     custom_test = models.CharField(max_length=255, blank=True, null=True)  # For "Other"
-    status = models.CharField(max_length=50, default="Pending")
+    status = models.CharField(max_length=50, choices=STATUS_CHOICE, default="Pending")
     created_at = models.DateTimeField(auto_now_add=True)
     
     def __str__(self):
@@ -85,10 +88,29 @@ class LabResult(models.Model):
         return f"LabResult for {self.lab_request}"
 
     
-@receiver(pre_save, sender = Patient)
+@receiver(pre_save, sender=Patient)
 def create_patient_id(sender, instance, **kwargs):
     if not instance.patient_id:
-        instance.patient_id = ''.join(random.choices(string.ascii_uppercase + string.digits, k=8))
+        raw_lastname = slugify(instance.last_name).lower()
+        
+        # Get the highest number used across ALL patients
+        last_patient = Patient.objects.order_by('-patient_id').first()
+        
+        if last_patient and last_patient.patient_id:
+            # Extract the numeric part from the last ID
+            try:
+                # Split the ID and get the number after last dash
+                last_number = int(last_patient.patient_id.split('-')[-1][5:])
+                current_count = last_number + 1
+            except (ValueError, IndexError):
+                # Fallback if parsing fails
+                current_count = Patient.objects.count() + 90
+        else:
+            # First patient
+            current_count = 90
+            
+        # Generate the new ID
+        instance.patient_id = f'{raw_lastname}-02000{current_count}'
 
 @receiver(pre_save, sender=LabRequest)
 def set_lab_request_id(sender, instance, **kwargs):
