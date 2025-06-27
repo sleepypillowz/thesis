@@ -172,6 +172,7 @@ export default function MedicineList() {
             of <span className="font-medium">{filteredMedicines.length}</span>{" "}
             medicines
           </p>
+          <button>Analysis</button>
         </div>
       </div>
 
