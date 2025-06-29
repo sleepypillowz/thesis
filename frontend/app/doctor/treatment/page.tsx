@@ -4,16 +4,6 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import userRole from "@/hooks/userRole";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectValue,
-} from "@/components/ui/select";
-import { SelectTrigger } from "@radix-ui/react-select";
 
 // Update interfaces to match API response structure
 interface QueueData {
@@ -128,23 +118,23 @@ export default function TreatmentManagement() {
   return (
     <div className="space-y-6 p-6">
       <h1 className="text-2xl font-bold">Treatment Management</h1>
-      <p className="text-lg">
+      <p className="text-lg text-gray-700">
         Manage patient treatments, add new treatments, and track ongoing
         treatments for each patient.
       </p>
 
-      <Button>
+      <Button className="bg-blue-500 text-white hover:bg-blue-600">
         <Link href="/doctor/patient-treatment-queue">
           View Treatment Queueing
         </Link>
       </Button>
 
       {/* Ongoing Treatments Section */}
-      <div className="card rounded-lg p-4 shadow-md">
+      <div className="rounded-lg bg-white p-4 shadow-md">
         <h2 className="mb-4 text-xl font-semibold">Patient Monitoring</h2>
         <table className="min-w-full table-auto">
           <thead>
-            <tr>
+            <tr className="bg-gray-100">
               <th className="px-4 py-2 text-left">Patient Name</th>
               <th className="px-4 py-2 text-left">Complaint</th>
               <th className="px-4 py-2 text-left">Status</th>
@@ -153,7 +143,10 @@ export default function TreatmentManagement() {
           </thead>
           <tbody>
             {treatments.map((treatment) => (
-              <tr key={`${treatment.patient.patient_id}-${treatment.id}`}>
+              <tr
+                key={`${treatment.patient.patient_id}-${treatment.id}`}
+                className="hover:bg-gray-50"
+              >
                 <td className="px-4 py-2">
                   {treatment.patient.first_name} {treatment.patient.middle_name}{" "}
                   {treatment.patient.last_name}
@@ -173,11 +166,12 @@ export default function TreatmentManagement() {
                     onClick={() =>
                       handleViewDetails(treatment.patient.patient_id)
                     }
+                    className="rounded bg-blue-500 px-3 py-1 text-white hover:bg-blue-600"
                   >
                     View Details
                   </Button>
                   <Button
-                    variant="secondary"
+                    className="rounded bg-yellow-500 px-3 py-1 text-white hover:bg-yellow-600"
                     onClick={() =>
                       router.push(
                         `/doctor/patient-treatment-form/${treatment.patient.patient_id}/${treatment.patient.queue_data?.queue_number}`
@@ -186,7 +180,9 @@ export default function TreatmentManagement() {
                   >
                     Update
                   </Button>
-                  <Button variant="destructive">Cancel</Button>
+                  <Button className="rounded bg-red-500 px-3 py-1 text-white hover:bg-red-600">
+                    Cancel
+                  </Button>
                 </td>
               </tr>
             ))}
@@ -195,12 +191,12 @@ export default function TreatmentManagement() {
       </div>
 
       {/* Add New Treatment Section */}
-      <div className="card mt-6 rounded-lg p-4 shadow-md">
+      <div className="mt-6 rounded-lg bg-white p-4 shadow-md">
         <h2 className="mb-4 text-xl font-semibold">Add New Treatment</h2>
         <form className="space-y-4">
           <div className="flex items-center justify-between">
             <label className="text-lg">Patient Name</label>
-            <Input
+            <input
               type="text"
               placeholder="Enter Patient Name"
               className="w-2/3 rounded-md border p-2"
@@ -208,7 +204,7 @@ export default function TreatmentManagement() {
           </div>
           <div className="flex items-center justify-between">
             <label className="text-lg">Diagnosis</label>
-            <Input
+            <input
               type="text"
               placeholder="Enter Diagnosis"
               className="w-2/3 rounded-md border p-2"
@@ -216,11 +212,11 @@ export default function TreatmentManagement() {
           </div>
           <div className="flex items-center justify-between">
             <label className="text-lg">Start Date</label>
-            <Input type="date" className="w-2/3 rounded-md border p-2" />
+            <input type="date" className="w-2/3 rounded-md border p-2" />
           </div>
           <div className="flex items-center justify-between">
             <label className="text-lg">Treatment Plan</label>
-            <Textarea
+            <textarea
               className="w-2/3 rounded-md border p-2"
               placeholder="Enter Treatment Plan"
               rows={4}
@@ -228,54 +224,46 @@ export default function TreatmentManagement() {
           </div>
           <div className="flex items-center justify-between">
             <label className="text-lg">Doctor</label>
-            <Select>
-              <SelectTrigger className="w-2/3 rounded-md border p-2 text-left">
-                <SelectValue placeholder="Select a Doctor" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  <SelectItem value="Brown">Dr. Brown</SelectItem>
-                  <SelectItem value="Williams">Dr. Williams</SelectItem>
-                  <SelectItem value="Lee">Dr. Lee</SelectItem>
-                </SelectGroup>
-              </SelectContent>
-            </Select>
+            <select className="w-2/3 rounded-md border p-2">
+              <option>Select Doctor</option>
+              <option>Dr. Brown</option>
+              <option>Dr. Williams</option>
+              <option>Dr. Lee</option>
+            </select>
           </div>
           <div className="flex justify-end">
-            <Button variant="outline">Add Treatment</Button>
+            <Button className="bg-green-500 text-white hover:bg-green-600">
+              Add Treatment
+            </Button>
           </div>
         </form>
       </div>
 
       {/* Search and Filter Section */}
-      <div className="card mt-6 rounded-lg p-4 shadow-md">
+      <div className="mt-6 rounded-lg bg-white p-4 shadow-md">
         <h2 className="mb-4 text-xl font-semibold">
           Search and Filter Treatments
         </h2>
         <div className="flex space-x-4">
-          <Input
+          <input
             type="text"
             placeholder="Search by Patient Name"
             className="w-1/3 rounded-md border p-2"
           />
-          <Input
+          <input
             type="text"
             placeholder="Search by Diagnosis"
             className="w-1/3 rounded-md border p-2"
           />
-          <Select>
-            <SelectTrigger className="w-1/3 rounded-md border p-2 text-left">
-              <SelectValue placeholder="Filter by Doctor" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                <SelectItem value="Brown">Dr. Brown</SelectItem>
-                <SelectItem value="Williams">Dr. Williams</SelectItem>
-                <SelectItem value="Lee">Dr. Lee</SelectItem>
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-          <Button>Search</Button>
+          <select className="w-1/3 rounded-md border p-2">
+            <option>Filter by Doctor</option>
+            <option>Dr. Brown</option>
+            <option>Dr. Williams</option>
+            <option>Dr. Lee</option>
+          </select>
+          <button className="rounded-md bg-blue-500 px-4 py-2 text-white hover:bg-blue-600">
+            Search
+          </button>
         </div>
       </div>
     </div>

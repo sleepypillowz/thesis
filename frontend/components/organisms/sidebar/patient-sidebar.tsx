@@ -1,75 +1,91 @@
 import {
+  House,
+  User,
+  Calendar,
   Pill,
-  Settings,
-  Power,
-  MessageSquareText,
-  ReceiptText,
-  FileClock,
-  FileText,
-  LayoutDashboard,
+  File,
+  Book,
+  Clock,
+  Search,
+  Contact,
 } from "lucide-react";
 
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
+  SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import { NavUser } from "@/components/molecules/nav-user";
 import Image from "next/image";
 import Link from "next/link";
 
 const menu_items = [
   {
-    title: "Dashboard",
+    title: "Home",
     url: "/patient",
-    icon: LayoutDashboard,
+    icon: House,
+  },
+  {
+    title: "Profile",
+    url: "/patient/profile",
+    icon: User,
   },
   {
     title: "Appointments",
     url: "/patient/appointments",
-    icon: FileText,
+    icon: Calendar,
   },
   {
-    title: "Prescriptions",
+    title: "prescriptions",
     url: "/patient/prescriptions",
     icon: Pill,
   },
   {
-    title: "Medical Record",
+    title: "Results",
     url: "/patient/results",
-    icon: FileClock,
+    icon: File,
   },
   {
-    title: "Billing",
-    url: "/patient/billing",
-    icon: ReceiptText,
+    title: "Booking",
+    url: "/patient/booking",
+    icon: Book,
   },
   {
-    title: "Chat",
-    url: "/patient/chat",
-    icon: MessageSquareText,
+    title: "Queue",
+    url: "/patient/queue",
+    icon: Clock,
   },
   {
-    title: "Settings",
-    url: "/patient/settings",
-    icon: Settings,
+    title: "Find a Doctor",
+    url: "/patient/find-doctor",
+    icon: Search,
   },
   {
-    title: "Logout",
-    url: "/",
-    icon: Power,
+    title: "Contact",
+    url: "/patient/contact",
+    icon: Contact,
   },
 ];
+
+const data = {
+  user: {
+    name: "shadcn",
+    email: "m@example.com",
+  },
+};
 
 export function PatientSidebar() {
   return (
     <Sidebar>
       <SidebarHeader>
-        <div className="flex justify-center">
+        <div className="flex">
           <span className="relative flex h-8 w-8 shrink-0 overflow-hidden rounded-full">
             <Image
               className="aspect-square h-full w-full"
@@ -84,6 +100,7 @@ export function PatientSidebar() {
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
+          <SidebarGroupLabel>Main Menu</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarGroup>
@@ -102,6 +119,9 @@ export function PatientSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+      <SidebarFooter>
+        <NavUser user={data.user} />
+      </SidebarFooter>
     </Sidebar>
   );
 }

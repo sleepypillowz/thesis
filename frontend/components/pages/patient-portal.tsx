@@ -1,308 +1,257 @@
-"use client";
-
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import Link from "next/link";
 import { FaPenToSquare, FaFile } from "react-icons/fa6";
-import { useState } from "react";
-import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-export default function ProfilePage() {
-  const [activeTab, setActiveTab] = useState("profile"); // Declared and initialized
-
-  const profileData = {
-    name: "Juan Dela Cruz",
-    gender: "Male",
-    dob: "12/31/1975",
-    contact: {
-      phone: "0911 505 3143",
-      email: "sampleemail@gmail.com",
-    },
-    lastConsultation: "12/31/2002",
-    diagnosis: "Diabetes",
-    allergies: ["Penicillin", "Pollen"],
-    medicalHistory: [
-      "Hypertension (diagnosed 1998)",
-      "Hyperlipidemia (diagnosed 2000)",
-      "Appendectomy (1985)",
-    ],
-    familyHistory: [
-      "Father with history of heart disease",
-      "Mother with Type 2 Diabetes",
-    ],
-  };
-
-  const appointments = [
-    {
-      type: "Chest X-Ray",
-      date: "December 06 2024",
-      doctor: "Dr. Johnny",
-    },
-  ];
-
-  const prescriptions = [
-    {
-      drug: "Paracetamol Biogesic",
-      units: 2,
-      dosage: "Twice",
-      days: 7,
-      time: "10:30",
-    },
-  ];
-
-  const results = [
-    { name: "Juan Dela Cruz Lab Result", viewLink: "/#", downloadLink: "/#" },
-    { name: "Juan Dela Cruz Lab Result", viewLink: "/#", downloadLink: "/#" },
-    { name: "Juan Dela Cruz Lab Result", viewLink: "/#", downloadLink: "/#" },
-  ];
-
-  const notes = [
-    "Diet and exercise counseling recommended.",
-    "Follow up in 2 weeks for blood glucose monitoring and medication adjustment",
-  ];
-
+export default function Page() {
   return (
-    <main className="min-h-screen flex-1 bg-gray-50 p-4 dark:bg-gray-900 sm:p-8">
-      <div className="mx-auto max-w-7xl">
-        <h1 className="mb-8 text-3xl font-bold text-gray-900 dark:text-white">
-          Patient Dashboard
-        </h1>
-
-        <Tabs
-          value={activeTab}
-          onValueChange={setActiveTab}
-          className="space-y-6"
-        >
-          <TabsList className="grid w-full grid-cols-2 gap-2 rounded-lg bg-gray-100 p-2 dark:bg-gray-800 sm:grid-cols-5">
-            <TabsTrigger value="profile">Profile</TabsTrigger>
-            <TabsTrigger value="appointments">Appointments</TabsTrigger>
-            <TabsTrigger value="prescriptions">Prescriptions</TabsTrigger>
-            <TabsTrigger value="results">Results</TabsTrigger>
-            <TabsTrigger value="notes">Notes</TabsTrigger>
-          </TabsList>
-
-          {/* Profile Section */}
-          <TabsContent value="profile">
-            <Card className="shadow-lg">
-              <CardHeader>
-                <CardTitle>Patient Profile</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                  <div className="content-center space-y-4 text-center">
-                    <div>
-                      <h3 className="text-lg font-semibold">
-                        {profileData.name}
-                      </h3>
-                      <p className="text-sm text-gray-600 dark:text-gray-300">
-                        {profileData.gender} | {profileData.dob}
-                      </p>
-                    </div>
-                    <div>
-                      <h3 className="text-lg font-semibold">Contact Details</h3>
-                      <p className="text-gray-600 dark:text-gray-300">
-                        {profileData.contact.phone}
-                      </p>
-                      <p className="text-gray-600 dark:text-gray-300">
-                        {profileData.contact.email}
-                      </p>
-                    </div>
+    <main className="flex-1 px-8 py-8">
+      <div className="flex justify-center">
+        <div className="mx-auto max-w-6xl rounded-lg">
+          <div className="mx-8 my-8 grid grid-cols-2 gap-4 space-y-4">
+            <section className="col-span-2">
+              <h1 className="mb-4 text-3xl font-semibold">Profile</h1>
+              <div className="card grid grid-cols-1 items-center justify-center gap-12 text-center sm:grid-cols-2 md:grid-cols-2">
+                <div>
+                  <div className="mb-4">
+                    <p className="text-lg font-bold">JUAN DELA CRUZ</p>
+                    <p className="text-sm">Male | 12/31/1975</p>
                   </div>
-                  <div className="space-y-4">
-                    <div>
-                      <h3 className="text-lg font-semibold">
-                        Last Consultation
-                      </h3>
-                      <p className="text-gray-600 dark:text-gray-300">
-                        {profileData.lastConsultation}
-                      </p>
-                    </div>
-                    <div>
-                      <h3 className="text-lg font-semibold">
-                        Current Diagnosis
-                      </h3>
-                      <Badge variant="secondary">{profileData.diagnosis}</Badge>
-                    </div>
-                    <div>
-                      <h3 className="text-lg font-semibold">Allergies</h3>
-                      <div className="flex gap-2">
-                        {profileData.allergies.map((allergy, index) => (
-                          <Badge key={index} variant="outline">
-                            {allergy}
-                          </Badge>
-                        ))}
-                      </div>
-                    </div>
-                    <div>
-                      <h3 className="text-lg font-semibold">Medical History</h3>
-                      <ul className="list-disc pl-5 text-gray-600 dark:text-gray-300">
-                        {profileData.medicalHistory.map((item, index) => (
-                          <li key={index}>{item}</li>
-                        ))}
-                      </ul>
-                    </div>
-                    <div>
-                      <h3 className="text-lg font-semibold">Family History</h3>
-                      <ul className="list-disc pl-5 text-gray-600 dark:text-gray-300">
-                        {profileData.familyHistory.map((item, index) => (
-                          <li key={index}>{item}</li>
-                        ))}
-                      </ul>
-                    </div>
+
+                  <div className="mt-4">
+                    <p className="text-lg font-bold">Contact Details</p>
+                    <p>0911 505 3143</p>
+                    <p>sampleemail@gmail.com</p>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
 
-          {/* Appointments Section */}
-          <TabsContent value="appointments">
-            <Card className="shadow-lg">
-              <CardHeader className="flex flex-row items-center justify-between">
-                <CardTitle>Appointments</CardTitle>
-                <div className="flex gap-2">
-                  <Button variant="outline" size="sm">
-                    Schedule Appointment
+                <div className="space-y-4 sm:text-left">
+                  <div>
+                    <p className="text-lg font-semibold">
+                      Date of Last Consultation
+                    </p>
+                    <p>12/31/2002</p>
+                  </div>
+
+                  <div>
+                    <p className="text-lg font-semibold">Current Diagnosis</p>
+                    <p>Diabetes</p>
+                  </div>
+
+                  <div>
+                    <p className="text-lg font-semibold">Allergies</p>
+                    <p>Penicillin, Pollen</p>
+                  </div>
+
+                  <div>
+                    <p className="text-lg font-semibold">Medical History</p>
+                    <p>
+                      Hypertension (diagnosed 1998), Hyperlipidemia (diagnosed
+                      2000), Appendectomy (1985)
+                    </p>
+                  </div>
+
+                  <div>
+                    <p className="text-lg font-semibold">Family History</p>
+                    <p>
+                      Father with history of heart disease, Mother with Type 2
+                      Diabetes
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section className="col-span-2">
+              <h1 className="mb-4 text-3xl font-semibold">Appointments</h1>
+              <div className="card overflow-x-auto">
+                <div className="my-4 flex flex-wrap justify-start space-y-4 sm:space-x-4 sm:space-y-0">
+                  <Button variant="outline" className="rounded-full">
+                    Doctors Appointment
                   </Button>
-                  <Button variant="outline" size="sm">
-                    Request Appointment
+                  <Button variant="outline" className="rounded-full">
+                    Patient Appointment Request
                   </Button>
                 </div>
-              </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Type</TableHead>
-                      <TableHead>Date</TableHead>
-                      <TableHead>Doctor</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {appointments.map((appt, index) => (
-                      <TableRow key={index}>
-                        <TableCell>{appt.type}</TableCell>
-                        <TableCell>{appt.date}</TableCell>
-                        <TableCell>{appt.doctor}</TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+                <table className="card w-full text-left text-sm rtl:text-right">
+                  <thead className="text-xs uppercase text-muted-foreground">
+                    <tr>
+                      <th scope="col" className="px-4 py-4">
+                        Type
+                      </th>
+                      <th scope="col" className="px-4 py-4">
+                        Date
+                      </th>
+                      <th scope="col" className="px-4 py-4">
+                        Doctor
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr className="border-b bg-card">
+                      <td className="px-4 py-4">Chest X-Ray</td>
+                      <td className="px-4 py-4">December 06 2024</td>
+                      <td className="px-4 py-4">Dr. Johnny</td>
+                    </tr>
+                  </tbody>
+                </table>
+
                 <Link
                   href="/patient/appointments"
-                  className="mt-4 flex items-center justify-end gap-2 text-blue-500 hover:text-blue-700"
+                  className="flex items-center justify-end space-x-2 pt-4 text-blue-500 hover:text-blue-700"
                 >
-                  <span>View All Appointments</span>
+                  <span>View all Appointments</span>
                   <FaPenToSquare />
                 </Link>
-              </CardContent>
-            </Card>
-          </TabsContent>
+              </div>
+            </section>
 
-          {/* Prescriptions Section */}
-          <TabsContent value="prescriptions">
-            <Card className="shadow-lg">
-              <CardHeader>
-                <CardTitle>Prescriptions</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Drug Name</TableHead>
-                      <TableHead>Units</TableHead>
-                      <TableHead>Dosage</TableHead>
-                      <TableHead>Days</TableHead>
-                      <TableHead>Time</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {prescriptions.map((prescription, index) => (
-                      <TableRow key={index}>
-                        <TableCell>{prescription.drug}</TableCell>
-                        <TableCell>{prescription.units}</TableCell>
-                        <TableCell>{prescription.dosage}</TableCell>
-                        <TableCell>{prescription.days}</TableCell>
-                        <TableCell>{prescription.time}</TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+            <section className="col-span-2">
+              <h1 className="mb-4 text-3xl font-semibold">Prescriptions</h1>
+              <div className="card overflow-x-auto">
+                <table className="card w-full text-left text-sm rtl:text-right">
+                  <thead className="text-xs uppercase text-muted-foreground">
+                    <tr>
+                      <th scope="col" className="px-4 py-4">
+                        Drug Name
+                      </th>
+                      <th scope="col" className="px-4 py-4">
+                        No. of Units
+                      </th>
+                      <th scope="col" className="px-4 py-4">
+                        Dosage
+                      </th>
+                      <th scope="col" className="px-4 py-4">
+                        No. of Days
+                      </th>
+                      <th scope="col" className="px-4 py-4">
+                        Time
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr className="border-b bg-card">
+                      <td className="px-4 py-4">Paracetamol Biogesic</td>
+                      <td className="px-4 py-4">2</td>
+                      <td className="px-4 py-4">Twice</td>
+                      <td className="px-4 py-4">7</td>
+                      <td className="px-4 py-4">10:30</td>
+                    </tr>
+                    <tr className="border-b bg-card">
+                      <td className="px-4 py-4">Paracetamol Biogesic</td>
+                      <td className="px-4 py-4">2</td>
+                      <td className="px-4 py-4">Twice</td>
+                      <td className="px-4 py-4">7</td>
+                      <td className="px-4 py-4">10:30</td>
+                    </tr>
+                    <tr className="bg-card">
+                      <td className="px-4 py-4">Paracetamol Biogesic</td>
+                      <td className="px-4 py-4">2</td>
+                      <td className="px-4 py-4">Twice</td>
+                      <td className="px-4 py-4">7</td>
+                      <td className="px-4 py-4">10:30</td>
+                    </tr>
+                  </tbody>
+                </table>
+
                 <Link
                   href="/patient/prescriptions"
-                  className="mt-4 flex items-center justify-end gap-2 text-blue-500 hover:text-blue-700"
+                  className="flex items-center justify-end space-x-2 pt-4 text-blue-500 hover:text-blue-700"
                 >
-                  <span>View All Prescriptions</span>
+                  <span>View all Prescriptions</span>
                   <FaPenToSquare />
                 </Link>
-              </CardContent>
-            </Card>
-          </TabsContent>
+              </div>
+            </section>
 
-          {/* Results Section */}
-          <TabsContent value="results">
-            <Card className="shadow-lg">
-              <CardHeader>
-                <CardTitle>Lab Results</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {results.map((result, index) => (
-                    <div
-                      key={index}
-                      className="flex items-center justify-between rounded-lg bg-gray-50 p-4 dark:bg-gray-800"
+            <section className="card block w-full overflow-x-auto">
+              <h1 className="mb-4 text-3xl font-semibold">View Results</h1>
+
+              <div className="space-y-2">
+                <div className="card flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    <FaFile className="text-accent" />
+                    <p className="text-left">Juan Dela Cruz Lab Result</p>
+                  </div>
+
+                  <div className="flex space-x-4">
+                    <Link
+                      href="/#"
+                      className="text-blue-500 hover:text-blue-700"
                     >
-                      <div className="flex items-center gap-2">
-                        <FaFile className="text-blue-500" />
-                        <span>{result.name}</span>
-                      </div>
-                      <div className="flex gap-4">
-                        <Link
-                          href={result.viewLink}
-                          className="text-blue-500 hover:text-blue-700"
-                        >
-                          View
-                        </Link>
-                        <Link
-                          href={result.downloadLink}
-                          className="text-blue-500 hover:text-blue-700"
-                        >
-                          Download
-                        </Link>
-                      </div>
-                    </div>
-                  ))}
+                      View
+                    </Link>
+                    <Link
+                      href="/#"
+                      className="text-blue-500 hover:text-blue-700"
+                    >
+                      Download
+                    </Link>
+                  </div>
                 </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
 
-          {/* Notes Section */}
-          <TabsContent value="notes">
-            <Card className="shadow-lg">
-              <CardHeader>
-                <CardTitle>Clinical Notes</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="font-semibold">Diagnosis: Type 2 Diabetes</p>
-                <ul className="mt-4 list-disc space-y-2 pl-5 text-gray-600 dark:text-gray-300">
-                  {notes.map((note, index) => (
-                    <li key={index}>{note}</li>
-                  ))}
+                <div className="card flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    <FaFile className="text-accent" />
+                    <p className="text-left">Juan Dela Cruz Lab Result</p>
+                  </div>
+
+                  <div className="flex space-x-4">
+                    <Link
+                      href="/#"
+                      className="text-blue-500 hover:text-blue-700"
+                    >
+                      View
+                    </Link>
+                    <Link
+                      href="/#"
+                      className="text-blue-500 hover:text-blue-700"
+                    >
+                      Download
+                    </Link>
+                  </div>
+                </div>
+
+                <div className="card flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    <FaFile className="text-accent" />
+                    <p className="text-left">Juan Dela Cruz Lab Result</p>
+                  </div>
+
+                  <div className="flex space-x-4">
+                    <Link
+                      href="/#"
+                      className="text-blue-500 hover:text-blue-700"
+                    >
+                      View
+                    </Link>
+                    <Link
+                      href="/#"
+                      className="text-blue-500 hover:text-blue-700"
+                    >
+                      Download
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section className="card">
+              <div className="flex-col justify-between">
+                <h1 className="mb-4 text-3xl font-semibold">Notes</h1>
+                <p className="text-lg">Diagnosis: Type 2 Diabetes</p>
+                <ul className="list-disc space-y-4 text-wrap break-words pl-5">
+                  <li className="mt-4">
+                    Diet and excercise counseling recommended.
+                  </li>
+                  <li>
+                    Follow up in 2 weeks for blood glucose monitoring and
+                    medication adjustment
+                  </li>
                 </ul>
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
+              </div>
+            </section>
+          </div>
+        </div>
       </div>
     </main>
   );

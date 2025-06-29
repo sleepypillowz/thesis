@@ -11,22 +11,15 @@ import {
 } from "@/components/ui/dialog";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
+
 
 interface Schedule {
   day_of_week: string;
   start_time: string;
   end_time: string;
 }
-import { useRouter } from "next/navigation";
-import { Input } from "../ui/input";
-import { Select } from "@radix-ui/react-select";
-import {
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../ui/select";
+
 interface DoctorProfile {
   specialization: string;
   schedules: Schedule[];
@@ -116,7 +109,7 @@ const DoctorCard: React.FC<DoctorCardComponentProps> = ({
   return (
     <div
       className={`flex flex-col border rounded-lg overflow-hidden shadow-md mb-6 transition-all duration-300 hover:shadow-lg ${
-        expanded ? "bg-blue-50" : "bg-card"
+        expanded ? "bg-blue-50" : "bg-white"
       }`}
     >
       <div className="flex flex-col md:flex-row">
@@ -141,11 +134,11 @@ const DoctorCard: React.FC<DoctorCardComponentProps> = ({
             </div>
             <div className="flex-grow">
               <h2 className="text-xl font-bold text-blue-800">{name}</h2>
-              <p className="mb-2 text-sm">{qualifications}</p>
+              <p className="mb-2 text-sm text-gray-600">{qualifications}</p>
               <div className="mb-3 flex items-center">
                 <span className="mr-1 font-medium">{rating.toFixed(1)}</span>
                 <div className="mr-2 text-sm">{renderStars()}</div>
-                <span className="text-sm">
+                <span className="text-sm text-gray-500">
                   ({reviewCount.toLocaleString()} ratings)
                 </span>
               </div>
@@ -164,7 +157,7 @@ const DoctorCard: React.FC<DoctorCardComponentProps> = ({
                 ))}
               </div>
             )}
-            <p className="text-sm">
+            <p className="text-sm text-gray-700">
               {expanded ? description : `${description.substring(0, 100)}...`}
             </p>
             <button
@@ -176,43 +169,47 @@ const DoctorCard: React.FC<DoctorCardComponentProps> = ({
           </div>
         </div>
         {/* Clinic Info Section */}
-        <div className="flex flex-col justify-between border-t bg-card p-6 md:w-1/4 md:border-l md:border-t-0">
+        <div className="flex flex-col justify-between border-t border-gray-200 bg-gray-50 p-6 md:w-1/4 md:border-l md:border-t-0">
           <div>
             <div className="mb-4">
-              <p className="text-sm">{address}</p>
-              <p className="mt-1 text-sm">{feedbackCount} Feedbacks</p>
+              <p className="text-sm text-gray-700">{address}</p>
+              <p className="mt-1 text-sm text-gray-500">
+                {feedbackCount} Feedbacks
+              </p>
             </div>
             <div className="mb-4">
               <p className="font-semibold text-green-700">{price}</p>
             </div>
             <div>
-              <p className="whitespace-pre-line text-sm">{availability}</p>
+              <p className="whitespace-pre-line text-sm text-gray-700">
+                {availability}
+              </p>
             </div>
           </div>
 
           {/* Conditionally show Edit/Archive buttons if callbacks are provided */}
           {onEdit && onArchive && (
             <div className="mt-4 flex justify-end gap-2">
-              <Button onClick={onEdit} className="rounded px-3 py-1 text-xs">
+              <button
+                onClick={onEdit}
+                className="rounded bg-yellow-500 px-3 py-1 text-xs text-white hover:bg-yellow-600"
+              >
                 Edit
-              </Button>
+              </button>
 
               <Dialog>
                 <DialogTrigger asChild>
-                  <Button
-                    variant="destructive"
-                    className="rounded px-3 py-1 text-xs"
-                  >
-                    Delete
-                  </Button>
+                  <button className="rounded bg-red-500 px-3 py-1 text-xs text-white hover:bg-red-600">
+                    Archive
+                  </button>
                 </DialogTrigger>
 
                 <DialogContent className="sm:max-w-[425px]">
                   <DialogHeader>
                     <DialogTitle>Confirm Archive</DialogTitle>
                     <DialogDescription>
-                      Are you sure you want to archive this doctor? Archived
-                      doctors will be moved to the archive section.
+                      Are you sure you want to archive this doctor? Archived doctors
+                      will be moved to the archive section.
                     </DialogDescription>
                   </DialogHeader>
                   <div className="mt-4 flex justify-end gap-2">
@@ -226,7 +223,10 @@ const DoctorCard: React.FC<DoctorCardComponentProps> = ({
                     >
                       Cancel
                     </Button>
-                    <Button variant="destructive" onClick={onArchive}>
+                    <Button
+                      variant="destructive"
+                      onClick={onArchive}
+                    >
                       Confirm
                     </Button>
                   </div>
@@ -284,10 +284,9 @@ const DoctorsPage: React.FC = () => {
 
         const data = await response.json();
         setUserEmail(data.email);
-
+        
         // Check if user is General Doctor
-        const isGenDoc =
-          userEmail.toLowerCase() === "generaldoctor@hospital.com";
+        const isGenDoc = userEmail.toLowerCase() === "generaldoctor@hospital.com";
         setIsGeneralDoctor(isGenDoc);
         console.log("User is General Doctor:", isGenDoc);
       } catch (error) {
@@ -297,7 +296,7 @@ const DoctorsPage: React.FC = () => {
 
     fetchUserEmail();
   });
-
+ 
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedSpecialty, setSelectedSpecialty] = useState("All");
   const [sortBy, setSortBy] = useState("rating");
@@ -559,7 +558,7 @@ const DoctorsPage: React.FC = () => {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_BASE}/user/users/${doctorId}/`,
         {
-          method: "DELETE",
+          method: "DELETE", 
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -572,7 +571,7 @@ const DoctorsPage: React.FC = () => {
       alert("Failed to archive doctor");
     }
   };
-
+  
   // --- Prepare Edit Modal ---
   const openEditModal = (doctor: ExtendedDoctorCardProps) => {
     const nameParts = doctor.name.split(" ");
@@ -611,25 +610,35 @@ const DoctorsPage: React.FC = () => {
       if (sortBy === "reviews") return b.reviewCount - a.reviewCount;
       return 0;
     });
-
+    
   const handleArchivesClick = () => {
     router.push("/doctor/archives");
   };
-
+  
   return (
     <div className="container mx-auto max-w-6xl px-6 py-8">
       <div className="mb-6 flex items-center gap-4">
-        <h1 className="flex-1 text-3xl font-bold text-primary">Find Doctors</h1>
+        <h1 className="flex-1 text-3xl font-bold text-blue-800">
+          Find Doctors
+        </h1>
+        
+        {/* Archives Button (only for General Doctor) */}
         {isGeneralDoctor && (
-          <Button onClick={handleArchivesClick} variant="secondary">
+          <button
+            onClick={handleArchivesClick}
+            className="rounded bg-gray-500 px-4 py-2 text-white hover:bg-gray-600"
+          >
             Archives
-          </Button>
+          </button>
         )}
-
+        
+        {/* Add Doctor Button (only for General Doctor) */}
         {isGeneralDoctor && (
           <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
             <DialogTrigger asChild>
-              <Button>Add Doctor</Button>
+              <button className="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700">
+                Add Doctor
+              </button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[600px]">
               <DialogHeader>
@@ -811,7 +820,7 @@ const DoctorsPage: React.FC = () => {
             </DialogContent>
           </Dialog>
         )}
-
+        
         {/* Edit Doctor Modal */}
         <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
           <DialogTrigger asChild>
@@ -975,58 +984,57 @@ const DoctorsPage: React.FC = () => {
       </div>
 
       {/* Search & Filter Section */}
-      <div className="card mb-8 rounded-lg p-6 shadow-md">
+      <div className="mb-8 rounded-lg bg-white p-6 shadow-md">
         <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
           <div>
-            <label className="mb-1 block text-sm font-medium">Search</label>
-            <Input
+            <label className="mb-1 block text-sm font-medium text-gray-700">
+              Search
+            </label>
+            <input
               type="text"
               placeholder="Search by name or qualification"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full rounded border p-2"
+              className="w-full rounded border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
           <div>
-            <label className="mb-1 block text-sm font-medium">Specialty</label>
-            <Select
+            <label className="mb-1 block text-sm font-medium text-gray-700">
+              Specialty
+            </label>
+            <select
               value={selectedSpecialty}
-              onValueChange={setSelectedSpecialty}
+              onChange={(e) => setSelectedSpecialty(e.target.value)}
+              className="w-full rounded border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
-              <SelectTrigger className="w-full rounded p-2">
-                <SelectValue placeholder="Select a Doctor" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  {specialties.map((specialty) => (
-                    <SelectItem key={specialty} value={specialty}>
-                      {specialty}
-                    </SelectItem>
-                  ))}
-                </SelectGroup>
-              </SelectContent>
-            </Select>
+              {specialties.map((specialty) => (
+                <option key={specialty} value={specialty}>
+                  {specialty}
+                </option>
+              ))}
+            </select>
           </div>
           <div>
-            <label className="mb-1 block text-sm font-medium">Sort By</label>
-            <Select value={sortBy} onValueChange={setSortBy}>
-              <SelectTrigger className="w-full rounded p-2">
-                <SelectValue placeholder="Select a Doctor" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  <SelectItem value="rating">Rating (High to Low)</SelectItem>
-                  <SelectItem value="price">Price (Low to High)</SelectItem>
-                  <SelectItem value="reviews">Number of Reviews</SelectItem>
-                </SelectGroup>
-              </SelectContent>
-            </Select>
+            <label className="mb-1 block text-sm font-medium text-gray-700">
+              Sort By
+            </label>
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value)}
+              className="w-full rounded border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="rating">Rating (High to Low)</option>
+              <option value="price">Price (Low to High)</option>
+              <option value="reviews">Number of Reviews</option>
+            </select>
           </div>
         </div>
       </div>
 
       {/* Results Count */}
-      <p className="mb-4">Showing {filteredDoctors.length} doctors</p>
+      <p className="mb-4 text-gray-600">
+        Showing {filteredDoctors.length} doctors
+      </p>
 
       {/* Render Doctor Cards */}
       <div className="space-y-6">
@@ -1035,16 +1043,16 @@ const DoctorsPage: React.FC = () => {
             key={doctor.id}
             {...doctor}
             onEdit={isGeneralDoctor ? () => openEditModal(doctor) : undefined}
-            onArchive={
-              isGeneralDoctor ? () => handleArchiveDoctor(doctor.id) : undefined
-            }
+            onArchive={isGeneralDoctor ? () => handleArchiveDoctor(doctor.id) : undefined}
           />
         ))}
       </div>
 
       {filteredDoctors.length === 0 && (
         <div className="py-12 text-center">
-          <p className="text-lg">No doctors found matching your criteria.</p>
+          <p className="text-lg text-gray-600">
+            No doctors found matching your criteria.
+          </p>
           <button
             onClick={() => {
               setSearchTerm("");
