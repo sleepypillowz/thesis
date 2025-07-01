@@ -1,12 +1,11 @@
 import {
   LayoutDashboard,
-  ClipboardPlus,
   Calendar,
-  // ChartArea,
-  ChevronDown,
-  User,
-  List,
   Settings,
+  MessageSquareText,
+  Power,
+  Users,
+  Heart,
 } from "lucide-react";
 
 import {
@@ -14,18 +13,12 @@ import {
   SidebarContent,
   SidebarGroup,
   SidebarGroupContent,
-  SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import Image from "next/image";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "../../ui/collapsible";
 import Link from "next/link";
 
 const menu_items = [
@@ -35,37 +28,34 @@ const menu_items = [
     icon: LayoutDashboard,
   },
   {
-    title: "Patient Portal",
-    url: "/oncall-doctors/patient-portal",
-    icon: User,
-  },
-  {
-    title: "Doctors List",
-    url: "/oncall-doctors/doctors-list",
-    icon: List,
-  },
-  // {
-  //   title: "Reports",
-  //   url: "/oncall-doctors/reports",
-  //   icon: ChartArea,
-  // },
-];
-
-const patient_items = [
-  {
-    title: "Medical Records",
-    url: "/oncall-doctors/medical-records",
-    icon: ClipboardPlus,
-  },
-  {
     title: "Appointments",
     url: "/oncall-doctors/appointments",
     icon: Calendar,
   },
   {
+    title: "Doctors",
+    url: "/oncall-doctors/doctors",
+    icon: Heart,
+  },
+  {
+    title: "Patients",
+    url: "/oncall-doctors/patients",
+    icon: Users,
+  },
+  {
     title: "Settings",
     url: "/oncall-doctors/settings",
     icon: Settings,
+  },
+  {
+    title: "Chat",
+    url: "/oncall-doctors/chat",
+    icon: MessageSquareText,
+  },
+  {
+    title: "Logout",
+    url: "/",
+    icon: Power,
   },
 ];
 
@@ -73,7 +63,10 @@ export function AppSidebar() {
   return (
     <Sidebar>
       <SidebarHeader>
-        <div className="flex">
+        <Link
+          href="/oncall-doctors"
+          className="flex items-center justify-center gap-2"
+        >
           <span className="relative flex h-8 w-8 shrink-0 overflow-hidden rounded-full">
             <Image
               className="aspect-square h-full w-full"
@@ -83,12 +76,11 @@ export function AppSidebar() {
               height={64}
             />
           </span>
-          <h1 className="ms-2 text-2xl">MediTrakk</h1>
-        </div>
+          <h1 className="text-2xl">MediTrakk</h1>
+        </Link>
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Main Menu</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarGroup>
@@ -106,35 +98,6 @@ export function AppSidebar() {
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
-
-        <Collapsible defaultOpen className="group/collapsible">
-          <SidebarGroup>
-            <SidebarGroupLabel asChild>
-              <CollapsibleTrigger>
-                Patients
-                <ChevronDown className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180" />
-              </CollapsibleTrigger>
-            </SidebarGroupLabel>
-            <SidebarGroupContent>
-              <SidebarMenu>
-                <SidebarGroup>
-                  <CollapsibleContent>
-                    {patient_items.map((item) => (
-                      <SidebarMenuItem key={item.title}>
-                        <SidebarMenuButton asChild>
-                          <a href={item.url}>
-                            <item.icon />
-                            <span>{item.title}</span>
-                          </a>
-                        </SidebarMenuButton>
-                      </SidebarMenuItem>
-                    ))}
-                  </CollapsibleContent>
-                </SidebarGroup>
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
-        </Collapsible>
       </SidebarContent>
     </Sidebar>
   );

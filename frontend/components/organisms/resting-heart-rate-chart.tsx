@@ -31,7 +31,7 @@ const chartData = [
 const chartConfig = {
   heartRate: {
     label: "Heart Rate",
-    color: "var(--chart-1)",
+    color: "oklch(55.1% 0.027 264.364)",
   },
 } satisfies ChartConfig;
 
@@ -40,7 +40,10 @@ export function RestingHeartRateChart() {
     <Card>
       <CardHeader>
         <CardTitle>Resting Heart Rate</CardTitle>
-        <CardDescription>72 bmp (Average)</CardDescription>
+        <CardDescription>
+          <span className="font-bold">72 bmp </span>
+          <span>(Average)</span>
+        </CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig}>
@@ -68,10 +71,10 @@ export function RestingHeartRateChart() {
             <Line
               dataKey="heartRate"
               type="natural"
-              stroke="hsl(var(--chart-1))"
+              stroke="oklch(55.1% 0.027 264.364)"
               strokeWidth={2}
               dot={{
-                fill: "hsl(var(--chart-1))",
+                fill: "oklch(55.1% 0.027 264.364)",
               }}
               activeDot={{
                 r: 6,

@@ -3,13 +3,13 @@ import {
   ClipboardPlus,
   Calendar,
   ChartArea,
-  ChevronDown,
   Bandage,
   User,
   List,
   Pill,
   Clock,
   Settings,
+  ChevronUp,
 } from "lucide-react";
 
 import {
@@ -91,7 +91,7 @@ export function AppSidebar() {
   return (
     <Sidebar>
       <SidebarHeader>
-        <div className="flex">
+        <Link href="/doctor" className="flex items-center justify-center gap-2">
           <span className="relative flex h-8 w-8 shrink-0 overflow-hidden rounded-full">
             <Image
               className="aspect-square h-full w-full"
@@ -101,8 +101,8 @@ export function AppSidebar() {
               height={64}
             />
           </span>
-          <h1 className="ms-2 text-2xl">MediTrakk</h1>
-        </div>
+          <h1 className="text-2xl">MediTrakk</h1>
+        </Link>
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
@@ -130,7 +130,7 @@ export function AppSidebar() {
             <SidebarGroupLabel asChild>
               <CollapsibleTrigger>
                 Patients
-                <ChevronDown className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180" />
+                <ChevronUp className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180" />
               </CollapsibleTrigger>
             </SidebarGroupLabel>
             <SidebarGroupContent>

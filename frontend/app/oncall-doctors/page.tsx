@@ -1,100 +1,66 @@
-"use client";
-import { useEffect, useState } from "react";
-import {
-  Patient,
-  columns,
-} from "@/components/molecules/tables/patient-columns";
-import { DataTable } from "@/components/ui/data-table";
-import { VisitorsChart } from "@/components/organisms/visitors-chart";
-import { CommonDiseasesChart } from "@/components/organisms/common-diseases-chart";
-import StatsCard from "@/components/organisms/admin-stats-cards";
-import userInfo from "@/hooks/userRole";
+import OncallDoctorsRecentAppointment from "@/components/molecules/oncall-doctors-recent-appointment";
+import { PatientSurveyChart } from "@/components/organisms/patient-survey-chart";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
+import Image from "next/image";
+import Link from "next/link";
 
 export default function Page() {
-  const [patients, setPatients] = useState<Patient[]>([]);
-  const [searchTerm, setSearchTerm] = useState("");
-  const user = userInfo();
-  useEffect(() => {
-    // Fetch patient data from the Django API or Supabase with the token
-    const fetchPatients = async () => {
-      try {
-        const accessToken = localStorage.getItem("access");
-        if (!accessToken) {
-          console.error("No access token found");
-          return;
-        }
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_BASE}/patients/`,
-          {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
-            credentials: "include",
-          }
-        );
-        console.log("API Base:", process.env.NEXT_PUBLIC_API_BASE);
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data: Patient[] = await response.json();
-        setPatients(data);
-      } catch (error) {
-        console.error("Error fetching patients:", error);
-      }
-    };
-
-    fetchPatients();
-  }, []);
-
-  // Filter patients based on the search term
-  const filteredPatients = patients.filter((patient) => {
-    const fullName = `${patient.first_name} ${patient.middle_name || ""} ${
-      patient.last_name
-    }`.toLowerCase();
-    return fullName.includes(searchTerm.toLowerCase());
-  });
-
   return (
-    <div className="mb-4 space-y-4 text-center md:text-left lg:m-0">
-      <div className="px-6 py-4">
-        <p className="text-2xl font-bold">
-          Good Day, <span className="text-blue-500">{user?.first_name}</span>
-        </p>
-
-        <p className="text-sm">
-          Check out the latest updates from the past 7 days!
-        </p>
-      </div>
-
-      <StatsCard />
-
-      <div className="space-y-4 lg:mx-4 lg:flex lg:justify-center lg:space-x-4 lg:space-y-0">
-        <div className="lg:w-full">
-          <VisitorsChart />
-        </div>
-
-        <div className="w-1/4 space-y-4">
-          <div className="lg:w-full lg:max-w-xs">
-            <CommonDiseasesChart />
+    <div className="m-6 space-y-6">
+      <section className="card">
+        <div className="grid grid-cols-3">
+          <div className="col-span-2 content-center">
+            <div className="mb-4 flex flex-col space-y-4 text-sm font-semibold text-muted-foreground">
+              <span>Welcome back</span>
+              <span className="text-xl font-bold text-blue-500">
+                DR. Sarah Smith!
+              </span>
+              <span>Gynecologist, MBBS,MD</span>
+            </div>
+            <div className="flex space-x-6 text-slate-800">
+              <div className="flex w-full flex-col rounded-xl bg-indigo-200 p-2">
+                <span className="text-sm font-bold">Appointments</span>
+                <span className="text-lg text-blue-600">12+</span>
+              </div>
+              <div className="flex w-full flex-col rounded-xl bg-red-200 p-2">
+                <span className="text-sm font-bold">Surgeries</span>
+                <span className="text-lg text-red-600">3+</span>
+              </div>
+              <div className="flex w-full flex-col rounded-xl bg-green-200 p-2">
+                <span className="text-sm font-bold">Room Visit</span>
+                <span className="text-lg text-green-600">12+</span>
+              </div>
+            </div>
           </div>
-          <div className="lg:w-full lg:max-w-xs">
-            <CommonDiseasesChart />
+          <div className="w-96 place-content-center place-self-center">
+            <AspectRatio ratio={1 / 1}>
+              <Image
+                src="/doctor.png"
+                alt="Doctor"
+                fill
+                className="h-full w-full rounded-lg object-cover"
+              />
+            </AspectRatio>
           </div>
         </div>
-      </div>
-      <div className="container mx-auto px-10 py-10">
-        <h1 className="mb-4 text-2xl">Medical Records</h1>
-        {/* Search Input */}
-        <input
-          type="text"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          placeholder="Search patient name..."
-          className="mb-4 w-full rounded border border-gray-300 p-2"
-        />
-        <DataTable columns={columns} data={filteredPatients} />
-      </div>
+      </section>
+      <section className="grid grid-cols-3 space-x-6">
+        <div className="card col-span-2">
+          <div className="flex justify-between">
+            <span className="mb-6 font-bold">Recent Appointments</span>
+            <Link
+              href="/oncall-doctors/appointments"
+              className="font-bold text-blue-500 hover:underline"
+            >
+              View All
+            </Link>
+          </div>
+          <OncallDoctorsRecentAppointment />
+        </div>
+        <div>
+          <PatientSurveyChart />
+        </div>
+      </section>
     </div>
   );
 }

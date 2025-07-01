@@ -12,7 +12,7 @@ const Dropdown = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" size="icon">
+        <Button variant="ghost" size="icon" className="rounded-full">
           <Bell />
           <span className="sr-only">Notification</span>
         </Button>

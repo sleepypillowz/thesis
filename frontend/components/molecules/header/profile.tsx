@@ -67,7 +67,7 @@ const Profile = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" size="icon">
+        <Button variant="ghost" size="icon" className="rounded-full">
           <User />
           <span className="sr-only">Profile</span>
         </Button>

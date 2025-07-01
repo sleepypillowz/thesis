@@ -20,7 +20,7 @@ body {
     --secondary-foreground: 213 32% 52%;
     --muted: 220 10% 92%;
     --muted-foreground: 220 16% 40%;
-    --accent: 179 25% 65%;
+    --accent: 220 16% 86%;
     --accent-foreground: 220 16% 20%;
     --destructive: 354 42% 56%;
     --destructive-foreground: 220 16% 98%;
@@ -32,11 +32,10 @@ body {
     --chart-3: 193 43% 67%;
     --chart-4: 210 34% 63%;
     --chart-5: 311 20% 63%;
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 240 5.9% 10%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-background: var(--card);
+    --sidebar-foreground: var(--card-foreground);
+    --sidebar-primary-foreground: var(--primary-foreground);
+    --sidebar-accent: 220 16% 86%;
     --sidebar-accent-foreground: 240 5.9% 10%;
     --sidebar-border: 220 13% 91%;
     --sidebar-ring: 217.2 91.2% 59.8%;
@@ -55,8 +54,8 @@ body {
     --secondary-foreground: 213 32% 62%;
     --muted: 220 16% 22%;
     --muted-foreground: 220 16% 70%;
-    --accent: 179 25% 55%;
-    --accent-foreground: 220 16% 16%;
+    --accent: 220 16% 28%;
+    --accent-foreground: 240 4.8% 95.9%;
     --destructive: 354 42% 56%;
     --destructive-foreground: 220 16% 98%;
     --border: 220 16% 25%;
@@ -67,11 +66,10 @@ body {
     --chart-3: 193 43% 57%;
     --chart-4: 210 34% 53%;
     --chart-5: 311 20% 53%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-background: var(--card);
+    --sidebar-foreground: var(--card-foreground);
+    --sidebar-primary-foreground: var(--primary-foreground);
+    --sidebar-accent: 220 16% 28%;
     --sidebar-accent-foreground: 240 4.8% 95.9%;
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 217.2 91.2% 59.8%;
@@ -90,7 +88,7 @@ body {
 
 @layer components {
   .card {
-    @apply rounded-xl bg-card text-card-foreground shadow-md p-4;
+    @apply rounded-xl bg-card text-card-foreground p-6;
   }
 }
 
