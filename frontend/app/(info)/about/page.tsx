@@ -46,9 +46,8 @@ export default function AboutUs() {
               </CardHeader>
               <CardContent>
                 <p>
-                  To provide comprehensive, accessible, and affordable
-                  healthcare services, prioritizing patient satisfaction and
-                  continuous improvement.
+                  To provide excellent healthcare and the delivery of quality
+                  health services to all its clients.
                 </p>
               </CardContent>
             </Card>
@@ -68,9 +67,8 @@ export default function AboutUs() {
               </CardHeader>
               <CardContent>
                 <p>
-                  To be a leading healthcare provider recognized for exceptional
-                  care, advanced technology, and a compassionate approach to
-                  healing.
+                  To be a quality birthing home service that shall be responsive
+                  to the health needs of its clients.
                 </p>
               </CardContent>
             </Card>

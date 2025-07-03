@@ -104,7 +104,10 @@ export default function ContactPage() {
                   text: "info@mediaproper.com",
                   href: "mailto:info@mediaproper.com",
                 },
-                { icon: MapPin, text: "130 Old Samson Rd." },
+                {
+                  icon: MapPin,
+                  text: "130 Old Samson Rd. Barangay Apolonio Samson, Quezon City",
+                },
               ].map((item, index) => (
                 <a
                   key={index}
