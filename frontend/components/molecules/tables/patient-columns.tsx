@@ -130,8 +130,8 @@ export const columns: ColumnDef<Patient>[] = [
             <Button asChild variant="secondary">
               <Link href="/doctor/medical-records">Edit</Link>
             </Button>
-            <Button asChild variant="destructive">
-              <Link href="/doctor/medical-records">Delete</Link>
+            <Button asChild variant="secondary">
+              <Link href="/doctor/medical-records">Archive</Link>
             </Button>
           </div>
         </DropdownMenu>

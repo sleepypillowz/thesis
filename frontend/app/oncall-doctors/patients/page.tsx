@@ -19,7 +19,6 @@ export default function Page() {
           <TableRow>
             <TableHead>Patient Name</TableHead>
             <TableHead>Age/Sex</TableHead>
-            <TableHead>Room</TableHead>
             <TableHead>Reason</TableHead>
             <TableHead>Diagnosis</TableHead>
             <TableHead>Last Seen</TableHead>
@@ -33,7 +32,6 @@ export default function Page() {
               <span>John Doe</span>
             </TableCell>
             <TableCell>30/M</TableCell>
-            <TableCell>302M</TableCell>
             <TableCell>Fever</TableCell>
             <TableCell>
               <Badge
