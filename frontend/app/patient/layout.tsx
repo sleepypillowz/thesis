@@ -3,7 +3,7 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import { PatientSidebar } from "@/components/organisms/sidebar/patient-sidebar";
+import { PatientSidebar } from "@/components/organisms/sidebars/patient-sidebar";
 import Header from "@/components/organisms/header";
 import RouteProgress from "@/components/shared/route-progress";
 

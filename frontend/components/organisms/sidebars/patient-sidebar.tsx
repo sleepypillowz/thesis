@@ -2,8 +2,6 @@ import {
   Pill,
   Settings,
   Power,
-  MessageSquareText,
-  ReceiptText,
   FileClock,
   FileText,
   LayoutDashboard,
@@ -40,16 +38,6 @@ const menu_items = [
     title: "Medical Record",
     url: "/patient/medical-record",
     icon: FileClock,
-  },
-  {
-    title: "Billing",
-    url: "/patient/billing",
-    icon: ReceiptText,
-  },
-  {
-    title: "Chat",
-    url: "/patient/chat",
-    icon: MessageSquareText,
   },
   {
     title: "Settings",
