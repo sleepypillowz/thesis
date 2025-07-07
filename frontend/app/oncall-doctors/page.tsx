@@ -1,22 +1,13 @@
 import OncallDoctorsRecentAppointment from "@/components/molecules/tables/oncall-doctors-recent-appointment";
+import PatientGroup from "@/components/molecules/tables/patient-group";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
-import { Activity, Egg, Syringe } from "lucide-react";
 import Image from "next/image";
-import Link from "next/link";
 
 const cards = [
-  { label: "Appointments", count: 12, color: "indigo" },
-  { label: "Surgeries", count: 12, color: "red" },
-  { label: "Room Visit", count: 12, color: "green" },
+  { id: 1, label: "Appointments", count: 12, color: "indigo" },
+  { id: 2, label: "Surgeries", count: 12, color: "red" },
+  { id: 3, label: "Room Visit", count: 12, color: "green" },
 ];
-
-const patientGroup = [
-  { label: "Cholesterol", count: 5, icon: Egg },
-  { label: "Blood Pressure", count: 3, icon: Activity },
-  { label: "Diabetes", count: 7, icon: Syringe },
-];
-
-const sortedPatients = [...patientGroup].sort((a, b) => b.count - a.count);
 
 export default function Page() {
   return (
@@ -58,42 +49,8 @@ export default function Page() {
         </div>
       </section>
       <div className="grid grid-cols-3 space-x-6">
-        <section className="card col-span-2">
-          <div className="flex justify-between">
-            <span className="mb-6 font-bold">Recent Appointments</span>
-            <Link
-              href="/oncall-doctors/appointments"
-              className="font-bold text-blue-500 hover:underline"
-            >
-              View All
-            </Link>
-          </div>
-          <OncallDoctorsRecentAppointment />
-        </section>
-        <section className="card space-y-6">
-          <div className="flex justify-between">
-            <span className="font-bold">Patient Group</span>
-            <Link
-              href="/oncall-doctors"
-              className="font-bold text-blue-500 hover:underline"
-            >
-              View All
-            </Link>
-          </div>
-          <ul className="space-y-6">
-            {sortedPatients.map((item, index) => (
-              <li key={index} className="flex flex-row justify-between">
-                <div className="flex flex-row">
-                  <item.icon className="mr-2" />
-                  <span>{item.label}</span>
-                </div>
-                <span className="text-sm text-muted-foreground">
-                  {item.count} patients
-                </span>
-              </li>
-            ))}
-          </ul>
-        </section>
+        <OncallDoctorsRecentAppointment />
+        <PatientGroup />
       </div>
     </div>
   );
