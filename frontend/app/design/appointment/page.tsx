@@ -17,6 +17,7 @@ export default function OncallDoctorsRecentAppointment() {
 
   const appointments = [
     {
+      id: 1,
       name: "John Doe",
       date: "06/30/2023",
       time: "8:00PM",
@@ -27,6 +28,7 @@ export default function OncallDoctorsRecentAppointment() {
       lastVisit: "09/01/2024",
     },
     {
+      id: 2,
       name: "Jane Doe",
       date: "06/30/2024",
       time: "8:00PM",
@@ -37,6 +39,7 @@ export default function OncallDoctorsRecentAppointment() {
       lastVisit: "09/01/2024",
     },
     {
+      id: 3,
       name: "John Wick",
       date: "06/30/2025",
       time: "8:00PM",
@@ -80,8 +83,8 @@ export default function OncallDoctorsRecentAppointment() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {filteredAppointments.map((item, index) => (
-            <TableRow key={index}>
+          {filteredAppointments.map((item) => (
+            <TableRow key={item.id}>
               <TableCell className="flex">
                 <User className="me-2 self-center rounded-full bg-muted" />
                 <span>{item.name}</span>

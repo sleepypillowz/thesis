@@ -1,4 +1,4 @@
-import OncallDoctorsRecentAppointment from "@/components/molecules/oncall-doctors-recent-appointment";
+import OncallDoctorsRecentAppointment from "@/components/molecules/tables/oncall-doctors-recent-appointment";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Activity, Egg, Syringe } from "lucide-react";
 import Image from "next/image";

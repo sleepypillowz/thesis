@@ -10,6 +10,30 @@ import Link from "next/link";
 import { PillBottle, Syringe, Tablets } from "lucide-react";
 
 export default function PatientRecentMedications() {
+  const medications = [
+    {
+      id: 1,
+      name: "Econochlor (chloramphenicol-oral)",
+      dosage: "1-0-1",
+      icon: Tablets,
+      color: "text-green-600",
+    },
+    {
+      id: 2,
+      name: "Desmopressin tabs",
+      dosage: "1-1-1",
+      icon: PillBottle,
+      color: "text-red-600",
+    },
+    {
+      id: 3,
+      name: "Abciximab-injection",
+      dosage: "1-1-1",
+      icon: Syringe,
+      color: "text-blue-600",
+    },
+  ];
+
   return (
     <div className="card">
       <div className="flex justify-between">
@@ -29,27 +53,15 @@ export default function PatientRecentMedications() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          <TableRow>
-            <TableCell className="flex">
-              <Tablets className="me-2 text-green-600" />
-              Econochlor (chloramphenicol-oral)
-            </TableCell>
-            <TableCell>1-0-1</TableCell>
-          </TableRow>
-          <TableRow>
-            <TableCell className="flex">
-              <PillBottle className="me-2 text-red-600" />
-              Desmopressin tabs
-            </TableCell>
-            <TableCell>1-1-1</TableCell>
-          </TableRow>
-          <TableRow>
-            <TableCell className="flex">
-              <Syringe className="me-2 text-blue-600" />
-              Abciximab-injection
-            </TableCell>
-            <TableCell>1-1-1</TableCell>
-          </TableRow>
+          {medications.map((item) => (
+            <TableRow key={item.id}>
+              <TableCell className="flex">
+                <item.icon className={`me-2 ${item.color}`} />
+                {item.name}
+              </TableCell>
+              <TableCell>{item.dosage}</TableCell>
+            </TableRow>
+          ))}
         </TableBody>
       </Table>
     </div>
