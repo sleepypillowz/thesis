@@ -1,7 +1,7 @@
 import PatientRecentMedications from "@/components/molecules/tables/patient-recent-medications";
 import StatsCard from "@/components/organisms/patient-stats-cards";
-import { PerformanceHeartRateChart } from "@/components/organisms/performance-heart-rate-chart";
-import { RestingHeartRateChart } from "@/components/organisms/resting-heart-rate-chart";
+import { PerformanceHeartRateChart } from "@/components/organisms/charts/performance-heart-rate-chart";
+import { RestingHeartRateChart } from "@/components/organisms/charts/resting-heart-rate-chart";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import Image from "next/image";
 

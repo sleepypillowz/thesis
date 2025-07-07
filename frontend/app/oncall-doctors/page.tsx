@@ -1,5 +1,5 @@
 import OncallDoctorsRecentAppointment from "@/components/molecules/oncall-doctors-recent-appointment";
-import { PatientSurveyChart } from "@/components/organisms/patient-survey-chart";
+import { PatientSurveyChart } from "@/components/organisms/charts/patient-survey-chart";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import Image from "next/image";
 import Link from "next/link";
