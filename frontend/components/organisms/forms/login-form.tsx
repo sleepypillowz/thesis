@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
-import { Github, ArrowRight, Loader2 } from "lucide-react";
+import { Facebook, ArrowRight, Loader2 } from "lucide-react";
 const formSchema = z.object({
   email: z.string().email({ message: "Invalid email" }),
   password: z.string().min(1, { message: "Required" }),
@@ -49,14 +49,17 @@ export function LoginForm({
     setIsLoading(true);
     try {
       // 1) Log in and get tokens
-      const loginRes = await fetch(`${process.env.NEXT_PUBLIC_API_BASE}/auth/jwt/create/`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email: values.email,
-          password: values.password,
-        }),
-      });
+      const loginRes = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE}/auth/jwt/create/`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email: values.email,
+            password: values.password,
+          }),
+        }
+      );
       if (!loginRes.ok) {
         const { detail } = await loginRes.json();
         throw new Error(detail || "Login failed");
@@ -77,7 +80,8 @@ export function LoginForm({
       if (is_superuser || role?.toLowerCase() === "admin") {
         window.location.href = "/admin";
       } else if (role?.toLowerCase() === "doctor") {
-        window.location.href = id === "LFG4YJ2P" ? "/doctor" : "/oncall-doctors";
+        window.location.href =
+          id === "LFG4YJ2P" ? "/doctor" : "/oncall-doctors";
       } else if (role?.toLowerCase() === "secretary") {
         window.location.href = "/secretary";
       } else {
@@ -109,10 +113,13 @@ export function LoginForm({
 
       <div className="bg-card p-6 shadow-lg">
         <Form {...form}>
-          <form onSubmit={(e) => {
-            e.preventDefault();
-            form.handleSubmit(onSubmit)();
-            }} className="space-y-5">
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              form.handleSubmit(onSubmit)();
+            }}
+            className="space-y-5"
+          >
             <FormField
               control={form.control}
               name="email"
@@ -243,8 +250,11 @@ export function LoginForm({
           className="h-12 w-full rounded-xl border-border/50 transition-all duration-300 hover:bg-accent/50"
           type="button"
         >
-          <Github className="mr-2 h-4 w-4" />
-          <span>GitHub</span>
+          <div className="rounded-full bg-blue-500 p-1">
+            <Facebook className="h-6 w-6 fill-white text-white" />
+          </div>
+
+          <span>Facebook</span>
         </Button>
 
         <p className="mt-6 text-center text-sm text-muted-foreground">
