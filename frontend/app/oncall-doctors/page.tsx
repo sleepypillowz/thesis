@@ -1,8 +1,22 @@
 import OncallDoctorsRecentAppointment from "@/components/molecules/oncall-doctors-recent-appointment";
-import { PatientSurveyChart } from "@/components/organisms/charts/patient-survey-chart";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
+import { Activity, Egg, Syringe } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+
+const cards = [
+  { label: "Appointments", count: 12, color: "indigo" },
+  { label: "Surgeries", count: 12, color: "red" },
+  { label: "Room Visit", count: 12, color: "green" },
+];
+
+const patientGroup = [
+  { label: "Cholesterol", count: 5, icon: Egg },
+  { label: "Blood Pressure", count: 3, icon: Activity },
+  { label: "Diabetes", count: 7, icon: Syringe },
+];
+
+const sortedPatients = [...patientGroup].sort((a, b) => b.count - a.count);
 
 export default function Page() {
   return (
@@ -18,18 +32,17 @@ export default function Page() {
               <span>Gynecologist, MBBS,MD</span>
             </div>
             <div className="flex space-x-6 text-slate-800">
-              <div className="flex w-full flex-col rounded-xl bg-indigo-200 p-2">
-                <span className="text-sm font-bold">Appointments</span>
-                <span className="text-lg text-blue-600">12+</span>
-              </div>
-              <div className="flex w-full flex-col rounded-xl bg-red-200 p-2">
-                <span className="text-sm font-bold">Surgeries</span>
-                <span className="text-lg text-red-600">3+</span>
-              </div>
-              <div className="flex w-full flex-col rounded-xl bg-green-200 p-2">
-                <span className="text-sm font-bold">Room Visit</span>
-                <span className="text-lg text-green-600">12+</span>
-              </div>
+              {cards.map((item, index) => (
+                <div
+                  key={index}
+                  className={`flex w-full flex-col rounded-xl bg-${item.color}-200 p-2`}
+                >
+                  <span className="text-sm font-bold">{item.label}</span>
+                  <span className={`text-lg text-${item.color}-600`}>
+                    {item.count}+
+                  </span>
+                </div>
+              ))}
             </div>
           </div>
           <div className="w-96 place-content-center place-self-center">
@@ -44,8 +57,8 @@ export default function Page() {
           </div>
         </div>
       </section>
-      <section className="grid grid-cols-3 space-x-6">
-        <div className="card col-span-2">
+      <div className="grid grid-cols-3 space-x-6">
+        <section className="card col-span-2">
           <div className="flex justify-between">
             <span className="mb-6 font-bold">Recent Appointments</span>
             <Link
@@ -56,11 +69,32 @@ export default function Page() {
             </Link>
           </div>
           <OncallDoctorsRecentAppointment />
-        </div>
-        <div>
-          <PatientSurveyChart />
-        </div>
-      </section>
+        </section>
+        <section className="card space-y-6">
+          <div className="flex justify-between">
+            <span className="font-bold">Patient Group</span>
+            <Link
+              href="/oncall-doctors"
+              className="font-bold text-blue-500 hover:underline"
+            >
+              View All
+            </Link>
+          </div>
+          <ul className="space-y-6">
+            {sortedPatients.map((item, index) => (
+              <li key={index} className="flex flex-row justify-between">
+                <div className="flex flex-row">
+                  <item.icon className="mr-2" />
+                  <span>{item.label}</span>
+                </div>
+                <span className="text-sm text-muted-foreground">
+                  {item.count} patients
+                </span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      </div>
     </div>
   );
 }
