@@ -9,7 +9,7 @@ const fadeIn = {
 
 export default function AboutUs() {
   return (
-    <div className="bg-gray-50">
+    <div>
       {/* Hero Section */}
       <section className="relative bg-primary py-20 text-primary-foreground">
         <div className="container mx-auto px-6 text-center">
@@ -137,7 +137,7 @@ export default function AboutUs() {
           </motion.h2>
           <motion.a
             href="/contact"
-            className="inline-block rounded-lg bg-white px-6 py-3 font-semibold text-primary transition-colors"
+            className="inline-block rounded-full bg-foreground px-6 py-3 font-semibold transition-colors"
             variants={fadeIn}
             initial="initial"
             animate="animate"

@@ -59,7 +59,7 @@ export default function ContactPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white px-4 py-12 sm:px-6 lg:px-8">
+    <div className="min-h-screen px-4 py-12 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-6xl">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -67,10 +67,10 @@ export default function ContactPage() {
           transition={{ duration: 0.5 }}
           className="mb-12 text-center"
         >
-          <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">
+          <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">
             Get in Touch
           </h1>
-          <p className="mx-auto mt-4 max-w-2xl text-lg text-gray-600">
+          <p className="mx-auto mt-4 max-w-2xl text-lg">
             We&apos;d love to hear from you! Fill out the form or reach out
             directly using our contact details.
           </p>
@@ -82,11 +82,9 @@ export default function ContactPage() {
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="space-y-8 rounded-2xl bg-white p-8 shadow-sm"
+            className="card space-y-8 rounded-2xl p-8 shadow-sm"
           >
-            <h2 className="text-2xl font-semibold text-gray-900">
-              Contact Details
-            </h2>
+            <h2 className="text-2xl font-semibold">Contact Details</h2>
             <div className="space-y-6">
               {[
                 {
@@ -112,7 +110,7 @@ export default function ContactPage() {
                 <a
                   key={index}
                   href={item.href}
-                  className="flex items-center gap-3 text-gray-600 transition-colors hover:text-gray-900"
+                  className="hover: flex items-center gap-3 transition-colors"
                   {...(item.href ? {} : { "aria-label": item.text })}
                 >
                   <item.icon className="h-5 w-5 text-gray-400" />
@@ -128,7 +126,7 @@ export default function ContactPage() {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5, delay: 0.4 }}
             onSubmit={handleSubmit(onSubmit)}
-            className="space-y-6 rounded-2xl bg-white p-8 shadow-sm"
+            className="card space-y-6 rounded-2xl p-8 shadow-sm"
             noValidate
           >
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
