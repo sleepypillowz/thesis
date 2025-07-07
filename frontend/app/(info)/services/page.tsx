@@ -37,7 +37,7 @@ const other_services = ["Rapid Antigen", "RT-PCR", "Saliva", "Rapid Antibody"];
 
 export default function Page() {
   return (
-    <div className="grid grid-cols-3">
+    <div className="grid md:grid-cols-2 lg:grid-cols-3">
       <section className="card m-6 space-y-6">
         <h1 className="text-center text-2xl font-bold">Laboratory Services</h1>
         <AspectRatio ratio={16 / 9}>
