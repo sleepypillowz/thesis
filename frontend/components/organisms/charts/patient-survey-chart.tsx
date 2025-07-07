@@ -42,7 +42,7 @@ const chartConfig = {
 
 export function PatientSurveyChart() {
   return (
-    <Card>
+    <Card className="border-none shadow-none">
       <CardHeader>
         <CardTitle>Patient Statistics</CardTitle>
         <CardDescription>Showing total visitors for last year</CardDescription>
