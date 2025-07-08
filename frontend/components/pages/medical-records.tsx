@@ -2,70 +2,163 @@
 
 import { useEffect, useState } from "react";
 import {
-  Patient,
-  columns,
-} from "@/components/molecules/tables/patient-columns";
-import { DataTable } from "@/components/ui/data-table";
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { EllipsisVertical, Eye, SquarePen, User } from "lucide-react";
+import Link from "next/link";
 
-export default function Page() {
+// Typescript Definition which defines the shape or structure of the patient object
+export type Patient = {
+  patient_id: string;
+  first_name: string;
+  middle_name: string;
+  last_name: string;
+  age: number;
+  queue_data: {
+    created_at: string;
+    status: string;
+    complaint: string;
+  }[];
+};
+
+export default function MedicalRecords() {
+  // useState is data that changes
+  // patients is the state variable and setPatients is the function used to update it
+  // the useState<Patient[]>([]); tells typescript is an array of Patient objects, and it starts as an empty array."
   const [patients, setPatients] = useState<Patient[]>([]);
+  // searchTerm is the state variable which holds what the user typed and setSearchTerm is the function used to update it
+  // the useState(""); tells typescript it starts of as an empty string
   const [searchTerm, setSearchTerm] = useState("");
 
+  // Fetch patient data from the API
+  // this runs once on mount cause of the empty array
   useEffect(() => {
-    // Fetch patient data from the Django API or Supabase with the token
+    // async allows you to fetch data without blocking the entire system this returns a promise
+    // await tells it to pause execution til the promise resolves
     const fetchPatients = async () => {
-      try {
-        const accessToken = localStorage.getItem("access");
-        if (!accessToken) {
-          console.error("No access token found");
-          return;
+      // access token of the user which checks if the user is logged in the right account
+      const accessToken = localStorage.getItem("access");
+      const response = await fetch(
+        // this is the url where the data is, this becomes http://localhost:8000/api/patients/
+        `${process.env.NEXT_PUBLIC_API_BASE}/patients/`,
+        {
+          method: "GET",
+          headers: {
+            // This request is coming from a logged-in user — here’s their token."
+            Authorization: `Bearer ${accessToken}`,
+          },
         }
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_BASE}/patients/`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${accessToken}`,
-            },
-          }
-        );
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data: Patient[] = await response.json();
-        setPatients(data);
-      } catch (error) {
-        console.error("Error fetching patients:", error);
-      }
+      );
+      // : Patient[]: this is a typescript annotation saying: "I expect data to be an array of Patient objects."
+      // .json() converts the json to js object
+      const data: Patient[] = await response.json();
+      setPatients(data);
     };
 
+    // run the function
     fetchPatients();
-  }, []); // Empty dependency array, meaning this runs only once on mount.
+    // [] is a dependency array and when its empty it tells the function to only run once (which is on first load or reload)
+    // you can also change the dependency to [value] (userId) so whenever the value changes it updates but it doesn't require a refresh
+  }, []);
 
-  // Filter patients based on the search term
-  const filteredPatients = patients.filter((patient) => {
-    const fullName = `${patient.first_name} ${patient.middle_name || ""} ${
-      patient.last_name
-    }`.toLowerCase();
-    return fullName.includes(searchTerm.toLowerCase());
-  });
+  // Filter patients based on search term
+  const filteredPatients = patients.filter((patient) =>
+    `${patient.first_name} ${patient.middle_name || ""} ${patient.last_name}`
+      .toLowerCase()
+      .trim()
+      .includes(searchTerm.toLowerCase())
+  );
 
   return (
-    <div className="container mx-auto px-10 py-10">
-      <h1 className="mb-4 text-2xl">Medical Records</h1>
-      {/* Search Input */}
-      <input
-        type="text"
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-        placeholder="Search patient name..."
-        className="mb-4 w-full rounded border border-gray-300 p-2"
-      />
-      <DataTable
-        columns={columns}
-        data={filteredPatients} // Use the filtered patients data
-      />
+    <div className="card m-6">
+      <div className="flex flex-row items-center space-x-2">
+        <h1 className="mr-4 font-bold">Medical Records</h1>
+        <Input
+          type="text"
+          placeholder="Search"
+          className="max-w-40 rounded-xl"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+      </div>
+
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Patient ID</TableHead>
+            <TableHead>Patient Name</TableHead>
+            <TableHead>Age</TableHead>
+            <TableHead>Created Date</TableHead>
+            <TableHead>Complaint</TableHead>
+            <TableHead>Status</TableHead>
+            <TableHead>Actions</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {filteredPatients.map((item) => {
+            // Get the latest queue entry
+            const latestQueue = item.queue_data?.sort(
+              (a, b) =>
+                new Date(b.created_at).getTime() -
+                new Date(a.created_at).getTime()
+            )[0];
+
+            return (
+              <TableRow key={item.patient_id}>
+                <TableCell>{item.patient_id}</TableCell>
+                <TableCell className="flex">
+                  <User className="me-2 self-center rounded-full bg-muted" />
+                  <span>
+                    {`${item.first_name} ${item.middle_name || ""} ${
+                      item.last_name
+                    }`.trim()}
+                  </span>
+                </TableCell>
+                <TableCell>{item.age}</TableCell>
+                <TableCell>
+                  {latestQueue
+                    ? new Date(latestQueue.created_at).toLocaleDateString(
+                        "en-US",
+                        {
+                          month: "2-digit",
+                          day: "2-digit",
+                          year: "numeric",
+                        }
+                      )
+                    : "N/A"}
+                </TableCell>
+                <TableCell>
+                  {latestQueue ? latestQueue.complaint : "N/A"}
+                </TableCell>
+                <TableCell>
+                  <Badge
+                    variant="outline"
+                    className="rounded-full border-red-500 text-orange-500"
+                  >
+                    {latestQueue ? latestQueue.status : "N/A"}
+                  </Badge>
+                </TableCell>
+                <TableCell className="flex space-x-2">
+                  <Link href={`/doctor/patient-information/${item.patient_id}`}>
+                    <Eye className="cursor-pointer text-green-500 hover:fill-current" />
+                  </Link>
+                  <Link href="/doctor/medical-records">
+                    <SquarePen className="cursor-pointer text-blue-500 hover:fill-current" />
+                  </Link>
+                  <EllipsisVertical className="cursor-pointer" />
+                </TableCell>
+              </TableRow>
+            );
+          })}
+        </TableBody>
+      </Table>
     </div>
   );
 }
