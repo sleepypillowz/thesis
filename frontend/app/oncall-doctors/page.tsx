@@ -4,9 +4,27 @@ import { AspectRatio } from "@/components/ui/aspect-ratio";
 import Image from "next/image";
 
 const cards = [
-  { id: 1, label: "Appointments", count: 12, color: "indigo" },
-  { id: 2, label: "Surgeries", count: 12, color: "red" },
-  { id: 3, label: "Room Visit", count: 12, color: "green" },
+  {
+    id: 1,
+    label: "Appointments",
+    count: 12,
+    bgColor: "bg-indigo-200",
+    textColor: "text-indigo-600",
+  },
+  {
+    id: 2,
+    label: "Surgeries",
+    count: 12,
+    bgColor: "bg-red-200",
+    textColor: "text-red-600",
+  },
+  {
+    id: 3,
+    label: "Room Visit",
+    count: 12,
+    bgColor: "bg-green-200",
+    textColor: "text-green-600",
+  },
 ];
 
 export default function Page() {
@@ -26,10 +44,10 @@ export default function Page() {
               {cards.map((item, index) => (
                 <div
                   key={index}
-                  className={`flex w-full flex-col rounded-xl bg-${item.color}-200 p-2`}
+                  className={`flex w-full flex-col rounded-xl ${item.bgColor} p-2`}
                 >
                   <span className="text-sm font-bold">{item.label}</span>
-                  <span className={`text-lg text-${item.color}-600`}>
+                  <span className={`text-lg ${item.textColor}`}>
                     {item.count}+
                   </span>
                 </div>
