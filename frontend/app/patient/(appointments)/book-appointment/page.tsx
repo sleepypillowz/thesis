@@ -1,4 +1,4 @@
-import PatientBookAppointment from "@/components/molecules/tables/patient-book-appointment";
+import PatientBookAppointment from "@/components/organisms/tables/patient/book-appointment";
 
 export default function Page() {
   return (

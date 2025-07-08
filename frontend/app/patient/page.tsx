@@ -1,4 +1,4 @@
-import PatientRecentMedications from "@/components/molecules/tables/patient-recent-medications";
+import PatientRecentMedications from "@/components/organisms/tables/patient/recent-medications";
 import StatsCard from "@/components/organisms/patient-stats-cards";
 import { PerformanceHeartRateChart } from "@/components/organisms/charts/performance-heart-rate-chart";
 import { RestingHeartRateChart } from "@/components/organisms/charts/resting-heart-rate-chart";
@@ -6,9 +6,9 @@ import { AspectRatio } from "@/components/ui/aspect-ratio";
 import Image from "next/image";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import PatientPastAppointment from "@/components/molecules/tables/patient-past-appointment";
-import PatientUpcomingAppointment from "@/components/molecules/tables/patient-upcoming-appointment";
-import PatientRecentDocuments from "@/components/molecules/tables/patient-recent-documents";
+import PatientPastAppointment from "@/components/organisms/tables/patient/past-appointment";
+import PatientUpcomingAppointment from "@/components/organisms/tables/patient/upcoming-appointment";
+import PatientRecentDocuments from "@/components/organisms/tables/patient/recent-documents";
 
 export default function Page() {
   return (

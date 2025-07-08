@@ -1,5 +1,5 @@
-import OncallDoctorsRecentAppointment from "@/components/molecules/tables/oncall-doctors-recent-appointment";
-import PatientGroup from "@/components/molecules/tables/patient-group";
+import OncallDoctorsRecentAppointment from "@/components/organisms/tables/oncall-doctor/recent-appointment";
+import PatientGroup from "@/components/organisms/tables/oncall-doctor/patient-group";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import Image from "next/image";
 
