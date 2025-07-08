@@ -10,6 +10,7 @@ import {
   Clock,
   Settings,
   ChevronUp,
+  Power,
 } from "lucide-react";
 
 import {
@@ -61,6 +62,11 @@ const menu_items = [
     title: "Settings",
     url: "/doctor/settings",
     icon: Settings,
+  },
+  {
+    title: "Logout",
+    url: "/",
+    icon: Power,
   },
 ];
 

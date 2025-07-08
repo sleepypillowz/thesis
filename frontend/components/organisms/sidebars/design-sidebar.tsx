@@ -1,5 +1,5 @@
 "use client";
-import { LayoutDashboard, Calendar } from "lucide-react";
+import { LayoutDashboard, Calendar, Power } from "lucide-react";
 
 import {
   Sidebar,
@@ -25,6 +25,11 @@ const menu_items = [
     title: "Appointment",
     url: "/design/appointment",
     icon: Calendar,
+  },
+  {
+    title: "Logout",
+    url: "/",
+    icon: Power,
   },
 ];
 

@@ -1,5 +1,5 @@
 "use client";
-import { LayoutDashboard, ChartNoAxesGantt } from "lucide-react";
+import { LayoutDashboard, ChartNoAxesGantt, Power } from "lucide-react";
 
 import {
   Sidebar,
@@ -35,6 +35,11 @@ const menu_items = [
     title: "Secretary Management",
     url: "/admin/secretary-management",
     icon: ChartNoAxesGantt,
+  },
+  {
+    title: "Logout",
+    url: "/",
+    icon: Power,
   },
 ];
 

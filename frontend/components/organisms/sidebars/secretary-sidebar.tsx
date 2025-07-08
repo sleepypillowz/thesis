@@ -10,6 +10,7 @@ import {
   BriefcaseMedical,
   Pill,
   Settings,
+  Power,
 } from "lucide-react";
 
 import {
@@ -68,6 +69,11 @@ const menu_items = [
     title: "Settings",
     url: "/secretary/settings",
     icon: Settings,
+  },
+  {
+    title: "Logout",
+    url: "/",
+    icon: Power,
   },
 ];
 
