@@ -11,7 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 
 export default function OncallDoctorsRecentAppointment() {
-  const test = [
+  const appointments = [
     {
       id: "APT-20250629-0001",
       name: "John Deo",
@@ -61,7 +61,7 @@ export default function OncallDoctorsRecentAppointment() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {test.map((item) => (
+          {appointments.map((item) => (
             <TableRow key={item.id}>
               <TableCell>{item.id}</TableCell>
               <TableCell className="flex">
