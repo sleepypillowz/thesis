@@ -22,9 +22,19 @@ const formSchema = z
   .object({
     first_name: z.string().min(1, { message: "Required" }),
     last_name: z.string().min(1, { message: "Required" }),
-    username: z.string().min(1, { message: "Required" }),
+    username: z
+      .string()
+      .min(1, { message: "Required" })
+      .regex(/^[a-zA-Z0-9]+$/, {
+        message: "Username must be alphanumeric",
+      }),
     email: z.string().email({ message: "Invalid email" }),
-    password: z.string().min(6, { message: "Minimum 6 characters" }),
+    password: z
+      .string()
+      .min(8, { message: "Minimum 8 characters" })
+      .regex(/^[a-zA-Z0-9]+$/, {
+        message: "Password must be alphanumeric",
+      }),
     confirm_password: z.string().min(1, { message: "Required" }),
   })
   .refine((data) => data.password === data.confirm_password, {
