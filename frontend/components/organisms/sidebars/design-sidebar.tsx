@@ -49,6 +49,22 @@ export function AppSidebar() {
           </span>
           <h1 className="text-2xl">MediTrakk</h1>
         </Link>
+        <div className="flex flex-col items-center">
+          <div className="mb-2 mt-4">
+            <Image
+              className="rounded-xl border-2 border-white object-cover"
+              src="/secretary.jpg"
+              alt="secretary"
+              width={64}
+              height={64}
+            />
+          </div>
+
+          <span className="text-sm font-bold">Sarah Smith</span>
+          <span className="text-xs font-semibold text-muted-foreground">
+            DESIGNER
+          </span>
+        </div>
       </SidebarHeader>
       <SidebarContent>
         {/* Main Menu */}
