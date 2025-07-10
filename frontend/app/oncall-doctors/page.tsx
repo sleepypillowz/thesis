@@ -2,6 +2,7 @@ import OncallDoctorsRecentAppointment from "@/components/organisms/tables/oncall
 import PatientGroup from "@/components/organisms/tables/oncall-doctor/patient-group";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import Image from "next/image";
+import TodoList from "@/components/organisms/tables/oncall-doctor/todo-list";
 
 const cards = [
   {
@@ -69,6 +70,9 @@ export default function Page() {
       <div className="grid grid-cols-3 space-x-6">
         <OncallDoctorsRecentAppointment />
         <PatientGroup />
+      </div>
+      <div className="grid grid-cols-3 space-x-6">
+        <TodoList />
       </div>
     </div>
   );
