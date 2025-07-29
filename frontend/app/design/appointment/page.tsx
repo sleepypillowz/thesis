@@ -11,6 +11,18 @@ import {
 } from "@/components/ui/table";
 import { EllipsisVertical, Eye, SquarePen, User } from "lucide-react";
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 export default function OncallDoctorsRecentAppointment() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -104,8 +116,72 @@ export default function OncallDoctorsRecentAppointment() {
               <TableCell>{item.disease}</TableCell>
               <TableCell>{item.lastVisit}</TableCell>
               <TableCell className="flex space-x-2">
-                <Eye className="cursor-pointer text-green-500 hover:fill-current" />
-                <SquarePen className="cursor-pointer text-blue-500 hover:fill-current" />
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Eye className="cursor-pointer text-green-500 hover:fill-current" />
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-[425px]">
+                    <DialogHeader>
+                      <DialogTitle>{item.name}</DialogTitle>
+                      <DialogDescription>
+                        <ul className="list-disc space-y-1 pl-5">
+                          <li>
+                            <strong>Reason for Referral:</strong> ENT assessment
+                            for chronic sinusitis
+                          </li>
+                          <li>
+                            <strong>Referring Doctor:</strong> Doctor Johnny
+                          </li>
+                          <li>
+                            <strong>Receiving Doctor:</strong> Doctor Sins
+                          </li>
+                          <li>
+                            <strong>Additional Notes:</strong> Patient reports
+                            ongoing nasal congestion and sinus pressure
+                          </li>
+                        </ul>
+                      </DialogDescription>
+                    </DialogHeader>
+                  </DialogContent>
+                </Dialog>
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <SquarePen className="cursor-pointer text-blue-500 hover:fill-current" />
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-[425px]">
+                    <DialogHeader>
+                      <DialogTitle>{item.name}</DialogTitle>
+                      <DialogDescription>
+                        Make changes to your profile here. Click save when
+                        you&apos;re done.
+                      </DialogDescription>
+                    </DialogHeader>
+                    <div className="grid gap-4">
+                      <div className="grid gap-3">
+                        <Label htmlFor="name-1">Name</Label>
+                        <Input
+                          id="name-1"
+                          name="name"
+                          defaultValue="Pedro Duarte"
+                        />
+                      </div>
+                      <div className="grid gap-3">
+                        <Label htmlFor="username-1">Username</Label>
+                        <Input
+                          id="username-1"
+                          name="username"
+                          defaultValue="@peduarte"
+                        />
+                      </div>
+                    </div>
+                    <DialogFooter>
+                      <DialogClose asChild>
+                        <Button variant="outline">Cancel</Button>
+                      </DialogClose>
+                      <Button type="submit">Save changes</Button>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
                 <EllipsisVertical className="cursor-pointer" />
               </TableCell>
             </TableRow>
