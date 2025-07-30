@@ -46,7 +46,7 @@ export default function OncallDoctorsRecentAppointment() {
       time: "8:00PM",
       mobile: "1234567890",
       gender: "Female",
-      status: "Scheduled",
+      status: "Pending",
       disease: "Flu",
       lastVisit: "09/01/2024",
     },
@@ -57,7 +57,7 @@ export default function OncallDoctorsRecentAppointment() {
       time: "8:00PM",
       mobile: "1234567890",
       gender: "Male",
-      status: "Scheduled",
+      status: "Cancelled",
       disease: "Depression",
       lastVisit: "09/01/2024",
     },
@@ -108,7 +108,13 @@ export default function OncallDoctorsRecentAppointment() {
               <TableCell>
                 <Badge
                   variant="outline"
-                  className="rounded-full border-red-500 text-orange-500"
+                  className={`rounded-full ${
+                    item.status === "Cancelled"
+                      ? "border-red-500 text-red-500"
+                      : item.status === "Pending"
+                      ? "border-yellow-500 text-yellow-500"
+                      : "border-green-500 text-green-500"
+                  }`}
                 >
                   {item.status}
                 </Badge>
