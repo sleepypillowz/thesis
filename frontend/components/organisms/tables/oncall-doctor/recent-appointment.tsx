@@ -6,7 +6,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { EllipsisVertical, Eye, SquarePen, User } from "lucide-react";
+import { User } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 
@@ -25,7 +25,7 @@ export default function OncallDoctorsRecentAppointment() {
       name: "John Deo",
       date: "2/25/18",
       time: "09:00",
-      status: "Scheduled",
+      status: "Pending",
       color: "orange",
     },
     {
@@ -33,7 +33,7 @@ export default function OncallDoctorsRecentAppointment() {
       name: "John Deo",
       date: "2/25/18",
       time: "09:00",
-      status: "Scheduled",
+      status: "Cancelled",
       color: "orange",
     },
   ];
@@ -57,7 +57,6 @@ export default function OncallDoctorsRecentAppointment() {
             <TableHead>Date</TableHead>
             <TableHead>Time</TableHead>
             <TableHead>Status</TableHead>
-            <TableHead>Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -73,15 +72,16 @@ export default function OncallDoctorsRecentAppointment() {
               <TableCell>
                 <Badge
                   variant="outline"
-                  className={`rounded-full border-${item.color}-500 text-${item.color}-500`}
+                  className={`rounded-full ${
+                    item.status === "Cancelled"
+                      ? "border-red-500 text-red-500"
+                      : item.status === "Pending"
+                      ? "border-yellow-500 text-yellow-500"
+                      : "border-green-500 text-green-500"
+                  }`}
                 >
                   {item.status}
                 </Badge>
-              </TableCell>
-              <TableCell className="flex space-x-2">
-                <Eye className="cursor-pointer text-green-500 hover:fill-current" />
-                <SquarePen className="cursor-pointer text-blue-500 hover:fill-current" />
-                <EllipsisVertical className="cursor-pointer" />
               </TableCell>
             </TableRow>
           ))}

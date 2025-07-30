@@ -128,17 +128,20 @@ export default function OncallDoctorsRecentAppointment() {
                   </DialogTrigger>
                   <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>
-                      <DialogTitle>{item.name}</DialogTitle>
+                      <div>
+                        <DialogTitle>{item.name}</DialogTitle>
+                      </div>
+
                       <ul className="list-disc space-y-1 pl-5 text-xs">
                         <li>
                           <strong>Reason for Referral:</strong> ENT assessment
                           for chronic sinusitis
                         </li>
                         <li>
-                          <strong>Referring Doctor:</strong> Doctor Johnny
+                          <strong>Referring Doctor:</strong> Doctor K
                         </li>
                         <li>
-                          <strong>Receiving Doctor:</strong> Doctor Sins
+                          <strong>Receiving Doctor:</strong> Doctor Adam
                         </li>
                         <li>
                           <strong>Additional Notes:</strong> Patient reports
