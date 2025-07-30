@@ -41,7 +41,7 @@ export default function PatientPrescriptions() {
             <TableCell className="flex space-x-2">
               <CloudDownload className="h-5 w-5 cursor-pointer text-purple-500 hover:fill-current" />
               <Eye className="h-5 w-5 cursor-pointer text-green-500 hover:fill-current" />
-              <Trash className="h-5 w-5 cursor-pointer text-orange-500 hover:fill-current" />
+              <Trash className="h-5 w-5 cursor-pointer text-red-500 hover:fill-current" />
             </TableCell>
           </TableRow>
           <TableRow>
@@ -60,7 +60,7 @@ export default function PatientPrescriptions() {
             <TableCell className="flex space-x-2">
               <CloudDownload className="h-5 w-5 cursor-pointer text-purple-500 hover:fill-current" />
               <Eye className="h-5 w-5 cursor-pointer text-green-500 hover:fill-current" />
-              <Trash className="h-5 w-5 cursor-pointer text-orange-500 hover:fill-current" />
+              <Trash className="h-5 w-5 cursor-pointer text-red-500 hover:fill-current" />
             </TableCell>
           </TableRow>
           <TableRow>
@@ -79,7 +79,7 @@ export default function PatientPrescriptions() {
             <TableCell className="flex space-x-2">
               <CloudDownload className="h-5 w-5 cursor-pointer text-purple-500 hover:fill-current" />
               <Eye className="h-5 w-5 cursor-pointer text-green-500 hover:fill-current" />
-              <Trash className="h-5 w-5 cursor-pointer text-orange-500 hover:fill-current" />
+              <Trash className="h-5 w-5 cursor-pointer text-red-500 hover:fill-current" />
             </TableCell>
           </TableRow>
         </TableBody>

@@ -106,7 +106,7 @@ function StatsCard({ img, title, value, footer }: StatsCardProps) {
   );
 }
 
-export default function StatsCards() {
+export default function PatientStatsCard() {
   return (
     <div className="grid grid-cols-1 place-items-center gap-6 text-card-foreground md:grid-cols-2 lg:grid-cols-4">
       {statsData.map((stat, index) => (

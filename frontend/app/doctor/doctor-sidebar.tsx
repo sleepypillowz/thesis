@@ -2,21 +2,20 @@ import {
   LayoutDashboard,
   ClipboardPlus,
   Calendar,
-  Clock,
-  ClipboardPenLine,
   ChartArea,
-  UserPlus,
-  ChevronDown,
-  BriefcaseMedical,
+  Bandage,
+  User,
+  List,
   Pill,
+  Clock,
   Settings,
+  ChevronUp,
   Power,
 } from "lucide-react";
 
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
@@ -25,49 +24,43 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { NavUser } from "../../molecules/nav-user";
 import Image from "next/image";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from "../../ui/collapsible";
+} from "../../components/ui/collapsible";
 import Link from "next/link";
 
 const menu_items = [
   {
     title: "Dashboard",
-    url: "/secretary",
+    url: "/doctor",
     icon: LayoutDashboard,
-  },
-  {
-    title: "Registration",
-    url: "/secretary/registration",
-    icon: UserPlus,
-  },
-  {
-    title: "Doctors Request",
-    url: "/secretary/doctor-request",
-    icon: BriefcaseMedical,
   },
   {
     title: "Patient Portal",
-    url: "/secretary/patient-portal",
-    icon: LayoutDashboard,
+    url: "/doctor/patient-portal",
+    icon: User,
+  },
+  {
+    title: "Doctors List",
+    url: "/doctor/doctors-list",
+    icon: List,
   },
   {
     title: "Medicine",
-    url: "/secretary/medicine",
+    url: "/doctor/medicine",
     icon: Pill,
   },
   {
     title: "Reports",
-    url: "/secretary/reports",
+    url: "/doctor/reports",
     icon: ChartArea,
   },
   {
     title: "Settings",
-    url: "/secretary/settings",
+    url: "/doctor/settings",
     icon: Settings,
   },
   {
@@ -80,41 +73,31 @@ const menu_items = [
 const patient_items = [
   {
     title: "Medical Records",
-    url: "/secretary/medical-records",
+    url: "/doctor/medical-records",
     icon: ClipboardPlus,
   },
   {
     title: "Appointments",
-    url: "/secretary/appointments",
+    url: "/doctor/appointments",
     icon: Calendar,
   },
   {
-    title: "Registration Queue",
-    url: "/secretary/registration-queue",
-    icon: Clock,
+    title: "Treatment",
+    url: "/doctor/treatment",
+    icon: Bandage,
   },
   {
-    title: "Assessment",
-    url: "/secretary/assessment-queue",
-    icon: ClipboardPenLine,
+    title: "Treatment Queue",
+    url: "/doctor/treatment-queue",
+    icon: Clock,
   },
 ];
-
-const data = {
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-  },
-};
 
 export function AppSidebar() {
   return (
     <Sidebar>
       <SidebarHeader>
-        <Link
-          href="/secretary"
-          className="flex items-center justify-center gap-2"
-        >
+        <Link href="/doctor" className="flex items-center justify-center gap-2">
           <span className="relative flex h-8 w-8 shrink-0 overflow-hidden rounded-full">
             <Image
               className="aspect-square h-full w-full"
@@ -139,7 +122,7 @@ export function AppSidebar() {
 
           <span className="text-sm font-bold">Sarah Smith</span>
           <span className="text-xs font-semibold text-muted-foreground">
-            SECRETARY
+            Doctor
           </span>
         </div>
       </SidebarHeader>
@@ -169,7 +152,7 @@ export function AppSidebar() {
             <SidebarGroupLabel asChild>
               <CollapsibleTrigger>
                 Patients
-                <ChevronDown className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180" />
+                <ChevronUp className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180" />
               </CollapsibleTrigger>
             </SidebarGroupLabel>
             <SidebarGroupContent>
@@ -193,9 +176,6 @@ export function AppSidebar() {
           </SidebarGroup>
         </Collapsible>
       </SidebarContent>
-      <SidebarFooter>
-        <NavUser user={data.user} />
-      </SidebarFooter>
     </Sidebar>
   );
 }

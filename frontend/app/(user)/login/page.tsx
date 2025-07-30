@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { GalleryVerticalEnd } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import { LoginForm } from "@/components/organisms/forms/login-form";
+import { LoginForm } from "@/app/(user)/login/login-form";
 
 export default function Home() {
   const [loaded, setLoaded] = useState(false);

@@ -2,14 +2,14 @@ import {
   LayoutDashboard,
   ClipboardPlus,
   Calendar,
-  ChartArea,
-  Bandage,
-  User,
-  List,
-  Pill,
   Clock,
+  ClipboardPenLine,
+  ChartArea,
+  UserPlus,
+  ChevronDown,
+  BriefcaseMedical,
+  Pill,
   Settings,
-  ChevronUp,
   Power,
 } from "lucide-react";
 
@@ -24,43 +24,49 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+
 import Image from "next/image";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from "../../ui/collapsible";
+} from "../../components/ui/collapsible";
 import Link from "next/link";
 
 const menu_items = [
   {
     title: "Dashboard",
-    url: "/doctor",
+    url: "/secretary",
     icon: LayoutDashboard,
   },
   {
-    title: "Patient Portal",
-    url: "/doctor/patient-portal",
-    icon: User,
+    title: "Registration",
+    url: "/secretary/registration",
+    icon: UserPlus,
   },
   {
-    title: "Doctors List",
-    url: "/doctor/doctors-list",
-    icon: List,
+    title: "Doctors Request",
+    url: "/secretary/doctor-request",
+    icon: BriefcaseMedical,
+  },
+  {
+    title: "Patient Portal",
+    url: "/secretary/patient-portal",
+    icon: LayoutDashboard,
   },
   {
     title: "Medicine",
-    url: "/doctor/medicine",
+    url: "/secretary/medicine",
     icon: Pill,
   },
   {
     title: "Reports",
-    url: "/doctor/reports",
+    url: "/secretary/reports",
     icon: ChartArea,
   },
   {
     title: "Settings",
-    url: "/doctor/settings",
+    url: "/secretary/settings",
     icon: Settings,
   },
   {
@@ -73,23 +79,23 @@ const menu_items = [
 const patient_items = [
   {
     title: "Medical Records",
-    url: "/doctor/medical-records",
+    url: "/secretary/medical-records",
     icon: ClipboardPlus,
   },
   {
     title: "Appointments",
-    url: "/doctor/appointments",
+    url: "/secretary/appointments",
     icon: Calendar,
   },
   {
-    title: "Treatment",
-    url: "/doctor/treatment",
-    icon: Bandage,
+    title: "Registration Queue",
+    url: "/secretary/registration-queue",
+    icon: Clock,
   },
   {
-    title: "Treatment Queue",
-    url: "/doctor/treatment-queue",
-    icon: Clock,
+    title: "Assessment",
+    url: "/secretary/assessment-queue",
+    icon: ClipboardPenLine,
   },
 ];
 
@@ -97,7 +103,10 @@ export function AppSidebar() {
   return (
     <Sidebar>
       <SidebarHeader>
-        <Link href="/doctor" className="flex items-center justify-center gap-2">
+        <Link
+          href="/secretary"
+          className="flex items-center justify-center gap-2"
+        >
           <span className="relative flex h-8 w-8 shrink-0 overflow-hidden rounded-full">
             <Image
               className="aspect-square h-full w-full"
@@ -122,7 +131,7 @@ export function AppSidebar() {
 
           <span className="text-sm font-bold">Sarah Smith</span>
           <span className="text-xs font-semibold text-muted-foreground">
-            Doctor
+            SECRETARY
           </span>
         </div>
       </SidebarHeader>
@@ -152,7 +161,7 @@ export function AppSidebar() {
             <SidebarGroupLabel asChild>
               <CollapsibleTrigger>
                 Patients
-                <ChevronUp className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180" />
+                <ChevronDown className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180" />
               </CollapsibleTrigger>
             </SidebarGroupLabel>
             <SidebarGroupContent>

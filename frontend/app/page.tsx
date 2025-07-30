@@ -10,7 +10,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import HeroHeader from "@/components/organisms/hero-header";
+import HeroHeader from "@/app/hero-header";
 import { Button } from "@/components/ui/button";
 
 export default function Home() {

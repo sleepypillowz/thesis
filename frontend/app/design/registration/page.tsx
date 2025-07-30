@@ -48,7 +48,7 @@ const formSchema = z.object({
   name_2143022848: z.string(),
 });
 
-export default function RegistrationForm() {
+export default function Page() {
   const complaints = [
     {
       label: "general illness",

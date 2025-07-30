@@ -3,7 +3,7 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import InfoHeader from "@/components/organisms/hero-header";
+import InfoHeader from "@/app/hero-header";
 
 export default function Page({
   children,
