@@ -41,6 +41,7 @@ export default function Page() {
 
   return (
     <div className="card m-6">
+      <h1 className="mb-6 font-bold">Past Appointment</h1>
       <Table>
         <TableHeader>
           <TableRow>

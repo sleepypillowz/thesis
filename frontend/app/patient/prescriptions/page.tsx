@@ -40,18 +40,19 @@ export default function PatientPrescriptions() {
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>#</TableHead>
-            <TableHead>Title</TableHead>
-            <TableHead>Created by</TableHead>
-            <TableHead>Date</TableHead>
-            <TableHead>Diseases</TableHead>
+            {Object.keys(prescriptions[0])
+              .filter((key) => key !== "id") // exclude 'id'
+              .map((key) => (
+                <TableHead key={key} className="capitalize">
+                  {key}
+                </TableHead>
+              ))}
             <TableHead>Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {prescriptions.map((item) => (
             <TableRow key={item.id}>
-              <TableCell>{item.id}</TableCell>
               <TableCell>{item.title}</TableCell>
               <TableCell>{item.createdby}</TableCell>
               <TableCell>{item.date}</TableCell>
