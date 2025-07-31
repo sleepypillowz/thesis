@@ -15,7 +15,7 @@ import {
   ChartLegend,
   ChartLegendContent,
 } from "@/components/ui/chart";
-import { Ambulance } from "lucide-react";
+import { Pill } from "lucide-react";
 const chartData = [
   {
     browser: "cardiovascular",
@@ -54,13 +54,13 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-export function CommonDiseasesChart() {
+export function CommonMedicinesChart() {
   return (
     <Card className="chart">
       <CardHeader className="items-center pb-0">
         <div className="flex items-center">
-          <Ambulance className="me-2 text-primary" />
-          <CardTitle>Common Diseases</CardTitle>
+          <Pill className="me-2 text-primary" />
+          <CardTitle>Common Medicines</CardTitle>
         </div>
 
         <CardDescription>January - June 2024</CardDescription>

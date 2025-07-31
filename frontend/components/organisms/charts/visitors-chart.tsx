@@ -1,6 +1,6 @@
 "use client";
 
-import { TrendingUp } from "lucide-react";
+import { ChartColumnIncreasing, TrendingUp } from "lucide-react";
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
 
 import {
@@ -45,9 +45,13 @@ const chartConfig = {
 
 export function VisitorsChart() {
   return (
-    <Card className="border-none shadow-md">
+    <Card className="chart">
       <CardHeader>
-        <CardTitle>Patient Statistics</CardTitle>
+        <div className="flex items-center">
+          <ChartColumnIncreasing className="me-2 text-primary" />
+          <CardTitle>Patient Statistics</CardTitle>
+        </div>
+
         <CardDescription>Showing total visitors for last year</CardDescription>
       </CardHeader>
       <CardContent>

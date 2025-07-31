@@ -37,7 +37,7 @@ const chartConfig = {
 
 export function RestingHeartRateChart() {
   return (
-    <Card className="border-none shadow-none">
+    <Card className="chart">
       <CardHeader>
         <CardTitle>Resting Heart Rate</CardTitle>
         <CardDescription>

@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { EllipsisVertical, Eye, SquarePen, User } from "lucide-react";
+import { EllipsisVertical, Eye, SquarePen, Users } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -101,9 +101,13 @@ export default function MedicalRecords() {
       : filteredPatients;
 
   return (
-    <div className="card m-6">
+    <div className="card">
       <div className="flex flex-row items-center space-x-2">
-        <h1 className="mr-4 font-bold">Medical Records</h1>
+        <div className="flex">
+          <Users className="me-2 text-primary" />
+          <h1 className="mr-4 font-bold">Medical Records</h1>
+        </div>
+
         <Input
           type="text"
           placeholder="Search"
@@ -114,7 +118,7 @@ export default function MedicalRecords() {
       </div>
 
       <Table>
-        <TableHeader>
+        <TableHeader className="px-0">
           <TableRow>
             <TableHead>Patient ID</TableHead>
             <TableHead>Patient Name</TableHead>
@@ -137,13 +141,10 @@ export default function MedicalRecords() {
             return (
               <TableRow key={item.patient_id}>
                 <TableCell>{item.patient_id}</TableCell>
-                <TableCell className="flex">
-                  <User className="me-2 self-center rounded-full bg-muted" />
-                  <span>
-                    {`${item.first_name} ${item.middle_name || ""} ${
-                      item.last_name
-                    }`.trim()}
-                  </span>
+                <TableCell>
+                  {`${item.first_name} ${item.middle_name || ""} ${
+                    item.last_name
+                  }`.trim()}
                 </TableCell>
                 <TableCell>{item.age}</TableCell>
                 <TableCell>

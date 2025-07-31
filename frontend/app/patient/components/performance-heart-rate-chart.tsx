@@ -37,7 +37,7 @@ const chartConfig = {
 
 export function PerformanceHeartRateChart() {
   return (
-    <Card className="border-none shadow-none">
+    <Card className="chart">
       <CardHeader>
         <CardTitle>Performance Heart Rate</CardTitle>
         <CardDescription>

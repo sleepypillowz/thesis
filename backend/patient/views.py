@@ -125,9 +125,9 @@ class PatientInfoView(APIView):
                     .select("id, user_useraccount ( first_name, last_name )") \
                     .in_("id", doctor_ids) \
                     .execute()
-            for doc in doctors_resp.data or []:
-                    ua = doc.get("user_useraccount") or {}
-                    doctor_name_map[doc["id"]] = f"{ua.get('first_name','')} {ua.get('last_name','')}".strip()
+                for doc in doctors_resp.data or []:
+                        ua = doc.get("user_useraccount") or {}
+                        doctor_name_map[doc["id"]] = f"{ua.get('first_name','')} {ua.get('last_name','')}".strip()
                         
             annotated_appts = []
             for a in appointment_data:
