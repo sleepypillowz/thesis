@@ -158,6 +158,7 @@ class Predict(APIView):
                 n_estimators=50, # number of trees
                 learning_rate=0.01,# how quickly the model to update each tree
                 max_depth=2, 
+                num_leaves=31,
                 min_child_samples=1 # number of data points required
             )
             model.fit(X_train, y_train)
