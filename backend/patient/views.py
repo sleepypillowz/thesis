@@ -120,15 +120,16 @@ class PatientInfoView(APIView):
             print(appointment_data)
             doctor_ids = list({a["doctor_id"] for a in appointment_data if a.get("doctor_id")})
             doctor_name_map = {}
+            
             if doctor_ids:
                 doctors_resp = supabase.table("user_doctor") \
                     .select("id, user_useraccount ( first_name, last_name )") \
                     .in_("id", doctor_ids) \
                     .execute()
-            for doc in doctors_resp.data or []:
-                    ua = doc.get("user_useraccount") or {}
-                    doctor_name_map[doc["id"]] = f"{ua.get('first_name','')} {ua.get('last_name','')}".strip()
-                        
+                for doc in doctors_resp.data or []:
+                        ua = doc.get("user_useraccount") or {}
+                        doctor_name_map[doc["id"]] = f"{ua.get('first_name','')} {ua.get('last_name','')}".strip()
+                            
             annotated_appts = []
             for a in appointment_data:
                 referral = a.get("appointment_appointmentreferral", {})

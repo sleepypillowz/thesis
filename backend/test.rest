@@ -48,7 +48,7 @@ Content-Type: application/json
 ###
 
 ### Login Secretary
-POST http://127.0.0.1:8000/auth/jwt/create/
+POST http://localhost:8000/auth/jwt/create/
 Content-Type: application/json
 
 {
@@ -91,9 +91,9 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiY
 
 
 ### doctor request
-GET http://localhost:8000/user/users/current-email/
+GET http://localhost:8000//patient/patient-info/ninas-02000105/
 Content-Type: application/json  
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzUxMzg1OTgxLCJpYXQiOjE3NDM2MDk5ODEsImp0aSI6IjlmZTM3ZjI0NzVmNTRhMmE5YjQ3OTExYWQ4YmU5MGY1IiwidXNlcl9pZCI6IkxGRzRZSjJQIiwiaXNfc3RhZmYiOmZhbHNlLCJpc19zdXBlcnVzZXIiOmZhbHNlLCJlbWFpbCI6ImdlbmVyYWxkb2N0b3JAaG9zcGl0YWwuY29tIiwicm9sZSI6ImRvY3RvciIsImZpcnN0X25hbWUiOiJKYW5lIn0.FPl899vtSr7AxruhwO9WmjWtbyNmFYdlcACIZCWmXzg
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzYxNzUxNDUwLCJpYXQiOjE3NTM5NzU0NTAsImp0aSI6IjU1MTY3ZDc0MDFkMjQxOWNhOTJjMjc3YmNjMmUzZGE1IiwidXNlcl9pZCI6IktXUEJMN09UIiwiaXNfc3RhZmYiOmZhbHNlLCJpc19zdXBlcnVzZXIiOmZhbHNlLCJlbWFpbCI6ImVudEBob3NwaXRhbC5jb20iLCJyb2xlIjoiZG9jdG9yIiwiZmlyc3RfbmFtZSI6IkpvaG4ifQ.oM9gA9ryl17rc3PUMdrLFH_jz2GeBuYt_cE1iTKJj-4
 
 {
   "patient": "6ND1F8G3",

@@ -64,62 +64,6 @@ export default function Page() {
         </div>
         <PatientRecentDocuments />
       </section>
-
-      <section className="card block w-full overflow-x-auto">
-        <h1 className="mb-4 text-3xl font-semibold">View Results</h1>
-
-        <div className="space-y-2">
-          <div className="card flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <FaFile className="text-accent" />
-              <p className="text-left">Juan Dela Cruz Lab Result</p>
-            </div>
-
-            <div className="flex space-x-4">
-              <Link href="/#" className="text-blue-500 hover:text-blue-700">View</Link>
-              <Link href="/#" className="text-blue-500 hover:text-blue-700">Download</Link>
-            </div>
-          </div>
-
-          <div className="card flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <FaFile className="text-accent" />
-              <p className="text-left">Juan Dela Cruz Lab Result</p>
-            </div>
-
-            <div className="flex space-x-4">
-              <Link href="/#" className="text-blue-500 hover:text-blue-700">View</Link>
-              <Link href="/#" className="text-blue-500 hover:text-blue-700">Download</Link>
-            </div>
-          </div>
-
-          <div className="card flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <FaFile className="text-accent" />
-              <p className="text-left">Juan Dela Cruz Lab Result</p>
-            </div>
-
-            <div className="flex space-x-4">
-              <Link href="/#" className="text-blue-500 hover:text-blue-700">View</Link>
-              <Link href="/#" className="text-blue-500 hover:text-blue-700">Download</Link>
-            </div>
-          </div>
-
-        </div>
-      </section>
-
-      <section className="card">
-        <div className="flex-col justify-between">
-          <h1 className="mb-4 text-3xl font-semibold">Notes</h1>
-          <p className="text-lg">Diagnosis: Type 2 Diabetes</p>
-          <ul className="list-disc space-y-4 text-wrap break-words pl-5">
-            <li className="mt-4">Diet and excercise counseling recommended.</li>
-            <li>Follow up in 2 weeks for blood glucose monitoring and medication
-              adjustment</li>
-          </ul>
-        </div>
-      </section>
-
     </div>
   );
 }

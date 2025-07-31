@@ -1,35 +1,61 @@
 "use client";
 
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { useState } from "react";
+import { motion } from "framer-motion";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { Phone, Mail, MapPin } from "lucide-react";
+import { Label } from "@/components/ui/label";
+import { Phone, Mail, MapPin, Loader2 } from "lucide-react";
+import { toast } from "sonner";
 
 const contactSchema = z.object({
-  firstName: z.string().min(1, "First name is required"),
-  lastName: z.string().min(1, "Last name is required"),
-  email: z.string().email("Invalid email"),
+  firstName: z.string().min(1, "First name is required").trim(),
+  lastName: z.string().min(1, "Last name is required").trim(),
+  email: z.string().email("Invalid email address").trim(),
   phone: z.string().optional(),
-  message: z.string().min(1, "Message is required"),
+  message: z
+    .string()
+    .min(10, "Message must be at least 10 characters")
+    .max(1000, "Message is too long")
+    .trim(),
 });
 
 type ContactFormData = z.infer<typeof contactSchema>;
 
 export default function ContactPage() {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm<ContactFormData>({
     resolver: zodResolver(contactSchema),
+    defaultValues: {
+      firstName: "",
+      lastName: "",
+      email: "",
+      phone: "",
+      message: "",
+    },
   });
 
-  const onSubmit = (data: ContactFormData) => {
-    console.log("Form submitted:", data);
-    // You can send this data to your backend or third-party service
+  const onSubmit = async (data: ContactFormData) => {
+    setIsSubmitting(true);
+    try {
+      // Simulate API call
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      console.log("Form submitted:", data);
+      toast.success("Message sent successfully!");
+      reset();
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -208,52 +234,6 @@ export default function ContactPage() {
             </Button>
           </motion.form>
         </div>
-
-        {/* Right Side: Contact Form */}
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-            <div>
-              <Input placeholder="First" {...register("firstName")} />
-              {errors.firstName && (
-                <p className="text-sm">{errors.firstName.message}</p>
-              )}
-            </div>
-            <div>
-              <Input placeholder="Last" {...register("lastName")} />
-              {errors.lastName && (
-                <p className="text-sm">{errors.lastName.message}</p>
-              )}
-            </div>
-          </div>
-          <div>
-            <Input
-              placeholder="example@email.com"
-              type="email"
-              {...register("email")}
-            />
-            {errors.email && <p className="text-sm">{errors.email.message}</p>}
-          </div>
-          <div>
-            <Input
-              placeholder="Phone (optional)"
-              type="tel"
-              {...register("phone")}
-            />
-          </div>
-          <div>
-            <Textarea
-              placeholder="Type your message..."
-              rows={5}
-              {...register("message")}
-            />
-            {errors.message && (
-              <p className="text-sm">{errors.message.message}</p>
-            )}
-          </div>
-          <Button type="submit" className="text-white">
-            Submit
-          </Button>
-        </form>
       </div>
     </div>
   );

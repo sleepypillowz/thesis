@@ -7,7 +7,7 @@ import { PatientSidebar } from "@/app/patient/patient-sidebar";
 import Header from "@/components/organisms/header";
 import RouteProgress from "@/components/shared/route-progress";
 
-export default function DoctorLayout({
+export default function Page({
   children,
 }: Readonly<{
   children: React.ReactNode;
@@ -22,9 +22,9 @@ export default function DoctorLayout({
             <RouteProgress />
             <Header />
             {children}
-          </div>
-        </div>
-      </main>
+          </main>
+        </SidebarInset>
+      </SidebarProvider>
     </>
   );
 }

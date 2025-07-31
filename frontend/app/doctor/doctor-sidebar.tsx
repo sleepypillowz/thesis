@@ -16,7 +16,6 @@ import {
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
@@ -25,7 +24,6 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { NavUser } from "../../molecules/nav-user";
 import Image from "next/image";
 import {
   Collapsible,
@@ -94,13 +92,6 @@ const patient_items = [
     icon: Clock,
   },
 ];
-
-const data = {
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-  },
-};
 
 export function AppSidebar() {
   return (
@@ -185,9 +176,6 @@ export function AppSidebar() {
           </SidebarGroup>
         </Collapsible>
       </SidebarContent>
-      <SidebarFooter>
-        <NavUser user={data.user} />
-      </SidebarFooter>
     </Sidebar>
   );
 }
