@@ -13,6 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { EllipsisVertical, Eye, SquarePen, User } from "lucide-react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 // Typescript Definition which defines the shape or structure of the patient object
 export type Patient = {
@@ -29,6 +30,7 @@ export type Patient = {
 };
 
 export default function MedicalRecords() {
+  const pathname = usePathname();
   // useState is data that changes
   // patients is the state variable and setPatients is the function used to update it
   // the useState<Patient[]>([]); tells typescript is an array of Patient objects, and it starts as an empty array."
@@ -68,13 +70,35 @@ export default function MedicalRecords() {
     // you can also change the dependency to [value] (userId) so whenever the value changes it updates but it doesn't require a refresh
   }, []);
 
-  // Filter patients based on search term
-  const filteredPatients = patients.filter((patient) =>
-    `${patient.first_name} ${patient.middle_name || ""} ${patient.last_name}`
-      .toLowerCase()
-      .trim()
-      .includes(searchTerm.toLowerCase())
-  );
+  // Filter patients based on search term and by date
+  const filteredPatients = patients
+    .filter((patient) =>
+      `${patient.first_name} ${patient.middle_name || ""} ${patient.last_name}`
+        .toLowerCase()
+        .trim()
+        .includes(searchTerm.toLowerCase())
+    )
+    .sort((a, b) => {
+      const latestA = a.queue_data?.sort(
+        (x, y) =>
+          new Date(y.created_at).getTime() - new Date(x.created_at).getTime()
+      )[0]?.created_at;
+
+      const latestB = b.queue_data?.sort(
+        (x, y) =>
+          new Date(y.created_at).getTime() - new Date(x.created_at).getTime()
+      )[0]?.created_at;
+
+      return (
+        new Date(latestB || 0).getTime() - new Date(latestA || 0).getTime()
+      );
+    });
+
+  // Only slice if we are on the dashboard
+  const displayedPatients =
+    pathname === "/doctor" || pathname === "/secretary" || pathname === "/admin"
+      ? filteredPatients.slice(0, 5)
+      : filteredPatients;
 
   return (
     <div className="card m-6">
@@ -102,7 +126,7 @@ export default function MedicalRecords() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {filteredPatients.map((item) => {
+          {displayedPatients.map((item) => {
             // Get the latest queue entry
             const latestQueue = item.queue_data?.sort(
               (a, b) =>
@@ -140,9 +164,17 @@ export default function MedicalRecords() {
                 <TableCell>
                   <Badge
                     variant="outline"
-                    className="rounded-full border-red-500 text-orange-500"
+                    className={`rounded-full ${
+                      latestQueue.status === "Completed" ||
+                      latestQueue.status === "Queued for Treatment"
+                        ? "border-green-500 text-green-500"
+                        : latestQueue.status === "Waiting"
+                        ? "border-yellow-500 text-yellow-500"
+                        : ""
+                    }
+              `}
                   >
-                    {latestQueue ? latestQueue.status : "N/A"}
+                    {latestQueue.status}
                   </Badge>
                 </TableCell>
                 <TableCell className="flex space-x-2">
