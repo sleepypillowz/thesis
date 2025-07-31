@@ -45,7 +45,7 @@ const chartConfig = {
 
 export function VisitorsChart() {
   return (
-    <Card className="border-none shadow-none">
+    <Card className="border-none shadow-md">
       <CardHeader>
         <CardTitle>Patient Statistics</CardTitle>
         <CardDescription>Showing total visitors for last year</CardDescription>

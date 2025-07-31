@@ -88,7 +88,7 @@ body {
 
 @layer components {
   .card {
-    @apply rounded-xl bg-card text-card-foreground p-6;
+    @apply rounded-xl bg-card text-card-foreground p-6 shadow-md;
   }
 }
 
