@@ -110,7 +110,7 @@ function StatsCard({ icon: Icon, title, value, footer }: StatsCardProps) {
   );
 }
 
-export default function StatsCards() {
+export default function AdminStatsCards() {
   return (
     <div className="m-4 grid grid-cols-1 place-items-center gap-4 text-card-foreground md:grid-cols-2 lg:grid-cols-4">
       {statsData.map((stat, index) => (

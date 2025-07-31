@@ -2,64 +2,144 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function Page() {
   return (
-    <main className="p-6">
-      <h1 className="mb-6 text-3xl font-bold">About Us</h1>
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <Card>
-          <CardHeader>
-            <CardTitle>Welcome to Our Hospital</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-muted-foreground">
-              We are a patient-focused medical facility dedicated to delivering
-              quality healthcare services with compassion, innovation, and
-              excellence. Our team of professionals ensures every patient
-              receives the care they deserve.
-            </p>
-          </CardContent>
-        </Card>
+    <div>
+      {/* Hero Section */}
+      <section className="relative bg-primary py-20 text-primary-foreground">
+        <div className="container mx-auto px-6 text-center">
+          <motion.h1
+            className="mb-4 text-4xl font-bold md:text-5xl"
+            variants={fadeIn}
+            initial="initial"
+            animate="animate"
+          >
+            About Our Hospital
+          </motion.h1>
+          <motion.p
+            className="mx-auto max-w-2xl text-lg md:text-xl"
+            variants={fadeIn}
+            initial="initial"
+            animate="animate"
+            transition={{ delay: 0.2 }}
+          >
+            Delivering compassionate, innovative, and exceptional healthcare to
+            our community.
+          </motion.p>
+        </div>
+      </section>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Our Mission</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-muted-foreground">
-              To provide comprehensive, accessible, and affordable healthcare
-              services to the community, with a focus on continuous improvement
-              and patient satisfaction.
-            </p>
-          </CardContent>
-        </Card>
+      {/* Main Content */}
+      <main className="container mx-auto px-6 py-12">
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+          <motion.div variants={fadeIn} initial="initial" animate="animate">
+            <Card className="shadow-lg transition-shadow duration-300 hover:shadow-xl">
+              <CardHeader>
+                <CardTitle className="text-xl font-semibold text-primary">
+                  Our Mission
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p>
+                  To provide excellent healthcare and the delivery of quality
+                  health services to all its clients.
+                </p>
+              </CardContent>
+            </Card>
+          </motion.div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Our Vision</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-muted-foreground">
-              To be the leading healthcare provider known for exceptional
-              medical care, advanced technology, and a compassionate approach to
-              healing.
-            </p>
-          </CardContent>
-        </Card>
+          <motion.div
+            variants={fadeIn}
+            initial="initial"
+            animate="animate"
+            transition={{ delay: 0.1 }}
+          >
+            <Card className="shadow-lg transition-shadow duration-300 hover:shadow-xl">
+              <CardHeader>
+                <CardTitle className="text-xl font-semibold text-primary">
+                  Our Vision
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p>
+                  To be a quality birthing home service that shall be responsive
+                  to the health needs of its clients.
+                </p>
+              </CardContent>
+            </Card>
+          </motion.div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Our Core Values</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ul className="ml-4 list-disc space-y-1 text-sm text-muted-foreground">
-              <li>Compassion</li>
-              <li>Integrity</li>
-              <li>Excellence</li>
-              <li>Teamwork</li>
-              <li>Innovation</li>
-            </ul>
-          </CardContent>
-        </Card>
-      </div>
-    </main>
+          <motion.div
+            variants={fadeIn}
+            initial="initial"
+            animate="animate"
+            transition={{ delay: 0.2 }}
+          >
+            <Card className="shadow-lg transition-shadow duration-300 hover:shadow-xl">
+              <CardHeader>
+                <CardTitle className="text-xl font-semibold text-primary">
+                  Our Core Values
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ul className="ml-5 list-disc space-y-2">
+                  <li>Compassion</li>
+                  <li>Integrity</li>
+                  <li>Excellence</li>
+                  <li>Teamwork</li>
+                  <li>Innovation</li>
+                </ul>
+              </CardContent>
+            </Card>
+          </motion.div>
+        </div>
+
+        {/* Additional Section */}
+        <section className="mt-16 text-center">
+          <motion.h2
+            className="mb-6 text-3xl font-bold"
+            variants={fadeIn}
+            initial="initial"
+            animate="animate"
+          >
+            Why Choose Us?
+          </motion.h2>
+          <motion.p
+            className="mx-auto mb-8 max-w-3xl"
+            variants={fadeIn}
+            initial="initial"
+            animate="animate"
+            transition={{ delay: 0.2 }}
+          >
+            Our hospital combines cutting-edge technology with a
+            patient-centered approach. Our dedicated team of professionals is
+            committed to your well-being, ensuring personalized care in a
+            welcoming environment.
+          </motion.p>
+        </section>
+      </main>
+
+      {/* Footer Call-to-Action */}
+      <section className="bg-primary py-12 text-primary-foreground">
+        <div className="container mx-auto px-6 text-center">
+          <motion.h2
+            className="mb-4 text-2xl font-bold md:text-3xl"
+            variants={fadeIn}
+            initial="initial"
+            animate="animate"
+          >
+            Ready to Experience Exceptional Care?
+          </motion.h2>
+          <motion.a
+            href="/contact"
+            className="inline-block rounded-full bg-foreground px-6 py-3 font-semibold transition-colors"
+            variants={fadeIn}
+            initial="initial"
+            animate="animate"
+            transition={{ delay: 0.2 }}
+          >
+            Contact Us Today
+          </motion.a>
+        </div>
+      </section>
+    </div>
   );
 }

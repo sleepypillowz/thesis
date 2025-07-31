@@ -1,143 +1,68 @@
-import { Button } from "@/components/ui/button";
-import Link from "next/link"
-import { FaPenToSquare, FaFile } from "react-icons/fa6";
+import PatientRecentMedications from "@/components/organisms/tables/patient/recent-medications";
+import StatsCard from "@/components/organisms/patient-stats-cards";
+import { PerformanceHeartRateChart } from "@/app/patient/components/performance-heart-rate-chart";
+import { RestingHeartRateChart } from "@/app/patient/components/resting-heart-rate-chart";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
+import Image from "next/image";
+
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import PatientPastAppointment from "@/app/patient/components/past-appointment";
+import PatientUpcomingAppointment from "@/app/patient/components/upcoming-appointment";
+import PatientRecentDocuments from "@/app/patient/components/recent-documents";
 
 export default function Page() {
   return (
-    <div className="mx-8 my-8 grid grid-cols-2 gap-4 space-y-4">
-      <section className="col-span-2">
-        <h1 className="mb-4 text-3xl font-semibold">Profile</h1>
-        <div
-          className="card grid grid-cols-1 items-center justify-center gap-12 text-center sm:grid-cols-2 md:grid-cols-2">
+    <div className="m-6 space-y-6">
+      <section className="card">
+        <div className="grid grid-cols-3">
+          <AspectRatio ratio={16 / 9}>
+            <Image
+              src="/Welcome.png"
+              alt="Welcome"
+              fill
+              className="h-full w-full rounded-lg object-cover"
+            />
+          </AspectRatio>
 
-          <div>
-            <div className="mb-4">
-              <p className="text-lg font-bold">JUAN DELA CRUZ</p>
-              <p className="text-sm">Male | 12/31/1975</p>
-            </div>
-
-            <div className="mt-4">
-              <p className="text-lg font-bold">Contact Details</p>
-              <p>0911 505 3143</p>
-              <p>sampleemail@gmail.com</p>
-            </div>
-          </div>
-
-          <div className="space-y-4 sm:text-left">
-            <div>
-              <p className="text-lg font-semibold">Date of Last Consultation</p>
-              <p>12/31/2002</p>
-            </div>
-
-            <div>
-              <p className="text-lg font-semibold">Current Diagnosis</p>
-              <p>Diabetes</p>
-            </div>
-
-            <div>
-              <p className="text-lg font-semibold">Allergies</p>
-              <p>Penicillin, Pollen</p>
-            </div>
-
-            <div>
-              <p className="text-lg font-semibold">Medical History</p>
-              <p>Hypertension (diagnosed 1998), Hyperlipidemia (diagnosed
-                2000), Appendectomy (1985)</p>
-            </div>
-
-            <div>
-              <p className="text-lg font-semibold">Family History</p>
-              <p>Father with history of heart disease, Mother with Type 2
-                Diabetes</p>
-            </div>
+          <div className="col-span-2 flex flex-col content-center space-y-4 p-12">
+            <span className="font-semibold">Welcome back</span>
+            <span className="text-2xl font-bold text-blue-500">
+              Cara Stevens!
+            </span>
+            <p className="text-muted-foreground">
+              We would like to take this opportunity to welcome you to our
+              practice and to thank you for choosing our physicians to
+              participate in your healthcare. We look forward to providing you
+              with personalized, comprehensive health care focusing on wellness
+              and prevention.
+            </p>
           </div>
         </div>
       </section>
-
-      <section className="col-span-2">
-        <h1 className="mb-4 text-3xl font-semibold">Appointments</h1>
-        <div className="card overflow-x-auto">
-          <div className="my-4 flex flex-wrap justify-start space-y-4 sm:space-x-4 sm:space-y-0">
-            <Button variant="outline" className="rounded-full">Doctors Appointment</Button>
-            <Button variant="outline" className="rounded-full">Patient Appointment Request</Button>
-          </div>
-          <table
-            className="card w-full text-left text-sm rtl:text-right">
-            <thead className="text-xs uppercase text-muted-foreground">
-              <tr>
-                <th scope="col" className="px-4 py-4">Type</th>
-                <th scope="col" className="px-4 py-4">Date</th>
-                <th scope="col" className="px-4 py-4">Doctor</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr className="border-b bg-card">
-                <td className="px-4 py-4">Chest X-Ray</td>
-                <td className="px-4 py-4">December 06 2024</td>
-                <td className="px-4 py-4">Dr. Johnny</td>
-              </tr>
-            </tbody>
-          </table>
-
-          <Link href="/patient/appointments"
-            className="flex items-center justify-end space-x-2 pt-4 text-blue-500 hover:text-blue-700">
-            <span>View all Appointments</span>
-            <FaPenToSquare />
-          </Link>
-
+      <StatsCard />
+      <section className="grid grid-cols-3 gap-6">
+        <RestingHeartRateChart />
+        <PerformanceHeartRateChart />
+        <PatientRecentMedications />
+        <div className="card col-span-2">
+          <Tabs defaultValue="upcoming-appointment">
+            <TabsList className="w-full">
+              <TabsTrigger className="w-1/2" value="upcoming-appointment">
+                Upcoming Appointment
+              </TabsTrigger>
+              <TabsTrigger className="w-1/2" value="past-appointment">
+                Past Appointment
+              </TabsTrigger>
+            </TabsList>
+            <TabsContent value="upcoming-appointment">
+              <PatientUpcomingAppointment />
+            </TabsContent>
+            <TabsContent value="past-appointment">
+              <PatientPastAppointment />
+            </TabsContent>
+          </Tabs>
         </div>
-
-
-
-      </section>
-
-
-      <section className="col-span-2">
-        <h1 className="mb-4 text-3xl font-semibold">Prescriptions</h1>
-        <div className="card overflow-x-auto">
-          <table
-            className="card w-full text-left text-sm rtl:text-right">
-            <thead className="text-xs uppercase text-muted-foreground">
-              <tr>
-                <th scope="col" className="px-4 py-4">Drug Name</th>
-                <th scope="col" className="px-4 py-4">No. of Units</th>
-                <th scope="col" className="px-4 py-4">Dosage</th>
-                <th scope="col" className="px-4 py-4">No. of Days</th>
-                <th scope="col" className="px-4 py-4">Time</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr className="border-b bg-card">
-                <td className="px-4 py-4">Paracetamol Biogesic</td>
-                <td className="px-4 py-4">2</td>
-                <td className="px-4 py-4">Twice</td>
-                <td className="px-4 py-4">7</td>
-                <td className="px-4 py-4">10:30</td>
-              </tr>
-              <tr className="border-b bg-card">
-                <td className="px-4 py-4">Paracetamol Biogesic</td>
-                <td className="px-4 py-4">2</td>
-                <td className="px-4 py-4">Twice</td>
-                <td className="px-4 py-4">7</td>
-                <td className="px-4 py-4">10:30</td>
-              </tr>
-              <tr className="bg-card">
-                <td className="px-4 py-4">Paracetamol Biogesic</td>
-                <td className="px-4 py-4">2</td>
-                <td className="px-4 py-4">Twice</td>
-                <td className="px-4 py-4">7</td>
-                <td className="px-4 py-4">10:30</td>
-              </tr>
-            </tbody>
-          </table>
-
-          <Link href="/patient/prescriptions"
-            className="flex items-center justify-end space-x-2 pt-4 text-blue-500 hover:text-blue-700">
-            <span>View all Prescriptions</span>
-            <FaPenToSquare />
-          </Link>
-
-        </div>
+        <PatientRecentDocuments />
       </section>
 
       <section className="card block w-full overflow-x-auto">

@@ -1,48 +1,86 @@
-export default function Page() {
+import { Badge } from "@/components/ui/badge";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { CloudDownload, Eye, Trash } from "lucide-react";
+
+export default function PatientPrescriptions() {
+  const prescriptions = [
+    {
+      id: "#A003",
+      title: "Prescription 1",
+      createdby: "Dr. Jacob Ryan",
+      date: "	12/05/2016",
+      disease: "Fever",
+    },
+    {
+      id: "#A002",
+      title: "Prescription 1",
+      createdby: "Dr. Jacob Ryan",
+      date: "	12/05/2016",
+      disease: "Cholera",
+    },
+    {
+      id: "#A001",
+      title: "Prescription 1",
+      createdby: "Dr. Jacob Ryan",
+      date: "	12/05/2016",
+      disease: "Jaundice",
+    },
+  ];
+
   return (
-    <div className="flex-1 px-8 py-8">
-      <div className="mx-auto max-w-7xl rounded-lg">
-        <h1 className="mb-4 text-3xl font-semibold">Prescriptions</h1>
-
-        <div className="card overflow-x-auto">
-          <table
-            className="card w-full text-left text-sm rtl:text-right">
-            <thead className="text-xs uppercase text-muted-foreground">
-              <tr>
-                <th scope="col" className="px-4 py-4">Drug Name</th>
-                <th scope="col" className="px-4 py-4">No. of Units</th>
-                <th scope="col" className="px-4 py-4">Dosage</th>
-                <th scope="col" className="px-4 py-4">No. of Days</th>
-                <th scope="col" className="px-4 py-4">Time</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr className="border-b bg-card">
-                <td className="px-4 py-4">Paracetamol Biogesic</td>
-                <td className="px-4 py-4">2</td>
-                <td className="px-4 py-4">Twice</td>
-                <td className="px-4 py-4">7</td>
-                <td className="px-4 py-4">10:30</td>
-              </tr>
-              <tr className="border-b bg-card">
-                <td className="px-4 py-4">Paracetamol Biogesic</td>
-                <td className="px-4 py-4">2</td>
-                <td className="px-4 py-4">Twice</td>
-                <td className="px-4 py-4">7</td>
-                <td className="px-4 py-4">10:30</td>
-              </tr>
-              <tr className="bg-card">
-                <td className="px-4 py-4">Paracetamol Biogesic</td>
-                <td className="px-4 py-4">2</td>
-                <td className="px-4 py-4">Twice</td>
-                <td className="px-4 py-4">7</td>
-                <td className="px-4 py-4">10:30</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-      </div>
+    <div className="card m-6">
+      <h1 className="font-bold">Prescription</h1>
+      <Table>
+        <TableHeader>
+          <TableRow>
+            {Object.keys(prescriptions[0])
+              .filter((key) => key !== "id") // exclude 'id'
+              .map((key) => (
+                <TableHead key={key} className="capitalize">
+                  {key}
+                </TableHead>
+              ))}
+            <TableHead>Actions</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {prescriptions.map((item) => (
+            <TableRow key={item.id}>
+              <TableCell>{item.title}</TableCell>
+              <TableCell>{item.createdby}</TableCell>
+              <TableCell>{item.date}</TableCell>
+              <TableCell>
+                <Badge
+                  variant="outline"
+                  className={`rounded-full ${
+                    item.disease === "Fever"
+                      ? "border-red-500 text-red-500"
+                      : item.disease === "Cholera"
+                      ? "border-green-500 text-green-500"
+                      : item.disease === "Jaundice"
+                      ? "border-purple-500 text-purple-500"
+                      : item.disease === "Jaundice"
+                  }`}
+                >
+                  {item.disease}
+                </Badge>
+              </TableCell>
+              <TableCell className="flex space-x-2">
+                <CloudDownload className="h-5 w-5 cursor-pointer text-blue-500 hover:fill-current" />
+                <Eye className="h-5 w-5 cursor-pointer text-green-500 hover:fill-current" />
+                <Trash className="h-5 w-5 cursor-pointer text-red-500 hover:fill-current" />
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
     </div>
   );
 }

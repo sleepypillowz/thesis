@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { GalleryVerticalEnd } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import { RegisterForm } from "@/components/organisms/forms/register-form"; // Make sure this component exists
+import { RegisterForm } from "@/app/(user)/register/register-form"; // Make sure this component exists
 
 export default function RegisterPage() {
   const [loaded, setLoaded] = useState(false);

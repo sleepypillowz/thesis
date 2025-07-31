@@ -27,19 +27,6 @@ const Header = () => {
     }
   }, []);
 
-  const getRoleBadgeStyle = (role?: string) => {
-    switch (role) {
-      case "admin":
-        return "bg-red-50 text-red-700 border-red-200";
-      case "doctor":
-        return "bg-green-50 text-green-700 border-green-200";
-      case "medical secretary":
-        return "bg-blue-50 text-blue-700 border-blue-200";
-      default:
-        return "bg-gray-50 text-gray-700 border-gray-200";
-    }
-  };
-
   return (
     <div className="z-50 border border-x-0 bg-card text-card-foreground shadow-sm lg:sticky lg:top-0">
       <div className="px-3 py-3 lg:px-5 lg:pl-3">
@@ -56,16 +43,6 @@ const Header = () => {
               <div className="flex items-center space-x-3">
                 <div className="flex flex-col items-end">
                   <span className="text-sm font-semibold">{user.email}</span>
-                  <span
-                    className={`
-                      text-xs px-2 py-0.5 rounded-full 
-                      ${getRoleBadgeStyle(user.role)}
-                      font-medium border
-                      transition-all duration-300 ease-in-out
-                    `}
-                  >
-                    {user.role}
-                  </span>
                 </div>
                 <div className="flex items-center space-x-2">
                   <Notification />
