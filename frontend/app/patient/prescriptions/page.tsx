@@ -1,3 +1,6 @@
+import clsx from "clsx";
+import TitleCard from "@/components/molecules/title-card";
+import { prescriptions } from "@/lib/placeholder-data";
 import { Badge } from "@/components/ui/badge";
 import {
   Table,
@@ -10,43 +13,15 @@ import {
 import { CloudDownload, Eye, Trash } from "lucide-react";
 
 export default function PatientPrescriptions() {
-  const prescriptions = [
-    {
-      id: "#A003",
-      title: "Prescription 1",
-      createdby: "Dr. Jacob Ryan",
-      date: "	12/05/2016",
-      disease: "Fever",
-    },
-    {
-      id: "#A002",
-      title: "Prescription 1",
-      createdby: "Dr. Jacob Ryan",
-      date: "	12/05/2016",
-      disease: "Cholera",
-    },
-    {
-      id: "#A001",
-      title: "Prescription 1",
-      createdby: "Dr. Jacob Ryan",
-      date: "	12/05/2016",
-      disease: "Jaundice",
-    },
-  ];
-
   return (
-    <div className="card m-6">
-      <h1 className="font-bold">Prescription</h1>
+    <TitleCard title="Prescription">
       <Table>
         <TableHeader>
           <TableRow>
-            {Object.keys(prescriptions[0])
-              .filter((key) => key !== "id") // exclude 'id'
-              .map((key) => (
-                <TableHead key={key} className="capitalize">
-                  {key}
-                </TableHead>
-              ))}
+            <TableHead>Title</TableHead>
+            <TableHead>Created by</TableHead>
+            <TableHead>Date</TableHead>
+            <TableHead>Diseases</TableHead>
             <TableHead>Actions</TableHead>
           </TableRow>
         </TableHeader>
@@ -59,15 +34,14 @@ export default function PatientPrescriptions() {
               <TableCell>
                 <Badge
                   variant="outline"
-                  className={`rounded-full ${
-                    item.disease === "Fever"
-                      ? "border-red-500 text-red-500"
-                      : item.disease === "Cholera"
-                      ? "border-green-500 text-green-500"
-                      : item.disease === "Jaundice"
-                      ? "border-purple-500 text-purple-500"
-                      : item.disease === "Jaundice"
-                  }`}
+                  className={clsx(
+                    "rounded-full",
+                    item.disease === "Fever" && "border-red-500 text-red-500",
+                    item.disease === "Cholera" &&
+                      "border-green-500 text-green-500",
+                    item.disease === "Jaundice" &&
+                      "border-purple-500 text-purple-500"
+                  )}
                 >
                   {item.disease}
                 </Badge>
@@ -81,6 +55,6 @@ export default function PatientPrescriptions() {
           ))}
         </TableBody>
       </Table>
-    </div>
+    </TitleCard>
   );
 }

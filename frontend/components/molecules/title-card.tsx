@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
 
-export default function Card({
+export default function TitleCard({
   title,
   children,
 }: {

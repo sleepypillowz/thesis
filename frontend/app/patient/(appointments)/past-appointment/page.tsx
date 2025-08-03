@@ -1,11 +1,11 @@
-import Card from "@/components/molecules/card";
+import TitleCard from "@/components/molecules/title-card";
 import AppointmentTable from "@/app/patient/components/appointment-table";
 import { appointments } from "@/lib/placeholder-data";
 
 export default function Page() {
   return (
-    <Card title="Past Appointment">
+    <TitleCard title="Past Appointment">
       <AppointmentTable appointments={appointments} />
-    </Card>
+    </TitleCard>
   );
 }

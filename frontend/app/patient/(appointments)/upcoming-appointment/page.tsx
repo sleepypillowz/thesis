@@ -1,4 +1,11 @@
-import UpcomingAppointment from "@/app/patient/components/upcoming-appointment";
+import TitleCard from "@/components/molecules/title-card";
+import AppointmentTable from "@/app/patient/components/appointment-table";
+import { appointments } from "@/lib/placeholder-data";
+
 export default function Page() {
-  return <UpcomingAppointment />;
+  return (
+    <TitleCard title="Upcoming Appointment">
+      <AppointmentTable appointments={appointments} />
+    </TitleCard>
+  );
 }

@@ -6,9 +6,9 @@ import { AspectRatio } from "@/components/ui/aspect-ratio";
 import Image from "next/image";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import TodaysAppointment from "@/app/patient/components/todays-appointment";
-import UpcomingAppointment from "@/app/patient/components/upcoming-appointment";
 import PatientRecentDocuments from "@/app/patient/components/recent-documents";
+import AppointmentTable from "./components/appointment-table";
+import { appointments } from "@/lib/placeholder-data";
 
 export default function Page() {
   return (
@@ -55,10 +55,10 @@ export default function Page() {
               </TabsTrigger>
             </TabsList>
             <TabsContent value="todays-appointment">
-              <TodaysAppointment />
+              <AppointmentTable appointments={appointments} />
             </TabsContent>
             <TabsContent value="upcoming-appointment">
-              <UpcomingAppointment />
+              <AppointmentTable appointments={appointments} />
             </TabsContent>
           </Tabs>
         </div>

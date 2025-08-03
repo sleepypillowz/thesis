@@ -1,25 +1,8 @@
 import Link from "next/link";
 import { CircleArrowDown, FileText, Trash2 } from "lucide-react";
+import { documents } from "@/lib/placeholder-data";
 
 export default function PatientRecentDocuments() {
-  const documents = [
-    {
-      id: 1,
-      name: "Blood Report",
-      color: "text-red-600",
-    },
-    {
-      id: 2,
-      name: "Mediclaim Documents",
-      color: "text-blue-600",
-    },
-    {
-      id: 3,
-      name: "Doctor Prescriptions",
-      color: "text-muted-foreground",
-    },
-  ];
-
   return (
     <div className="card space-y-4">
       <div className="flex justify-between">
