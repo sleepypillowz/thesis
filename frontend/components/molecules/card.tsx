@@ -1,0 +1,16 @@
+import { ReactNode } from "react";
+
+export default function Card({
+  title,
+  children,
+}: {
+  title: string;
+  children: ReactNode;
+}) {
+  return (
+    <div className="card m-6">
+      <h1 className="mb-6 font-bold">{title}</h1>
+      {children}
+    </div>
+  );
+}

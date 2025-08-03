@@ -6,8 +6,8 @@ import { AspectRatio } from "@/components/ui/aspect-ratio";
 import Image from "next/image";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import PatientPastAppointment from "@/app/patient/components/past-appointment";
-import PatientUpcomingAppointment from "@/app/patient/components/upcoming-appointment";
+import TodaysAppointment from "@/app/patient/components/todays-appointment";
+import UpcomingAppointment from "@/app/patient/components/upcoming-appointment";
 import PatientRecentDocuments from "@/app/patient/components/recent-documents";
 
 export default function Page() {
@@ -47,18 +47,18 @@ export default function Page() {
         <div className="card col-span-2">
           <Tabs defaultValue="upcoming-appointment">
             <TabsList className="w-full">
+              <TabsTrigger className="w-1/2" value="todays-appointment">
+                Todays Appointment
+              </TabsTrigger>
               <TabsTrigger className="w-1/2" value="upcoming-appointment">
                 Upcoming Appointment
               </TabsTrigger>
-              <TabsTrigger className="w-1/2" value="past-appointment">
-                Past Appointment
-              </TabsTrigger>
             </TabsList>
-            <TabsContent value="upcoming-appointment">
-              <PatientUpcomingAppointment />
+            <TabsContent value="todays-appointment">
+              <TodaysAppointment />
             </TabsContent>
-            <TabsContent value="past-appointment">
-              <PatientPastAppointment />
+            <TabsContent value="upcoming-appointment">
+              <UpcomingAppointment />
             </TabsContent>
           </Tabs>
         </div>
