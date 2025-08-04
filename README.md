@@ -30,9 +30,9 @@
 
 ## Features
 
-*   [Feature 1]
-*   [Feature 2]
-*   [Feature 3]
+*   Appointment
+*   Medicine Stocks
+*   Disease Graph
 
 ## Getting Started
 
@@ -40,12 +40,17 @@
 
 ```bash
 git clone https://github.com/sleepypillowz/thesis.git
-cd thesis
-npm install
+cd backend
+python -m venv venv
+venv\Scripts\activate
+pip install -r requirements.txt
+
+cd frontend
+pnpm install
 ```
 ## Usage
 ```
-npm run dev
+pnpm dev
 ```
 
 ## Examples
