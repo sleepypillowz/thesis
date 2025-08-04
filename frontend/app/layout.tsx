@@ -2,6 +2,7 @@ import { ThemeProvider } from "@/utils/theme-provider";
 import type { Metadata } from "next";
 import "./globals.css";
 import { nunito } from "@/app/fonts";
+import RouteProgress from "@/components/shared/route-progress";
 
 export const metadata: Metadata = {
   title: "MediTrakk",
@@ -22,6 +23,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
+          <RouteProgress />
           {children}
         </ThemeProvider>
       </body>

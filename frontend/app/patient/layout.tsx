@@ -5,7 +5,6 @@ import {
 } from "@/components/ui/sidebar";
 import { PatientSidebar } from "@/app/patient/patient-sidebar";
 import Header from "@/components/organisms/header";
-import RouteProgress from "@/components/shared/route-progress";
 
 export default function Page({
   children,
@@ -19,7 +18,6 @@ export default function Page({
         <SidebarInset className="flex-1">
           <main className="flex-1">
             <SidebarTrigger className="fixed md:hidden" />
-            <RouteProgress />
             <Header />
             {children}
           </main>
