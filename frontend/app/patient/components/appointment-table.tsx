@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/table";
 import { User } from "lucide-react";
 import clsx from "clsx";
+import { Badge } from "@/components/ui/badge";
 
 type Appointment = {
   id: string;
@@ -61,15 +62,19 @@ export default function AppointmentTable({
             <TableCell>{item.treatment}</TableCell>
             <TableCell>{item.contact}</TableCell>
             <TableCell>{item.location}</TableCell>
-            <TableCell
-              className={clsx({
-                "border-green-500 text-green-500":
-                  item.status === "Confirmed" || item.status === "Done",
-                "border-yellow-500 text-yellow-500": item.status === "Pending",
-                "border-red-500 text-red-500": item.status === "Cancelled",
-              })}
-            >
-              {item.status}
+            <TableCell>
+              <Badge
+                variant="outline"
+                className={clsx("rounded-full", {
+                  "border-green-500 text-green-500":
+                    item.status === "Confirmed" || item.status === "Done",
+                  "border-yellow-500 text-yellow-500":
+                    item.status === "Pending",
+                  "border-red-500 text-red-500": item.status === "Cancelled",
+                })}
+              >
+                {item.status}
+              </Badge>
             </TableCell>
           </TableRow>
         ))}
