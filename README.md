@@ -50,6 +50,11 @@ pnpm install
 ```
 ## Usage
 ```
+cd backend
+venv\Scripts\activate
+python manage.py runserver
+
+cd frontend
 pnpm dev
 ```
 
