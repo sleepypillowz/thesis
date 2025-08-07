@@ -9,7 +9,18 @@ import {
 import { User } from "lucide-react";
 import clsx from "clsx";
 import { Badge } from "@/components/ui/badge";
-import { Appointment } from "@/lib/definitions";
+
+type Appointment = {
+  id: string;
+  doctor: string;
+  profession: string;
+  date: string;
+  time: string;
+  treatment: string;
+  contact: string;
+  location: string;
+  status: string;
+};
 
 export default function AppointmentTable({
   appointments,
