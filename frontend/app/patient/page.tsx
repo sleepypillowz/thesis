@@ -1,4 +1,4 @@
-import PatientRecentMedications from "@/components/organisms/tables/patient/recent-medications";
+import PatientRecentMedications from "@/app/patient/components/recent-medications";
 import StatsCard from "@/components/organisms/patient-stats-cards";
 import { PerformanceHeartRateChart } from "@/app/patient/components/performance-heart-rate-chart";
 import { RestingHeartRateChart } from "@/app/patient/components/resting-heart-rate-chart";
