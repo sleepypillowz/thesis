@@ -1,4 +1,3 @@
-import { AspectRatio } from "@radix-ui/react-aspect-ratio";
 import Image from "next/image";
 
 const laboratory_services = [
