@@ -1,10 +1,5 @@
 "use client";
-import {
-  LayoutDashboard,
-  Calendar,
-  Power,
-  BriefcaseMedical,
-} from "lucide-react";
+import { LayoutDashboard, Calendar, Power } from "lucide-react";
 
 import {
   Sidebar,
