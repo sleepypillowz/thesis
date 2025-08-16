@@ -1,5 +1,10 @@
 "use client";
-import { LayoutDashboard, Calendar, Power, BriefcaseMedical } from "lucide-react";
+import {
+  LayoutDashboard,
+  Calendar,
+  Power,
+  BriefcaseMedical,
+} from "lucide-react";
 
 import {
   Sidebar,
@@ -25,11 +30,6 @@ const menu_items = [
     title: "Appointment",
     url: "/design/appointment",
     icon: Calendar,
-  },
-    {
-    title: "Services",
-    url: "/design/services",
-    icon: BriefcaseMedical,
   },
   {
     title: "Logout",
