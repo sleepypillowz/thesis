@@ -27,6 +27,11 @@ const menu_items = [
     icon: Calendar,
   },
   {
+    title: "OPD Record",
+    url: "/design/opd-record",
+    icon: Calendar,
+  },
+  {
     title: "Logout",
     url: "/",
     icon: Power,
