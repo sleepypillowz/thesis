@@ -328,7 +328,7 @@ export default function MedicalRecordForm() {
 
       // Physician's Notes
       doc.setFont("helvetica", "bold");
-      doc.text("PHYSICIAN'S NOTES:", margin, yPosition);
+      doc.text("PHYSICIANS NOTES:", margin, yPosition);
       yPosition += 8;
 
       doc.setFont("helvetica", "normal");
@@ -349,7 +349,7 @@ export default function MedicalRecordForm() {
       );
       yPosition += 5;
       doc.setFontSize(8);
-      doc.text("PHYSICIAN'S SIGNATURE", pageWidth - margin - 30, yPosition, {
+      doc.text("PHYSICIANS SIGNATURE", pageWidth - margin - 30, yPosition, {
         align: "center",
       });
 
@@ -778,7 +778,7 @@ export default function MedicalRecordForm() {
 
             <Card>
               <CardHeader>
-                <CardTitle>Physician's Notes</CardTitle>
+                <CardTitle>Physicians Notes</CardTitle>
               </CardHeader>
               <CardContent>
                 <FormField
@@ -797,7 +797,7 @@ export default function MedicalRecordForm() {
                   <div className="text-right">
                     <Separator className="mb-2 w-48" />
                     <p className="text-sm text-gray-600">
-                      Physician's Signature
+                      Physicians Signature
                     </p>
                   </div>
                 </div>
