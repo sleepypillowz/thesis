@@ -9,7 +9,6 @@ from django.utils.text import slugify
 
 from medicine.models import Medicine
 
-# Create your models here.'
 class Patient(models.Model):
     patient_id = models.CharField(max_length=50, unique=True, primary_key=True, editable=False)
     name = models.CharField(max_length=200, blank=True, null=True)
@@ -34,6 +33,9 @@ class Patient(models.Model):
     
     def __str__(self):
         return self.name or f"{self.first_name} {self.last_name}"
+    
+    class Meta:
+        db_table = "patients"
     
 class Diagnosis(models.Model):
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='diagnosis')
