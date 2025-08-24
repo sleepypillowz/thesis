@@ -12,7 +12,6 @@ from medicine.models import Medicine
 # Create your models here.'
 class Patient(models.Model):
     patient_id = models.CharField(max_length=50, unique=True, primary_key=True, editable=False)
-    name = models.CharField(max_length=200, blank=True, null=True)
     first_name = models.CharField(max_length=200, blank=True, null=True)
     middle_name = models.CharField(max_length=100, blank=True, null=True)
     last_name = models.CharField(max_length=200)
@@ -33,7 +32,7 @@ class Patient(models.Model):
         return age
     
     def __str__(self):
-        return self.name or f"{self.first_name} {self.last_name}"
+        return f'{self.first_name} {self.last_name}'
     
 class Diagnosis(models.Model):
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='diagnosis')

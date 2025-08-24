@@ -16,7 +16,6 @@ from queueing.models import TemporaryStorageQueue, Treatment
 
 class PatientSerializer(serializers.Serializer):
     patient_id = serializers.CharField(max_length=8)
-    name = serializers.CharField(max_length=200, allow_blank=True, required=False)
     first_name = serializers.CharField(max_length=200, allow_blank=True, required=False)
     middle_name = serializers.CharField(max_length=100, allow_blank=True, required=False)
     last_name = serializers.CharField(max_length=200)
