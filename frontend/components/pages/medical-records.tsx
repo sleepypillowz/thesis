@@ -15,7 +15,6 @@ import { EllipsisVertical, Eye, SquarePen, Users } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-// Typescript Definition which defines the shape or structure of the patient object
 export type Patient = {
   patient_id: string;
   first_name: string;
@@ -31,21 +30,11 @@ export type Patient = {
 
 export default function MedicalRecords() {
   const pathname = usePathname();
-  // useState is data that changes
-  // patients is the state variable and setPatients is the function used to update it
-  // the useState<Patient[]>([]); tells typescript is an array of Patient objects, and it starts as an empty array."
   const [patients, setPatients] = useState<Patient[]>([]);
-  // searchTerm is the state variable which holds what the user typed and setSearchTerm is the function used to update it
-  // the useState(""); tells typescript it starts of as an empty string
   const [searchTerm, setSearchTerm] = useState("");
 
-  // Fetch patient data from the API
-  // this runs once on mount cause of the empty array
   useEffect(() => {
-    // async allows you to fetch data without blocking the entire system this returns a promise
-    // await tells it to pause execution til the promise resolves
     const fetchPatients = async () => {
-      // access token of the user which checks if the user is logged in the right account
       const accessToken = localStorage.getItem("access");
       const response = await fetch(
         // this is the url where the data is, this becomes http://localhost:8000/api/patients/
@@ -53,24 +42,17 @@ export default function MedicalRecords() {
         {
           method: "GET",
           headers: {
-            // This request is coming from a logged-in user — here’s their token."
             Authorization: `Bearer ${accessToken}`,
           },
         }
       );
-      // : Patient[]: this is a typescript annotation saying: "I expect data to be an array of Patient objects."
-      // .json() converts the json to js object
       const data: Patient[] = await response.json();
       setPatients(data);
     };
 
-    // run the function
     fetchPatients();
-    // [] is a dependency array and when its empty it tells the function to only run once (which is on first load or reload)
-    // you can also change the dependency to [value] (userId) so whenever the value changes it updates but it doesn't require a refresh
   }, []);
 
-  // Filter patients based on search term and by date
   const filteredPatients = patients
     .filter((patient) =>
       `${patient.first_name} ${patient.middle_name || ""} ${patient.last_name}`
@@ -94,7 +76,6 @@ export default function MedicalRecords() {
       );
     });
 
-  // Only slice if we are on the dashboard
   const displayedPatients =
     pathname === "/doctor" || pathname === "/secretary" || pathname === "/admin"
       ? filteredPatients.slice(0, 5)
@@ -131,7 +112,6 @@ export default function MedicalRecords() {
         </TableHeader>
         <TableBody>
           {displayedPatients.map((item) => {
-            // Get the latest queue entry
             const latestQueue = item.queue_data?.sort(
               (a, b) =>
                 new Date(b.created_at).getTime() -

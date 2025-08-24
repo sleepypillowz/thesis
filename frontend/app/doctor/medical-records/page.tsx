@@ -1,9 +1,9 @@
-import MedicalRecords from "@/components/pages/medical-records";
+import PatientList from "@/components/pages/patient-list/page";
 
 export default function Page() {
   return (
     <div className="m-6">
-      <MedicalRecords />
+      <PatientList />
     </div>
   );
 }
