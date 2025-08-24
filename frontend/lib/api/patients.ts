@@ -3,8 +3,8 @@ import { useState, useEffect } from 'react';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE;
 
-export interface Patient {
-  first_name: string;
+export interface patients {
+  name: string;
   status: string;
 }
 
@@ -53,7 +53,7 @@ const useQuery = <T>(queryFn: () => Promise<T>): T | null => {
 // API object
 export const api = {
   patients: {
-    getPatients: () => fetchData<Patient[]>("/patients/"),
+    getPatients: () => fetchData<patients[]>("/patients/"),
   },
 };
 
