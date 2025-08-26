@@ -1,5 +1,4 @@
-"use client";
-import { LayoutDashboard, Calendar, Power } from "lucide-react";
+import { LayoutDashboard, Calendar } from "lucide-react";
 
 import {
   Sidebar,
@@ -12,29 +11,24 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import Image from "next/image";
 
 import Link from "next/link";
+import SidebarHeaderProfile from "@/components/atoms/sidebar-header-profile";
 const menu_items = [
   {
     title: "Dashboard",
-    url: "/design",
+    url: "/designer",
     icon: LayoutDashboard,
   },
   {
     title: "Appointment",
-    url: "/design/appointment",
+    url: "/designer/appointment",
     icon: Calendar,
   },
   {
     title: "OPD Record",
-    url: "/design/opd-record",
+    url: "/designer/opd-record",
     icon: Calendar,
-  },
-  {
-    title: "Logout",
-    url: "/",
-    icon: Power,
   },
 ];
 
@@ -42,34 +36,7 @@ export function AppSidebar() {
   return (
     <Sidebar>
       <SidebarHeader>
-        <Link href="/design" className="flex items-center justify-center gap-2">
-          <span className="relative flex h-8 w-8 shrink-0 overflow-hidden rounded-full">
-            <Image
-              className="aspect-square h-full w-full"
-              src="/logo.png"
-              alt="logo"
-              width={64}
-              height={64}
-            />
-          </span>
-          <h1 className="text-2xl">MediTrakk</h1>
-        </Link>
-        <div className="flex flex-col items-center">
-          <div className="mb-2 mt-4">
-            <Image
-              className="rounded-xl border-2 border-white object-cover"
-              src="/secretary.jpg"
-              alt="secretary"
-              width={64}
-              height={64}
-            />
-          </div>
-
-          <span className="text-sm font-bold">Sarah Smith</span>
-          <span className="text-xs font-semibold text-muted-foreground">
-            DESIGNER
-          </span>
-        </div>
+        <SidebarHeaderProfile />
       </SidebarHeader>
       <SidebarContent>
         {/* Main Menu */}

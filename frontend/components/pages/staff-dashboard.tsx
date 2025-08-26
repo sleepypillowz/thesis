@@ -2,19 +2,19 @@
 import { VisitorsChart } from "@/components/organisms/charts/visitors-chart";
 import { CommonDiseasesChart } from "@/components/organisms/charts/common-diseases-chart";
 import StatsCard from "@/components/organisms/admin-stats-cards";
-import userInfo from "@/hooks/userRole";
 import MedicalRecords from "@/components/pages/medical-records";
 import { CommonMedicinesChart } from "@/components/organisms/charts/common-medicine-chart";
+import { useUser } from "@clerk/nextjs";
 
 export default function StaffDashboard() {
-  const user = userInfo();
+  const { user } = useUser();
 
   return (
     <div className="m-6 space-y-4 text-center md:text-left">
       <div className="mx-2 py-4">
         <div className="flex space-x-2 text-2xl font-bold">
           <p>Good Day,</p>
-          <p className="text-blue-500">{user?.first_name}</p>
+          <p className="text-blue-500">{user?.firstName}</p>
         </div>
 
         <p className="text-sm">

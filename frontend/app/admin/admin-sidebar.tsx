@@ -1,5 +1,4 @@
-"use client";
-import { LayoutDashboard, ChartNoAxesGantt, Power } from "lucide-react";
+import { LayoutDashboard, ChartNoAxesGantt } from "lucide-react";
 
 import {
   Sidebar,
@@ -12,9 +11,9 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import Image from "next/image";
 
 import Link from "next/link";
+import SidebarHeaderProfile from "@/components/atoms/sidebar-header-profile";
 const menu_items = [
   {
     title: "Dashboard",
@@ -36,45 +35,13 @@ const menu_items = [
     url: "/admin/secretary-management",
     icon: ChartNoAxesGantt,
   },
-  {
-    title: "Logout",
-    url: "/",
-    icon: Power,
-  },
 ];
 
 export function AppSidebar() {
   return (
     <Sidebar>
       <SidebarHeader>
-        <Link href="/admin" className="flex items-center justify-center gap-2">
-          <span className="relative flex h-8 w-8 shrink-0 overflow-hidden rounded-full">
-            <Image
-              className="aspect-square h-full w-full"
-              src="/logo.png"
-              alt="logo"
-              width={64}
-              height={64}
-            />
-          </span>
-          <h1 className="text-2xl">MediTrakk</h1>
-        </Link>
-        <div className="flex flex-col items-center">
-          <div className="mb-2 mt-4">
-            <Image
-              className="rounded-xl border-2 border-white object-cover"
-              src="/secretary.jpg"
-              alt="secretary"
-              width={64}
-              height={64}
-            />
-          </div>
-
-          <span className="text-sm font-bold">Sarah Smith</span>
-          <span className="text-xs font-semibold text-muted-foreground">
-            ADMIN
-          </span>
-        </div>
+        <SidebarHeaderProfile />
       </SidebarHeader>
       <SidebarContent>
         {/* Main Menu */}

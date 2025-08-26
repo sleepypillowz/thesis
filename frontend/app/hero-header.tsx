@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Button } from "../components/ui/button";
 import { usePathname } from "next/navigation";
 import clsx from "clsx";
+import { SignInButton } from "@clerk/nextjs";
 
 const HeroHeader = () => {
   const pathname = usePathname();
@@ -35,8 +36,11 @@ const HeroHeader = () => {
             </Link>
           ))}
         </div>
-        <Button className="rounded-xl transition-transform duration-200 hover:scale-105 hover:shadow-md">
-          <Link href="/login">Login</Link>
+        <Button
+          asChild
+          className="rounded-xl transition-transform duration-200 hover:scale-105 hover:shadow-md"
+        >
+          <SignInButton />
         </Button>
         <button className="md:hidden">
           <svg

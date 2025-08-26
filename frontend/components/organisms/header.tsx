@@ -1,6 +1,5 @@
 import Notification from "@/components/molecules/header/notification-dropdown";
-import Profile from "@/components/molecules/header/profile";
-import Username from "@/components/atoms/username";
+import { SignedIn, UserButton } from "@clerk/nextjs";
 
 const Header = () => {
   return (
@@ -10,12 +9,12 @@ const Header = () => {
           <div className="flex items-center justify-start rtl:justify-end"></div>
           <div className="relative flex items-center space-x-4">
             <div className="flex items-center space-x-3">
-              <div className="flex flex-col items-end">
-                <Username />
-              </div>
+              <div className="flex flex-col items-end"></div>
               <div className="flex items-center space-x-2">
                 <Notification />
-                <Profile />
+                <SignedIn>
+                  <UserButton />
+                </SignedIn>
               </div>
             </div>
           </div>
