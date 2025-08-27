@@ -138,7 +138,7 @@ export default function MedicalRecords() {
               <TableRow key={item.patient_id}>
                 <TableCell>{item.patient_id}</TableCell>
                 <TableCell className="flex">
-                  <User className="me-2 self-center rounded-full bg-muted" />
+              
                   <span>
                     {`${item.first_name} ${item.middle_name || ""} ${
                       item.last_name
