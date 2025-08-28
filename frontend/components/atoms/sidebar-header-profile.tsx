@@ -33,7 +33,7 @@ export default async function SidebarHeaderProfile() {
 
         <span className="text-sm font-bold">{user?.fullName}</span>
         <span className="text-xs font-semibold text-muted-foreground">
-          {String(userRole ?? "").toUpperCase()}
+          {String(userRole ?? "PATIENT").toUpperCase()}
         </span>
       </div>
     </>
