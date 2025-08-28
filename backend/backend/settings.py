@@ -1,5 +1,5 @@
 import os
-from os import getenv, path
+from os import path
 from pathlib import Path
 import dotenv   
 from datetime import timedelta
