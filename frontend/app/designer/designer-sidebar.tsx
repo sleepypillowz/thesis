@@ -30,6 +30,11 @@ const menu_items = [
     url: "/designer/opd-record",
     icon: Calendar,
   },
+  {
+    title: "user-management",
+    url: "/designer/user-management",
+    icon: Calendar,
+  },
 ];
 
 export function AppSidebar() {

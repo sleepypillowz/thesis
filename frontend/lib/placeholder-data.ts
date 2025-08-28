@@ -1,6 +1,8 @@
 // This file contains placeholder data that you'll be replacing with real data in the Data Fetching chapter:
 // https://nextjs.org/learn/dashboard-app/fetching-data
 
+import { User } from "@/app/designer/columns";
+
 const appointments = [
   {
     id: "#A004",
@@ -90,4 +92,97 @@ const documents = [
   },
 ];
 
-export { appointments, prescriptions, documents };
+const users = [
+  {
+    id: 1,
+    email: "alice.smith@example.com",
+    first_name: "Alice",
+    last_name: "Smith",
+    role: "admin",
+    is_active: true,
+  },
+  {
+    id: 2,
+    email: "bob.jones@example.com",
+    first_name: "Bob",
+    last_name: "Jones",
+    role: "doctor",
+    is_active: true,
+  },
+  {
+    id: 3,
+    email: "carol.taylor@example.com",
+    first_name: "Carol",
+    last_name: "Taylor",
+    role: "secretary",
+    is_active: false,
+  },
+  {
+    id: 4,
+    email: "david.lee@example.com",
+    first_name: "David",
+    last_name: "Lee",
+    role: "doctor",
+    is_active: true,
+  },
+  {
+    id: 5,
+    email: "ella.wilson@example.com",
+    first_name: "Ella",
+    last_name: "Wilson",
+    role: "secretary",
+    is_active: true,
+  },
+  {
+    id: 6,
+    email: "frank.miller@example.com",
+    first_name: "Frank",
+    last_name: "Miller",
+    role: "admin",
+    is_active: false,
+  },
+  {
+    id: 7,
+    email: "grace.davis@example.com",
+    first_name: "Grace",
+    last_name: "Davis",
+    role: "doctor",
+    is_active: true,
+  },
+  {
+    id: 8,
+    email: "henry.moore@example.com",
+    first_name: "Henry",
+    last_name: "Moore",
+    role: "secretary",
+    is_active: true,
+  },
+  {
+    id: 9,
+    email: "isla.anderson@example.com",
+    first_name: "Isla",
+    last_name: "Anderson",
+    role: "admin",
+    is_active: true,
+  },
+  {
+    id: 10,
+    email: "jack.white@example.com",
+    first_name: "Jack",
+    last_name: "White",
+    role: "doctor",
+    is_active: false,
+  },
+  {
+    id: 11,
+    email: "kate.harris@example.com",
+    first_name: "Kate",
+    last_name: "Harris",
+    role: "secretary",
+    is_active: true,
+  },
+] as const satisfies User[];
+
+
+
+export { appointments, prescriptions, documents, users };
