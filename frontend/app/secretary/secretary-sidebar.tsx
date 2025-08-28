@@ -9,7 +9,6 @@ import {
   ChevronDown,
   BriefcaseMedical,
   Pill,
-  Settings,
 } from "lucide-react";
 
 import {
@@ -62,11 +61,6 @@ const menu_items = [
     title: "Reports",
     url: "/secretary/reports",
     icon: ChartArea,
-  },
-  {
-    title: "Settings",
-    url: "/secretary/settings",
-    icon: Settings,
   },
 ];
 

@@ -1,7 +1,6 @@
 import {
   LayoutDashboard,
   Calendar,
-  Settings,
   MessageSquareText,
   Users,
   Heart,
@@ -40,11 +39,6 @@ const menu_items = [
     title: "Patients",
     url: "/oncall-doctors/patients",
     icon: Users,
-  },
-  {
-    title: "Settings",
-    url: "/oncall-doctors/settings",
-    icon: Settings,
   },
   {
     title: "Chat",

@@ -1,6 +1,5 @@
 import {
   Pill,
-  Settings,
   FileClock,
   FileText,
   LayoutDashboard,
@@ -37,11 +36,6 @@ const menu_items = [
     title: "Medical Record",
     url: "/patient/medical-record",
     icon: FileClock,
-  },
-  {
-    title: "Settings",
-    url: "/patient/settings",
-    icon: Settings,
   },
 ];
 
