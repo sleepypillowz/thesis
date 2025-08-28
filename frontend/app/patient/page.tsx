@@ -5,12 +5,13 @@ import { AspectRatio } from "@/components/ui/aspect-ratio";
 import Image from "next/image";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import PatientRecentDocuments from "@/app/patient/components/recent-documents";
-import { prescriptions, appointments } from "@/lib/placeholder-data";
+import { prescriptions, appointments, documents } from "@/lib/placeholder-data";
 import { currentUser } from "@clerk/nextjs/server";
 import { DashboardTable } from "@/components/ui/dashboard-table";
 import { columns } from "./(appointments)/columns";
-import { columns as PrescriptionColumn } from "./prescriptions/columns";
+import { columns as PrescriptionsColumn } from "./prescriptions/columns";
+import { columns as DocumentsColumn } from "./documents/columns";
+import Link from "next/link";
 
 export default async function Page() {
   const user = await currentUser();
@@ -50,7 +51,7 @@ export default async function Page() {
         <div className="card">
           <h1 className="mb-4 font-bold">Prescriptions</h1>
           <DashboardTable
-            columns={PrescriptionColumn}
+            columns={PrescriptionsColumn}
             data={prescriptions ?? []}
           />
         </div>
@@ -73,7 +74,10 @@ export default async function Page() {
             </TabsContent>
           </Tabs>
         </div>
-        <PatientRecentDocuments />
+        <div className="card">
+          <h1 className="mb-4 font-bold">Documents</h1>
+          <DashboardTable columns={DocumentsColumn} data={documents ?? []} />
+        </div>
       </section>
     </div>
   );

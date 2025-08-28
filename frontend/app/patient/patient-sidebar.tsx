@@ -37,6 +37,11 @@ const menu_items = [
     url: "/patient/medical-record",
     icon: FileClock,
   },
+  {
+    title: "Documents",
+    url: "/patient/documents",
+    icon: FileText,
+  },
 ];
 
 const appointment_items = [

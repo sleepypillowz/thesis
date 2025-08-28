@@ -3,6 +3,7 @@
 
 import { User } from "@/app/designer/columns";
 import { Appointment } from "@/app/patient/(appointments)/columns";
+import { DocumentFile } from "@/app/patient/documents/columns";
 import { Prescription } from "@/app/patient/prescriptions/columns";
 
 export const appointments: Appointment[] = [
@@ -147,21 +148,39 @@ export const prescriptions: Prescription[] = [
   },
 ];
 
-const documents = [
+export const documents: DocumentFile[] = [
   {
-    id: 1,
-    name: "Blood Report",
-    color: "text-red-600",
+    document_id: "1",
+    title: "Student Handbook",
+    description: "Official student guidelines for 2025",
+    file_url: "/documents/student-handbook.pdf",
+    file_type: "PDF",
+    uploaded_by: "Admin",
+    created_at: "2025-08-01",
+    updated_at: "2025-08-01",
+    status: "active",
   },
   {
-    id: 2,
-    name: "Mediclaim Documents",
-    color: "text-blue-600",
+    document_id: "2",
+    title: "Medical Report",
+    description: "Annual physical examination results",
+    file_url: "/documents/medical-report.docx",
+    file_type: "DOCX",
+    uploaded_by: "Dr. Smith",
+    created_at: "2025-08-10",
+    updated_at: "2025-08-15",
+    status: "archived",
   },
   {
-    id: 3,
-    name: "Doctor Prescriptions",
-    color: "text-muted-foreground",
+    document_id: "3",
+    title: "Event Poster",
+    description: "Poster for upcoming campus event",
+    file_url: "/documents/event-poster.jpg",
+    file_type: "JPG",
+    uploaded_by: "Student Council",
+    created_at: "2025-08-20",
+    updated_at: "2025-08-22",
+    status: "active",
   },
 ];
 
@@ -258,4 +277,4 @@ const users = [
 
 
 
-export { documents, users };
+export { users };
