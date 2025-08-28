@@ -41,7 +41,7 @@ export function PageTable<TData, TValue>({
 
   return (
     <div className="card m-6 space-y-6">
-      <h1 className="mr-4">{title}</h1>
+      <h1 className="mr-4 font-bold">{title}</h1>
       <div className="overflow-hidden rounded-md border">
         <Table>
           <TableHeader className="bg-accent">

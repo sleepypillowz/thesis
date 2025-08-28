@@ -3,6 +3,7 @@
 
 import { User } from "@/app/designer/columns";
 import { Appointment } from "@/app/patient/(appointments)/columns";
+import { Prescription } from "@/app/patient/prescriptions/columns";
 
 export const appointments: Appointment[] = [
   {
@@ -107,27 +108,42 @@ export const appointments: Appointment[] = [
 ];
 
 
-const prescriptions = [
+export const prescriptions: Prescription[] = [
   {
-    id: "#A003",
-    title: "Prescription 1",
-    createdby: "Dr. Jacob Ryan",
-    date: "12/05/2016",
-    disease: "Fever",
+    prescription_id: "RX001",
+    patient_name: "John Doe",
+    doctor_name: "Dr. Smith",
+    medicine_name: "Amoxicillin",
+    dosage: "500mg",
+    frequency: "3 times a day",
+    duration: "7 days",
+    instructions: "Take after meals with water",
+    date_issued: "2025-08-20",
+    status: "active",
   },
   {
-    id: "#A002",
-    title: "Prescription 1",
-    createdby: "Dr. Jacob Ryan",
-    date: "12/05/2016",
-    disease: "Cholera",
+    prescription_id: "RX002",
+    patient_name: "Jane Miller",
+    doctor_name: "Dr. Adams",
+    medicine_name: "Paracetamol",
+    dosage: "500mg",
+    frequency: "Every 6 hours as needed",
+    duration: "5 days",
+    instructions: "Do not exceed 4g per day",
+    date_issued: "2025-08-18",
+    status: "completed",
   },
   {
-    id: "#A001",
-    title: "Prescription 1",
-    createdby: "Dr. Jacob Ryan",
-    date: "12/05/2016",
-    disease: "Jaundice",
+    prescription_id: "RX003",
+    patient_name: "Michael Johnson",
+    doctor_name: "Dr. Patel",
+    medicine_name: "Ibuprofen",
+    dosage: "400mg",
+    frequency: "2 times a day",
+    duration: "10 days",
+    instructions: "Take with food to avoid stomach upset",
+    date_issued: "2025-08-22",
+    status: "active",
   },
 ];
 
@@ -242,4 +258,4 @@ const users = [
 
 
 
-export { prescriptions, documents, users };
+export { documents, users };

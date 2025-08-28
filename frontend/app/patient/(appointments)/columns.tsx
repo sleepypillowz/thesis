@@ -16,10 +16,6 @@ export type Appointment = {
 
 export const columns: ColumnDef<Appointment>[] = [
   {
-    accessorKey: "patient_name",
-    header: "Patient",
-  },
-  {
     accessorKey: "doctor_name",
     header: "Doctor",
   },

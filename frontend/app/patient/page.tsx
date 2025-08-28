@@ -1,4 +1,3 @@
-import PatientRecentMedications from "@/app/patient/components/recent-medications";
 import StatsCard from "@/components/organisms/patient-stats-cards";
 import { PerformanceHeartRateChart } from "@/app/patient/components/performance-heart-rate-chart";
 import { RestingHeartRateChart } from "@/app/patient/components/resting-heart-rate-chart";
@@ -7,10 +6,11 @@ import Image from "next/image";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import PatientRecentDocuments from "@/app/patient/components/recent-documents";
-import { appointments } from "@/lib/placeholder-data";
+import { prescriptions, appointments } from "@/lib/placeholder-data";
 import { currentUser } from "@clerk/nextjs/server";
 import { DashboardTable } from "@/components/ui/dashboard-table";
 import { columns } from "./(appointments)/columns";
+import { columns as PrescriptionColumn } from "./prescriptions/columns";
 
 export default async function Page() {
   const user = await currentUser();
@@ -47,7 +47,14 @@ export default async function Page() {
       <section className="grid grid-cols-3 gap-6">
         <RestingHeartRateChart />
         <PerformanceHeartRateChart />
-        <PatientRecentMedications />
+        <div className="card">
+          <h1 className="mb-4 font-bold">Prescriptions</h1>
+          <DashboardTable
+            columns={PrescriptionColumn}
+            data={prescriptions ?? []}
+          />
+        </div>
+
         <div className="card col-span-2">
           <Tabs defaultValue="upcoming-appointment">
             <TabsList className="w-full">
