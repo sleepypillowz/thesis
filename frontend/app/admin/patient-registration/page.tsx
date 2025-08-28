@@ -3,7 +3,21 @@
 import { useState } from "react";
 
 export default function Page() {
-  const [formData, setFormData] = useState({
+  interface FormData {
+    first_name: string;
+    middle_name: string;
+    last_name: string;
+    phone: string;
+    email: string;
+    date_of_birth: string;
+    complaint: string;
+    street_address: string;
+    barangay: string;
+    municipal_city: string;
+    agree_terms: boolean;
+  }
+
+  const [formData, setFormData] = useState<FormData>({
     first_name: "",
     middle_name: "",
     last_name: "",
@@ -18,10 +32,12 @@ export default function Page() {
   });
 
   // Handle input change
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleChange = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     const { id, value, type, checked } = event.target as HTMLInputElement;
 
-    setFormData((prevData: any) => ({
+    setFormData((prevData) => ({
       ...prevData,
       [id]: type === "checkbox" ? checked : value,
     }));
@@ -31,13 +47,16 @@ export default function Page() {
     e.preventDefault();
 
     try {
-      const response = await fetch('http://127.0.0.1:8000/patient/patient-register', {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
+      const response = await fetch(
+        "http://127.0.0.1:8000/patient/patient-register",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        }
+      );
 
       if (!response.ok) {
         throw new Error(`Error: ${response.status} - ${response.statusText}`);
@@ -52,10 +71,16 @@ export default function Page() {
 
   return (
     <div className="flex-1 px-4 pt-32 sm:px-6 lg:px-8">
-      <form onSubmit={handleSubmit} className="mx-auto max-w-4xl rounded-lg bg-white p-6 shadow-lg">
+      <form
+        onSubmit={handleSubmit}
+        className="mx-auto max-w-4xl rounded-lg bg-white p-6 shadow-lg"
+      >
         <div className="mb-6 grid gap-6 md:grid-cols-2">
           <div>
-            <label htmlFor="first_name" className="mb-2 block text-sm font-medium text-gray-900 dark:text-white">
+            <label
+              htmlFor="first_name"
+              className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
+            >
               First name
             </label>
             <input
@@ -69,7 +94,10 @@ export default function Page() {
             />
           </div>
           <div>
-            <label htmlFor="middle_name" className="mb-2 block text-sm font-medium text-gray-900 dark:text-white">
+            <label
+              htmlFor="middle_name"
+              className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
+            >
               Middle name
             </label>
             <input
@@ -82,7 +110,10 @@ export default function Page() {
             />
           </div>
           <div>
-            <label htmlFor="last_name" className="mb-2 block text-sm font-medium text-gray-900 dark:text-white">
+            <label
+              htmlFor="last_name"
+              className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
+            >
               Last name
             </label>
             <input
@@ -96,7 +127,10 @@ export default function Page() {
             />
           </div>
           <div>
-            <label htmlFor="phone" className="mb-2 block text-sm font-medium text-gray-900 dark:text-white">
+            <label
+              htmlFor="phone"
+              className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
+            >
               Phone number
             </label>
             <input
@@ -112,7 +146,10 @@ export default function Page() {
         </div>
 
         <div className="mb-6">
-          <label htmlFor="email" className="mb-2 block text-sm font-medium text-gray-900 dark:text-white">
+          <label
+            htmlFor="email"
+            className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
+          >
             Email address
           </label>
           <input
@@ -127,7 +164,10 @@ export default function Page() {
         </div>
 
         <div className="mb-6">
-          <label htmlFor="date_of_birth" className="mb-2 block text-sm font-medium text-gray-900 dark:text-white">
+          <label
+            htmlFor="date_of_birth"
+            className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
+          >
             Date of Birth
           </label>
           <input
@@ -142,7 +182,10 @@ export default function Page() {
 
         {/* Address Fields */}
         <div className="mb-6">
-          <label htmlFor="street_address" className="mb-2 block text-sm font-medium text-gray-900 dark:text-white">
+          <label
+            htmlFor="street_address"
+            className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
+          >
             Street Address
           </label>
           <input
@@ -157,7 +200,10 @@ export default function Page() {
         </div>
 
         <div className="mb-6">
-          <label htmlFor="barangay" className="mb-2 block text-sm font-medium text-gray-900 dark:text-white">
+          <label
+            htmlFor="barangay"
+            className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
+          >
             Barangay
           </label>
           <input
@@ -172,7 +218,10 @@ export default function Page() {
         </div>
 
         <div className="mb-6">
-          <label htmlFor="municipal_city" className="mb-2 block text-sm font-medium text-gray-900 dark:text-white">
+          <label
+            htmlFor="municipal_city"
+            className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
+          >
             Municipal/City
           </label>
           <input
@@ -198,9 +247,15 @@ export default function Page() {
               required
             />
           </div>
-          <label htmlFor="agree_terms" className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+          <label
+            htmlFor="agree_terms"
+            className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+          >
             I agree with the{" "}
-            <a href="#" className="text-blue-600 hover:underline dark:text-blue-500">
+            <a
+              href="#"
+              className="text-blue-600 hover:underline dark:text-blue-500"
+            >
               terms and conditions
             </a>
             .
