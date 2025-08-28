@@ -9,8 +9,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import PatientRecentDocuments from "@/app/patient/components/recent-documents";
 import AppointmentTable from "./components/appointment-table";
 import { appointments } from "@/lib/placeholder-data";
+import { currentUser } from "@clerk/nextjs/server";
 
-export default function Page() {
+export default async function Page() {
+  const user = await currentUser();
+
   return (
     <div className="m-6 space-y-6">
       <section className="card">
@@ -27,7 +30,7 @@ export default function Page() {
           <div className="col-span-2 flex flex-col content-center space-y-4 p-12">
             <span className="font-semibold">Welcome back</span>
             <span className="text-2xl font-bold text-blue-500">
-              Cara Stevens!
+              {user?.fullName + "!"}
             </span>
             <p className="text-muted-foreground">
               We would like to take this opportunity to welcome you to our
