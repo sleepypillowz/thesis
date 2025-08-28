@@ -5,7 +5,6 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import userInfo from "@/hooks/userRole";
 
 export default function Page() {
   const router = useRouter();
@@ -28,21 +27,6 @@ export default function Page() {
   const [showModal, setShowModal] = useState(false);
   const [showTermsModal, setShowTermsModal] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const user = userInfo();
-  const userRole = user?.role;
-
-  if (userRole && !["secretary"].includes(userRole)) {
-    return (
-      <div className="flex min-h-screen items-center justify-center">
-        <p className="text-xl font-bold text-red-600">
-          You are not authorized to access this page.
-        </p>
-      </div>
-    );
-  }
-  if (!userRole) {
-    return <div>Loading...</div>;
-  }
 
   const handleChange = (
     event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -403,7 +387,7 @@ export default function Page() {
                 </div>
                 <div className="ml-3 text-sm">
                   <label htmlFor="agree_terms" className="font-medium">
-                    <span 
+                    <span
                       onClick={toggleTermsModal}
                       className="cursor-pointer hover:text-blue-700 hover:underline"
                     >
@@ -484,43 +468,46 @@ export default function Page() {
                 ✕
               </button>
             </div>
-            
+
             <div className="prose max-h-[60vh] overflow-y-auto">
               <h3 className="text-lg font-semibold">Patient Agreement</h3>
               <p className="text-sm">
-                By registering with our healthcare facility, you agree to the following terms:
+                By registering with our healthcare facility, you agree to the
+                following terms:
               </p>
-              
+
               <ol className="mt-4 list-decimal pl-6 text-sm">
                 <li className="mb-3">
-                  <strong>Accuracy of Information:</strong> You certify that all provided 
-                  personal and medical information is complete and accurate to the best 
-                  of your knowledge.
+                  <strong>Accuracy of Information:</strong> You certify that all
+                  provided personal and medical information is complete and
+                  accurate to the best of your knowledge.
                 </li>
                 <li className="mb-3">
-                  <strong>Privacy Consent:</strong> You consent to the collection, use, 
-                  and disclosure of your personal health information for the purposes 
-                  of treatment, payment, and healthcare operations.
+                  <strong>Privacy Consent:</strong> You consent to the
+                  collection, use, and disclosure of your personal health
+                  information for the purposes of treatment, payment, and
+                  healthcare operations.
                 </li>
                 <li className="mb-3">
-                  <strong>Financial Responsibility:</strong> You understand and agree 
-                  to be financially responsible for any services received.
+                  <strong>Financial Responsibility:</strong> You understand and
+                  agree to be financially responsible for any services received.
                 </li>
                 <li className="mb-3">
-                  <strong>Treatment Consent:</strong> You consent to medical treatment 
-                  deemed necessary by healthcare providers, understanding that all 
-                  procedures carry inherent risks.
+                  <strong>Treatment Consent:</strong> You consent to medical
+                  treatment deemed necessary by healthcare providers,
+                  understanding that all procedures carry inherent risks.
                 </li>
                 <li className="mb-3">
-                  <strong>Communication:</strong> You agree to receive communications 
-                  regarding your care via the contact information provided.
+                  <strong>Communication:</strong> You agree to receive
+                  communications regarding your care via the contact information
+                  provided.
                 </li>
               </ol>
 
               <p className="mt-4 text-xs text-gray-600">
-                This agreement is effective upon registration and remains valid 
-                throughout your care at this facility. You may request a full copy 
-                of our privacy policy at any time.
+                This agreement is effective upon registration and remains valid
+                throughout your care at this facility. You may request a full
+                copy of our privacy policy at any time.
               </p>
             </div>
 
