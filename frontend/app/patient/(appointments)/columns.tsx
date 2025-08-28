@@ -1,5 +1,6 @@
 "use client";
 
+import { Badge } from "@/components/ui/badge";
 import { ColumnDef } from "@tanstack/react-table";
 
 // This type is used to define the shape of our data.
@@ -38,5 +39,27 @@ export const columns: ColumnDef<Appointment>[] = [
   {
     accessorKey: "status",
     header: "Status",
+    cell: ({ row }) => {
+      const status = row.getValue("status") as string;
+
+      // Map status to color
+      const statusColor =
+        status === "Scheduled" || status === "Completed"
+          ? "text-green-500 border-green-500"
+          : status === "Pending"
+          ? "text-yellow-500 border-yellow-500"
+          : status === "Cancelled"
+          ? "text-red-500 border-red-500"
+          : "text-gray-500 border-gray-500";
+
+      return (
+        <Badge
+          variant="outline"
+          className={`${statusColor} rounded-full bg-slate-100 dark:bg-accent`}
+        >
+          {status}
+        </Badge>
+      );
+    },
   },
 ];

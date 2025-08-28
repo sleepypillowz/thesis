@@ -46,7 +46,7 @@ export function DashboardTable<TData, TValue>({
     <>
       <div className="overflow-hidden rounded-md border">
         <Table>
-          <TableHeader className="bg-accent">
+          <TableHeader className="bg-gray-100 dark:bg-accent">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {

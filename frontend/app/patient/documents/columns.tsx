@@ -1,6 +1,7 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
+import { Download } from "lucide-react";
 
 export type DocumentFile = {
   document_id: string;
@@ -26,5 +27,14 @@ export const columns: ColumnDef<DocumentFile>[] = [
   {
     accessorKey: "created_at",
     header: "Date Uploaded",
+  },
+  {
+    id: "actions",
+    header: "Actions",
+    cell: () => {
+      return (
+        <Download className="cursor-pointer text-blue-500 hover:fill-current" />
+      );
+    },
   },
 ];

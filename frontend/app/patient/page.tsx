@@ -11,7 +11,6 @@ import { DashboardTable } from "@/components/ui/dashboard-table";
 import { columns } from "./(appointments)/columns";
 import { columns as PrescriptionsColumn } from "./prescriptions/columns";
 import { columns as DocumentsColumn } from "./documents/columns";
-import Link from "next/link";
 
 export default async function Page() {
   const user = await currentUser();
