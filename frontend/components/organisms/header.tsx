@@ -8,7 +8,9 @@ const Header = () => {
       <div className="px-3 py-3 lg:px-5 lg:pl-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center justify-start rtl:justify-end">
-            <h1 className="text-2xl font-bold">Malibiran Medical Clinic</h1>
+            <h1 className="ml-4 text-2xl font-bold">
+              Malibiran Medical Clinic
+            </h1>
           </div>
           <div className="relative flex items-center space-x-4">
             <div className="flex items-center space-x-3">
