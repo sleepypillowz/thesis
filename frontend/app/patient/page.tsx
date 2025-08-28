@@ -7,9 +7,10 @@ import Image from "next/image";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import PatientRecentDocuments from "@/app/patient/components/recent-documents";
-import AppointmentTable from "./components/appointment-table";
 import { appointments } from "@/lib/placeholder-data";
 import { currentUser } from "@clerk/nextjs/server";
+import { DashboardTable } from "@/components/ui/dashboard-table";
+import { columns } from "./(appointments)/columns";
 
 export default async function Page() {
   const user = await currentUser();
@@ -58,10 +59,10 @@ export default async function Page() {
               </TabsTrigger>
             </TabsList>
             <TabsContent value="todays-appointment">
-              <AppointmentTable appointments={appointments} />
+              <DashboardTable columns={columns} data={appointments ?? []} />
             </TabsContent>
             <TabsContent value="upcoming-appointment">
-              <AppointmentTable appointments={appointments} />
+              <DashboardTable columns={columns} data={appointments ?? []} />
             </TabsContent>
           </Tabs>
         </div>

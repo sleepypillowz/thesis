@@ -1,11 +1,19 @@
-import TitleCard from "@/components/molecules/title-card";
-import AppointmentTable from "@/app/patient/components/appointment-table";
+"use client";
+import { columns } from "../columns";
+import { SkeletonPageTable } from "@/components/atoms/custom-skeleton";
+import { PageTable } from "@/components/ui/page-table";
 import { appointments } from "@/lib/placeholder-data";
 
-export default function Page() {
+export default function DemoPage() {
+  if (appointments === undefined) {
+    return <SkeletonPageTable />;
+  }
+
   return (
-    <TitleCard title="Upcoming Appointment">
-      <AppointmentTable appointments={appointments} />
-    </TitleCard>
+    <PageTable
+      title="Upcoming Appointments"
+      columns={columns}
+      data={appointments ?? []}
+    />
   );
 }
