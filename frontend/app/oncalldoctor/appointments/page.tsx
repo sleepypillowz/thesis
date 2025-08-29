@@ -187,7 +187,7 @@ export default function ReferralsPage() {
     return (
       <div className="flex min-h-screen w-full items-center justify-center bg-slate-50">
         <div className="mx-auto flex w-full max-w-3xl items-center space-x-4 rounded-xl bg-white p-6 shadow-md">
-          <div className="flex-shrink-0">
+          <div className="shrink-0">
             <svg
               className="h-12 w-12 text-red-500"
               fill="none"
@@ -292,7 +292,7 @@ export default function ReferralsPage() {
       </div>
 
       {referrals.length === 0 ? (
-        <div className="flex w-full flex-col items-center justify-center rounded-xl bg-white p-12 shadow-sm">
+        <div className="flex w-full flex-col items-center justify-center rounded-xl bg-white p-12 shadow-xs">
           <svg
             className="mb-4 h-24 w-24 text-gray-300"
             fill="none"
@@ -337,7 +337,7 @@ export default function ReferralsPage() {
               appointmentSection = (
                 <div className="h-min rounded-lg bg-blue-50 p-4">
                   <div className="flex items-start">
-                    <div className="mt-1 flex-shrink-0">
+                    <div className="mt-1 shrink-0">
                       <svg
                         className="h-5 w-5 text-blue-500"
                         fill="none"
@@ -371,7 +371,7 @@ export default function ReferralsPage() {
             return (
               <div
                 key={referral.id}
-                className="w-full overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm"
+                className="w-full overflow-hidden rounded-xl border border-gray-100 bg-white shadow-xs"
               >
                 <div className="p-6">
                   <div className="mb-4 flex flex-wrap items-center justify-between">

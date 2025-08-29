@@ -108,7 +108,7 @@ export function RegisterForm({
       )}
       {...props}
     >
-      <div className="bg-gradient-to-br from-primary/80 to-primary p-6 text-white">
+      <div className="bg-linear-to-br from-primary/80 to-primary p-6 text-white">
         <h1 className="text-2xl font-bold">Create an Account</h1>
         <p className="mt-1 text-sm text-primary-foreground/80">
           Register to get started
@@ -130,7 +130,7 @@ export function RegisterForm({
                         className={cn(
                           "group relative border rounded-xl transition-all duration-300",
                           focused === field.name
-                            ? "border-primary shadow-sm ring-1 ring-primary/20"
+                            ? "border-primary shadow-xs ring-1 ring-primary/20"
                             : "border-border",
                           form.formState.errors[field.name]
                             ? "border-destructive"
@@ -168,7 +168,7 @@ export function RegisterForm({
                       className={cn(
                         "group relative border rounded-xl transition-all duration-300",
                         focused === field.name
-                          ? "border-primary shadow-sm ring-1 ring-primary/20"
+                          ? "border-primary shadow-xs ring-1 ring-primary/20"
                           : "border-border",
                         form.formState.errors[field.name]
                           ? "border-destructive"

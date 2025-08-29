@@ -92,21 +92,21 @@ export default function ReportDashboard() {
 
       {/* Stats Cards */}
       <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
-        <div className="rounded-lg bg-white p-6 shadow-sm">
+        <div className="rounded-lg bg-white p-6 shadow-xs">
           <h3 className="text-gray-500">Total Patients</h3>
           <p className="text-3xl font-bold">1,234</p>
         </div>
-        <div className="rounded-lg bg-white p-6 shadow-sm">
+        <div className="rounded-lg bg-white p-6 shadow-xs">
           <h3 className="text-gray-500">Monthly Visits</h3>
           <p className="text-3xl font-bold">
             {loading ? "Loading..." : totalVisits}
           </p>
         </div>
-        <div className="rounded-lg bg-white p-6 shadow-sm">
+        <div className="rounded-lg bg-white p-6 shadow-xs">
           <h3 className="text-gray-500">Lab Tests (May)</h3>
           <p className="text-3xl font-bold">89</p>
         </div>
-        <div className="rounded-lg bg-white p-6 shadow-sm">
+        <div className="rounded-lg bg-white p-6 shadow-xs">
           <h3 className="text-gray-500">Active Prescriptions</h3>
           <p className="text-3xl font-bold">432</p>
         </div>
@@ -115,7 +115,7 @@ export default function ReportDashboard() {
       {/* Charts Grid */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         {/* Monthly Visits Chart */}
-        <div className="rounded-lg bg-white p-6 shadow-sm">
+        <div className="rounded-lg bg-white p-6 shadow-xs">
           <h2 className="mb-4 text-xl font-semibold">Monthly Patient Visits</h2>
           {loading ? (
             <p className="text-gray-500">Loading chart...</p>
@@ -132,7 +132,7 @@ export default function ReportDashboard() {
         </div>
 
         {/* Lab Tests Chart */}
-        <div className="rounded-lg bg-white p-6 shadow-sm">
+        <div className="rounded-lg bg-white p-6 shadow-xs">
           <h2 className="mb-4 text-xl font-semibold">Laboratory Tests</h2>
           <BarChart width={500} height={300} data={labTestsData}>
             <CartesianGrid strokeDasharray="3 3" />
@@ -145,7 +145,7 @@ export default function ReportDashboard() {
         </div>
 
         {/* Common Diseases Pie Chart */}
-        <div className="rounded-lg bg-white p-6 shadow-sm">
+        <div className="rounded-lg bg-white p-6 shadow-xs">
           <h2 className="mb-4 text-xl font-semibold">Common Diseases</h2>
           <PieChart width={500} height={300}>
             <Pie
@@ -170,7 +170,7 @@ export default function ReportDashboard() {
         </div>
 
         {/* Common Medications List */}
-        <div className="rounded-lg bg-white p-6 shadow-sm">
+        <div className="rounded-lg bg-white p-6 shadow-xs">
           <h2 className="mb-4 text-xl font-semibold">Frequent Medications</h2>
           <div className="space-y-3">
             {commonMedicines.map((item, index) => (
@@ -190,13 +190,13 @@ export default function ReportDashboard() {
 
       {/* Additional Reports */}
       <div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2">
-        <div className="rounded-lg bg-white p-6 shadow-sm">
+        <div className="rounded-lg bg-white p-6 shadow-xs">
           <h2 className="mb-4 text-xl font-semibold">Patient Demographics</h2>
           <div className="text-gray-500">
             Age/Gender distribution chart placeholder
           </div>
         </div>
-        <div className="rounded-lg bg-white p-6 shadow-sm">
+        <div className="rounded-lg bg-white p-6 shadow-xs">
           <h2 className="mb-4 text-xl font-semibold">Diagnosis Trends</h2>
           <div className="text-gray-500">
             Diagnosis patterns over time placeholder

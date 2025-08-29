@@ -119,7 +119,7 @@ export default function MedicineList() {
 
   return (
     <div className="container mx-auto p-4">
-      <div className="card mb-6 rounded-lg p-6 shadow">
+      <div className="card mb-6 rounded-lg p-6 shadow-sm">
         <div className="mb-6 flex items-center justify-between">
           <h1 className="text-2xl font-bold">Medicines Management</h1>
           <Button>
@@ -186,11 +186,11 @@ export default function MedicineList() {
             {paginatedMedicines.map((medicine) => (
               <div
                 key={medicine.id}
-                className="card relative overflow-hidden rounded-lg border shadow-sm transition-shadow duration-200 hover:shadow-md"
+                className="card relative overflow-hidden rounded-lg border shadow-xs transition-shadow duration-200 hover:shadow-md"
               >
                 {/* Stock Badge On Upper-Right */}
                 <div
-                  className={`absolute top-2 right-2 text-xs font-medium px-2 py-1 rounded-md shadow-sm ${
+                  className={`absolute top-2 right-2 text-xs font-medium px-2 py-1 rounded-md shadow-xs ${
                     medicine.stocks >= 200
                       ? "bg-green-100 text-green-600" // ✅ In Stock
                       : medicine.stocks > 100
@@ -275,7 +275,7 @@ export default function MedicineList() {
           </div>
 
           {/* Pagination controls */}
-          <div className="card mt-6 flex items-center justify-between rounded-lg p-4 shadow-sm">
+          <div className="card mt-6 flex items-center justify-between rounded-lg p-4 shadow-xs">
             <button
               onClick={goToPreviousPage}
               disabled={currentPage === 1}

@@ -151,20 +151,20 @@ export default function RegistrationQueue() {
             <div className="flex justify-between">
               <button
                 onClick={() => handleAccept(queueItem)}
-                className={buttonVariants({ variant: "outline" })}
+                className={buttonVariants({ variant: "outline-solid" })}
               >
                 Accept
               </button>
 
               <button
-                className={buttonVariants({ variant: "outline" })}
+                className={buttonVariants({ variant: "outline-solid" })}
                 onClick={() => router.push("/payments")}
               >
                 Edit
               </button>
             </div>
             <button
-              className={buttonVariants({ variant: "outline" })}
+              className={buttonVariants({ variant: "outline-solid" })}
               onClick={() => router.push("/payments")}
             >
               Cancel

@@ -396,7 +396,7 @@ export default function TreatmentForm() {
         </div>
 
         {assessment ? (
-          <div className="mb-8 overflow-hidden rounded-xl border border-blue-100 bg-blue-50 shadow-sm">
+          <div className="mb-8 overflow-hidden rounded-xl border border-blue-100 bg-blue-50 shadow-xs">
             <div className="border-b border-blue-100 bg-blue-100/40 px-6 py-4">
               <h3 className="font-semibold text-blue-900">
                 Preliminary Assessment
@@ -410,7 +410,7 @@ export default function TreatmentForm() {
                       Vital Signs
                     </h4>
                     <div className="mt-1 grid grid-cols-2 gap-3">
-                      <div className="rounded-lg bg-white p-3 shadow-sm">
+                      <div className="rounded-lg bg-white p-3 shadow-xs">
                         <p className="text-xs font-medium text-gray-500">
                           Blood Pressure
                         </p>
@@ -418,7 +418,7 @@ export default function TreatmentForm() {
                           {assessment.blood_pressure || "N/A"}
                         </p>
                       </div>
-                      <div className="rounded-lg bg-white p-3 shadow-sm">
+                      <div className="rounded-lg bg-white p-3 shadow-xs">
                         <p className="text-xs font-medium text-gray-500">
                           Temperature
                         </p>
@@ -426,7 +426,7 @@ export default function TreatmentForm() {
                           {assessment.temperature || "N/A"}
                         </p>
                       </div>
-                      <div className="rounded-lg bg-white p-3 shadow-sm">
+                      <div className="rounded-lg bg-white p-3 shadow-xs">
                         <p className="text-xs font-medium text-gray-500">
                           Heart Rate
                         </p>
@@ -434,7 +434,7 @@ export default function TreatmentForm() {
                           {assessment.heart_rate || "N/A"}
                         </p>
                       </div>
-                      <div className="rounded-lg bg-white p-3 shadow-sm">
+                      <div className="rounded-lg bg-white p-3 shadow-xs">
                         <p className="text-xs font-medium text-gray-500">
                           Respiratory Rate
                         </p>
@@ -442,7 +442,7 @@ export default function TreatmentForm() {
                           {assessment.respiratory_rate || "N/A"}
                         </p>
                       </div>
-                      <div className="rounded-lg bg-white p-3 shadow-sm">
+                      <div className="rounded-lg bg-white p-3 shadow-xs">
                         <p className="text-xs font-medium text-gray-500">
                           Pulse Rate
                         </p>
@@ -457,7 +457,7 @@ export default function TreatmentForm() {
                       Patient History
                     </h4>
                     <div className="mt-1 space-y-2">
-                      <div className="rounded-lg bg-white p-3 shadow-sm">
+                      <div className="rounded-lg bg-white p-3 shadow-xs">
                         <p className="text-xs font-medium text-gray-500">
                           Allergies
                         </p>
@@ -465,7 +465,7 @@ export default function TreatmentForm() {
                           {assessment.allergies || "None reported"}
                         </p>
                       </div>
-                      <div className="rounded-lg bg-white p-3 shadow-sm">
+                      <div className="rounded-lg bg-white p-3 shadow-xs">
                         <p className="text-xs font-medium text-gray-500">
                           Medical History
                         </p>
@@ -482,7 +482,7 @@ export default function TreatmentForm() {
                       Current Condition
                     </h4>
                     <div className="mt-1 space-y-2">
-                      <div className="rounded-lg bg-white p-3 shadow-sm">
+                      <div className="rounded-lg bg-white p-3 shadow-xs">
                         <p className="text-xs font-medium text-gray-500">
                           Symptoms
                         </p>
@@ -490,7 +490,7 @@ export default function TreatmentForm() {
                           {assessment.symptoms || "None reported"}
                         </p>
                       </div>
-                      <div className="rounded-lg bg-white p-3 shadow-sm">
+                      <div className="rounded-lg bg-white p-3 shadow-xs">
                         <p className="text-xs font-medium text-gray-500">
                           Current Medications
                         </p>
@@ -499,7 +499,7 @@ export default function TreatmentForm() {
                         </p>
                       </div>
                       <div className="grid grid-cols-2 gap-2">
-                        <div className="rounded-lg bg-white p-3 shadow-sm">
+                        <div className="rounded-lg bg-white p-3 shadow-xs">
                           <p className="text-xs font-medium text-gray-500">
                             Pain Scale
                           </p>
@@ -507,7 +507,7 @@ export default function TreatmentForm() {
                             {assessment.pain_scale || "N/A"}
                           </p>
                         </div>
-                        <div className="rounded-lg bg-white p-3 shadow-sm">
+                        <div className="rounded-lg bg-white p-3 shadow-xs">
                           <p className="text-xs font-medium text-gray-500">
                             Pain Location
                           </p>
@@ -523,7 +523,7 @@ export default function TreatmentForm() {
                       Lifestyle
                     </h4>
                     <div className="mt-1 grid grid-cols-2 gap-2">
-                      <div className="rounded-lg bg-white p-3 shadow-sm">
+                      <div className="rounded-lg bg-white p-3 shadow-xs">
                         <p className="text-xs font-medium text-gray-500">
                           Smoking Status
                         </p>
@@ -531,7 +531,7 @@ export default function TreatmentForm() {
                           {assessment.smoking_status || "N/A"}
                         </p>
                       </div>
-                      <div className="rounded-lg bg-white p-3 shadow-sm">
+                      <div className="rounded-lg bg-white p-3 shadow-xs">
                         <p className="text-xs font-medium text-gray-500">
                           Alcohol Use
                         </p>
@@ -541,7 +541,7 @@ export default function TreatmentForm() {
                       </div>
                     </div>
                   </div>
-                  <div className="rounded-lg bg-white p-3 shadow-sm">
+                  <div className="rounded-lg bg-white p-3 shadow-xs">
                     <p className="text-xs font-medium text-gray-500">
                       Final Assessment
                     </p>
@@ -561,7 +561,7 @@ export default function TreatmentForm() {
 
         <div className="mb-8">
           <Button
-            className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white transition-all hover:from-blue-700 hover:to-indigo-700 hover:shadow-md"
+            className="flex items-center gap-2 bg-linear-to-r from-blue-600 to-indigo-600 text-white transition-all hover:from-blue-700 hover:to-indigo-700 hover:shadow-md"
             onClick={() => setShowRequestModal(true)}
           >
             <Plus size={16} />
@@ -571,7 +571,7 @@ export default function TreatmentForm() {
 
         <form onSubmit={handleSubmit} className="space-y-8">
           {/* Diagnoses Section */}
-          <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+          <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-xs">
             <div className="mb-4 flex items-center justify-between">
               <h3 className="text-xl font-semibold text-gray-800">Diagnoses</h3>
               <button
@@ -586,7 +586,7 @@ export default function TreatmentForm() {
               {diagnoses.map((diag, index) => (
                 <div
                   key={index}
-                  className="rounded-lg border border-gray-100 bg-gray-50 p-4 shadow-sm"
+                  className="rounded-lg border border-gray-100 bg-gray-50 p-4 shadow-xs"
                 >
                   <div className="grid gap-4 md:grid-cols-2">
                     <div>
@@ -604,7 +604,7 @@ export default function TreatmentForm() {
                           )
                         }
                         placeholder="Enter diagnosis code"
-                        className="w-full rounded-md border border-gray-300 p-2 text-sm shadow-sm focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                        className="w-full rounded-md border border-gray-300 p-2 text-sm shadow-xs focus:border-blue-400 focus:outline-hidden focus:ring-3 focus:ring-blue-200 focus:ring-opacity-50"
                       />
                     </div>
                     <div>
@@ -621,7 +621,7 @@ export default function TreatmentForm() {
                             e.target.value
                           )
                         }
-                        className="w-full rounded-md border border-gray-300 p-2 text-sm shadow-sm focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                        className="w-full rounded-md border border-gray-300 p-2 text-sm shadow-xs focus:border-blue-400 focus:outline-hidden focus:ring-3 focus:ring-blue-200 focus:ring-opacity-50"
                       />
                     </div>
                   </div>
@@ -639,7 +639,7 @@ export default function TreatmentForm() {
                         )
                       }
                       placeholder="Describe the diagnosis in detail"
-                      className="w-full rounded-md border border-gray-300 p-2 text-sm shadow-sm focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                      className="w-full rounded-md border border-gray-300 p-2 text-sm shadow-xs focus:border-blue-400 focus:outline-hidden focus:ring-3 focus:ring-blue-200 focus:ring-opacity-50"
                       rows={2}
                     />
                   </div>
@@ -658,7 +658,7 @@ export default function TreatmentForm() {
           </div>
 
           {/* Prescriptions Section */}
-          <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+          <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-xs">
             <div className="mb-4 flex items-center justify-between">
               <h3 className="text-xl font-semibold text-gray-800">
                 Prescriptions
@@ -675,7 +675,7 @@ export default function TreatmentForm() {
               {prescriptions.map((prescription, index) => (
                 <div
                   key={index}
-                  className="rounded-lg border border-gray-100 bg-gray-50 p-5 shadow-sm"
+                  className="rounded-lg border border-gray-100 bg-gray-50 p-5 shadow-xs"
                 >
                   <div className="mb-4 grid grid-cols-1 gap-4 md:grid-cols-2">
                     <div className="relative">
@@ -697,7 +697,7 @@ export default function TreatmentForm() {
                             setActivePrescriptionIndex(index);
                           }}
                           onFocus={() => setActivePrescriptionIndex(index)}
-                          className="w-full rounded-md border border-gray-300 p-2 pl-8 text-sm shadow-sm focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                          className="w-full rounded-md border border-gray-300 p-2 pl-8 text-sm shadow-xs focus:border-blue-400 focus:outline-hidden focus:ring-3 focus:ring-blue-200 focus:ring-opacity-50"
                         />
                         <Search
                           size={16}
@@ -736,7 +736,7 @@ export default function TreatmentForm() {
                                   <button
                                     key={idx}
                                     type="button"
-                                    className="flex w-full items-center justify-between border-b border-gray-100 px-4 py-2 text-left text-sm hover:bg-blue-50 focus:bg-blue-50 focus:outline-none"
+                                    className="flex w-full items-center justify-between border-b border-gray-100 px-4 py-2 text-left text-sm hover:bg-blue-50 focus:bg-blue-50 focus:outline-hidden"
                                     onClick={() => {
                                       handlePrescriptionChange(
                                         index,
@@ -810,7 +810,7 @@ export default function TreatmentForm() {
                             e.target.value
                           )
                         }
-                        className="w-full rounded-md border border-gray-300 p-2 text-sm shadow-sm focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                        className="w-full rounded-md border border-gray-300 p-2 text-sm shadow-xs focus:border-blue-400 focus:outline-hidden focus:ring-3 focus:ring-blue-200 focus:ring-opacity-50"
                       />
                     </div>
                   </div>
@@ -830,7 +830,7 @@ export default function TreatmentForm() {
                             e.target.value
                           )
                         }
-                        className="w-full rounded-md border border-gray-300 p-2 text-sm shadow-sm focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                        className="w-full rounded-md border border-gray-300 p-2 text-sm shadow-xs focus:border-blue-400 focus:outline-hidden focus:ring-3 focus:ring-blue-200 focus:ring-opacity-50"
                       />
                     </div>
                     <div>
@@ -848,7 +848,7 @@ export default function TreatmentForm() {
                             e.target.value
                           )
                         }
-                        className="w-full rounded-md border border-gray-300 p-2 text-sm shadow-sm focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                        className="w-full rounded-md border border-gray-300 p-2 text-sm shadow-xs focus:border-blue-400 focus:outline-hidden focus:ring-3 focus:ring-blue-200 focus:ring-opacity-50"
                       />
                     </div>
                   </div>
@@ -867,7 +867,7 @@ export default function TreatmentForm() {
                             e.target.value
                           )
                         }
-                        className="w-full rounded-md border border-gray-300 p-2 text-sm shadow-sm focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                        className="w-full rounded-md border border-gray-300 p-2 text-sm shadow-xs focus:border-blue-400 focus:outline-hidden focus:ring-3 focus:ring-blue-200 focus:ring-opacity-50"
                       />
                     </div>
                     <div>
@@ -884,7 +884,7 @@ export default function TreatmentForm() {
                             e.target.value
                           )
                         }
-                        className="w-full rounded-md border border-gray-300 p-2 text-sm shadow-sm focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                        className="w-full rounded-md border border-gray-300 p-2 text-sm shadow-xs focus:border-blue-400 focus:outline-hidden focus:ring-3 focus:ring-blue-200 focus:ring-opacity-50"
                       />
                     </div>
                   </div>
@@ -903,14 +903,14 @@ export default function TreatmentForm() {
           </div>
 
           {/* Treatment Notes */}
-          <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+          <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-xs">
             <label className="mb-2 block text-sm font-medium text-gray-700">
               Treatment Notes
             </label>
             <textarea
               value={treatmentNotes}
               onChange={(e) => setTreatmentNotes(e.target.value)}
-              className="w-full rounded-lg border border-gray-300 p-3 text-sm shadow-sm transition-all focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+              className="w-full rounded-lg border border-gray-300 p-3 text-sm shadow-xs transition-all focus:border-blue-400 focus:outline-hidden focus:ring-3 focus:ring-blue-200 focus:ring-opacity-50"
               rows={4}
               placeholder="Add any additional notes about the treatment plan..."
             />
@@ -920,7 +920,7 @@ export default function TreatmentForm() {
           <div className="mt-8 flex justify-end">
             <Button
               type="submit"
-              className="min-w-32 bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-3 text-sm font-medium text-white transition-all hover:from-blue-700 hover:to-indigo-700 hover:shadow-lg"
+              className="min-w-32 bg-linear-to-r from-blue-600 to-indigo-600 px-6 py-3 text-sm font-medium text-white transition-all hover:from-blue-700 hover:to-indigo-700 hover:shadow-lg"
             >
               Submit Treatment
             </Button>
@@ -929,7 +929,7 @@ export default function TreatmentForm() {
 
         {/* Laboratory Request Modal */}
         {showRequestModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-xs">
             <div className="w-full max-w-md rounded-xl border border-gray-100 bg-white p-6 shadow-2xl">
               <h2 className="mb-4 text-xl font-bold text-gray-800">
                 Request Laboratory Examination
@@ -942,7 +942,7 @@ export default function TreatmentForm() {
                   <select
                     value={labTestChoice}
                     onChange={(e) => setLabTestChoice(e.target.value)}
-                    className="w-full rounded-md border border-gray-300 p-2 text-sm shadow-sm focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                    className="w-full rounded-md border border-gray-300 p-2 text-sm shadow-xs focus:border-blue-400 focus:outline-hidden focus:ring-3 focus:ring-blue-200 focus:ring-opacity-50"
                     required
                   >
                     <option value="">-- Select a test --</option>
@@ -1018,7 +1018,7 @@ export default function TreatmentForm() {
                       value={customLabTest}
                       onChange={(e) => setCustomLabTest(e.target.value)}
                       placeholder="Enter custom test name"
-                      className="w-full rounded-md border border-gray-300 p-2 text-sm shadow-sm focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                      className="w-full rounded-md border border-gray-300 p-2 text-sm shadow-xs focus:border-blue-400 focus:outline-hidden focus:ring-3 focus:ring-blue-200 focus:ring-opacity-50"
                       required
                     />
                   </div>
@@ -1046,7 +1046,7 @@ export default function TreatmentForm() {
 
         {/* Success Modal */}
         {showModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-xs">
             <div className="w-full max-w-md overflow-hidden rounded-xl bg-white shadow-2xl">
               <div className="bg-green-50 px-6 py-4 text-center">
                 <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
@@ -1073,13 +1073,13 @@ export default function TreatmentForm() {
                 </p>
                 <div className="grid grid-cols-2 gap-4">
                   <button
-                    className="rounded-lg border border-blue-600 bg-white px-4 py-2 text-sm font-medium text-blue-600 transition-colors hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                    className="rounded-lg border border-blue-600 bg-white px-4 py-2 text-sm font-medium text-blue-600 transition-colors hover:bg-blue-50 focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                     onClick={() => router.push("/doctor")}
                   >
                     Go To Dashboard
                   </button>
                   <button
-                    className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                    className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700 focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                     onClick={() =>
                       router.push("/doctor/patient-treatment-queue")
                     }

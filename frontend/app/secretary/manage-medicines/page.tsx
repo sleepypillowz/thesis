@@ -351,7 +351,7 @@ export default function PrescribedMedicines() {
   // ─── JSX ─────────────────────────────────────────────────────────────────────
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-slate-50 to-gray-100 p-6">
+    <main className="min-h-screen bg-linear-to-br from-slate-50 to-gray-100 p-6">
       <div className="max-w-7xl mx-auto">
         {/* ── Header ────────────────────────────────────────────────────────────── */}
         <div className="flex items-center justify-between mb-8">
@@ -388,7 +388,7 @@ export default function PrescribedMedicines() {
         {/* ── Stats Cards ───────────────────────────────────────────────────────── */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
           {/* Total Prescriptions */}
-          <Card className="border-0 shadow-sm bg-white">
+          <Card className="border-0 shadow-xs bg-white">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
@@ -405,7 +405,7 @@ export default function PrescribedMedicines() {
           </Card>
 
           {/* Total Quantity */}
-          <Card className="border-0 shadow-sm bg-white">
+          <Card className="border-0 shadow-xs bg-white">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
@@ -422,7 +422,7 @@ export default function PrescribedMedicines() {
           </Card>
 
           {/* Total Dispensed */}
-          <Card className="border-0 shadow-sm bg-white">
+          <Card className="border-0 shadow-xs bg-white">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
@@ -439,7 +439,7 @@ export default function PrescribedMedicines() {
           </Card>
 
           {/* Low Stock Items */}
-          <Card className="border-0 shadow-sm bg-white">
+          <Card className="border-0 shadow-xs bg-white">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
@@ -458,7 +458,7 @@ export default function PrescribedMedicines() {
 
         {/* ── Monthly Tables ─────────────────────────────────────────────────────── */}
         {medicinesByMonth.map(([month, monthMedicines]) => (
-          <Card key={month} className="border-0 shadow-sm bg-white overflow-hidden mb-8">
+          <Card key={month} className="border-0 shadow-xs bg-white overflow-hidden mb-8">
             <CardContent className="p-0">
               {/* Month Header */}
               <div className="px-6 py-4 border-b border-gray-200 bg-gray-50">
@@ -735,7 +735,7 @@ export default function PrescribedMedicines() {
         ))}
 
         {medicinesByMonth.length === 0 && (
-          <Card className="border-0 shadow-sm bg-white">
+          <Card className="border-0 shadow-xs bg-white">
             <CardContent className="text-center py-12">
               <FileText className="h-12 w-12 text-gray-400 mx-auto mb-4" />
               <h3 className="text-lg font-medium text-gray-900 mb-2">

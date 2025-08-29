@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 // @source: https://github.com/dan-lee/timescape?tab=readme-ov-file
 
 const timePickerInputBase =
-  "p-1 inline tabular-nums h-fit border-none outline-none select-none content-box caret-transparent rounded-sm min-w-8 text-center focus:bg-foreground/20 focus-visible:ring-0 focus-visible:outline-none";
+  "p-1 inline tabular-nums h-fit border-none outline-hidden select-none content-box caret-transparent rounded-sm min-w-8 text-center focus:bg-foreground/20 focus-visible:ring-0 focus-visible:outline-hidden";
 const timePickerSeparatorBase = "text-xs text-gray-400";
 
 type DateFormat = "days" | "months" | "years";

@@ -18,7 +18,7 @@ export default function RegisterPage() {
       {/* Left Side - Image Column */}
       <div className="relative hidden overflow-hidden bg-muted lg:block">
         <div
-          className={`absolute inset-0 bg-primary/20 backdrop-blur-sm z-10 transition-opacity duration-1000 ${
+          className={`absolute inset-0 bg-primary/20 backdrop-blur-xs z-10 transition-opacity duration-1000 ${
             imageLoaded ? "opacity-0" : "opacity-100"
           }`}
         />

@@ -22,7 +22,7 @@ const menuItems = [
 ];
 export default function Navbar() {
   return (
-    <div className="hidden justify-between rounded-full border-2 bg-card p-4 pl-0 shadow-sm md:visible md:flex md:pl-4">
+    <div className="hidden justify-between rounded-full border-2 bg-card p-4 pl-0 shadow-xs md:visible md:flex md:pl-4">
       {/* Desktop Navigation */}
       <NavigationMenu className="md:flex">
         <NavigationMenuList>
@@ -31,7 +31,7 @@ export default function Navbar() {
               <NavigationMenuLink key={item.name} asChild>
                 <Link
                   href={item.href}
-                  className="group inline-flex h-9 w-max rounded-full px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-accent/50 data-[state=open]:bg-accent/50"
+                  className="group inline-flex h-9 w-max rounded-full px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-hidden disabled:pointer-events-none disabled:opacity-50 data-active:bg-accent/50 data-[state=open]:bg-accent/50"
                 >
                   {item.name}
                 </Link>
