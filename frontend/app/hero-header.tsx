@@ -17,7 +17,7 @@ const HeroHeader = () => {
   ];
 
   return (
-    <nav className="z-50 bg-card px-6 py-4 shadow-xs">
+    <nav className="z-50 bg-card px-6 py-4 shadow-sm">
       <div className="container mx-auto flex items-center justify-between">
         <div className="flex items-center">
           <span className="text-xl font-bold">Malibiran Clinic</span>

@@ -170,7 +170,7 @@ const TreatmentPage: React.FC = () => {
 
   return (
     <div className="bg-gray-50 min-h-screen">
-      <header className="bg-white shadow-sm">
+      <header className="bg-white shadow">
         <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center">
             <h1 className="text-3xl font-bold text-gray-900">Patient Treatment</h1>
@@ -195,7 +195,7 @@ const TreatmentPage: React.FC = () => {
 
       <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         {patient && (
-          <div className="bg-white shadow-sm rounded-lg mb-6 p-6">
+          <div className="bg-white shadow rounded-lg mb-6 p-6">
             <h2 className="text-xl font-semibold mb-4">Patient Information</h2>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
               <div>
@@ -226,7 +226,7 @@ const TreatmentPage: React.FC = () => {
           </div>
         )}
 
-        <div className="bg-white shadow-sm rounded-lg mb-6 p-6">
+        <div className="bg-white shadow rounded-lg mb-6 p-6">
           <h2 className="text-xl font-semibold mb-4">Treatment Notes</h2>
           <textarea
             value={treatmentNotes}
@@ -237,7 +237,7 @@ const TreatmentPage: React.FC = () => {
         </div>
 
         <div className="grid md:grid-cols-2 gap-6">
-          <div className="bg-white shadow-sm rounded-lg p-6">
+          <div className="bg-white shadow rounded-lg p-6">
             <h2 className="text-xl font-semibold mb-4">Diagnoses</h2>
             
             <div className="space-y-4 mb-6">
@@ -308,7 +308,7 @@ const TreatmentPage: React.FC = () => {
             </div>
           </div>
 
-          <div className="bg-white shadow-sm rounded-lg p-6">
+          <div className="bg-white shadow rounded-lg p-6">
             <h2 className="text-xl font-semibold mb-4">Prescriptions</h2>
             
             <div className="space-y-4 mb-6">

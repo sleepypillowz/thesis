@@ -112,7 +112,7 @@ const DoctorCard: React.FC<DoctorCardComponentProps> = ({
         {/* Doctor Info Section */}
         <div className="p-6 md:w-3/4">
           <div className="flex items-start">
-            <div className="mr-4 h-16 w-16 shrink-0 rounded-full bg-gray-200">
+            <div className="mr-4 h-16 w-16 flex-shrink-0 rounded-full bg-gray-200">
               {imageUrl ? (
                 <Image
                   src={imageUrl}
@@ -128,7 +128,7 @@ const DoctorCard: React.FC<DoctorCardComponentProps> = ({
                 </div>
               )}
             </div>
-            <div className="grow">
+            <div className="flex-grow">
               <h2 className="text-xl font-bold text-blue-800">{name}</h2>
               <p className="mb-2 text-sm text-gray-600">{qualifications}</p>
               <div className="mb-3 flex items-center">
@@ -158,7 +158,7 @@ const DoctorCard: React.FC<DoctorCardComponentProps> = ({
             </p>
             <button
               onClick={() => setExpanded(!expanded)}
-              className="mt-2 text-sm text-blue-600 hover:underline focus:outline-hidden"
+              className="mt-2 text-sm text-blue-600 hover:underline focus:outline-none"
             >
               {expanded ? "Show less" : "Read more"}
             </button>
@@ -399,7 +399,7 @@ const DoctorsPage: React.FC = () => {
               placeholder="Search by name or qualification"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full rounded border border-gray-300 p-2 focus:outline-hidden focus:ring-2 focus:ring-blue-500"
+              className="w-full rounded border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
           <div>
@@ -409,7 +409,7 @@ const DoctorsPage: React.FC = () => {
             <select
               value={selectedSpecialty}
               onChange={(e) => setSelectedSpecialty(e.target.value)}
-              className="w-full rounded border border-gray-300 p-2 focus:outline-hidden focus:ring-2 focus:ring-blue-500"
+              className="w-full rounded border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               {specialties.map((specialty) => (
                 <option key={specialty} value={specialty}>
@@ -425,7 +425,7 @@ const DoctorsPage: React.FC = () => {
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="w-full rounded border border-gray-300 p-2 focus:outline-hidden focus:ring-2 focus:ring-blue-500"
+              className="w-full rounded border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="rating">Rating (High to Low)</option>
               <option value="price">Price (Low to High)</option>

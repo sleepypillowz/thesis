@@ -178,7 +178,7 @@ export default function MonthlyVisitReports() {
         
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
           {[...Array(4)].map((_, i) => (
-            <Card key={i} className="border-0 shadow-xs">
+            <Card key={i} className="border-0 shadow-sm">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div className="space-y-2">
@@ -192,7 +192,7 @@ export default function MonthlyVisitReports() {
           ))}
         </div>
         
-        <Card className="border-0 shadow-xs">
+        <Card className="border-0 shadow-sm">
           <CardContent className="p-6 space-y-4">
             {[...Array(3)].map((_, i) => (
               <div key={i} className="space-y-4">
@@ -223,7 +223,7 @@ export default function MonthlyVisitReports() {
       <div className="max-w-7xl mx-auto p-6">
         <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded-md">
           <div className="flex">
-            <div className="shrink-0">
+            <div className="flex-shrink-0">
               <AlertTriangle className="h-5 w-5 text-red-400" />
             </div>
             <div className="ml-3">
@@ -262,7 +262,7 @@ export default function MonthlyVisitReports() {
 
   return (
     <main 
-      className="min-h-screen bg-linear-to-br from-slate-50 to-gray-100 p-6"
+      className="min-h-screen bg-gradient-to-br from-slate-50 to-gray-100 p-6"
       ref={reportRef}
     >
       <div className="max-w-7xl mx-auto">
@@ -283,7 +283,7 @@ export default function MonthlyVisitReports() {
           </div>
           <button
             onClick={handleExportPDF}
-            className="flex items-center justify-center px-4 py-2 bg-white border border-gray-300 rounded-md shadow-xs text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors w-full md:w-auto"
+            className="flex items-center justify-center px-4 py-2 bg-white border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors w-full md:w-auto"
           >
             <CalendarCheck className="mr-2 h-4 w-4" />
             Export Full Report
@@ -333,10 +333,10 @@ export default function MonthlyVisitReports() {
             return (
               <Card 
                 key={summary.month} 
-                className="border-0 shadow-xs bg-white overflow-hidden transition-all duration-300"
+                className="border-0 shadow-sm bg-white overflow-hidden transition-all duration-300"
               >
                 <button
-                  className="w-full text-left p-6 hover:bg-gray-50 transition-colors focus:outline-hidden focus:ring-2 focus:ring-blue-200 rounded-t"
+                  className="w-full text-left p-6 hover:bg-gray-50 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-200 rounded-t"
                   onClick={() => toggleMonthExpansion(summary.month)}
                   aria-expanded={isExpanded}
                 >
@@ -474,7 +474,7 @@ export default function MonthlyVisitReports() {
               </Card>
             );
           }) : (
-            <Card className="border-0 shadow-xs bg-white">
+            <Card className="border-0 shadow-sm bg-white">
               <CardContent className="py-12 text-center">
                 <ClipboardList className="h-12 w-12 text-gray-400 mx-auto mb-4" />
                 <h3 className="text-lg font-medium text-gray-900 mb-2">
@@ -512,7 +512,7 @@ const StatCard = ({
   };
   
   return (
-    <Card className="border-0 shadow-xs bg-white hover:shadow-md transition-shadow">
+    <Card className="border-0 shadow-sm bg-white hover:shadow-md transition-shadow">
       <CardContent className="p-6">
         <div className="flex items-center justify-between">
           <div>

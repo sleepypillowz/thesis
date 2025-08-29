@@ -413,10 +413,10 @@ export default function TreatmentDetailsPage() {
           Back
         </button>
 
-        <div className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-xs">
+        <div className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
           {/* Patient Information Header */}
           {treatmentDetails && !isLoading && !error && (
-            <div className="bg-linear-to-r from-blue-600 to-blue-500 p-6 text-white md:p-8">
+            <div className="bg-gradient-to-r from-blue-600 to-blue-500 p-6 text-white md:p-8">
               <div className="flex flex-col md:flex-row md:items-center md:justify-between">
                 <div className="flex items-center">
                   <div className="mr-4 flex h-12 w-12 items-center justify-center rounded-full bg-white text-xl font-bold text-blue-600">
@@ -494,7 +494,7 @@ export default function TreatmentDetailsPage() {
           )}
 
           {/* Treatment Title Section */}
-          <div className="border-b border-gray-200 bg-linear-to-r from-white to-blue-50 p-6 shadow-xs md:p-8">
+          <div className="border-b border-gray-200 bg-gradient-to-r from-white to-blue-50 p-6 shadow-sm md:p-8">
             <div className="flex flex-col items-start sm:flex-row sm:items-center">
               {/* Title + Subtitle */}
               <div>
@@ -523,7 +523,7 @@ export default function TreatmentDetailsPage() {
               </div>
 
               {/* Button Group Container – flush right with extra spacing and design */}
-              <div className="ml-auto flex items-center space-x-2 rounded-lg p-2 backdrop-blur-xs">
+              <div className="ml-auto flex items-center space-x-2 rounded-lg p-2 backdrop-blur-sm">
                 <button
                   onClick={() => setIsReferModalOpen(true)}
                   className="flex items-center gap-2 rounded-full bg-blue-600 px-5 py-2 font-medium text-white transition-shadow duration-200 hover:bg-blue-700 hover:shadow-lg"
@@ -639,7 +639,7 @@ export default function TreatmentDetailsPage() {
                 {activeTab === "latest" && (
                   <div className="space-y-8">
                     <div className="flex items-center">
-                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-blue-100">
+                      <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-blue-100">
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           className="h-5 w-5 text-blue-600"
@@ -687,7 +687,7 @@ export default function TreatmentDetailsPage() {
                       <h3 className="mb-4 text-lg font-medium text-gray-900">
                         Treatment Notes
                       </h3>
-                      <p className="rounded-lg border border-gray-100 bg-white p-4 text-gray-700 shadow-xs">
+                      <p className="rounded-lg border border-gray-100 bg-white p-4 text-gray-700 shadow-sm">
                         {treatmentDetails.recent_treatment?.treatment_notes ||
                           "No treatment notes available"}
                       </p>
@@ -695,7 +695,7 @@ export default function TreatmentDetailsPage() {
 
                     <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
                       {/* Diagnoses Section */}
-                      <div className="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-xs">
+                      <div className="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm">
                         <div className="border-b border-gray-100 bg-blue-50 p-5">
                           <div className="flex items-center">
                             <svg
@@ -730,7 +730,7 @@ export default function TreatmentDetailsPage() {
                                     className="py-3"
                                   >
                                     <div className="flex items-start">
-                                      <span className="mr-3 inline-flex h-6 w-auto min-w-12 items-center justify-center rounded-full bg-blue-100 px-2 text-xs font-medium text-blue-800">
+                                      <span className="mr-3 inline-flex h-6 w-auto min-w-[3rem] items-center justify-center rounded-full bg-blue-100 px-2 text-xs font-medium text-blue-800">
                                         {d.diagnosis_code}
                                       </span>
                                       <p className="text-gray-700">
@@ -770,7 +770,7 @@ export default function TreatmentDetailsPage() {
                       </div>
 
                       {/* Prescriptions Section */}
-                      <div className="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-xs">
+                      <div className="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm">
                         <div className="border-b border-gray-100 bg-green-50 p-5">
                           <div className="flex items-center">
                             <svg
@@ -901,7 +901,7 @@ export default function TreatmentDetailsPage() {
                                   <div className="absolute -left-1 mt-1.5 h-10 w-10 rounded-full border-4 border-gray-200 bg-white"></div>
 
                                   <div className="ml-14">
-                                    <div className="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-xs">
+                                    <div className="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm">
                                       <div className="p-5">
                                         {/* Treatment Header */}
                                         <div className="mb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between">
@@ -994,7 +994,7 @@ export default function TreatmentDetailsPage() {
                                                         className="rounded-lg border border-gray-100 bg-white p-2"
                                                       >
                                                         <div className="flex items-start">
-                                                          <span className="mr-2 inline-flex h-6 w-auto min-w-12 items-center justify-center rounded bg-gray-100 px-2 text-xs font-medium text-gray-700">
+                                                          <span className="mr-2 inline-flex h-6 w-auto min-w-[3rem] items-center justify-center rounded bg-gray-100 px-2 text-xs font-medium text-gray-700">
                                                             {d.diagnosis_code}
                                                           </span>
                                                           <span className="text-gray-600">
@@ -1179,7 +1179,7 @@ export default function TreatmentDetailsPage() {
                   </div>
                 )}
                 {isReferModalOpen && (
-                  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-xs duration-300 animate-in fade-in">
+                  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm duration-300 animate-in fade-in">
                     <div className="w-full max-w-2xl overflow-hidden rounded-xl border border-border/50 bg-card shadow-lg duration-300 animate-in zoom-in-95">
                       {/* Modal Header */}
                       <div className="flex items-center justify-between border-b border-border bg-muted/30 p-5">
@@ -1254,7 +1254,7 @@ export default function TreatmentDetailsPage() {
                           <input
                             type="text"
                             placeholder="Search doctors..."
-                            className="w-full rounded-lg border border-border bg-background py-2.5 pl-10 pr-4 transition-all focus:border-primary focus:outline-hidden focus:ring-2 focus:ring-primary/30"
+                            className="w-full rounded-lg border border-border bg-background py-2.5 pl-10 pr-4 transition-all focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30"
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                           />
@@ -1364,7 +1364,7 @@ export default function TreatmentDetailsPage() {
                                                 e.target.value
                                               )
                                             }
-                                            className="w-full rounded-lg border border-border bg-background px-3 py-2 transition-all focus:border-primary focus:outline-hidden focus:ring-2 focus:ring-primary/30"
+                                            className="w-full rounded-lg border border-border bg-background px-3 py-2 transition-all focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30"
                                             placeholder="Enter referral reason..."
                                           />
                                         </div>
@@ -1383,7 +1383,7 @@ export default function TreatmentDetailsPage() {
                                                 e.target.value
                                               )
                                             }
-                                            className="h-24 w-full resize-none rounded-lg border border-border bg-background px-3 py-2 transition-all focus:border-primary focus:outline-hidden focus:ring-2 focus:ring-primary/30"
+                                            className="h-24 w-full resize-none rounded-lg border border-border bg-background px-3 py-2 transition-all focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30"
                                             placeholder="Add any additional notes..."
                                           />
                                         </div>

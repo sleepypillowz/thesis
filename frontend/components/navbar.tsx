@@ -25,7 +25,7 @@ const menuItems = [
 ]
 export default function Navbar() {
   return (
-    <div className="flex justify-between p-4 pl-0 lg:justify-center lg:border-2 lg:bg-card lg:pl-4 lg:shadow-xs">
+    <div className="flex justify-between p-4 pl-0 lg:justify-center lg:border-2 lg:bg-card lg:pl-4 lg:shadow-sm">
       {/* Mobile Navigation */}
       <Sheet>
         <SheetTrigger asChild className="lg:hidden">
@@ -53,7 +53,7 @@ export default function Navbar() {
               <NavigationMenuLink key={item.name} asChild>
                 <Link
                   href={item.href}
-                  className="group inline-flex h-9 w-max rounded-md px-4 py-2 font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-hidden disabled:pointer-events-none disabled:opacity-50 data-active:bg-accent/50 data-[state=open]:bg-accent/50"
+                  className="group inline-flex h-9 w-max rounded-md px-4 py-2 font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-accent/50 data-[state=open]:bg-accent/50"
                 >
                   {item.name}
                 </Link>

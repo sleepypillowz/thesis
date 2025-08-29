@@ -66,7 +66,7 @@ function StatsCard({ img, title, value, footer }: StatsCardProps) {
   return (
     <div className="card block w-full max-w-sm space-y-2 rounded-xl">
       <div className="grid grid-cols-2">
-        <div className="relative aspect-2/1 w-full max-w-md">
+        <div className="relative aspect-[2/1] w-full max-w-md">
           <Image
             src={img}
             alt="blood pressure"

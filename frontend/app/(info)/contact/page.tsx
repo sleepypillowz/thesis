@@ -82,7 +82,7 @@ export default function ContactPage() {
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="card space-y-8 rounded-2xl p-8 shadow-xs"
+            className="card space-y-8 rounded-2xl p-8 shadow-sm"
           >
             <h2 className="text-2xl font-semibold">Contact Details</h2>
             <div className="space-y-6">
@@ -126,7 +126,7 @@ export default function ContactPage() {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5, delay: 0.4 }}
             onSubmit={handleSubmit(onSubmit)}
-            className="card space-y-6 rounded-2xl p-8 shadow-xs"
+            className="card space-y-6 rounded-2xl p-8 shadow-sm"
             noValidate
           >
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
