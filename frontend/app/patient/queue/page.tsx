@@ -51,13 +51,13 @@ export default function Page() {
             <div className="flex flex-col pt-6">
               <div className="flex justify-between">
                 <Link
-                  className={buttonVariants({ variant: "outline-solid" })}
+                  className={buttonVariants({ variant: "outline" })}
                   href="/patient/queue"
                 >
                   Accept
                 </Link>
                 <Link
-                  className={buttonVariants({ variant: "outline-solid" })}
+                  className={buttonVariants({ variant: "outline" })}
                   href="/patient/queue"
                 >
                   Edit
@@ -65,7 +65,7 @@ export default function Page() {
               </div>
 
               <Link
-                className={buttonVariants({ variant: "outline-solid" })}
+                className={buttonVariants({ variant: "outline" })}
                 href="/patient/queue"
               >
                 Cancel
@@ -121,13 +121,13 @@ export default function Page() {
             <div className="flex flex-col pt-6">
               <div className="flex justify-between">
                 <Link
-                  className={buttonVariants({ variant: "outline-solid" })}
+                  className={buttonVariants({ variant: "outline" })}
                   href="/patient/queue"
                 >
                   Accept
                 </Link>
                 <Link
-                  className={buttonVariants({ variant: "outline-solid" })}
+                  className={buttonVariants({ variant: "outline" })}
                   href="/patient/queue"
                 >
                   Edit
@@ -135,7 +135,7 @@ export default function Page() {
               </div>
 
               <Link
-                className={buttonVariants({ variant: "outline-solid" })}
+                className={buttonVariants({ variant: "outline" })}
                 href="/patient/queue"
               >
                 Cancel

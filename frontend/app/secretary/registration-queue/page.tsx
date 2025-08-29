@@ -36,14 +36,17 @@ export default function RegistrationQueue() {
 
   useEffect(() => {
     const token = localStorage.getItem("access");
-    fetch(`${process.env.NEXT_PUBLIC_API_BASE}/queueing/registration_queueing/`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        // Include the token in the Authorization header
-        Authorization: `Bearer ${token}`,
-      },
-    })
+    fetch(
+      `${process.env.NEXT_PUBLIC_API_BASE}/queueing/registration_queueing/`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          // Include the token in the Authorization header
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    )
       .then((response) => {
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -151,20 +154,20 @@ export default function RegistrationQueue() {
             <div className="flex justify-between">
               <button
                 onClick={() => handleAccept(queueItem)}
-                className={buttonVariants({ variant: "outline-solid" })}
+                className={buttonVariants({ variant: "outline" })}
               >
                 Accept
               </button>
 
               <button
-                className={buttonVariants({ variant: "outline-solid" })}
+                className={buttonVariants({ variant: "outline" })}
                 onClick={() => router.push("/payments")}
               >
                 Edit
               </button>
             </div>
             <button
-              className={buttonVariants({ variant: "outline-solid" })}
+              className={buttonVariants({ variant: "outline" })}
               onClick={() => router.push("/payments")}
             >
               Cancel

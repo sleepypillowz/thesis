@@ -31,7 +31,9 @@ export default function Page() {
   useEffect(() => {
     const token = localStorage.getItem("access");
     fetch(
-      `${process.env.NEXT_PUBLIC_API_BASE}/queueing/preliminary_assessment_queueing/?t=${Date.now()}`,
+      `${
+        process.env.NEXT_PUBLIC_API_BASE
+      }/queueing/preliminary_assessment_queueing/?t=${Date.now()}`,
       {
         cache: "no-cache",
         method: "GET",
@@ -118,19 +120,19 @@ export default function Page() {
                     `/secretary/preliminary-assessment/${queueItem.patient_id}/${queueItem.queue_number}/`
                   );
                 }}
-                className={buttonVariants({ variant: "outline-solid" })}
+                className={buttonVariants({ variant: "outline" })}
               >
                 Accept
               </button>
               <button
-                className={buttonVariants({ variant: "outline-solid" })}
+                className={buttonVariants({ variant: "outline" })}
                 onClick={() => router.push("/payments")}
               >
                 Edit
               </button>
             </div>
             <button
-              className={buttonVariants({ variant: "outline-solid" })}
+              className={buttonVariants({ variant: "outline" })}
               onClick={() => router.push("/payments")}
             >
               Cancel

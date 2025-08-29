@@ -113,7 +113,7 @@ export default function Page() {
           </button>
           <button
             onClick={() => router.push("/payments")}
-            className={buttonVariants({ variant: "outline-solid" })}
+            className={buttonVariants({ variant: "outline" })}
           >
             Edit
           </button>
