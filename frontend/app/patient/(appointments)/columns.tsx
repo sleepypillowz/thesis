@@ -55,7 +55,7 @@ export const columns: ColumnDef<Appointment>[] = [
       return (
         <Badge
           variant="outline"
-          className={`${statusColor} rounded-full bg-slate-100 dark:bg-accent`}
+          className={`${statusColor} rounded-full bg-muted`}
         >
           {status}
         </Badge>
