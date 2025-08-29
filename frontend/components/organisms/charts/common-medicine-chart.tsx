@@ -34,23 +34,23 @@ const chartConfig = {
   },
   cardiovascular: {
     label: "cardiovascular",
-    color: "hsl(var(--chart-1))",
+    color: "var(--color-chart-1)",
   },
   cancer: {
     label: "cancer",
-    color: "hsl(var(--chart-2))",
+    color: "var(--color-chart-2)",
   },
   respiratory: {
     label: "respiratory",
-    color: "hsl(var(--chart-3))",
+    color: "var(--color-chart-3)",
   },
   mental: {
     label: "mental",
-    color: "hsl(var(--chart-4))",
+    color: "var(--color-chart-4)",
   },
   diabetes: {
     label: "diabetes",
-    color: "hsl(var(--chart-5))",
+    color: "var(--color-chart-5)",
   },
 } satisfies ChartConfig;
 
@@ -74,7 +74,7 @@ export function CommonMedicinesChart() {
             <Pie data={chartData} dataKey="visitors" />
             <ChartLegend
               content={<ChartLegendContent nameKey="browser" />}
-              className="-translate-y-2 flex-wrap gap-2 *:basis-1/4 *:justify-center"
+              className="-translate-y-2 flex-wrap gap-2 [&>*]:basis-1/4 [&>*]:justify-center"
             />
           </PieChart>
         </ChartContainer>
