@@ -190,7 +190,7 @@ export default function ReferralScheduler() {
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
-      <div className="mx-auto max-w-6xl overflow-hidden rounded-lg bg-white shadow">
+      <div className="mx-auto max-w-6xl overflow-hidden rounded-lg bg-white shadow-sm">
         <div className="border-b p-6">
           <h1 className="text-2xl font-bold text-gray-800">
             Referral Appointment Scheduling
@@ -309,7 +309,7 @@ export default function ReferralScheduler() {
                       mode="single"
                       selected={date}
                       onSelect={setDate}
-                      className="rounded-md border shadow"
+                      className="rounded-md border shadow-sm"
                       disabled={(date) => {
                         const dateKey = format(date, "yyyy-MM-dd");
                         return (

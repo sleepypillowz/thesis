@@ -118,19 +118,19 @@ export default function Page() {
                     `/secretary/preliminary-assessment/${queueItem.patient_id}/${queueItem.queue_number}/`
                   );
                 }}
-                className={buttonVariants({ variant: "outline" })}
+                className={buttonVariants({ variant: "outline-solid" })}
               >
                 Accept
               </button>
               <button
-                className={buttonVariants({ variant: "outline" })}
+                className={buttonVariants({ variant: "outline-solid" })}
                 onClick={() => router.push("/payments")}
               >
                 Edit
               </button>
             </div>
             <button
-              className={buttonVariants({ variant: "outline" })}
+              className={buttonVariants({ variant: "outline-solid" })}
               onClick={() => router.push("/payments")}
             >
               Cancel

@@ -163,7 +163,7 @@ useEffect(() => {
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-slate-50 to-gray-100 p-6">
+    <main className="min-h-screen bg-linear-to-br from-slate-50 to-gray-100 p-6">
       <div className="max-w-7xl mx-auto">
         <Header />
         
@@ -198,7 +198,7 @@ const LoadingSkeleton = () => (
     
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
       {[...Array(3)].map((_, i) => (
-        <Card key={i} className="border-0 shadow-sm">
+        <Card key={i} className="border-0 shadow-xs">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div className="space-y-2">
@@ -212,7 +212,7 @@ const LoadingSkeleton = () => (
       ))}
     </div>
     
-    <Card className="border-0 shadow-sm">
+    <Card className="border-0 shadow-xs">
       <CardContent className="p-6 space-y-4">
         {[...Array(5)].map((_, i) => (
           <div key={i} className="flex justify-between items-center border-b pb-4">
@@ -231,7 +231,7 @@ const ErrorDisplay = ({ error }: { error: string }) => (
   <div className="max-w-7xl mx-auto p-6">
     <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded-md">
       <div className="flex">
-        <div className="flex-shrink-0">
+        <div className="shrink-0">
           <AlertTriangle className="h-5 w-5 text-red-400" />
         </div>
         <div className="ml-3">
@@ -272,7 +272,7 @@ const StatsCards = ({
   Patients: number;
 }) => (
   <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-    <Card className="border-0 shadow-sm bg-white">
+    <Card className="border-0 shadow-xs bg-white">
       <CardContent className="p-6">
         <div className="flex items-center justify-between">
           <div>
@@ -286,7 +286,7 @@ const StatsCards = ({
       </CardContent>
     </Card>
     
-    <Card className="border-0 shadow-sm bg-white">
+    <Card className="border-0 shadow-xs bg-white">
       <CardContent className="p-6">
         <div className="flex items-center justify-between">
           <div>
@@ -300,7 +300,7 @@ const StatsCards = ({
       </CardContent>
     </Card>
     
-    <Card className="border-0 shadow-sm bg-white">
+    <Card className="border-0 shadow-xs bg-white">
       <CardContent className="p-6">
         <div className="flex items-center justify-between">
           <div>
@@ -327,7 +327,7 @@ const DiseaseAnalysisTable = ({
   toggleDiseaseExpansion: (diseaseKey: string) => void;
   formatDate: (date: string) => string;
 }) => (
-  <Card className="border-0 shadow-sm bg-white overflow-hidden">
+  <Card className="border-0 shadow-xs bg-white overflow-hidden">
     <CardContent className="p-0">
       <div className="px-6 py-4 border-b border-gray-200 bg-gray-50">
         <h2 className="text-lg font-semibold text-gray-900">Disease Analysis</h2>

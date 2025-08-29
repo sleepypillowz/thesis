@@ -157,7 +157,7 @@ function EditUserDialog({
             <label className="block text-sm font-medium">Role</label>
             <select
               {...form.register("role")}
-              className="mt-1 block w-full rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+              className="mt-1 block w-full rounded-md shadow-xs focus:border-indigo-300 focus:ring-3 focus:ring-indigo-200 focus:ring-opacity-50"
             >
               <option value="doctor">Doctor</option>
               <option value="admin">Admin</option>
@@ -432,7 +432,7 @@ export default function UserManagementDashboard() {
         </div>
 
         {/* Control Bar */}
-        <div className="card mb-6 rounded-lg border p-4 shadow-sm">
+        <div className="card mb-6 rounded-lg border p-4 shadow-xs">
           <div className="flex flex-col gap-3 md:flex-row">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-3.5 h-4 w-4" />
@@ -469,7 +469,7 @@ export default function UserManagementDashboard() {
         </div>
 
         {/* Users Table */}
-        <div className="card overflow-hidden rounded-lg border shadow-sm">
+        <div className="card overflow-hidden rounded-lg border shadow-xs">
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead className="border-b">
@@ -489,7 +489,7 @@ export default function UserManagementDashboard() {
                   <tr key={user.id} className="transition-colors">
                     <td className="px-6 py-4">
                       <div className="flex items-center">
-                        <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-indigo-100">
+                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-indigo-100">
                           <span className="font-medium text-indigo-600">
                             {user.first_name[0]}
                             {user.last_name[0]}
