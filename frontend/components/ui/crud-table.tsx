@@ -279,7 +279,7 @@ export function CrudTable<
 
       <div className="overflow-hidden rounded-md border">
         <Table>
-          <TableHeader className="bg-accent">
+          <TableHeader className="bg-muted">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (

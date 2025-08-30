@@ -1,66 +1,118 @@
-import { LayoutDashboard, Calendar } from "lucide-react";
+import { LayoutDashboard, Calendar, ChevronUp, FileText } from "lucide-react";
 
 import {
   Sidebar,
   SidebarContent,
   SidebarGroup,
   SidebarGroupContent,
-  SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarMenuSub,
+  SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
 
 import Link from "next/link";
 import SidebarHeaderProfile from "@/components/atoms/sidebar-header-profile";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
+
+const appointment_items = [
+  {
+    title: "Todays Appointment",
+    url: "/designer/todays-appointment",
+  },
+  {
+    title: "Upcoming Appointment",
+    url: "/designer/upcoming-appointment",
+  },
+  {
+    title: "Past Appointments",
+    url: "/designer/past-appointment",
+  },
+];
+
 const menu_items = [
-  {
-    title: "Dashboard",
-    url: "/designer",
-    icon: LayoutDashboard,
-  },
-  {
-    title: "Appointment",
-    url: "/designer/appointment",
-    icon: Calendar,
-  },
   {
     title: "OPD Record",
     url: "/designer/opd-record",
     icon: Calendar,
   },
   {
-    title: "user-management",
+    title: "User Management",
     url: "/designer/user-management",
+    icon: Calendar,
+  },
+  {
+    title: "Patient List",
+    url: "/designer/patient-list",
     icon: Calendar,
   },
 ];
 
-export function AppSidebar() {
+export default function DesignerSidebar() {
   return (
     <Sidebar>
       <SidebarHeader>
         <SidebarHeaderProfile />
       </SidebarHeader>
       <SidebarContent>
-        {/* Main Menu */}
         <SidebarGroup>
-          <SidebarGroupLabel>Main Menu</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              <SidebarGroup>
-                {menu_items.map((item) => (
-                  <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton asChild>
-                      <Link href={item.url}>
-                        <item.icon />
-                        <span>{item.title}</span>
-                      </Link>
+              {/* Dashboard Item (Manually Rendered) */}
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link href="/designer">
+                    <LayoutDashboard />
+                    <span>Dashboard</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+
+              {/* Appointments Collapsible */}
+              <Collapsible className="group/collapsible">
+                <SidebarMenuItem>
+                  <CollapsibleTrigger asChild>
+                    <SidebarMenuButton className="flex items-center justify-between">
+                      <div className="flex items-center">
+                        <FileText className="mr-2 h-4 w-4" />
+                        <span>Appointments</span>
+                      </div>
+                      <ChevronUp className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180" />
                     </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ))}
-              </SidebarGroup>
+                  </CollapsibleTrigger>
+                  <CollapsibleContent>
+                    <SidebarMenuSub>
+                      {appointment_items.map((item) => (
+                        <SidebarMenuSubItem key={item.title}>
+                          <SidebarMenuButton asChild>
+                            <Link href={item.url}>
+                              <span>{item.title}</span>
+                            </Link>
+                          </SidebarMenuButton>
+                        </SidebarMenuSubItem>
+                      ))}
+                    </SidebarMenuSub>
+                  </CollapsibleContent>
+                </SidebarMenuItem>
+              </Collapsible>
+
+              {/* Remaining Menu Items */}
+              {menu_items.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton asChild>
+                    <Link href={item.url}>
+                      <item.icon />
+                      <span>{item.title}</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>

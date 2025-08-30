@@ -3,7 +3,7 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import { AppSidebar } from "@/app/designer/designer-sidebar";
+import DesignerSidebar from "@/app/designer/designer-sidebar";
 import Header from "@/components/organisms/header";
 
 export default function Page({
@@ -14,7 +14,7 @@ export default function Page({
   return (
     <>
       <SidebarProvider>
-        <AppSidebar />
+        <DesignerSidebar />
         <SidebarInset className="flex-1">
           <main className="flex-1">
             <SidebarTrigger className="fixed md:hidden" />
