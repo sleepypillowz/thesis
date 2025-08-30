@@ -15,12 +15,11 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
-import { User } from "lucide-react";
 
 export const description = "A line chart";
 
 // Component props
-type ChartLineDefaultProps = {
+type AdminStatChartProps = {
   title: string;
   total: number | string;
   color: string;
@@ -28,13 +27,13 @@ type ChartLineDefaultProps = {
   data: { month: string; value: number }[];
 };
 
-export function ChartLineDefault({
+export function AdminStatChart({
   title,
   total,
   color,
   icon,
   data,
-}: ChartLineDefaultProps) {
+}: AdminStatChartProps) {
   const colorMap: Record<string, string> = {
     purple: "bg-purple-500",
     orange: "bg-orange-500",

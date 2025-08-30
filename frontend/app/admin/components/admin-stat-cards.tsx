@@ -1,5 +1,5 @@
 "use client";
-import { ChartLineDefault } from "@/components/organisms/charts/chart-line-default";
+import { AdminStatChart } from "@/components/organisms/charts/admin-stat-chart";
 import { Banknote, Scissors, User, UserRoundPlus } from "lucide-react";
 
 const data = [
@@ -14,28 +14,28 @@ const data = [
 export default function AdminStatCards() {
   return (
     <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 m-4">
-      <ChartLineDefault
+      <AdminStatChart
         title="Appointments"
         total={650}
         color="purple"
         icon={User}
         data={data}
       />
-      <ChartLineDefault
+      <AdminStatChart
         title="Operations"
         total={54}
         color="orange"
         icon={Scissors}
         data={data}
       />
-      <ChartLineDefault
+      <AdminStatChart
         title="New Patients"
         total={129}
         color="green"
         icon={UserRoundPlus}
         data={data}
       />
-      <ChartLineDefault
+      <AdminStatChart
         title="Earnings"
         total={20125}
         color="blue"
