@@ -1,9 +1,5 @@
-import StaffDashboard from "@/components/pages/staff-dashboard";
+import AdminStatCards from "./components/admin-stat-cards";
 
 export default function Page() {
-  return (
-    <div>
-      <StaffDashboard />
-    </div>
-  );
+  return <AdminStatCards />;
 }
