@@ -1,6 +1,6 @@
 "use client";
 
-import { Line, LineChart } from "recharts";
+import { Area, AreaChart } from "recharts";
 
 import {
   Card,
@@ -16,7 +16,7 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 
-export const description = "A line chart";
+export const description = "A area chart";
 
 // Component props
 type AdminStatChartProps = {
@@ -51,7 +51,7 @@ export function AdminStatChart({
   const IconComponent = icon;
 
   return (
-    <Card className={`h-full bg-${color}-100`}>
+    <Card className={`h-full rounded-none bg-${color}-100`}>
       <CardHeader className="p-0 mt-4">
         <div className="flex flex-row justify-between ml-4 items-center">
           <div
@@ -72,7 +72,7 @@ export function AdminStatChart({
       </CardHeader>
       <CardContent className="p-0">
         <ChartContainer config={chartConfig} className="w-full h-16">
-          <LineChart
+          <AreaChart
             accessibilityLayer
             data={data}
             margin={{
@@ -84,14 +84,16 @@ export function AdminStatChart({
               cursor={false}
               content={<ChartTooltipContent hideLabel />}
             />
-            <Line
+            <Area
               dataKey="value"
               type="natural"
+              fill={color}
+              fillOpacity={0.2}
               stroke={color}
               strokeWidth={2}
               dot={false}
             />
-          </LineChart>
+          </AreaChart>
         </ChartContainer>
       </CardContent>
     </Card>

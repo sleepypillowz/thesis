@@ -67,7 +67,7 @@ export default function PatientChart() {
   }, []);
 
   return (
-    <Card className="flex flex-col mx-4">
+    <Card className="flex flex-col">
       <CardHeader className="pb-0">
         <CardTitle>Patient Chart</CardTitle>
       </CardHeader>
