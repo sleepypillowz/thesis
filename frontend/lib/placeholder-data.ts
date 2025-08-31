@@ -2,6 +2,7 @@
 // https://nextjs.org/learn/dashboard-app/fetching-data
 
 import { Doctor } from "@/app/admin/components/doctor-columns";
+import { Operation } from "@/app/admin/components/operation-columns";
 import { User } from "@/app/designer/columns";
 import { Patient } from "@/app/designer/patient-list/columns";
 import { Appointment } from "@/app/patient/(appointments)/columns";
@@ -385,3 +386,70 @@ export const users = [
     is_active: true,
   },
 ] as const satisfies User[];
+
+export const operations: Operation[] = [
+  {
+    patient_name: "Alice Johnson",
+    date: "20-08-2019",
+    duration: "1.5 hours",
+    type: "General",
+    follow_up_date: "20-09-2019",
+    condition: "Appendicitis",
+  },
+  {
+    patient_name: "Robert Brown",
+    date: "25-08-2019",
+    duration: "2 hours",
+    type: "Local",
+    follow_up_date: "25-09-2019",
+    condition: "Hernia",
+  },
+  {
+    patient_name: "Sophia Clark",
+    date: "30-08-2019",
+    duration: "2.5 hours",
+    type: "General",
+    follow_up_date: "30-09-2019",
+    condition: "Gallstones",
+  },
+  {
+    patient_name: "Liam Davis",
+    date: "05-09-2019",
+    duration: "2 hours",
+    type: "Local",
+    follow_up_date: "05-10-2019",
+    condition: "Knee Injury",
+  },
+  {
+    patient_name: "Emma Wilson",
+    date: "10-09-2019",
+    duration: "1 hour",
+    type: "Local",
+    follow_up_date: "10-09-2019",
+    condition: "Cataract",
+  },
+  {
+    patient_name: "Olivia Martinez",
+    date: "15-09-2019",
+    duration: "4 hours",
+    type: "General",
+    follow_up_date: "15-10-2019",
+    condition: "Cardiac",
+  },
+  {
+    patient_name: "William Johnson",
+    date: "20-09-2019",
+    duration: "5 hours",
+    type: "General",
+    follow_up_date: "20-10-2019",
+    condition: "Spinal",
+  },
+  {
+    patient_name: "Mia Brown",
+    date: "25-09-2019",
+    duration: "3 hours",
+    type: "General",
+    follow_up_date: "25-10-2019",
+    condition: "Obesity",
+  },
+];
