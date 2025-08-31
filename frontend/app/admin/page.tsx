@@ -4,6 +4,7 @@ import { CalendarFunction } from "./components/calendar";
 import HospitalSurveyChart from "@/components/organisms/charts/hospital-survey-chart";
 import { TotalAppointments } from "./components/total-appointments";
 import { RevenueChart } from "@/components/organisms/charts/revenue-chart";
+import Appointments from "./components/appointments";
 
 export default function Page() {
   return (
@@ -29,6 +30,12 @@ export default function Page() {
         <HospitalSurveyChart />
         <TotalAppointments />
         <RevenueChart />
+      </div>
+      <div className="grid grid-cols-3 gap-4">
+        <div className="card col-span-2">
+          <h1 className="font-bold mb-4">Appointments</h1>
+          <Appointments />
+        </div>
       </div>
     </div>
   );
