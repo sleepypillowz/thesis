@@ -5,6 +5,7 @@ import { ColumnDef } from "@tanstack/react-table";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
+
 export type Appointment = {
   patient_name: string;
   doctor_name: string;
@@ -15,7 +16,7 @@ export type Appointment = {
   status: string;
 };
 
-export const columns: ColumnDef<Appointment>[] = [
+export const AppointmentColumns: ColumnDef<Appointment>[] = [
   {
     accessorKey: "doctor_name",
     header: "Doctor",

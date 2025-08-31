@@ -1,6 +1,7 @@
 // This file contains placeholder data that you'll be replacing with real data in the Data Fetching chapter:
 // https://nextjs.org/learn/dashboard-app/fetching-data
 
+import { Doctor } from "@/app/admin/components/doctor-columns";
 import { User } from "@/app/designer/columns";
 import { Patient } from "@/app/designer/patient-list/columns";
 import { Appointment } from "@/app/patient/(appointments)/columns";
@@ -245,6 +246,51 @@ export const patients: Patient[] = [
     queue_data: [
       { created_at: "2025-08-30T10:00:00Z", status: "In Consultation", complaint: "Dizziness" },
     ],
+  },
+];
+
+export const doctors: Doctor[] = [
+  {
+    doctor_name: "Dr. Smith",
+    specialization: "Cardiology",
+    days_available: "Mon, Wed, Fri",
+    working_hours: "09:00 - 17:00",
+    status: "active",
+  },
+  {
+    doctor_name: "Dr. Johnson",
+    specialization: "Dermatology",
+    days_available: "Tue, Thu",
+    working_hours: "10:00 - 16:00",
+    status: "active",
+  },
+  {
+    doctor_name: "Dr. Williams",
+    specialization: "Pediatrics",
+    days_available: "Mon - Fri",
+    working_hours: "08:00 - 15:00",
+    status: "on leave",
+  },
+  {
+    doctor_name: "Dr. Brown",
+    specialization: "Orthopedics",
+    days_available: "Wed, Thu, Sat",
+    working_hours: "11:00 - 18:00",
+    status: "active",
+  },
+  {
+    doctor_name: "Dr. Davis",
+    specialization: "Neurology",
+    days_available: "Mon, Tue, Fri",
+    working_hours: "09:30 - 17:30",
+    status: "inactive",
+  },
+  {
+    doctor_name: "Dr. Miller",
+    specialization: "General Medicine",
+    days_available: "Mon - Sat",
+    working_hours: "07:00 - 14:00",
+    status: "active",
   },
 ];
 

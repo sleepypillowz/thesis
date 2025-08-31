@@ -1,10 +1,18 @@
+"use client";
+
 import PatientChart from "@/components/organisms/charts/patient-chart";
 import AdminStatCards from "./components/admin-stat-cards";
 import { CalendarFunction } from "./components/calendar";
 import HospitalSurveyChart from "@/components/organisms/charts/hospital-survey-chart";
 import { TotalAppointments } from "./components/total-appointments";
 import { RevenueChart } from "@/components/organisms/charts/revenue-chart";
-import Appointments from "./components/appointments";
+
+import { AppointmentColumns } from "./components/appointment-columns";
+import { DashboardTable } from "@/components/ui/dashboard-table";
+import { appointments } from "@/lib/placeholder-data";
+
+import { DoctorColumns } from "./components/doctor-columns";
+import { doctors } from "@/lib/placeholder-data";
 
 export default function Page() {
   return (
@@ -34,7 +42,14 @@ export default function Page() {
       <div className="grid grid-cols-3 gap-4">
         <div className="card col-span-2">
           <h1 className="font-bold mb-4">Appointments</h1>
-          <Appointments />
+          <DashboardTable
+            columns={AppointmentColumns}
+            data={appointments ?? []}
+          />
+        </div>
+        <div className="card col-span">
+          <h1 className="font-bold mb-4">Doctor Status</h1>
+          <DashboardTable columns={DoctorColumns} data={doctors ?? []} />
         </div>
       </div>
     </div>
