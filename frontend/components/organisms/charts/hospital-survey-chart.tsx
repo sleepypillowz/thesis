@@ -48,14 +48,14 @@ export default function HospitalSurveyChart() {
       <CardHeader>
         <CardTitle>Hospital Survey</CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="p-0">
         <ChartContainer config={chartConfig}>
           <AreaChart
             accessibilityLayer
             data={chartData}
             margin={{
-              left: 12,
-              right: 12,
+              left: 4,
+              right: 4,
             }}
           >
             <CartesianGrid vertical={false} />
