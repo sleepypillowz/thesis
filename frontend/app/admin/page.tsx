@@ -16,6 +16,7 @@ import { appointments } from "@/lib/placeholder-data";
 import { doctors } from "@/lib/placeholder-data";
 import { operations } from "@/lib/placeholder-data";
 import { OperationColumns } from "./components/operation-columns";
+import DailyAppointments from "./components/daily-appointments";
 
 export default function Page() {
   const [date, setDate] = React.useState<Date | undefined>(new Date());
@@ -25,16 +26,11 @@ export default function Page() {
       <AdminStatCards />
       <div className="grid sm:grid-cols-1 lg:grid-cols-3 gap-4">
         <PatientChart />
-        <div className="card">
-          <div className="flex justify-between">
-            <h1 className="font-bold">Appointments</h1>
-            <span>August 2025</span>
-          </div>
-        </div>
+        <DailyAppointments />
 
         <div className="card">
           <h1 className="font-bold">Calendar</h1>
-          <div className="items-center flex justify-center">
+          <div className="flex justify-center items-center pt-4">
             <Calendar
               mode="single"
               selected={date}
