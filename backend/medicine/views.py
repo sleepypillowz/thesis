@@ -153,7 +153,7 @@ class Predict(APIView):
 
             
             sparsity = (group['quantity'] == 0).mean()
-            
+            print("hdh")
             # Handle sparse medicines differently
             if sparsity > 0.7:  # More than 70% zeros
                 # Croston's method for intermittent demand
