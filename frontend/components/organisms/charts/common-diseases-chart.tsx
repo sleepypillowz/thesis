@@ -34,23 +34,23 @@ const chartConfig = {
   },
   cardiovascular: {
     label: "cardiovascular",
-    color: "var(--color-chart-1)",
+    color: "hsl(var(--chart-1))",
   },
   cancer: {
     label: "cancer",
-    color: "var(--color-chart-2)",
+    color: "hsl(var(--chart-2))",
   },
   respiratory: {
     label: "respiratory",
-    color: "var(--color-chart-3)",
+    color: "hsl(var(--chart-3))",
   },
   mental: {
     label: "mental",
-    color: "var(--color-chart-4)",
+    color: "hsl(var(--chart-4))",
   },
   diabetes: {
     label: "diabetes",
-    color: "var(--color-chart-5)",
+    color: "hsl(var(--chart-5))",
   },
 } satisfies ChartConfig;
 
