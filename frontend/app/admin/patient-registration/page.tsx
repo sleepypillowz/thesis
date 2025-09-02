@@ -3,21 +3,7 @@
 import { useState } from "react";
 
 export default function Page() {
-  interface FormData {
-    first_name: string;
-    middle_name: string;
-    last_name: string;
-    phone: string;
-    email: string;
-    date_of_birth: string;
-    complaint: string;
-    street_address: string;
-    barangay: string;
-    municipal_city: string;
-    agree_terms: boolean;
-  }
-
-  const [formData, setFormData] = useState<FormData>({
+  const [formData, setFormData] = useState({
     first_name: "",
     middle_name: "",
     last_name: "",
@@ -37,7 +23,7 @@ export default function Page() {
   ) => {
     const { id, value, type, checked } = event.target as HTMLInputElement;
 
-    setFormData((prevData) => ({
+    setFormData((prevData: any) => ({
       ...prevData,
       [id]: type === "checkbox" ? checked : value,
     }));
@@ -264,7 +250,7 @@ export default function Page() {
 
         <button
           type="submit"
-          className="w-full rounded-lg bg-sky-700 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-sky-800 focus:outline-hidden focus:ring-4 focus:ring-sky-300"
+          className="w-full rounded-lg bg-sky-700 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-sky-800 focus:outline-none focus:ring-4 focus:ring-sky-300"
         >
           Submit
         </button>

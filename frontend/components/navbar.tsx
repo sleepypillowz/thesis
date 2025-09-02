@@ -1,16 +1,16 @@
-"use client"
+"use client";
 
-import { Menu } from "lucide-react"
-import Link from "next/link"
+import { Menu } from "lucide-react";
+import Link from "next/link";
 
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 import {
   NavigationMenu,
   NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuList,
-} from "@/components/ui/navigation-menu"
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
+} from "@/components/ui/navigation-menu";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 const menuItems = [
   { name: "Home", href: "/patient" },
@@ -22,7 +22,7 @@ const menuItems = [
   { name: "Queue", href: "/patient/queue" },
   { name: "Find a Doctor", href: "/patient/find-doctor" },
   { name: "Contact", href: "/patient/contact" },
-]
+];
 export default function Navbar() {
   return (
     <div className="flex justify-between p-4 pl-0 lg:justify-center lg:border-2 lg:bg-card lg:pl-4 lg:shadow-xs">
@@ -37,7 +37,11 @@ export default function Navbar() {
         <SheetContent side="left">
           <nav className="flex flex-col gap-4">
             {menuItems.map((item) => (
-              <Link key={item.name} href={item.href} className="text-lg font-medium hover:underline">
+              <Link
+                key={item.name}
+                href={item.href}
+                className="text-lg font-medium hover:underline"
+              >
                 {item.name}
               </Link>
             ))}
@@ -63,6 +67,5 @@ export default function Navbar() {
         </NavigationMenuList>
       </NavigationMenu>
     </div>
-  )
+  );
 }
-

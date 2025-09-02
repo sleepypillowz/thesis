@@ -3,6 +3,7 @@ import { LayoutDashboard, ChartNoAxesGantt } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
@@ -14,6 +15,7 @@ import {
 
 import Link from "next/link";
 import SidebarHeaderProfile from "@/components/atoms/sidebar-header-profile";
+import { NavUser } from "@/components/nav-user";
 const menu_items = [
   {
     title: "Dashboard",
@@ -37,6 +39,12 @@ const menu_items = [
   },
 ];
 
+const data = {
+  user: {
+    name: "shadcn",
+    email: "m@example.com",
+  },
+};
 export function AppSidebar() {
   return (
     <Sidebar>
@@ -65,6 +73,9 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+      <SidebarFooter>
+        <NavUser user={data.user} />
+      </SidebarFooter>
     </Sidebar>
   );
 }
