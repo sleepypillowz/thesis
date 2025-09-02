@@ -14,9 +14,6 @@ const nextConfig = {
       { protocol: 'http',  hostname: 'localhost',    port: '8000', pathname: '/media/**' },
       // PROD: your Render backend
       { protocol: 'https', hostname: 'thesis-sg26.onrender.com', pathname: '/media/**' },
-      {
-        protocol: "https",
-      },
     ],
     formats: ['image/avif', 'image/webp'],
   },
