@@ -1,11 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
-import { currentUser } from "@clerk/nextjs/server";
 
 export default async function SidebarHeaderProfile() {
-  const user = await currentUser();
-  const userRole = user?.publicMetadata?.role as string | undefined;
-
   return (
     <>
       <Link href="/" className="flex items-center justify-center gap-2">
@@ -24,16 +20,16 @@ export default async function SidebarHeaderProfile() {
         <div className="mb-2 mt-4">
           <Image
             className="rounded-2xl border-2 object-cover"
-            src={user?.imageUrl ?? "/default-user.png"}
+            src="/secretary.jpg"
             alt="user"
             width={64}
             height={64}
           />
         </div>
 
-        <span className="text-sm font-bold">{user?.fullName}</span>
+        <span className="text-sm font-bold">Sarah Smith</span>
         <span className="text-xs font-semibold text-muted-foreground">
-          {String(userRole ?? "PATIENT").toUpperCase()}
+          ROLE
         </span>
       </div>
     </>

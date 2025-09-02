@@ -3,7 +3,6 @@ import Link from "next/link";
 import { Button } from "../components/ui/button";
 import { usePathname } from "next/navigation";
 import clsx from "clsx";
-import { SignInButton } from "@clerk/nextjs";
 
 const HeroHeader = () => {
   const pathname = usePathname();
@@ -17,7 +16,7 @@ const HeroHeader = () => {
   ];
 
   return (
-    <nav className="z-50 bg-card px-6 py-4 shadow-xs">
+    <nav className="z-50 bg-card px-6 py-4 shadow-sm">
       <div className="container mx-auto flex items-center justify-between">
         <div className="flex items-center">
           <span className="text-xl font-bold">Malibiran Clinic</span>
@@ -36,11 +35,8 @@ const HeroHeader = () => {
             </Link>
           ))}
         </div>
-        <Button
-          asChild
-          className="rounded-xl transition-transform duration-200 hover:scale-105 hover:shadow-md"
-        >
-          <SignInButton />
+        <Button className="rounded-xl transition-transform duration-200 hover:scale-105 hover:shadow-md">
+          <Link href="/login">Login</Link>
         </Button>
         <button className="md:hidden">
           <svg
