@@ -192,7 +192,7 @@ const PatientRegistrationForm: React.FC = () => {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search patients by name, email, or phone..."
-              className="w-full rounded-lg border border-slate-200 py-3 pl-12 pr-4 shadow-xs focus:border-transparent focus:outline-hidden focus:ring-2 focus:ring-blue-500"
+              className="w-full rounded-lg border border-slate-200 py-3 pl-12 pr-4 shadow-sm focus:border-transparent focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             {isLoading && (
               <div className="absolute inset-y-0 right-0 flex items-center pr-3">
@@ -212,10 +212,10 @@ const PatientRegistrationForm: React.FC = () => {
                   onClick={() => handleSelectPatient(result)}
                   className="flex cursor-pointer items-center border-b border-slate-100 px-4 py-3 transition-colors last:border-0 hover:bg-blue-50"
                 >
-                  <div className="mr-3 shrink-0 rounded-full bg-blue-100 p-2">
+                  <div className="mr-3 flex-shrink-0 rounded-full bg-blue-100 p-2">
                     <FaUserAlt className="text-blue-500" />
                   </div>
-                  <div className="grow">
+                  <div className="flex-grow">
                     <p className="font-medium">
                       {result.first_name}{" "}
                       {result.middle_name ? result.middle_name + " " : ""}
@@ -275,7 +275,7 @@ const PatientRegistrationForm: React.FC = () => {
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="mb-6 rounded-lg bg-blue-50 p-4">
               <div className="flex items-center">
-                <div className="mr-4 rounded-full bg-white p-3 shadow-xs">
+                <div className="mr-4 rounded-full bg-white p-3 shadow-sm">
                   <FaUserAlt className="text-blue-500" />
                 </div>
                 <div>
@@ -350,7 +350,7 @@ const PatientRegistrationForm: React.FC = () => {
                       Address
                     </label>
                     <div className="flex items-center rounded border border-slate-200 bg-white p-3">
-                      <FaMapMarkerAlt className="mr-3 shrink-0 text-slate-400" />
+                      <FaMapMarkerAlt className="mr-3 flex-shrink-0 text-slate-400" />
                       <span className="line-clamp-1">
                         {selectedPatient.street_address},{" "}
                         {selectedPatient.barangay},{" "}
@@ -371,7 +371,7 @@ const PatientRegistrationForm: React.FC = () => {
               <select
                 value={complaint}
                 onChange={(e) => setComplaint(e.target.value)}
-                className="block w-full rounded-lg border border-slate-200 bg-white px-4 py-3 focus:border-transparent focus:outline-hidden focus:ring-2 focus:ring-blue-500"
+                className="block w-full rounded-lg border border-slate-200 bg-white px-4 py-3 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="General Illness">General Illness</option>
                 <option value="Injury">Injury</option>
@@ -384,14 +384,14 @@ const PatientRegistrationForm: React.FC = () => {
               <button
                 type="button"
                 onClick={clearSelection}
-                className="rounded-lg border border-slate-200 px-6 py-3 text-slate-600 transition-colors hover:bg-slate-50 focus:outline-hidden focus:ring-2 focus:ring-slate-500 focus:ring-opacity-50 md:flex-1"
+                className="rounded-lg border border-slate-200 px-6 py-3 text-slate-600 transition-colors hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-opacity-50 md:flex-1"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="flex items-center justify-center rounded-lg bg-blue-600 px-6 py-3 text-white transition-colors hover:bg-blue-700 focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 md:flex-1"
+                className="flex items-center justify-center rounded-lg bg-blue-600 px-6 py-3 text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 md:flex-1"
               >
                 {isSubmitting ? (
                   <>
@@ -414,11 +414,11 @@ export default function Page() {
   const router = useRouter();
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-blue-50 to-indigo-50 p-4 md:p-8">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 p-4 md:p-8">
       <div className="mx-auto max-w-4xl">
         <button
           onClick={() => router.back()}
-          className="mb-6 flex items-center rounded-lg bg-white px-4 py-2 text-slate-600 shadow-xs transition-colors hover:text-blue-600"
+          className="mb-6 flex items-center rounded-lg bg-white px-4 py-2 text-slate-600 shadow-sm transition-colors hover:text-blue-600"
         >
           <FaArrowLeft className="mr-2" />
           Back to Dashboard

@@ -34,7 +34,7 @@ export default function Page() {
           {/* Left Column */}
           <div className="space-y-8 lg:col-span-2">
             {/* Personal Information Card */}
-            <div className="card rounded-xl border p-6 shadow-xs">
+            <div className="card rounded-xl border p-6 shadow-sm">
               <div className="flex items-center gap-4 border-b pb-4">
                 <div className="flex h-12 w-12 items-center justify-center rounded-full border-2 border-blue-200 bg-blue-100">
                   <FaUser className="h-6 w-6 text-blue-600" />
@@ -86,7 +86,7 @@ export default function Page() {
             </div>
 
             {/* Appointments Card */}
-            <div className="card rounded-xl border p-6 shadow-xs">
+            <div className="card rounded-xl border p-6 shadow-sm">
               <div className="flex items-center justify-between border-b pb-4">
                 <h2 className="flex items-center gap-2 text-xl font-semibold tracking-tight">
                   <FaRegCalendarCheck className="h-6 w-6 text-green-600" />
@@ -129,7 +129,7 @@ export default function Page() {
             </div>
 
             {/* Prescriptions Card */}
-            <div className="card rounded-xl border p-6 shadow-xs">
+            <div className="card rounded-xl border p-6 shadow-sm">
               <div className="flex items-center justify-between border-b pb-4">
                 <h2 className="flex items-center gap-2 text-xl font-semibold tracking-tight">
                   <FaPrescription className="h-6 w-6 text-purple-600" />
@@ -174,7 +174,7 @@ export default function Page() {
           {/* Right Column */}
           <div className="space-y-8">
             {/* Medical History Card */}
-            <div className="card rounded-xl border border-l-4 border-orange-500 p-6 shadow-xs">
+            <div className="card rounded-xl border border-l-4 border-orange-500 p-6 shadow-sm">
               <h2 className="mb-4 flex items-center gap-2 border-b pb-4 text-xl font-semibold tracking-tight">
                 <FaNotesMedical className="h-6 w-6 text-orange-600" />
                 Health Overview
@@ -201,7 +201,7 @@ export default function Page() {
             </div>
 
             {/* Lab Results Card */}
-            <div className="card rounded-xl border p-6 shadow-xs">
+            <div className="card rounded-xl border p-6 shadow-sm">
               <div className="flex items-center justify-between border-b pb-4">
                 <h2 className="flex items-center gap-2 text-xl font-semibold tracking-tight">
                   <FaFile className="h-6 w-6 text-red-600" />
