@@ -148,8 +148,9 @@ class Predict(APIView):
             
             # Fill NaN values
             group['quantity'] = group['quantity'].fillna(0)
-            group['name'] = group['name'].fillna(method='ffill')
-            group['medication_id'] = group['medication_id'].fillna(method='ffill')
+            group['name'] = group['name'].ffill()
+            group['medication_id'] = group['medication_id'].ffill()
+
             
             sparsity = (group['quantity'] == 0).mean()
             
