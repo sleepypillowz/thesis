@@ -3,8 +3,12 @@ import Link from "next/link";
 import { Button } from "../components/ui/button";
 import { usePathname } from "next/navigation";
 import clsx from "clsx";
+import { useTheme } from "next-themes";
+import { Moon, Sun } from "lucide-react";
+import { DarkModeToggle } from "@/components/molecules/header/dark-mode-toggle";
 
 const HeroHeader = () => {
+  const { theme, setTheme } = useTheme();
   const pathname = usePathname();
 
   const navLinks = [
@@ -35,9 +39,13 @@ const HeroHeader = () => {
             </Link>
           ))}
         </div>
-        <Button className="rounded-xl transition-transform duration-200 hover:scale-105 hover:shadow-md">
-          <Link href="/login">Login</Link>
-        </Button>
+        <div className="flex space-x-4 items-center justify-center">
+          <DarkModeToggle />
+          <Button className="rounded-xl transition-transform duration-200 hover:scale-105 hover:shadow-md">
+            <Link href="/login">Login</Link>
+          </Button>
+        </div>
+
         <button className="md:hidden">
           <svg
             xmlns="http://www.w3.org/2000/svg"
