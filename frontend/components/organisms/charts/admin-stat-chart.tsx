@@ -51,7 +51,7 @@ export function AdminStatChart({
   const IconComponent = icon;
 
   return (
-    <Card className={`h-full rounded-none bg-${color}-100`}>
+    <Card className={`h-full rounded-lg bg-${color}-100`}>
       <CardHeader className="p-0 mt-4">
         <div className="flex flex-row justify-between ml-4 items-center">
           <div
