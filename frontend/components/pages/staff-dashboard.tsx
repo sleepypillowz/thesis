@@ -4,17 +4,14 @@ import { CommonDiseasesChart } from "@/components/organisms/charts/common-diseas
 import StatsCard from "@/components/organisms/admin-stats-cards";
 import MedicalRecords from "@/components/pages/medical-records";
 import { CommonMedicinesChart } from "@/components/organisms/charts/common-medicine-chart";
-import { useUser } from "@clerk/nextjs";
 
 export default function StaffDashboard() {
-  const { user } = useUser();
-
   return (
     <div className="m-6 space-y-4 text-center md:text-left">
       <div className="mx-2 py-4">
         <div className="flex space-x-2 text-2xl font-bold">
           <p>Good Day,</p>
-          <p className="text-blue-500">{user?.firstName}</p>
+          <p className="text-blue-500">John Doe</p>
         </div>
 
         <p className="text-sm">

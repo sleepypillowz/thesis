@@ -16,7 +16,6 @@ const nextConfig = {
       { protocol: 'https', hostname: 'thesis-sg26.onrender.com', pathname: '/media/**' },
       {
         protocol: "https",
-        hostname: "img.clerk.com",
       },
     ],
     formats: ['image/avif', 'image/webp'],

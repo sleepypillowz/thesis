@@ -6,15 +6,12 @@ import Image from "next/image";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { prescriptions, appointments, documents } from "@/lib/placeholder-data";
-import { currentUser } from "@clerk/nextjs/server";
 import { DashboardTable } from "@/components/ui/dashboard-table";
 import { columns } from "./(appointments)/columns";
 import { columns as PrescriptionsColumn } from "./prescriptions/columns";
 import { columns as DocumentsColumn } from "./documents/columns";
 
 export default async function Page() {
-  const user = await currentUser();
-
   return (
     <div className="m-6 space-y-6">
       <section className="card">
@@ -30,9 +27,7 @@ export default async function Page() {
 
           <div className="col-span-2 flex flex-col content-center space-y-4 p-12">
             <span className="font-semibold">Welcome back</span>
-            <span className="text-2xl font-bold text-blue-500">
-              {user?.fullName + "!"}
-            </span>
+            <span className="text-2xl font-bold text-blue-500">John Doe!</span>
             <p className="text-muted-foreground">
               We would like to take this opportunity to welcome you to our
               practice and to thank you for choosing our physicians to
