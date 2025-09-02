@@ -380,7 +380,7 @@ export default function MedicalRecordForm() {
         </div>
       </div>
 
-      <div ref={formRef} className="rounded-lg bg-white p-8 shadow-xs">
+      <div ref={formRef} className="rounded-lg bg-white p-8 shadow-sm">
         {/* Header */}
         <div className="mb-8 text-center">
           <h2 className="text-xl font-bold uppercase tracking-wide">

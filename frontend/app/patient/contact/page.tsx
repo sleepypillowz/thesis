@@ -38,7 +38,7 @@ export default function Page() {
 
             <div className="text-center">
               <button type="submit"
-                className="w-full rounded-lg bg-sky-700 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-sky-800 focus:outline-hidden focus:ring-4 focus:ring-sky-300">
+                className="w-full rounded-lg bg-sky-700 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-sky-800 focus:outline-none focus:ring-4 focus:ring-sky-300">
                 Submit
               </button>
             </div>

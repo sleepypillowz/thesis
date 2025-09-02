@@ -184,7 +184,7 @@ const LabRequestsPage = () => {
             onClick={() => setFilter("all")}
             className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
               filter === "all"
-                ? "bg-blue-100 text-blue-800 shadow-xs"
+                ? "bg-blue-100 text-blue-800 shadow-sm"
                 : "  hover:bg-card"
             }`}
           >
@@ -194,7 +194,7 @@ const LabRequestsPage = () => {
             onClick={() => setFilter("pending")}
             className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
               filter === "pending"
-                ? "bg-yellow-100 text-yellow-800 shadow-xs"
+                ? "bg-yellow-100 text-yellow-800 shadow-sm"
                 : "  hover:bg-card"
             }`}
           >
@@ -205,7 +205,7 @@ const LabRequestsPage = () => {
             onClick={() => setFilter("completed")}
             className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
               filter === "completed"
-                ? "bg-green-100 text-green-800 shadow-xs"
+                ? "bg-green-100 text-green-800 shadow-sm"
                 : "  hover:bg-card"
             }`}
           >
@@ -228,7 +228,7 @@ const LabRequestsPage = () => {
         )}
 
         {!isLoading && labRequests.length === 0 && !error && (
-          <div className="rounded-lg p-12 text-center shadow-xs">
+          <div className="rounded-lg p-12 text-center shadow-sm">
             <FileText className="mx-auto h-12 w-12" />
             <h3 className="mt-4 text-lg font-medium">No laboratory requests</h3>
             <p className="mt-2">
@@ -240,7 +240,7 @@ const LabRequestsPage = () => {
         {!isLoading &&
           filteredRequests.length === 0 &&
           labRequests.length > 0 && (
-            <div className="rounded-lg p-12 text-center shadow-xs">
+            <div className="rounded-lg p-12 text-center shadow-sm">
               <FileText className="mx-auto h-12 w-12" />
               <h3 className="mt-4 text-lg font-medium">No matching requests</h3>
               <p className="mt-2">
@@ -253,11 +253,11 @@ const LabRequestsPage = () => {
           {filteredRequests.map((request) => (
             <div
               key={request.id}
-              className="card overflow-hidden rounded-lg border shadow-xs transition-all hover:shadow-sm"
+              className="card overflow-hidden rounded-lg border shadow-sm transition-all hover:shadow"
             >
               <div className="p-6">
                 <div className="flex flex-wrap items-start justify-between gap-4">
-                  <div className="grow">
+                  <div className="flex-grow">
                     <div className="flex items-start gap-4">
                       <div className="rounded-full bg-blue-50 p-3">
                         <FileText className="h-6 w-6 text-blue-600" />
@@ -414,7 +414,7 @@ const LabRequestsPage = () => {
 
                             <button
                               type="submit"
-                              className="w-full rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-xs transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+                              className="w-full rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
                               disabled={
                                 !selectedFile || uploadingId === request.id
                               }

@@ -259,7 +259,7 @@ const LabResultsPage = () => {
 
         <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-3">
           {[...Array(3)].map((_, i) => (
-            <Card key={i} className="border-0 shadow-xs">
+            <Card key={i} className="border-0 shadow-sm">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div className="space-y-2">
@@ -273,7 +273,7 @@ const LabResultsPage = () => {
           ))}
         </div>
 
-        <Card className="border-0 shadow-xs">
+        <Card className="border-0 shadow-sm">
           <CardContent className="space-y-4 p-6">
             {[...Array(5)].map((_, i) => (
               <div
@@ -299,7 +299,7 @@ const LabResultsPage = () => {
       <div className="mx-auto max-w-6xl p-6">
         <div className="rounded-md border-l-4 border-red-500 bg-red-50 p-4">
           <div className="flex">
-            <div className="shrink-0">
+            <div className="flex-shrink-0">
               <svg
                 className="h-5 w-5 text-red-400"
                 xmlns="http://www.w3.org/2000/svg"
@@ -331,7 +331,7 @@ const LabResultsPage = () => {
   }
 
   return (
-    <main className="min-h-screen bg-linear-to-br from-slate-50 to-gray-100 p-6">
+    <main className="min-h-screen bg-gradient-to-br from-slate-50 to-gray-100 p-6">
       <div className="mx-auto max-w-6xl">
         {/* Header Section */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
@@ -380,7 +380,7 @@ const LabResultsPage = () => {
 
         {/* Stats Cards */}
         <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-3">
-          <Card className="border-0 bg-white shadow-xs">
+          <Card className="border-0 bg-white shadow-sm">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
@@ -398,7 +398,7 @@ const LabResultsPage = () => {
             </CardContent>
           </Card>
 
-          <Card className="border-0 bg-white shadow-xs">
+          <Card className="border-0 bg-white shadow-sm">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
@@ -421,7 +421,7 @@ const LabResultsPage = () => {
             </CardContent>
           </Card>
 
-          <Card className="border-0 bg-white shadow-xs">
+          <Card className="border-0 bg-white shadow-sm">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
@@ -450,7 +450,7 @@ const LabResultsPage = () => {
         </div>
 
         {/* Results Table */}
-        <Card className="overflow-hidden border-0 bg-white shadow-xs">
+        <Card className="overflow-hidden border-0 bg-white shadow-sm">
           <CardContent className="p-0">
             <div className="px-6 py-4 border-b border-gray-200 bg-gray-50">
               <div className="flex justify-between items-center">

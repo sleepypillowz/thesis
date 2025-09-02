@@ -189,9 +189,9 @@ export default function PatientReport() {
       </header>
 
       {/* Main Content */}
-      <div id="pdf-content" className="grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <div id="pdf-content" className="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {/* Patient Info Card */}
-        <div className="bg-white shadow-sm rounded-lg mb-6 p-6">
+        <div className="bg-white shadow rounded-lg mb-6 p-6">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between">
             <div className="flex items-center mb-4 md:mb-0">
               <div className="bg-blue-100 p-3 rounded-lg mr-4">
@@ -236,7 +236,7 @@ export default function PatientReport() {
         </div>
 
         {/* Vital Signs & Overview */}
-        <div className="bg-white shadow-sm rounded-lg mb-6 p-6">
+        <div className="bg-white shadow rounded-lg mb-6 p-6">
           <h3 className="text-lg font-medium text-gray-900 mb-4">Vital Signs</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
             <VitalCard
@@ -263,7 +263,7 @@ export default function PatientReport() {
         </div>
 
         {/* Recent Medications & Conditions */}
-        <div className="bg-white shadow-sm rounded-lg mb-6 p-6">
+        <div className="bg-white shadow rounded-lg mb-6 p-6">
           {/* Recent Medications */}
           <h3 className="text-lg font-medium text-gray-900 mb-4">Recent Medications</h3>
           <div className="space-y-4 mb-6">
@@ -304,7 +304,7 @@ export default function PatientReport() {
         </div>
 
         {/* Diagnoses */}
-        <div className="bg-white shadow-sm rounded-lg mb-6 p-6">
+        <div className="bg-white shadow rounded-lg mb-6 p-6">
           <h3 className="text-lg font-medium text-gray-900 mb-4">Diagnoses</h3>
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
@@ -331,7 +331,7 @@ export default function PatientReport() {
         </div>
 
         {/* Labs */}
-        <div className="bg-white shadow-sm rounded-lg mb-6 p-6">
+        <div className="bg-white shadow rounded-lg mb-6 p-6">
           <h3 className="text-lg font-medium text-gray-900 mb-4">Laboratory Results</h3>
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
@@ -369,7 +369,7 @@ export default function PatientReport() {
         </div>
 
         {/* Treatment Notes */}
-        <div className="bg-white shadow-sm rounded-lg mb-6 p-6">
+        <div className="bg-white shadow rounded-lg mb-6 p-6">
           <h3 className="text-lg font-medium text-gray-900 mb-4">Treatment Notes</h3>
           <div className="space-y-6">
             {all_treatment_notes.map((note, index) => (
