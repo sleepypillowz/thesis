@@ -60,38 +60,60 @@ export default function FrequentMedicinesViewAll() {
     fetchMedicines();
   }, []);
 
-  const fetchPredictions = async () => {
-    try {
-      setPredictionsLoading(true);
-      setPredictionsError(null);
-      setShowPredictions(true);
+const fetchPredictions = async () => {
+  try {
+    setPredictionsLoading(true);
+    setPredictionsError(null);
+    setShowPredictions(true);
 
-      const accessToken = localStorage.getItem("access");
-      if (!accessToken) {
-        throw new Error("Authentication required");
-      }
-
-      const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_BASE}/medicine/predict/`,
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
-      if (response.data?.results) {
-        setPredictions(response.data.results);
-      } else {
-        throw new Error("Invalid response format");
-      }
-    } catch (err) {
-      setPredictionsError(err instanceof Error ? err.message : "An unknown error occurred");
-    } finally {
-      setPredictionsLoading(false);
+    const accessToken = localStorage.getItem("access");
+    if (!accessToken) {
+      throw new Error("Authentication required");
     }
-  };
+
+    const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE}/medicine/predict/`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    // Ensure results is always an array
+    const rawResults: any[] = Array.isArray(response.data?.results) ? response.data!.results : [];
+
+    // Optional debugging
+    console.log("Raw prediction results:", rawResults);
+
+    // Deduplicate by medicine_id (keep first occurrence)
+    const uniqueMap = new Map<number, any>();
+    for (const item of rawResults) {
+      // item might be missing medicine_id — guard for that
+      const id = Number(item?.medicine_id);
+      if (!Number.isNaN(id) && !uniqueMap.has(id)) {
+        uniqueMap.set(id, item);
+      }
+    }
+
+    const uniquePredictions: ForecastResult[] = Array.from(uniqueMap.values()).map(
+      (it: any) => ({
+        medicine_id: Number(it.medicine_id),
+        name: String(it.name ?? ""),
+        mse: it.mse == null ? null : Number(it.mse),
+        r2: it.r2 == null ? null : Number(it.r2),
+        forecast_next_3_months: Array.isArray(it.forecast_next_3_months)
+          ? it.forecast_next_3_months.map((v: any) => (v == null ? 0 : Number(v)))
+          : [],
+      })
+    );
+
+    setPredictions(uniquePredictions);
+  } catch (err) {
+    setPredictionsError(err instanceof Error ? err.message : "An unknown error occurred");
+  } finally {
+    setPredictionsLoading(false);
+  }
+};
+
 
   if (medicinesLoading) {
     return <LoadingState />;
@@ -267,20 +289,23 @@ export default function FrequentMedicinesViewAll() {
                           </span>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                          {item.mse !== null ? item.mse.toFixed(2) : "N/A"}
+                          {typeof item.mse === "number" ? item.mse.toFixed(2) : "N/A"}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                          {item.r2 !== null ? item.r2.toFixed(3) : "N/A"}
+                          {typeof item.r2 === "number" ? item.r2.toFixed(3) : "N/A"}
                         </td>
+
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                          {item.forecast_next_3_months.map((val, idx) => (
-                            <span
-                              key={idx}
-                              className="inline-block bg-green-100 text-green-800 px-2 py-1 rounded-lg text-xs mr-2"
-                            >
-                              {val.toFixed(1)}
-                            </span>
-                          ))}
+                          {Array.isArray(item.forecast_next_3_months)
+                            ? item.forecast_next_3_months.map((val, idx) => (
+                                <span
+                                  key={idx}
+                                  className="inline-block bg-green-100 text-green-800 px-2 py-1 rounded-lg text-xs mr-2"
+                                >
+                                  {typeof val === "number" ? val.toFixed(1) : "N/A"}
+                                </span>
+                              ))
+                            : "N/A"}
                         </td>
                       </tr>
                     ))
