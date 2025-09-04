@@ -40,9 +40,9 @@ const other_services = [
 
 export default function Page() {
   return (
-    <div className="card m-6">
+    <div className="card my-6 xl:mx-48">
       <h1 className="my-4 font-bold">Laboratory Services</h1>
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
         {laboratory_services.map(({ name, icon }) => (
           <div key={name} className="card flex items-center gap-2">
             <Image
