@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { ColumnDef } from "@tanstack/react-table";
 
 export type Doctor = {
-  doctor_name: string;
+  name: string;
   specialization: string | null;
   days_available: string | null;
   working_hours: string | null;
@@ -13,7 +13,7 @@ export type Doctor = {
 
 export const DoctorColumns: ColumnDef<Doctor>[] = [
   {
-    accessorKey: "doctor_name",
+    accessorKey: "name",
     header: "Doctor",
   },
   {

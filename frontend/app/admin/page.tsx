@@ -11,7 +11,7 @@ import { RevenueChart } from "@/components/organisms/charts/revenue-chart";
 
 import { DashboardTable } from "@/components/ui/dashboard-table";
 import { AppointmentColumns } from "./components/appointment-columns";
-import { DoctorColumns } from "./components/doctor-columns";
+import { DoctorColumns } from "../../components/molecules/tables/doctor-columns";
 import { appointments } from "@/lib/placeholder-data";
 import { doctors } from "@/lib/placeholder-data";
 import { operations } from "@/lib/placeholder-data";
