@@ -2,8 +2,23 @@
 
 import { useState } from "react";
 
+// Define the form data type
+interface FormData {
+  first_name: string;
+  middle_name: string;
+  last_name: string;
+  phone: string;
+  email: string;
+  date_of_birth: string;
+  complaint: string;
+  street_address: string;
+  barangay: string;
+  municipal_city: string;
+  agree_terms: boolean;
+}
+
 export default function Page() {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     first_name: "",
     middle_name: "",
     last_name: "",
@@ -23,7 +38,7 @@ export default function Page() {
   ) => {
     const { id, value, type, checked } = event.target as HTMLInputElement;
 
-    setFormData((prevData: any) => ({
+    setFormData((prevData: FormData) => ({
       ...prevData,
       [id]: type === "checkbox" ? checked : value,
     }));
