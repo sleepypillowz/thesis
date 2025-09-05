@@ -1,7 +1,18 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { getUserRole } from "@/utils/auth"; // your helper
 
-export default async function SidebarHeaderProfile() {
+export default function SidebarHeaderProfile() {
+  const [role, setRole] = useState<string | null>(null);
+
+  useEffect(() => {
+    const r = getUserRole();
+    setRole(r);
+  }, []);
+
   return (
     <>
       <Link href="/" className="flex items-center justify-center gap-2">
@@ -28,8 +39,8 @@ export default async function SidebarHeaderProfile() {
         </div>
 
         <span className="text-sm font-bold">Sarah Smith</span>
-        <span className="text-xs font-semibold text-muted-foreground">
-          ROLE
+        <span className="text-xs font-semibold uppercase text-muted-foreground">
+          {role ?? "Loading..."}
         </span>
       </div>
     </>
