@@ -60,7 +60,7 @@ export function GridTable<TData, TValue>({
   const [showInput, setShowInput] = useState(true);
 
   return (
-    <Tabs defaultValue="grid-view">
+    <Tabs defaultValue="table-view">
       <div className="card m-6 space-y-6">
         <div className="flex justify-between">
           <div className="flex items-center">
