@@ -1,8 +1,12 @@
+"use client";
+
 import OncallDoctorsRecentAppointment from "@/components/organisms/tables/oncall-doctor/recent-appointment";
 import PatientGroup from "@/components/organisms/tables/oncall-doctor/patient-group";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import Image from "next/image";
 import TodoList from "@/components/organisms/tables/oncall-doctor/todo-list";
+import { useName } from "@/hooks/use-name";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const cards = [
   {
@@ -29,6 +33,8 @@ const cards = [
 ];
 
 export default function Page() {
+  const name = useName();
+
   return (
     <div className="m-6 space-y-6">
       <section className="card">
@@ -37,7 +43,7 @@ export default function Page() {
             <div className="mb-4 flex flex-col space-y-4 text-sm font-semibold text-muted-foreground">
               <span>Welcome back</span>
               <span className="text-xl font-bold text-blue-500">
-                DR. Sarah Smith!
+                {name ?? <Skeleton className="mb-1 h-8 w-[120px]" />}
               </span>
               <span>Gynecologist, MBBS,MD</span>
             </div>
