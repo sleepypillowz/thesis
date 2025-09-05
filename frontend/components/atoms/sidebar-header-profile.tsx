@@ -3,14 +3,20 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { getUserRole } from "@/utils/auth"; // your helper
+import { getRole, getName } from "@/utils/auth"; // import both
 
 export default function SidebarHeaderProfile() {
   const [role, setRole] = useState<string | null>(null);
+  const [name, setName] = useState<string | null>(null);
 
   useEffect(() => {
-    const r = getUserRole();
+    const r = getRole();
     setRole(r);
+
+    (async () => {
+      const n = await getName();
+      setName(n);
+    })();
   }, []);
 
   return (
@@ -27,6 +33,7 @@ export default function SidebarHeaderProfile() {
         </span>
         <h1 className="text-2xl">MediTrakk</h1>
       </Link>
+
       <div className="flex flex-col items-center">
         <div className="mb-2 mt-4">
           <Image
@@ -38,7 +45,7 @@ export default function SidebarHeaderProfile() {
           />
         </div>
 
-        <span className="text-sm font-bold">Sarah Smith</span>
+        <span className="text-sm font-bold">{name ?? "Loading..."}</span>
         <span className="text-xs font-semibold uppercase text-muted-foreground">
           {role ?? "Loading..."}
         </span>
