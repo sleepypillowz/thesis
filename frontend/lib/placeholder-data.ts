@@ -8,6 +8,8 @@ import { Patient } from "@/app/designer/patient-list/columns";
 import { Appointment } from "@/app/patient/(appointments)/columns";
 import { DocumentFile } from "@/app/patient/documents/columns";
 import { Prescription } from "@/app/patient/prescriptions/columns";
+import { Calendar, Mail, UserPlus } from "lucide-react";
+import { NotificationType } from "@/components/molecules/header/notification";
 
 export const appointments: Appointment[] = [
   {
@@ -451,5 +453,29 @@ export const operations: Operation[] = [
     type: "General",
     follow_up_date: "25-10-2019",
     condition: "Obesity",
+  },
+];
+
+export const notifications: NotificationType[] = [
+  {
+    id: 1,
+    title: "Please check your email",
+    time: "14 mins ago",
+    icon: Mail,
+    color: "text-green-500",
+  },
+  {
+    id: 2,
+    title: "New patient added",
+    time: "22 mins ago",
+    icon: UserPlus,
+    color: "text-green-500",
+  },
+  {
+    id: 3,
+    title: "Your leave is approved!",
+    time: "3 hours ago",
+    icon: Calendar,
+    color: "text-blue-500",
   },
 ];

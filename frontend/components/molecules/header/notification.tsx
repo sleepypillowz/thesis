@@ -1,78 +1,61 @@
-import { BellRing, Check } from "lucide-react";
-
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Switch } from "@/components/ui/switch";
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
+import { Bell, Clock } from "lucide-react";
+import { notifications } from "@/lib/placeholder-data";
 
-const notifications = [
-  {
-    title: "Your call has been confirmed.",
-    description: "1 hour ago",
-  },
-  {
-    title: "You have a new message!",
-    description: "1 hour ago",
-  },
-  {
-    title: "Your subscription is expiring soon!",
-    description: "2 hours ago",
-  },
-];
+export type NotificationType = {
+  id?: number;
+  title: string;
+  time: string;
+  icon: React.ElementType;
+  color: string;
+};
 
-type CardProps = React.ComponentProps<typeof Card>;
-
-export function Notification({ className, ...props }: CardProps) {
+const Notification = () => {
   return (
-    <Card className={cn("w-[380px]", className)} {...props}>
-      <CardHeader>
-        <CardTitle>Notifications</CardTitle>
-        <CardDescription>You have 3 unread messages.</CardDescription>
-      </CardHeader>
-      <CardContent className="grid gap-4">
-        <div className="flex items-center space-x-4 rounded-md border p-4">
-          <BellRing />
-          <div className="flex-1 space-y-1">
-            <p className="text-sm font-medium leading-none">
-              Push Notifications
-            </p>
-            <p className="text-sm text-muted-foreground">
-              Send notifications to device.
-            </p>
-          </div>
-          <Switch />
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" size="icon" className="rounded-full">
+          <Bell />
+          <span className="sr-only">Notification</span>
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent className="mx-4 w-64 p-0">
+        <div className="flex flex-row items-center justify-between p-4">
+          <span className="text-sm font-bold">Notifications</span>
+          <span className="cursor-pointer text-xs hover:underline">
+            Mark all as read
+          </span>
         </div>
-        <div>
-          {notifications.map((notification, index) => (
-            <div
-              key={index}
-              className="mb-4 grid grid-cols-[25px_1fr] items-start pb-4 last:mb-0 last:pb-0"
-            >
-              <span className="flex h-2 w-2 translate-y-1 rounded-full bg-sky-500" />
-              <div className="space-y-1">
-                <p className="text-sm font-medium leading-none">
-                  {notification.title}
-                </p>
-                <p className="text-sm text-muted-foreground">
-                  {notification.description}
-                </p>
+
+        {notifications.map((item) => (
+          <div
+            key={item.id}
+            className="card m-0 cursor-pointer rounded-none p-4 hover:bg-muted"
+          >
+            <div className="grid grid-cols-5 gap-4">
+              <div className="flex flex-col items-center justify-center">
+                <item.icon className={item.color} />
+              </div>
+
+              <div className="col-span-4 flex flex-col">
+                <span className="text-xs font-bold">{item.title}</span>
+                <div className="flex flex-row items-center space-x-1 text-muted-foreground">
+                  <Clock className="h-4 w-4" />
+
+                  <span className="text-xs">{item.time}</span>
+                </div>
               </div>
             </div>
-          ))}
-        </div>
-      </CardContent>
-      <CardFooter>
-        <Button className="w-full">
-          <Check /> Mark all as read
-        </Button>
-      </CardFooter>
-    </Card>
+          </div>
+        ))}
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
-}
+};
+
+export default Notification;

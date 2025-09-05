@@ -1,5 +1,5 @@
 import DarkModeToggle from "@/components/molecules/header/dark-mode-toggle";
-import Notification from "@/components/molecules/header/notification-dropdown";
+import Notification from "@/components/molecules/header/notification";
 import Profile from "@/components/molecules/header/profile";
 
 const Header = () => {
