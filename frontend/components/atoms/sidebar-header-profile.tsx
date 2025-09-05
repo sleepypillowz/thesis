@@ -1,23 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { getRole, getName } from "@/utils/auth"; // import both
+import { useRole } from "@/hooks/use-role";
+import { useName } from "@/hooks/use-name";
+import { Skeleton } from "../ui/skeleton";
 
 export default function SidebarHeaderProfile() {
-  const [role, setRole] = useState<string | null>(null);
-  const [name, setName] = useState<string | null>(null);
-
-  useEffect(() => {
-    const r = getRole();
-    setRole(r);
-
-    (async () => {
-      const n = await getName();
-      setName(n);
-    })();
-  }, []);
+  const role = useRole();
+  const name = useName();
 
   return (
     <>
@@ -44,11 +35,14 @@ export default function SidebarHeaderProfile() {
             height={64}
           />
         </div>
-
-        <span className="text-sm font-bold">{name ?? "Loading..."}</span>
-        <span className="text-xs font-semibold uppercase text-muted-foreground">
-          {role ?? "Loading..."}
-        </span>
+        <div className="flex flex-col items-center justify-center">
+          <span className="text-sm font-bold">
+            {name ?? <Skeleton className="mb-1 h-4 w-[80px]" />}
+          </span>
+          <span className="text-xs font-semibold uppercase text-muted-foreground">
+            {role ?? <Skeleton className="h-4 w-[60px]" />}
+          </span>
+        </div>
       </div>
     </>
   );
