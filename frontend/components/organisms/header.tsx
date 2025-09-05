@@ -10,7 +10,7 @@ const Header = () => {
         <div className="flex items-center justify-between">
           <div className="flex items-center justify-start rtl:justify-end">
             <Link href="/" className="ms-2 flex md:me-24">
-              <span className="ms-2 self-center whitespace-nowrap text-2xl font-semibold">
+              <span className="ms-2 self-center whitespace-nowrap text-3xl font-bold tracking-tight">
                 Malibiran Medical Clinic
               </span>
             </Link>
