@@ -9,14 +9,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "../../ui/button";
-import { LogOut, Moon, Sun, User } from "lucide-react";
-import { useTheme } from "next-themes";
+import { LogOut, User } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 
 const Profile = () => {
-  const { theme, setTheme } = useTheme();
   const router = useRouter();
   const [userName, setUserName] = useState(""); // store user's name
   const [loading, setLoading] = useState(true);
@@ -81,13 +79,6 @@ const Profile = () => {
         <DropdownMenuItem onClick={() => router.push("/user-profile")}>
           <User className="h-4 w-4" />
           Account
-        </DropdownMenuItem>
-        <DropdownMenuItem
-          onClick={() => setTheme(theme === "light" ? "dark" : "light")}
-        >
-          <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-          <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-          Toggle Theme
         </DropdownMenuItem>
         <DropdownMenuItem>
           <LogOut />

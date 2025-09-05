@@ -2,6 +2,7 @@ import Notification from "@/components/molecules/header/notification-dropdown";
 import Profile from "@/components/molecules/header/profile";
 import Username from "@/components/atoms/username";
 import Link from "next/link";
+import { DarkModeToggle } from "../molecules/header/dark-mode-toggle";
 
 const Header = () => {
   return (
@@ -21,6 +22,7 @@ const Header = () => {
                 <Username />
               </div>
               <div className="flex items-center space-x-2">
+                <DarkModeToggle />
                 <Notification />
                 <Profile />
               </div>
