@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Button } from "../components/ui/button";
 import { usePathname } from "next/navigation";
 import clsx from "clsx";
-import { DarkModeToggle } from "@/components/molecules/header/dark-mode-toggle";
+import DarkModeToggle from "@/components/molecules/header/dark-mode-toggle";
 
 const HeroHeader = () => {
   const pathname = usePathname();
