@@ -134,52 +134,54 @@ export function CrudTable<
   };
 
   // ---------- Columns ----------
-  // Computed "name" column for search filtering (hidden from UI).
-  // filterFn matches all tokens (case-insensitive), so "ali smi" matches "Alice Smith".
-  const nameColumn: ColumnDef<TData, string> = {
-    id: "name",
-    accessorFn: (row) => `${row.first_name} ${row.last_name}`.trim(),
-    header: "Name",
-    filterFn: (row, columnId, filterValue) => {
-      const value = String(filterValue || "")
-        .toLowerCase()
-        .trim();
-      if (!value) return true;
-      const tokens = value.split(/\s+/).filter(Boolean);
-      const full =
-        `${row.original.first_name} ${row.original.last_name}`.toLowerCase();
-      return tokens.every((t) => full.includes(t));
-    },
-  };
+  const allColumns = React.useMemo(() => {
+    // Computed "name" column for search filtering (hidden from UI).
+    // filterFn matches all tokens (case-insensitive), so "ali smi" matches "Alice Smith".
+    const nameColumn: ColumnDef<TData, string> = {
+      id: "name",
+      accessorFn: (row) => `${row.first_name} ${row.last_name}`.trim(),
+      header: "Name",
+      filterFn: (row, columnId, filterValue) => {
+        const value = String(filterValue || "")
+          .toLowerCase()
+          .trim();
+        if (!value) return true;
+        const tokens = value.split(/\s+/).filter(Boolean);
+        const full =
+          `${row.original.first_name} ${row.original.last_name}`.toLowerCase();
+        return tokens.every((t) => full.includes(t));
+      },
+    };
 
-  // Actions column
-  const actionsColumn: ColumnDef<TData> = {
-    id: "actions",
-    header: "Actions",
-    cell: ({ row }) => (
-      <div className="flex gap-2">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => startEdit(row.original)}
-        >
-          Edit
-        </Button>
-        <Button
-          variant="destructive"
-          size="sm"
-          onClick={() => handleDelete(row.original)}
-        >
-          Delete
-        </Button>
-      </div>
-    ),
-  };
+    // Actions column
+    const actionsColumn: ColumnDef<TData> = {
+      id: "actions",
+      header: "Actions",
+      cell: ({ row }) => (
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => startEdit(row.original)}
+          >
+            Edit
+          </Button>
+          <Button
+            variant="destructive"
+            size="sm"
+            onClick={() => handleDelete(row.original)}
+          >
+            Delete
+          </Button>
+        </div>
+      ),
+    };
 
-  const allColumns = React.useMemo(
-    () => [nameColumn, ...columns, actionsColumn] as ColumnDef<TData, TValue>[],
-    [columns]
-  );
+    return [nameColumn, ...columns, actionsColumn] as ColumnDef<
+      TData,
+      TValue
+    >[];
+  }, [columns]);
 
   const table = useReactTable({
     data: tableData,
