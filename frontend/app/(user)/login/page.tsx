@@ -47,24 +47,21 @@ export default function Home() {
                 imageLoaded
                   ? "opacity-100 translate-y-0"
                   : "opacity-0 translate-y-8"
-              }`}
+              } bg-black/50 rounded-2xl p-6`}
             >
-              <h2 className="mb-3 text-3xl font-bold">
-                Streamline Your Medical Practice
+              <h2 className="mb-3 text-3xl font-bold text-white">
+                Streamline Your Medical Experience
               </h2>
-              <p className="text-white/80">
-                MediTrakk helps you manage patient records, appointments, and
-                billing all in one place.
-              </p>
+              <p>MediTrakk helps you manage appointments.</p>
 
               <div className="mt-8 flex gap-4">
                 <div className="flex items-center gap-2">
-                  <div className="h-2 w-2 rounded-full bg-white/20"></div>
-                  <p className="text-sm text-white/70">Patient Management</p>
+                  <div className="h-2 w-2 rounded-full bg-primary"></div>
+                  <p className="text-sm">Patient Management</p>
                 </div>
                 <div className="flex items-center gap-2">
-                  <div className="h-2 w-2 rounded-full bg-white/20"></div>
-                  <p className="text-sm text-white/70">Secure Data</p>
+                  <div className="h-2 w-2 rounded-full bg-primary"></div>
+                  <p className="text-sm">Secure Data</p>
                 </div>
               </div>
             </div>
