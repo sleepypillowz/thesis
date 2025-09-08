@@ -1,6 +1,6 @@
 import DarkModeToggle from "@/components/molecules/header/dark-mode-toggle";
 import Notification from "@/components/molecules/header/notification";
-import Profile from "@/components/molecules/header/profile";
+import ProfileDropdown from "@/components/molecules/header/profile-dropdown";
 
 const Header = () => {
   return (
@@ -12,7 +12,7 @@ const Header = () => {
         <div className="space-x-1">
           <DarkModeToggle />
           <Notification />
-          <Profile />
+          <ProfileDropdown />
         </div>
       </div>
     </div>
