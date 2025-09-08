@@ -16,7 +16,16 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
-import { Facebook, ArrowRight, Loader2 } from "lucide-react";
+import {
+  Facebook,
+  ArrowRight,
+  Loader2,
+  User,
+  Shield,
+  Stethoscope,
+  Clipboard,
+} from "lucide-react";
+
 const formSchema = z.object({
   email: z.string().email({ message: "Invalid email" }),
   password: z.string().min(1, { message: "Required" }),
@@ -45,10 +54,10 @@ export function LoginForm({
   const watchEmail = form.watch("email");
   const watchPassword = form.watch("password");
   const isFormFilled = watchEmail.length > 0 && watchPassword.length > 0;
+
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
     try {
-      // 1) Log in and get tokens
       const loginRes = await fetch(
         `${process.env.NEXT_PUBLIC_API_BASE}/auth/jwt/create/`,
         {
@@ -68,7 +77,6 @@ export function LoginForm({
       localStorage.setItem("access", access);
       localStorage.setItem("refresh", refresh);
 
-      // 2) Fetch the current user’s info _synchronously_ before redirect
       const userRes = await fetch(
         `${process.env.NEXT_PUBLIC_API_BASE}/user/users/whoami/`,
         { headers: { Authorization: `Bearer ${access}` } }
@@ -76,7 +84,6 @@ export function LoginForm({
       if (!userRes.ok) throw new Error("Failed to fetch user");
       const { id, role, is_superuser } = await userRes.json();
 
-      // 3) Redirect based on role and ID
       if (is_superuser || role?.toLowerCase() === "admin") {
         window.location.href = "/admin";
       } else if (role?.toLowerCase() === "doctor") {
@@ -95,6 +102,39 @@ export function LoginForm({
     }
   }
 
+  const testAccounts = [
+    {
+      label: "General Doctor",
+      email: "generaldoctor@hospital.com",
+      password: "securepassword123",
+      icon: Stethoscope,
+    },
+    {
+      label: "Secretary",
+      email: "secretaryaccount@gmail.com",
+      password: "nVmTfEkCFeB3APi",
+      icon: Clipboard,
+    },
+    {
+      label: "On-Call Doctor",
+      email: "cardiologist@hospital.com",
+      password: "securepassword123",
+      icon: Shield,
+    },
+    {
+      label: "Admin",
+      email: "admin@gmail.com",
+      password: "10200922",
+      icon: User,
+    },
+  ];
+
+  // Autofill helper
+  const autoFill = (email: string, password: string) => {
+    form.setValue("email", email);
+    form.setValue("password", password);
+  };
+
   return (
     <div
       className={cn(
@@ -112,6 +152,25 @@ export function LoginForm({
       </div>
 
       <div className="bg-card p-6 shadow-lg">
+        {/* Autofill buttons */}
+        <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
+          {testAccounts.map((acc) => {
+            const Icon = acc.icon;
+            return (
+              <Button
+                key={acc.label}
+                type="button"
+                variant="outline"
+                onClick={() => autoFill(acc.email, acc.password)}
+                className="flex h-12 items-center justify-start gap-2 rounded-2xl border border-border/50 bg-muted/40 px-4 shadow-sm transition-all hover:scale-105 hover:bg-primary/10 hover:shadow-md"
+              >
+                <Icon className="h-5 w-5 text-primary" />
+                <span className="font-medium">{acc.label}</span>
+              </Button>
+            );
+          })}
+        </div>
+
         <Form {...form}>
           <form
             onSubmit={(e) => {
@@ -120,6 +179,7 @@ export function LoginForm({
             }}
             className="space-y-5"
           >
+            {/* Email */}
             <FormField
               control={form.control}
               name="email"
@@ -143,31 +203,13 @@ export function LoginForm({
                         {...field}
                       />
                     </FormControl>
-                    {field.value && (
-                      <div className="absolute right-3 top-4 text-green-500 opacity-100 transition-opacity duration-300">
-                        <svg
-                          width="16"
-                          height="16"
-                          viewBox="0 0 16 16"
-                          fill="none"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            d="M13.5 4.5L6.5 11.5L2.5 7.5"
-                            stroke="currentColor"
-                            strokeWidth="1.5"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          />
-                        </svg>
-                      </div>
-                    )}
                   </div>
                   <FormMessage className="mt-1 px-1 text-xs" />
                 </FormItem>
               )}
             />
 
+            {/* Password */}
             <FormField
               control={form.control}
               name="password"
@@ -192,18 +234,11 @@ export function LoginForm({
                     </FormControl>
                   </div>
                   <FormMessage className="mt-1 px-1 text-xs" />
-                  <div className="mt-1 flex justify-end">
-                    <a
-                      href="/forgot-password"
-                      className="text-xs font-medium text-primary transition-colors hover:text-primary/80"
-                    >
-                      Forgot password?
-                    </a>
-                  </div>
                 </FormItem>
               )}
             />
 
+            {/* Submit */}
             <Button
               type="submit"
               className={cn(
@@ -233,39 +268,6 @@ export function LoginForm({
             </Button>
           </form>
         </Form>
-
-        <div className="relative mb-4 mt-8">
-          <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-border/30" />
-          </div>
-          <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-card px-3 text-muted-foreground">
-              Or continue with
-            </span>
-          </div>
-        </div>
-
-        <Button
-          variant="outline"
-          className="h-12 w-full rounded-xl border-border/50 transition-all duration-300 hover:bg-accent/50"
-          type="button"
-        >
-          <div className="rounded-full bg-blue-500 p-1">
-            <Facebook className="h-6 w-6 fill-white text-white" />
-          </div>
-
-          <span>Facebook</span>
-        </Button>
-
-        <p className="mt-6 text-center text-sm text-muted-foreground">
-          Don&apos;t have an account?{" "}
-          <a
-            href="/register"
-            className="font-medium text-primary transition-colors hover:text-primary/80"
-          >
-            Sign up
-          </a>
-        </p>
       </div>
     </div>
   );
