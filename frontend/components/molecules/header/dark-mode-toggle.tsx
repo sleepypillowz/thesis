@@ -1,19 +1,32 @@
 "use client";
+
 import { useTheme } from "next-themes";
-import { Button } from "@/components/ui/button";
-import { Moon, Sun } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Sun, Moon } from "lucide-react";
 
 export default function DarkModeToggle() {
   const { theme, setTheme } = useTheme();
+  const isDark = theme === "dark";
 
   return (
-    <Button
-      variant="ghost"
-      onClick={() => setTheme(theme === "light" ? "dark" : "light")}
-      className="h-9 w-9 rounded-full"
+    <button
+      onClick={() => setTheme(isDark ? "light" : "dark")}
+      className="relative flex h-6 w-12 items-center rounded-full bg-gray-300 transition-colors duration-300 dark:bg-gray-600"
     >
-      <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-      <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-    </Button>
+      {/* Knob */}
+      <motion.div
+        className="absolute left-0 flex h-6 w-6 items-center justify-center rounded-full bg-white shadow-md"
+        animate={{
+          x: isDark ? 24 : 0, // slide knob
+        }}
+        transition={{ type: "spring", stiffness: 300, damping: 20 }}
+      >
+        {isDark ? (
+          <Moon className="h-3.5 w-3.5 text-gray-800" />
+        ) : (
+          <Sun className="h-3.5 w-3.5 text-yellow-500" />
+        )}
+      </motion.div>
+    </button>
   );
 }
