@@ -24,7 +24,7 @@ const Notification = () => {
           <span className="sr-only">Notification</span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="mx-4 w-64 p-0">
+      <DropdownMenuContent className="mr-4 w-64 p-0">
         <div className="flex flex-row items-center justify-between p-4">
           <span className="text-sm font-bold">Notifications</span>
           <span className="cursor-pointer text-xs hover:underline">
