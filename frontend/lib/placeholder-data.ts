@@ -4,7 +4,6 @@
 import { Doctor } from "@/components/molecules/tables/doctor-columns";
 import { Operation } from "@/app/admin/components/operation-columns";
 import { User } from "@/app/designer/columns";
-import { Patient } from "@/app/designer/patient-list/columns";
 import { Appointment } from "@/app/patient/(appointments)/columns";
 import { DocumentFile } from "@/app/patient/documents/columns";
 import { Prescription } from "@/app/patient/prescriptions/columns";
@@ -186,69 +185,6 @@ export const documents: DocumentFile[] = [
     created_at: "2025-08-20",
     updated_at: "2025-08-22",
     status: "active",
-  },
-];
-
-export const patients: Patient[] = [
-  {
-    patient_id: "1",
-    first_name: "John",
-    middle_name: "A.",
-    last_name: "Doe",
-    age: 32,
-    queue_data: [
-      { created_at: "2025-08-30T08:30:00Z", status: "Waiting", complaint: "Headache" },
-    ],
-  },
-  {
-    patient_id: "2",
-    first_name: "Maria",
-    middle_name: "B.",
-    last_name: "Santos",
-    age: 27,
-    queue_data: [
-      { created_at: "2025-08-30T09:00:00Z", status: "In Consultation", complaint: "Fever" },
-    ],
-  },
-  {
-    patient_id: "3",
-    first_name: "Carlos",
-    middle_name: "C.",
-    last_name: "Reyes",
-    age: 45,
-    queue_data: [
-      { created_at: "2025-08-30T09:15:00Z", status: "Waiting", complaint: "Back Pain" },
-    ],
-  },
-  {
-    patient_id: "4",
-    first_name: "Angela",
-    middle_name: "D.",
-    last_name: "Lopez",
-    age: 39,
-    queue_data: [
-      { created_at: "2025-08-30T09:30:00Z", status: "Done", complaint: "Cough" },
-    ],
-  },
-  {
-    patient_id: "5",
-    first_name: "David",
-    middle_name: "E.",
-    last_name: "Cruz",
-    age: 50,
-    queue_data: [
-      { created_at: "2025-08-30T09:45:00Z", status: "Waiting", complaint: "Chest Pain" },
-    ],
-  },
-  {
-    patient_id: "6",
-    first_name: "Sophia",
-    middle_name: "F.",
-    last_name: "Garcia",
-    age: 21,
-    queue_data: [
-      { created_at: "2025-08-30T10:00:00Z", status: "In Consultation", complaint: "Dizziness" },
-    ],
   },
 ];
 
