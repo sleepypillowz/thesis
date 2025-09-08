@@ -1,17 +1,19 @@
 "use client";
 
 import { useTheme } from "next-themes";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { Sun, Moon } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export default function DarkModeToggle() {
   const { theme, setTheme } = useTheme();
   const isDark = theme === "dark";
 
   return (
-    <button
+    <Button
+      variant="ghost"
       onClick={() => setTheme(isDark ? "light" : "dark")}
-      className="relative flex h-6 w-12 items-center rounded-full bg-gray-300 transition-colors duration-300 dark:bg-gray-600"
+      className="relative h-6 w-12 rounded-full bg-gray-300 transition-colors duration-300 dark:bg-gray-600"
     >
       {/* Knob */}
       <motion.div
@@ -27,6 +29,6 @@ export default function DarkModeToggle() {
           <Sun className="h-3.5 w-3.5 text-yellow-500" />
         )}
       </motion.div>
-    </button>
+    </Button>
   );
 }

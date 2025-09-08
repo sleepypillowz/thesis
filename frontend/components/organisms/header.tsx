@@ -9,8 +9,11 @@ const Header = () => {
         <span className="ms-2 whitespace-nowrap text-3xl font-bold tracking-tight">
           Malibiran Medical Clinic
         </span>
-        <div className="space-x-1">
-          <DarkModeToggle />
+        <div className="flex items-center space-x-1">
+          <div className="mr-2">
+            <DarkModeToggle />
+          </div>
+
           <Notification />
           <ProfileDropdown />
         </div>
