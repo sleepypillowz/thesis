@@ -1,15 +1,12 @@
 "use client";
 import { DataTable } from "@/components/ui/data-table";
-import { columns } from "./columns";
-import { SkeletonDataTable } from "@/components/atoms/custom-skeleton";
-import { api, useQuery } from "@/lib/api/patients";
+import { PatientColumns } from "./patient-columns";
+import usePatients from "@/hooks/use-patients";
 
 export default function PatientList() {
-  const patients = useQuery(api.patients.getPatients);
+  const patients = usePatients();
 
-  if (patients === undefined) {
-    return <SkeletonDataTable />;
-  }
-
-  return <DataTable title="Patients" columns={columns} data={patients ?? []} />;
+  return (
+    <DataTable title="Patients" columns={PatientColumns} data={patients} />
+  );
 }

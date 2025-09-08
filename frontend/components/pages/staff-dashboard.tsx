@@ -6,10 +6,14 @@ import StatsCard from "@/components/organisms/admin-stats-cards";
 import { VisitorsChart } from "@/components/organisms/charts/visitors-chart";
 import { CommonDiseasesChart } from "@/components/organisms/charts/common-diseases-chart";
 import { CommonMedicinesChart } from "@/components/organisms/charts/common-medicine-chart";
-import MedicalRecords from "@/components/pages/medical-records";
+import { PatientColumns } from "./patient-list/patient-columns";
+import { DashboardTable } from "../ui/dashboard-table";
+import TitleCard from "../molecules/title-card";
+import usePatients from "@/hooks/use-patients";
 
 export default function StaffDashboard() {
   const name = useName();
+  const patients = usePatients();
 
   return (
     <div className="m-6 space-y-4 text-center md:text-left">
@@ -40,7 +44,9 @@ export default function StaffDashboard() {
           <CommonMedicinesChart />
         </div>
       </div>
-      <MedicalRecords />
+      <TitleCard title="Patients">
+        <DashboardTable columns={PatientColumns} data={patients ?? []} />
+      </TitleCard>
     </div>
   );
 }
