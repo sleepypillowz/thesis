@@ -47,11 +47,6 @@ const menu_items = [
     url: "/designer/user-management",
     icon: Calendar,
   },
-  {
-    title: "Patient List",
-    url: "/designer/patient-list",
-    icon: Calendar,
-  },
 ];
 
 export default function DesignerSidebar() {
