@@ -44,22 +44,24 @@ export default function RegisterPage() {
               imageLoaded
                 ? "opacity-100 translate-y-0"
                 : "opacity-0 translate-y-8"
-            }`}
+            } bg-black/50 rounded-2xl p-6`}
           >
-            <h2 className="mb-3 text-3xl font-bold">Join MediTrakk Today</h2>
-            <p className="text-white/80">
+            <h2 className="mb-3 text-3xl font-bold text-white">
+              Join MediTrakk Today
+            </h2>
+            <p className="text-muted">
               Create an account to access patient records, appointments, and
               more.
             </p>
 
             <div className="mt-8 flex gap-4">
               <div className="flex items-center gap-2">
-                <div className="h-2 w-2 rounded-full bg-white/20" />
-                <p className="text-sm text-white/70">All-in-One Access</p>
+                <div className="h-2 w-2 rounded-full bg-primary" />
+                <p className="text-sm text-muted">All-in-One Access</p>
               </div>
               <div className="flex items-center gap-2">
-                <div className="h-2 w-2 rounded-full bg-white/20" />
-                <p className="text-sm text-white/70">Start in Minutes</p>
+                <div className="h-2 w-2 rounded-full bg-primary" />
+                <p className="text-sm text-muted">Start in Minutes</p>
               </div>
             </div>
           </div>
