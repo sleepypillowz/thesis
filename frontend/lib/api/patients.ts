@@ -1,61 +1,33 @@
-// utils/medical-record.ts
-import { useState, useEffect } from 'react';
+import { Patient } from "@/components/pages/patient-list/patient-columns";
 
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE;
+export async function getPatients(): Promise<Patient[]> {
+  const accessToken = localStorage.getItem("access");
 
-export interface patients {
-  name: string;
-  status: string;
-}
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_BASE}/patients/`,
+    {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    }
+  );
 
-// Generic fetch function with access token
-const fetchData = async <T>(endpoint: string): Promise<T> => {
-  const accessToken = localStorage.getItem("access"); // get token from localStorage
-
-  const response = await fetch(`${API_BASE}${endpoint}`, {
-    method: "GET",
-    headers: {
-      Authorization: `Bearer ${accessToken}`, // add token here
-      'Content-Type': 'application/json',   // optional but good practice
-    },
-  });
-  
   if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}`);
+    throw new Error("Failed to fetch patients");
   }
-  
-  return response.json();
-};
 
-// Generic useQuery hook
-const useQuery = <T>(queryFn: () => Promise<T>): T | null => {
-  const [data, setData] = useState<T | null>(null);
+  const patients: Patient[] = await response.json();
 
-  useEffect(() => {
-    const fetchDataAsync = async () => {
-      try {
-        console.log("Starting API call...");
-        const result = await queryFn();
-        console.log("API call successful:", result);
-        setData(result);
-      } catch (err) {
-        console.error("Detailed error:", err);
-        setData(null);
-      }
-    };
+  // sort by the latest created_at in queue_data
+  return patients.sort((a, b) => {
+    const aDate = a.queue_data.length
+      ? new Date(a.queue_data[a.queue_data.length - 1].created_at).getTime()
+      : 0;
+    const bDate = b.queue_data.length
+      ? new Date(b.queue_data[b.queue_data.length - 1].created_at).getTime()
+      : 0;
 
-    fetchDataAsync();
-  }, [queryFn]);
-
-  return data;
-};
-
-// API object
-export const api = {
-  patients: {
-    getPatients: () => fetchData<patients[]>("/patients/"),
-  },
-};
-
-// Export useQuery for easy usage
-export { useQuery };
+    return bDate - aDate; // newest first
+  });
+}

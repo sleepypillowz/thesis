@@ -8,7 +8,7 @@ export default function TitleCard({
   children: ReactNode;
 }) {
   return (
-    <div className="card m-6">
+    <div className="card">
       <h1 className="mb-6 font-bold">{title}</h1>
       {children}
     </div>

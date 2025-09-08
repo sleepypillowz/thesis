@@ -4,7 +4,7 @@
 import { Doctor } from "@/components/molecules/tables/doctor-columns";
 import { Operation } from "@/app/admin/components/operation-columns";
 import { User } from "@/app/designer/columns";
-import { Patient } from "@/app/designer/patient-list/columns";
+import { Patient } from "@/components/pages/patient-list/patient-columns";
 import { Appointment } from "@/app/patient/(appointments)/columns";
 import { DocumentFile } from "@/app/patient/documents/columns";
 import { Prescription } from "@/app/patient/prescriptions/columns";
