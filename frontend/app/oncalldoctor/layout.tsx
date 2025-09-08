@@ -3,7 +3,7 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import { AppSidebar } from "@/app/oncall-doctors/oncalldoctors-sidebar";
+import { AppSidebar } from "@/app/oncalldoctor/oncalldoctors-sidebar";
 import Header from "@/components/organisms/header";
 
 export default function Page({
