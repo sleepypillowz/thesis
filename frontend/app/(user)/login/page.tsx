@@ -52,16 +52,18 @@ export default function Home() {
               <h2 className="mb-3 text-3xl font-bold text-white">
                 Streamline Your Medical Experience
               </h2>
-              <p>MediTrakk helps you manage appointments.</p>
+              <p className="text-muted">
+                MediTrakk helps you manage appointments.
+              </p>
 
               <div className="mt-8 flex gap-4">
                 <div className="flex items-center gap-2">
                   <div className="h-2 w-2 rounded-full bg-primary"></div>
-                  <p className="text-sm">Patient Management</p>
+                  <p className="text-sm text-muted">Patient Management</p>
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="h-2 w-2 rounded-full bg-primary"></div>
-                  <p className="text-sm">Secure Data</p>
+                  <p className="text-sm text-muted">Secure Data</p>
                 </div>
               </div>
             </div>
