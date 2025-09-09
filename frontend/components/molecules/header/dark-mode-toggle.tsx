@@ -4,9 +4,18 @@ import { useTheme } from "next-themes";
 import { motion } from "framer-motion";
 import { Sun, Moon } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useEffect, useState } from "react";
 
 export default function DarkModeToggle() {
   const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) return null;
+
   const isDark = theme === "dark";
 
   return (
