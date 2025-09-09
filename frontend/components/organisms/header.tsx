@@ -10,10 +10,7 @@ const Header = () => {
           Malibiran Medical Clinic
         </span>
         <div className="flex items-center space-x-1">
-          <div className="mr-2">
-            <DarkModeToggle />
-          </div>
-
+          <DarkModeToggle />
           <Notification />
           <ProfileDropdown />
         </div>
