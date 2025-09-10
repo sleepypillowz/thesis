@@ -30,6 +30,7 @@ interface DataTableProps<TData, TValue> {
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Users } from "lucide-react";
 
 export function DataTable<TData, TValue>({
   columns,
@@ -54,16 +55,18 @@ export function DataTable<TData, TValue>({
   return (
     <div className="card m-6 space-y-6">
       <div className="flex items-center">
-        <h1 className="mr-4">{title}</h1>
-
-        <Input
-          placeholder="Search Name"
-          value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
-          onChange={(event) =>
-            table.getColumn("name")?.setFilterValue(event.target.value)
-          }
-          className="max-w-40 rounded-full"
-        />
+        <div className="flex flex-row items-center space-x-2">
+          <Users className="text-primary" />
+          <h1 className="font-bold">{title}</h1>
+          <Input
+            placeholder="Search Name"
+            value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
+            onChange={(event) =>
+              table.getColumn("name")?.setFilterValue(event.target.value)
+            }
+            className="max-w-40 rounded-[10px]"
+          />
+        </div>
       </div>
 
       <div className="overflow-hidden rounded-md border">
