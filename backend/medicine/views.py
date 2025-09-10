@@ -106,7 +106,8 @@ from sklearn.metrics import mean_squared_error, r2_score, mean_absolute_error
 from lightgbm import LGBMRegressor
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
+from statsforecast import StatsForecast
+from statsforecast.models import CrostonClassic
 
 class Predict(APIView):
     permission_classes = [IsMedicalStaff]
@@ -149,23 +150,38 @@ class Predict(APIView):
 
             
             sparsity = (group['quantity'] == 0).mean()
-            # if lots of zeroes, use crostons 
+            # if lots of zeroes, use crostons via StatsForcast
             # lgbm if regular demand
             if sparsity > 0.7:  # More than 70% zeros
-                # Croston's method for intermittent demand
+                # for intermittent demand
                 non_zero = group[group['quantity'] > 0]
                 if len(non_zero) > 1:
-                    # Average demand size  
-                    demand_size = non_zero['quantity'].mean()
-                    # Forecast
-                    forecast = [float(demand_size)] * 3
+                    
+                    sf_df = group.reset_index(names='month')[['month', 'quantity']].rename(
+                        columns={'month':'ds', 'quantity':'y'}
+                    )
+                    sf_df['unique_id'] = medicine_id
+                    sf = StatsForecast(
+                        models=[CrostonClassic()], 
+                        freq='M',
+                        n_jobs=-1 # use all cpu
+                    )
+                    
+                    forecast = sf.forecast(df=sf_df,h=3)
+                    forecast = forecast['CrostonClassic'].tolist()
+                    
+                    # fitted = sf.fitted_[0]
+                    # sf_df['yhat'] = fitted
+                    
+                    # mse = mean_squared_error(sf_df['y'], sf_df['yhat'])
+                    # accuracy = 100/len(y) * np.sum(2 * np.abs(sf_df['yhat'] - y) / (np.abs(y) + np.abs(sf_df['yhat'])))
+                    # r2 = r2_score(sf_df['y'], sf_df['yhat'])
                     mse, r2, accuracy = None, None, None
                 else:
                     forecast = [0] * 3
                     mse, r2, accuracy = None, None, None
             else:
-                # Prepare features without leakage
-                group = group.reset_index()
+                group = group.reset_index()  
                 group['month_index'] = range(len(group))
                 group['lag_1'] = group['quantity'].shift(1)
                 group['lag_2'] = group['quantity'].shift(2)
@@ -212,7 +228,7 @@ class Predict(APIView):
                     try:
                         mape = mean_absolute_error(y_test, preds) / np.mean(y_test)
                         accuracy = float(1 - mape) if not np.isnan(mape) else None
-                    except:
+                    except: 
                         accuracy = None
                 
                 # Iterative forecasting
@@ -256,7 +272,8 @@ class Predict(APIView):
             
         return Response({'results': results})
         
-
+def interminent_prediction():
+    ...
 # # views.py
 # import random
 # from datetime import date, timedelta

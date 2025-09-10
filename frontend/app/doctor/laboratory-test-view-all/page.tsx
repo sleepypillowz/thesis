@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useEffect, useState, useMemo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -12,7 +13,7 @@ interface LabResult {
   submitted_by: string;
 }
 
-const LabResultsPage = () => {
+const LabResultsPage: React.FC = () => {
   const [labResults, setLabResults] = useState<LabResult[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -48,9 +49,7 @@ const LabResultsPage = () => {
         const data = await response.json();
         setLabResults(data.lab_results || []);
       } catch (err) {
-        setError(
-          err instanceof Error ? err.message : "An unknown error occurred"
-        );
+        setError(err instanceof Error ? err.message : "An unknown error occurred");
       } finally {
         setLoading(false);
       }
@@ -59,190 +58,105 @@ const LabResultsPage = () => {
     fetchLabResults();
   }, []);
 
-  // Calculate date ranges
+  // Calculate date ranges (currentPeriodResults, recentResults, periodLabel)
   const { currentPeriodResults, recentResults, periodLabel } = useMemo(() => {
     const now = new Date();
-    
-    // Weekly view calculations
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+    sevenDaysAgo.setHours(0, 0, 0, 0);
+
     if (viewMode === "weekly") {
-      // Start of week (Monday)
+      // Determine Monday as start of week (adjust if Sunday)
       const startOfWeek = new Date(now);
-      startOfWeek.setDate(now.getDate() - now.getDay() + (now.getDay() === 0 ? -6 : 1));
+      const day = startOfWeek.getDay();
+      const diffToMonday = day === 0 ? -6 : 1 - day; // Sunday -> previous Monday
+      startOfWeek.setDate(startOfWeek.getDate() + diffToMonday);
       startOfWeek.setHours(0, 0, 0, 0);
-      
-      // End of week (Sunday)
+
       const endOfWeek = new Date(startOfWeek);
       endOfWeek.setDate(startOfWeek.getDate() + 6);
       endOfWeek.setHours(23, 59, 59, 999);
-      
-      const currentResults = labResults.filter(result => {
+
+      const currentResults = labResults.filter((result) => {
         const uploadedDate = new Date(result.uploaded_at);
         return uploadedDate >= startOfWeek && uploadedDate <= endOfWeek;
       });
-      
+
+      const recent = labResults.filter((result) => {
+        const uploadedDate = new Date(result.uploaded_at);
+        return uploadedDate >= sevenDaysAgo;
+      });
+
+      const label = `Week of ${startOfWeek.toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+      })} - ${endOfWeek.toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+      })}`;
+
       return {
         currentPeriodResults: currentResults,
-        recentResults: labResults.filter(result => {
-          const uploadedDate = new Date(result.uploaded_at);
-          return uploadedDate >= new Date(now.setDate(now.getDate() - 7));
-        }),
-        periodLabel: `Week of ${startOfWeek.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${endOfWeek.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`
+        recentResults: recent,
+        periodLabel: label,
       };
-    } 
-    // Monthly view calculations
-    else {
-      // First day of month
+    } else {
+      // Monthly view
       const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-      
-      // Last day of month
       const lastDayOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
       lastDayOfMonth.setHours(23, 59, 59, 999);
-      
-      const currentResults = labResults.filter(result => {
+
+      const currentResults = labResults.filter((result) => {
         const uploadedDate = new Date(result.uploaded_at);
         return uploadedDate >= firstDayOfMonth && uploadedDate <= lastDayOfMonth;
       });
-      
-      return {
-        currentPeriodResults: currentResults,
-        recentResults: labResults.filter(result => {
-          const uploadedDate = new Date(result.uploaded_at);
-          return uploadedDate >= new Date(now.setDate(now.getDate() - 7));
-        }),
-        periodLabel: new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
-      };
-    }
-  }, [labResults, viewMode]);
 
-  // Group results by month for monthly view
-  const groupedResults = useMemo(() => {
-    if (viewMode !== "monthly") return [];
-    
-    const groups: Record<string, LabResult[]> = {};
-    
-    // Create a copy and sort by date descending (most recent first)
-    const sortedResults = [...labResults].sort((a, b) => 
-      new Date(b.uploaded_at).getTime() - new Date(a.uploaded_at).getTime()
-    );
-    
-    sortedResults.forEach(result => {
-      const date = new Date(result.uploaded_at);
-      const monthKey = date.toLocaleDateString('en-US', { 
-        month: 'long', 
-        year: 'numeric' 
-      });
-      
-      if (!groups[monthKey]) {
-        groups[monthKey] = [];
-      }
-      
-      groups[monthKey].push(result);
-    });
-    
-    // Sort groups by month (most recent first)
-    return Object.entries(groups)
-      .sort(([aKey], [bKey]) => 
-        new Date(bKey).getTime() - new Date(aKey).getTime()
-      )
-      .map(([month, results]) => ({ month, results }));
-  }, [labResults, viewMode]);
-
-    // Weekly view calculations
-    if (viewMode === "weekly") {
-      // Start of week (Monday)
-      const startOfWeek = new Date(now);
-      startOfWeek.setDate(
-        now.getDate() - now.getDay() + (now.getDay() === 0 ? -6 : 1)
-      );
-      startOfWeek.setHours(0, 0, 0, 0);
-
-      // End of week (Sunday)
-      const endOfWeek = new Date(startOfWeek);
-      endOfWeek.setDate(startOfWeek.getDate() + 6);
-      endOfWeek.setHours(23, 59, 59, 999);
-
-      const currentResults = labResults.filter((result) => {
+      const recent = labResults.filter((result) => {
         const uploadedDate = new Date(result.uploaded_at);
-        return uploadedDate >= startOfWeek && uploadedDate <= endOfWeek;
+        return uploadedDate >= sevenDaysAgo;
       });
 
-      return {
-        currentPeriodResults: currentResults,
-        recentResults: labResults.filter((result) => {
-          const uploadedDate = new Date(result.uploaded_at);
-          return uploadedDate >= new Date(now.setDate(now.getDate() - 7));
-        }),
-        periodLabel: `Week of ${startOfWeek.toLocaleDateString("en-US", {
-          month: "short",
-          day: "numeric",
-        })} - ${endOfWeek.toLocaleDateString("en-US", {
-          month: "short",
-          day: "numeric",
-        })}`,
-      };
-    }
-    // Monthly view calculations
-    else {
-      // First day of month
-      const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-
-      // Last day of month
-      const lastDayOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
-      lastDayOfMonth.setHours(23, 59, 59, 999);
-
-      const currentResults = labResults.filter((result) => {
-        const uploadedDate = new Date(result.uploaded_at);
-        return (
-          uploadedDate >= firstDayOfMonth && uploadedDate <= lastDayOfMonth
-        );
-      });
-
-      return {
-        currentPeriodResults: currentResults,
-        recentResults: labResults.filter((result) => {
-          const uploadedDate = new Date(result.uploaded_at);
-          return uploadedDate >= new Date(now.setDate(now.getDate() - 7));
-        }),
-        periodLabel: new Date().toLocaleDateString("en-US", {
-          month: "long",
-          year: "numeric",
-        }),
-      };
-    }
-  }, [labResults, viewMode]);
-
-  // Group results by month for monthly view
-  const groupedResults = useMemo(() => {
-    if (viewMode !== "monthly") return [];
-
-    const groups: Record<string, LabResult[]> = {};
-
-    // Create a copy and sort by date descending (most recent first)
-    const sortedResults = [...labResults].sort(
-      (a, b) =>
-        new Date(b.uploaded_at).getTime() - new Date(a.uploaded_at).getTime()
-    );
-
-    sortedResults.forEach((result) => {
-      const date = new Date(result.uploaded_at);
-      const monthKey = date.toLocaleDateString("en-US", {
+      const label = new Date().toLocaleDateString("en-US", {
         month: "long",
         year: "numeric",
       });
 
-      if (!groups[monthKey]) {
-        groups[monthKey] = [];
+      return {
+        currentPeriodResults: currentResults,
+        recentResults: recent,
+        periodLabel: label,
+      };
+    }
+  }, [labResults, viewMode]);
+
+  // Group results by month for monthly view (sorted by most recent month first)
+  const groupedResults = useMemo(() => {
+    if (viewMode !== "monthly") return [] as { month: string; results: LabResult[] }[];
+
+    // Use a Map keyed by YYYY-MM to avoid ambiguous string parsing issues
+    const groups = new Map<string, { label: string; results: LabResult[] }>();
+
+    const sortedResults = [...labResults].sort(
+      (a, b) => new Date(b.uploaded_at).getTime() - new Date(a.uploaded_at).getTime()
+    );
+
+    for (const result of sortedResults) {
+      const d = new Date(result.uploaded_at);
+      const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`; // YYYY-MM
+      const label = d.toLocaleDateString("en-US", { month: "long", year: "numeric" });
+
+      if (!groups.has(key)) {
+        groups.set(key, { label, results: [] });
       }
+      groups.get(key)!.results.push(result);
+    }
 
-      groups[monthKey].push(result);
-    });
+    // Convert to array sorted by key descending (most recent first)
+    const entries = Array.from(groups.entries())
+      .sort(([aKey], [bKey]) => (aKey < bKey ? 1 : -1))
+      .map(([_, value]) => ({ month: value.label, results: value.results }));
 
-    // Sort groups by month (most recent first)
-    return Object.entries(groups)
-      .sort(
-        ([aKey], [bKey]) => new Date(bKey).getTime() - new Date(aKey).getTime()
-      )
-      .map(([month, results]) => ({ month, results }));
+    return entries;
   }, [labResults, viewMode]);
 
   // Loading state
@@ -276,10 +190,7 @@ const LabResultsPage = () => {
         <Card className="border-0 shadow-sm">
           <CardContent className="space-y-4 p-6">
             {[...Array(5)].map((_, i) => (
-              <div
-                key={i}
-                className="flex items-center justify-between border-b pb-4"
-              >
+              <div key={i} className="flex items-center justify-between border-b pb-4">
                 <Skeleton className="h-4 w-1/5" />
                 <Skeleton className="h-4 w-1/5" />
                 <Skeleton className="h-4 w-1/5" />
@@ -300,27 +211,13 @@ const LabResultsPage = () => {
         <div className="rounded-md border-l-4 border-red-500 bg-red-50 p-4">
           <div className="flex">
             <div className="flex-shrink-0">
-              <svg
-                className="h-5 w-5 text-red-400"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-                  clipRule="evenodd"
-                />
+              <svg className="h-5 w-5 text-red-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
               </svg>
             </div>
             <div className="ml-3">
-              <p className="text-sm text-red-700">
-                Error loading lab results: {error}
-              </p>
-              <button
-                onClick={() => window.location.reload()}
-                className="mt-2 text-sm font-medium text-red-700 hover:text-red-600"
-              >
+              <p className="text-sm text-red-700">Error loading lab results: {error}</p>
+              <button onClick={() => window.location.reload()} className="mt-2 text-sm font-medium text-red-700 hover:text-red-600">
                 Try again →
               </button>
             </div>
@@ -342,13 +239,13 @@ const LabResultsPage = () => {
             <div>
               <h1 className="text-3xl font-bold text-gray-900">Lab Results</h1>
               <p className="text-gray-600 mt-1">
-                {viewMode === "monthly" 
+                {viewMode === "monthly"
                   ? `Viewing results for ${periodLabel}`
                   : `Viewing recent results from the last 7 days`}
               </p>
             </div>
           </div>
-          
+
           <div className="flex items-center space-x-4">
             <span className="text-sm font-medium text-gray-700">View:</span>
             <div className="inline-flex rounded-md shadow-sm" role="group">
@@ -356,9 +253,7 @@ const LabResultsPage = () => {
                 type="button"
                 onClick={() => setViewMode("monthly")}
                 className={`px-4 py-2 text-sm font-medium rounded-l-lg ${
-                  viewMode === "monthly"
-                    ? "bg-blue-600 text-white"
-                    : "bg-white text-gray-700 hover:bg-gray-100"
+                  viewMode === "monthly" ? "bg-blue-600 text-white" : "bg-white text-gray-700 hover:bg-gray-100"
                 }`}
               >
                 Monthly
@@ -367,9 +262,7 @@ const LabResultsPage = () => {
                 type="button"
                 onClick={() => setViewMode("weekly")}
                 className={`px-4 py-2 text-sm font-medium rounded-r-md ${
-                  viewMode === "weekly"
-                    ? "bg-blue-600 text-white"
-                    : "bg-white text-gray-700 hover:bg-gray-100"
+                  viewMode === "weekly" ? "bg-blue-600 text-white" : "bg-white text-gray-700 hover:bg-gray-100"
                 }`}
               >
                 Weekly
@@ -384,12 +277,8 @@ const LabResultsPage = () => {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">
-                    Total Results
-                  </p>
-                  <p className="text-2xl font-bold text-gray-900">
-                    {labResults.length}
-                  </p>
+                  <p className="text-sm font-medium text-gray-600">Total Results</p>
+                  <p className="text-2xl font-bold text-gray-900">{labResults.length}</p>
                 </div>
                 <div className="rounded-full bg-blue-100 p-3">
                   <FileText className="h-6 w-6 text-blue-600" />
@@ -402,17 +291,9 @@ const LabResultsPage = () => {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">
-                    {viewMode === "monthly" ? "This Month" : "This Week"}
-                  </p>
+                  <p className="text-sm font-medium text-gray-600">{viewMode === "monthly" ? "This Month" : "This Week"}</p>
                   <p className="text-2xl font-bold text-gray-900">{currentPeriodResults.length}</p>
-                  <p className="text-xs text-gray-500 mt-1">
-                    {periodLabel}
-                  </p>
-                  <p className="text-2xl font-bold text-gray-900">
-                    {currentPeriodResults.length}
-                  </p>
-                  <p className="mt-1 text-xs text-gray-500">{periodLabel}</p>
+                  <p className="text-xs text-gray-500 mt-1">{periodLabel}</p>
                 </div>
                 <div className="rounded-full bg-green-100 p-3">
                   <Calendar className="h-6 w-6 text-green-600" />
@@ -425,17 +306,11 @@ const LabResultsPage = () => {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">
-                    Recent (7 days)
-                  </p>
-                  <p className="text-2xl font-bold text-gray-900">
-                    {recentResults.length}
-                  </p>
+                  <p className="text-sm font-medium text-gray-600">Recent (7 days)</p>
+                  <p className="text-2xl font-bold text-gray-900">{recentResults.length}</p>
                   <p className="mt-1 text-xs text-gray-500">
                     Since{" "}
-                    {new Date(
-                      new Date().setDate(new Date().getDate() - 7)
-                    ).toLocaleDateString("en-US", {
+                    {new Date(new Date().setDate(new Date().getDate() - 7)).toLocaleDateString("en-US", {
                       month: "short",
                       day: "numeric",
                     })}
@@ -455,14 +330,10 @@ const LabResultsPage = () => {
             <div className="px-6 py-4 border-b border-gray-200 bg-gray-50">
               <div className="flex justify-between items-center">
                 <h2 className="text-lg font-semibold text-gray-900">
-                  {viewMode === "monthly" 
-                    ? "All Lab Results" 
-                    : "Recent Lab Results (Last 7 Days)"}
+                  {viewMode === "monthly" ? "All Lab Results" : "Recent Lab Results (Last 7 Days)"}
                 </h2>
                 <div className="text-sm text-gray-500">
-                  {viewMode === "monthly" 
-                    ? `Showing ${labResults.length} results` 
-                    : `Showing ${recentResults.length} recent results`}
+                  {viewMode === "monthly" ? `Showing ${labResults.length} results` : `Showing ${recentResults.length} recent results`}
                 </div>
               </div>
             </div>
@@ -471,21 +342,11 @@ const LabResultsPage = () => {
               <table className="w-full">
                 <thead className="border-b border-gray-200 bg-gray-50">
                   <tr>
-                    <th className="px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                      Result ID
-                    </th>
-                    <th className="px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                      Requested By
-                    </th>
-                    <th className="px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                      Submitted By
-                    </th>
-                    <th className="px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                      Upload Date
-                    </th>
-                    <th className="px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                      Status
-                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Result ID</th>
+                    <th className="px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Requested By</th>
+                    <th className="px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Submitted By</th>
+                    <th className="px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Upload Date</th>
+                    <th className="px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Status</th>
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
@@ -499,13 +360,13 @@ const LabResultsPage = () => {
                               {group.month}
                             </td>
                           </tr>
-                          
+
                           {/* Results for this month */}
                           {group.results.map((result) => (
-                            <ResultRow 
-                              key={result.id} 
-                              result={result} 
-                              isCurrentPeriod={currentPeriodResults.some(r => r.id === result.id)}
+                            <ResultRow
+                              key={result.id}
+                              result={result}
+                              isCurrentPeriod={currentPeriodResults.some((r) => r.id === result.id)}
                               viewMode={viewMode}
                             />
                           ))}
@@ -520,14 +381,12 @@ const LabResultsPage = () => {
                     )
                   ) : recentResults.length > 0 ? (
                     recentResults
-                      .sort((a, b) => 
-                        new Date(b.uploaded_at).getTime() - new Date(a.uploaded_at).getTime()
-                      )
+                      .sort((a, b) => new Date(b.uploaded_at).getTime() - new Date(a.uploaded_at).getTime())
                       .map((result) => (
-                        <ResultRow 
-                          key={result.id} 
-                          result={result} 
-                          isCurrentPeriod={currentPeriodResults.some(r => r.id === result.id)}
+                        <ResultRow
+                          key={result.id}
+                          result={result}
+                          isCurrentPeriod={currentPeriodResults.some((r) => r.id === result.id)}
                           viewMode={viewMode}
                         />
                       ))
@@ -549,22 +408,22 @@ const LabResultsPage = () => {
 };
 
 // Result row component
-const ResultRow = ({ 
-  result, 
+const ResultRow = ({
+  result,
   isCurrentPeriod,
-  viewMode
-}: { 
+  viewMode,
+}: {
   result: LabResult;
   isCurrentPeriod: boolean;
   viewMode: "weekly" | "monthly";
 }) => {
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short', 
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     });
   };
 
@@ -572,9 +431,9 @@ const ResultRow = ({
   const now = new Date();
   const sevenDaysAgo = new Date();
   sevenDaysAgo.setDate(now.getDate() - 7);
-  
+
   const isRecent = uploadedDate >= sevenDaysAgo;
-  
+
   return (
     <tr className="hover:bg-gray-50 transition-colors duration-150">
       <td className="px-6 py-4 whitespace-nowrap">
@@ -582,42 +441,36 @@ const ResultRow = ({
           <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
             {result.id.slice(0, 8)}...
           </Badge>
-          {isRecent && (
-            <Badge className="bg-yellow-100 text-yellow-800 text-xs">
-              New
-            </Badge>
-          )}
+          {isRecent && <Badge className="bg-yellow-100 text-yellow-800 text-xs">New</Badge>}
         </div>
       </td>
+
       <td className="px-6 py-4 whitespace-nowrap">
         <div className="flex items-center space-x-2">
           <User className="h-4 w-4 text-gray-400" />
           <span className="text-sm font-medium text-gray-900">{result.requested_by}</span>
         </div>
       </td>
+
       <td className="px-6 py-4 whitespace-nowrap">
         <div className="flex items-center space-x-2">
           <User className="h-4 w-4 text-gray-400" />
           <span className="text-sm text-gray-600">{result.submitted_by}</span>
         </div>
       </td>
+
       <td className="px-6 py-4 whitespace-nowrap">
         <div className="flex items-center space-x-2">
           <Calendar className="h-4 w-4 text-gray-400" />
-          <span className={`text-sm ${isCurrentPeriod ? 'font-medium text-gray-900' : 'text-gray-600'}`}>
+          <span className={`text-sm ${isCurrentPeriod ? "font-medium text-gray-900" : "text-gray-600"}`}>
             {formatDate(result.uploaded_at)}
           </span>
-          {isCurrentPeriod && viewMode === "monthly" && (
-            <Badge className="bg-green-100 text-green-800 text-xs">
-              This Month
-            </Badge>
-          )}
+          {isCurrentPeriod && viewMode === "monthly" && <Badge className="bg-green-100 text-green-800 text-xs">This Month</Badge>}
         </div>
       </td>
+
       <td className="px-6 py-4 whitespace-nowrap">
-        <Badge className="bg-green-100 text-green-800 hover:bg-green-200">
-          Completed
-        </Badge>
+        <Badge className="bg-green-100 text-green-800 hover:bg-green-200">Completed</Badge>
       </td>
     </tr>
   );
@@ -628,13 +481,9 @@ const NoResults = ({ viewMode }: { viewMode: "weekly" | "monthly" }) => (
   <div className="flex flex-col items-center justify-center">
     <FileText className="h-12 w-12 text-gray-400 mb-4" />
     <h3 className="text-lg font-medium text-gray-900 mb-2">
-      {viewMode === "monthly" 
-        ? "No lab results found for this month" 
-        : "No recent lab results found"}
+      {viewMode === "monthly" ? "No lab results found for this month" : "No recent lab results found"}
     </h3>
-    <p className="text-gray-600 max-w-md">
-      Your lab results will appear here once they become available.
-    </p>
+    <p className="text-gray-600 max-w-md">Your lab results will appear here once they become available.</p>
   </div>
 );
 

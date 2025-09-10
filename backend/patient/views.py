@@ -42,17 +42,27 @@ class PatientListView(APIView):
 
     def get(self, request):
         try:
-            response = supabase.table("patient_patient").select(
-                "*, queueing_temporarystoragequeue(id, status, created_at, priority_level, queue_number, complaint)"
-            ).execute()
+            role = getattr(request.user, "role", None)
+            print(role)
+            user_id = request.user.id
+            print(user_id)
+            if role == "doctor" and user_id != "LFG4YJ2P" :
+                response = supabase.table("queueing_treatment").select(
+                    "patient_patient(*, queueing_temporarystoragequeue(id, status, created_at, priority_level, queue_number, complaint))"
+                ).eq("doctor_id",user_id).execute()
+                
+                patients = [t["patient_patient"] for t in response.data if "patient_patient" in t]
+            elif role in ["secretary", "admin"] or user_id == "LFG4YJ2P":
+                response = (
+                    supabase.table("patient_patient").select("*, queueing_temporarystoragequeue(id, status, created_at, priority_level, queue_number, complaint)").execute()
+                )
+                patients = response.data
+            else: 
+                return Response(
+                    {"error": "Unauthorized role"}, 
+                    status=status.HTTP_403_FORBIDDEN
+                )
 
-            print('Full response:', response)
-
-            if hasattr(response, 'error') and response.error:
-                error_msg = getattr(response.error, 'message', 'Unknown error')
-                return Response({"error": error_msg}, status=status.HTTP_400_BAD_REQUEST)
-
-            patients = response.data if hasattr(response, 'data') else response
 
             for patient in patients:
                 patient_id = patient.get('id', 'unknown')
