@@ -52,7 +52,7 @@ POST http://localhost:8000/auth/jwt/create/
 Content-Type: application/json
 
 {
-  "email": "ent@hospital.com",
+  "email": "cardiologist@hospital.com",
   "password": "securepassword123"
 }
 
@@ -73,63 +73,8 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiY
 GET    http://localhost:8000/medicine/predict/  
 Content-Type: application/json  
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzU5NzU3NjYxLCJpYXQiOjE3NTE5ODE2NjEsImp0aSI6IjVmZDRkYzNlYzMwYzQzNjFhYmEwMDllOTM4ZTQ1ZTY1IiwidXNlcl9pZCI6IkVFMkRZWFlZIiwiaXNfc3RhZmYiOmZhbHNlLCJpc19zdXBlcnVzZXIiOmZhbHNlLCJlbWFpbCI6InNlY3JldGFyeWFjY291bnRAZ21haWwuY29tIiwicm9sZSI6InNlY3JldGFyeSIsImZpcnN0X25hbWUiOiJMYXlsYSJ9.3uv35HQBPiH6_MocJNdehvFq8LfblguBaiV2o5QTnGk 
-### secretary request
-GET   http://localhost:8000/patient/lab-request/list/
-Content-Type: application/json  
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzU5MjMzNDc3LCJpYXQiOjE3NTE0NTc0NzcsImp0aSI6ImMzMzdmNmZjNGExMjQwNGNiNjNkOTM4NjgyZDM3M2M0IiwidXNlcl9pZCI6IkVFMkRZWFlZIiwiaXNfc3RhZmYiOmZhbHNlLCJpc19zdXBlcnVzZXIiOmZhbHNlLCJlbWFpbCI6InNlY3JldGFyeWFjY291bnRAZ21haWwuY29tIiwicm9sZSI6InNlY3JldGFyeSIsImZpcnN0X25hbWUiOiJMYXlsYSJ9.6OTEj1APoZGQI-S5XLxC5bOiM_RuH0EbovNLoIZpoL4
-
-### lab result upload 
-POST http://127.0.0.1:8000/patient/lab-result/
-Content-Type: application/json  
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ5MDUwNjEzLCJpYXQiOjE3NDEyNzQ2MTMsImp0aSI6ImY2YmVjMzZlMDAwOTRjZDZiNzY0MzdiYzYyNjQwNTE5IiwidXNlcl9pZCI6IlFZQUVNTzFTIiwiaXNfc3RhZmYiOmZhbHNlLCJpc19zdXBlcnVzZXIiOmZhbHNlLCJlbWFpbCI6ImxhbmFyb2Fkc0BnbWFpbC5jb20iLCJyb2xlIjoic2VjcmV0YXJ5IiwiZmlyc3RfbmFtZSI6IkxhbmEifQ.yvWdYyi0wIEQzPH0yx76idufa7wNO54_tnMtv5EHO6E
-
-{
-  "lab_request": "V2QXR4TL",
-  "image": "penis-fracture.png",
-}
-
-### Secretary req
-GET http://127.0.0.1:8000/appointment/doctor-schedule/KWPBL7OT
-Content-Type: application/json  
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzUwOTAyNDUxLCJpYXQiOjE3NDMxMjY0NTEsImp0aSI6ImYwM2U5N2Q4N2RkMjRjYjBiOWViODBkNGY0MjYzODEzIiwidXNlcl9pZCI6IkVFMkRZWFlZIiwiaXNfc3RhZmYiOmZhbHNlLCJpc19zdXBlcnVzZXIiOmZhbHNlLCJlbWFpbCI6InNlY3JldGFyeWFjY291bnRAZ21haWwuY29tIiwicm9sZSI6InNlY3JldGFyeSIsImZpcnN0X25hbWUiOiJTZWNyZXRhcnkifQ.fmqLJ07u7BSLqLruWF8EwMrAzem-O5UZJidmG--uB6k
-
-
 ### doctor request
-GET http://localhost:8000//patient/patient-info/ninas-02000105/
+GET   http://localhost:8000/patients/
 Content-Type: application/json  
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzYxNzUxNDUwLCJpYXQiOjE3NTM5NzU0NTAsImp0aSI6IjU1MTY3ZDc0MDFkMjQxOWNhOTJjMjc3YmNjMmUzZGE1IiwidXNlcl9pZCI6IktXUEJMN09UIiwiaXNfc3RhZmYiOmZhbHNlLCJpc19zdXBlcnVzZXIiOmZhbHNlLCJlbWFpbCI6ImVudEBob3NwaXRhbC5jb20iLCJyb2xlIjoiZG9jdG9yIiwiZmlyc3RfbmFtZSI6IkpvaG4ifQ.oM9gA9ryl17rc3PUMdrLFH_jz2GeBuYt_cE1iTKJj-4
-
-{
-  "patient": "6ND1F8G3",
-  "receiving_doctor": "P0BH5G3X",
-  "reason": "Specialized cardiology consultation required.",
-  "notes": "Patient has a history of heart disease and requires further evaluation."
-}
-
-
-### Batch Confirm Dispense for Multiple Prescriptions
-POST http://localhost:8000/appointment-referral/
-Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzU0MTYyMzA3LCJpYXQiOjE3NDYzODYzMDcsImp0aSI6IjIwZDI4OTQyMGFmYzQ5ZmI5ZjcyZWI2ZTNiNzIxYWQzIiwidXNlcl9pZCI6IkxGRzRZSjJQIiwiaXNfc3RhZmYiOmZhbHNlLCJpc19zdXBlcnVzZXIiOmZhbHNlLCJlbWFpbCI6ImdlbmVyYWxkb2N0b3JAaG9zcGl0YWwuY29tIiwicm9sZSI6ImRvY3RvciIsImZpcnN0X25hbWUiOiJKYW5lIn0.dLDoACgZQSwdP_s6JeHawMORmmm5vO76XMkyt_K9OoM
-
-[
-  {
-    "patient": "6ND1F8G3",
-    "receiving_doctor": "EZQC2ST0",
-    "reason": "Routine cardiac evaluation",
-    "notes": "Patient experiences occasional chest tightness during exertion"
-  },
-  {
-    "patient": "6ND1F8G3",
-    "receiving_doctor": "KWPBL7OT",
-    "reason": "ENT assessment for chronic sinusitis",
-    "notes": "Patient reports ongoing nasal congestion and sinus pressure"
-  }
-]
-
-
-
-### Get referrals
-GET http://localhost:8000/medicine-prescription-display
-Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzU2NTU3MDAxLCJpYXQiOjE3NDg3ODEwMDEsImp0aSI6IjlhYmQ1MWIxZGFhNjQ0YTI4OWVlOWRiNDc1ODNiNTExIiwidXNlcl9pZCI6IkVFMkRZWFlZIiwiaXNfc3RhZmYiOmZhbHNlLCJpc19zdXBlcnVzZXIiOmZhbHNlLCJlbWFpbCI6InNlY3JldGFyeWFjY291bnRAZ21haWwuY29tIiwicm9sZSI6InNlY3JldGFyeSIsImZpcnN0X25hbWUiOiJMYXlsYSJ9.Phuvnjg0BDohZjK0xm7g_3a1tuTotVNk5qBsXhKw4jk
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzY1MjQ2MjI4LCJpYXQiOjE3NTc0NzAyMjgsImp0aSI6ImUzNWVhZGQyYjJiZDRjNDBhNmQ5NGM4ZjQ2MGVlNTBmIiwidXNlcl9pZCI6IkxGRzRZSjJQIiwiaXNfc3RhZmYiOmZhbHNlLCJpc19zdXBlcnVzZXIiOmZhbHNlLCJlbWFpbCI6ImdlbmVyYWxkb2N0b3JAaG9zcGl0YWwuY29tIiwicm9sZSI6ImRvY3RvciIsImZpcnN0X25hbWUiOiJKYW5lcyJ9.e0yUR3kMS0zpM1l0jHMcydciAzzgK3BR6soKsj2qqqQ
+### lab result upload 
