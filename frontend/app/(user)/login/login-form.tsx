@@ -87,7 +87,7 @@ export function LoginForm({
         window.location.href = "/admin";
       } else if (role?.toLowerCase() === "doctor") {
         window.location.href =
-          id === "LFG4YJ2P" ? "/doctor" : "/oncalldoctor";
+          id === "LFG4YJ2P" ? "/doctor" : "/oncall-doctors";
       } else if (role?.toLowerCase() === "secretary") {
         window.location.href = "/secretary";
       } else {

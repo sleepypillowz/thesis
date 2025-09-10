@@ -102,7 +102,7 @@ export const PatientColumns: ColumnDef<Patient>[] = [
 
       return (
         <div className="flex flex-row space-x-1">
-          <Link href={`/doctor/patient-information/${patientId}`}>
+          <Link href={`/oncall-doctors/patient-information/${patientId}`}>
             <Eye className="cursor-pointer text-green-500 hover:fill-current" />
           </Link>
           <Edit className="cursor-pointer text-blue-500 hover:fill-current" />

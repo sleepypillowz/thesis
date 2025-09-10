@@ -26,12 +26,12 @@ const menu_items = [
   },
   {
     title: "Doctors",
-    url: "/oncall-doctors/doctors",
+    url: "/oncall-doctors/doctor-list",
     icon: Heart,
   },
   {
-    title: "Patients",
-    url: "/oncall-doctors/patients",
+    title: "Medical Records",
+    url: "/oncall-doctors/medical-records",
     icon: Users,
   },
 ];
