@@ -6,7 +6,7 @@ import StatsCard from "@/components/organisms/admin-stats-cards";
 import { VisitorsChart } from "@/components/organisms/charts/visitors-chart";
 import { CommonDiseasesChart } from "@/components/organisms/charts/common-diseases-chart";
 import { CommonMedicinesChart } from "@/components/organisms/charts/common-medicine-chart";
-import { PatientColumns } from "./patient-list/patient-columns";
+import { PatientColumns } from "./medical-records/patient-columns";
 import { DashboardTable } from "../ui/dashboard-table";
 import TitleCard from "../molecules/title-card";
 import usePatients from "@/hooks/use-patients";

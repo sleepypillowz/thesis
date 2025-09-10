@@ -60,8 +60,8 @@ const menu_items = [
 
 const patient_items = [
   {
-    title: "Patient List",
-    url: "/doctor/patient-list",
+    title: "Medical Records",
+    url: "/doctor/medical-records",
     icon: ClipboardPlus,
   },
   {
