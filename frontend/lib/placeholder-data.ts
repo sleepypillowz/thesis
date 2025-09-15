@@ -4,11 +4,27 @@
 import { Doctor } from "@/components/molecules/tables/doctor-columns";
 import { Operation } from "@/app/admin/components/operation-columns";
 import { User } from "@/app/designer/columns";
+import { Registration } from "@/app/secretary/registration-queue/columns";
 import { Appointment } from "@/app/patient/(appointments)/columns";
 import { DocumentFile } from "@/app/patient/documents/columns";
 import { Prescription } from "@/app/patient/prescriptions/columns";
 import { Calendar, Mail, UserPlus } from "lucide-react";
 import { NotificationType } from "@/components/molecules/header/notification";
+
+export const registrations: Registration[] = [
+  {
+    queue_number: "#05",
+    name: "Juan Dela Cruz",
+    type: "Consultation",
+    time: "4:00 pm",
+  },
+    {
+    queue_number: "#06",
+    name: "Juan Dela Cruz",
+    type: "Consultation",
+    time: "4:00 pm",
+  },
+]
 
 export const appointments: Appointment[] = [
   {
