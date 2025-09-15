@@ -3,6 +3,7 @@
 import { Badge } from "@/components/ui/badge";
 import { ColumnDef } from "@tanstack/react-table";
 import { Edit, EllipsisVertical, Eye } from "lucide-react";
+import { usePathname } from "next/dist/client/components/navigation";
 import Link from "next/link";
 
 export type Patient = {
@@ -98,11 +99,18 @@ export const PatientColumns: ColumnDef<Patient>[] = [
     id: "actions",
     header: "Actions",
     cell: ({ row }) => {
+      const pathname = usePathname();
+      let basePath = "/doctors";
+
+      if (pathname.includes("oncall-doctors")) {
+        basePath = "/oncall-doctors";
+      }
+
       const patientId = row.original.patient_id;
 
       return (
         <div className="flex flex-row space-x-1">
-          <Link href={`/oncall-doctors/patient-information/${patientId}`}>
+          <Link href={`${basePath}/patient-information/${patientId}`}>
             <Eye className="cursor-pointer text-green-500 hover:fill-current" />
           </Link>
           <Edit className="cursor-pointer text-blue-500 hover:fill-current" />
