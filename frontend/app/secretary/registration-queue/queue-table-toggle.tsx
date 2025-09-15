@@ -14,14 +14,17 @@ const QueueTableToggle = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" size="icon">
-          <ChevronDown />
+        <Button variant="outline" size="sm" className="w-96 justify-between">
+          Upcoming Appointments
+          <ChevronDown className="ml-2" />
         </Button>
       </DropdownMenuTrigger>
+
       <DropdownMenuContent
         side="bottom"
         align="end"
-        className="fixed right-4 top-16 z-50 w-96 rounded-xl bg-white p-0 shadow-xl"
+        sideOffset={0}
+        className="w-96 p-0 shadow-xl"
       >
         <DashboardTable columns={columns} data={registrations ?? []} />
       </DropdownMenuContent>
