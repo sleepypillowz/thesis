@@ -5,55 +5,69 @@ from  django.utils.timezone import now
 from django.conf import settings
 from user.models import UserAccount
 # Create your models here.
+from django.db import models
+from django.utils.timezone import now
+from patient.models import Patient
+from django.db.models import Max
+
 class TemporaryStorageQueue(models.Model):
     PRIORITY_CHOICES = [
         ('Regular', 'Regular'),
-        ('Priority', 'Priority Lane (PWD/Pregnant)')
+        ('Priority', 'Priority Lane (PWD/Pregnant)'),
     ]
     COMPLAINT_CHOICES = [
-    ('General Illness', 'General Illness'),
-    ('Injury', 'Injury'),
-    ('Check-up', 'Check-up'),
-    ('Other', 'Other'),
+        ('General Illness', 'General Illness'),
+        ('Injury', 'Injury'),
+        ('Check-up', 'Check-up'),
+        ('Other', 'Other'),
     ]
 
-    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='temporarystoragequeue')
-    priority_level = models.CharField(max_length=10, choices=PRIORITY_CHOICES, default='Regular')
+    patient = models.ForeignKey(
+        Patient,
+        on_delete=models.CASCADE,
+        related_name='temporarystoragequeue'
+    )
+    priority_level = models.CharField(
+        max_length=10, choices=PRIORITY_CHOICES, default='Regular'
+    )
+    complaint = models.TextField(
+        max_length=100,
+        blank=True,
+        null=True,
+        choices=COMPLAINT_CHOICES,
+        help_text="Either one of the predefined choices, or a custom text when 'Other'"
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     status = models.CharField(
-        max_length=50, 
-        choices = [
-            ('Waiting', 'Waiting'), 
-            ('Queued for Assessment', 'Queued for Assessment'), 
+        max_length=50,
+        choices=[
+            ('Waiting', 'Waiting'),
+            ('Queued for Assessment', 'Queued for Assessment'),
             ('Queued for Treatment', 'Queued for Treatment'),
-            ('Ongoing for Treatment', 'Ongoing for Treatment'),            
+            ('Ongoing for Treatment', 'Ongoing for Treatment'),
             ('Completed', 'Completed'),
-        ], 
-        default='Waiting')
-    complaint = models.TextField(max_length=100, blank=True, null=True, choices= COMPLAINT_CHOICES
-                                 , help_text="Either one of the predefined choices, or a custom text when 'Other'")
-    other_complaint = None
+        ],
+        default='Waiting'
+    )
     queue_number = models.PositiveBigIntegerField(null=True, blank=True)
     queue_date = models.DateField(default=date.today)
+    position = models.IntegerField(default=0, db_index=True)
 
-def save(self, *args, **kwargs):
-    today = now().date()
+    def save(self, *args, **kwargs):
+        # Only auto-generate queue_number when it is not supplied
+        if self.queue_number is None:
+            # get the max queue_number for the same date, handle None safely
+            max_q = TemporaryStorageQueue.objects.filter(
+                queue_date=self.queue_date
+            ).aggregate(Max('queue_number'))['queue_number__max'] or 0
 
-    if not self.queue_number:
-        last_queue_entry = TemporaryStorageQueue.objects.filter(
-            priority_level=self.priority_level,
-            queue_date=today
-        ).order_by('-queue_number').first()  # Get the last queue entry
+            self.queue_number = max_q + 1
 
-        # If there is no last queue entry, set queue_number to 1, otherwise increment the last one
-        self.queue_number = (last_queue_entry.queue_number if last_queue_entry else 0) + 1
-        self.queue_date = today
-
-    super().save(*args, **kwargs)
-
+        super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"Patient {self.patient_id} - Queue {self.queue_number} ({self.priority_level})"
+        return f"Patient {self.patient.patient_id} - Queue {self.queue_number} ({self.priority_level})"
+
 
     
 class PreliminaryAssessment(models.Model):

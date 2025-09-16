@@ -5,7 +5,7 @@ from rest_framework import permissions
 class IsMedicalStaff(BasePermission):
     def has_permission(self, request, view):
         
-        allowed_roles = ['doctor', 'secretary']
+        allowed_roles = ['doctor', 'secretary', 'on-call-doctor']
         user_role = getattr(request.user, 'role').lower()
         
         return user_role in allowed_roles   

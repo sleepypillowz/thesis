@@ -4,6 +4,8 @@ from rest_framework import status
 from django.http import Http404, FileResponse
 from django.shortcuts import get_object_or_404
 from django.db.models.functions import Lower
+from django.utils.timezone import now
+
 
 
 from queueing.serializers import PreliminaryAssessmentBasicSerializer
@@ -46,7 +48,7 @@ class PatientListView(APIView):
             print(role)
             user_id = request.user.id
             print(user_id)
-            if role == "doctor" and user_id != "LFG4YJ2P" :
+            if role == "on-call-doctor" and user_id != "LFG4YJ2P" :
                 response = supabase.table("queueing_treatment").select(
                     "patient_patient(*, queueing_temporarystoragequeue(id, status, created_at, priority_level, queue_number, complaint))"
                 ).eq("doctor_id",user_id).execute()
@@ -537,6 +539,20 @@ class PatientRegister(APIView):
                 return queue_entry.priority_level
             return "Regular"
 
+        # Function: generate queue number with daily reset + max 50 reset
+        def generate_queue_number():
+            today = now().date()
+            last_queue_number = TemporaryStorageQueue.objects.filter(
+                created_at__date=today
+            ).aggregate(Max('queue_number'))['queue_number__max']
+
+            if last_queue_number is None:
+                return 1
+            elif last_queue_number >= 50:
+                return 1
+            else:
+                return last_queue_number + 1
+
         # RE-REGISTRATION (existing patient)
         if request.data.get("patient_id"):
             try:
@@ -555,10 +571,7 @@ class PatientRegister(APIView):
                 raw_complaint = request.data.get("other_complaint", "").strip()
 
             priority_level = determine_priority()
-            last_queue_number = TemporaryStorageQueue.objects.aggregate(
-                Max('queue_number')
-            )['queue_number__max']
-            queue_number = (last_queue_number or 0) + 1
+            queue_number = generate_queue_number()
             print("🔥 Assigned Queue Number:", queue_number)
 
             queue_entry = TemporaryStorageQueue.objects.create(
@@ -609,10 +622,7 @@ class PatientRegister(APIView):
                 complaint_value = request.data.get("other_complaint", "").strip()
 
             # Determine queue number
-            last_queue_number = TemporaryStorageQueue.objects.aggregate(
-                Max('queue_number')
-            )['queue_number__max']
-            queue_number = (last_queue_number or 0) + 1
+            queue_number = generate_queue_number()
             print("🔥 Assigned Queue Number:", queue_number)
 
             # Create Patient
@@ -655,6 +665,7 @@ class PatientRegister(APIView):
 
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
 
 class SearchPatient(APIView):
     permission_classes = [IsMedicalStaff]
