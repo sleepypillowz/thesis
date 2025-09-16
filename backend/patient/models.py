@@ -22,7 +22,10 @@ class Patient(models.Model):
     street_address = models.CharField(max_length=100, blank=True, null=True)
     barangay = models.CharField(max_length=100, blank=True, null=True)
     municipal_city = models.CharField(max_length=100, blank=True, null=True)
-       
+     
+    @property
+    def full_name(self):
+        return " ".join(filter(None, [self.first_name, self.middle_name, self.last_name]))  
     def get_complaint(self):
         return dict(self.COMPLAINT_CHOICES).get(self.complaint, ' ')
     

@@ -26,6 +26,7 @@ class UserAccount(AbstractBaseUser, PermissionsMixin):
     id = models.CharField(max_length=8, unique=True, primary_key=True, editable=False)
     ROLE_CHOICES = [
         ('doctor', 'Doctor'),
+        ('on-call-doctor', 'Oncall-Doctor'),
         ('secretary', 'Medical Secretary'),
         ('admin', 'Admin'),
     ]

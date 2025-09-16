@@ -7,6 +7,7 @@ from django.conf import settings
 class Appointment(models.Model):
     STATUS = (
         ('Scheduled', 'Scheduled'),
+        ('Waiting', 'Waiting'),
         ('Completed', 'Completed'),
         ('Cancelled', 'Cancelled'),
     )

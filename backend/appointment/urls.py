@@ -12,6 +12,10 @@ urlpatterns = [
     path('appointment/doctor-schedule/<str:doctor_id>/', views.DoctorSchedule.as_view(), name='doctor-schedule'),
     path('appointment/schedule-appointment/', views.ScheduleAppointment.as_view(), name='schedule-appointment'),
     path('appointment/upcoming-appointments/', views.UpcomingAppointments.as_view(), name='upcoming-appointment'),
+    path('queue/debug/', views.QueueDebugMonthView.as_view(), name='queue-debug'),
+    path("appointment/<str:appointment_id>/accept/", views.AcceptAppointmentView.as_view(), name="accept-appointment"),
+    # path("<uuid:appointment_id>/cancel/", CancelAppointmentView.as_view(), name="cancel-appointment"),
+    # path("<uuid:appointment_id>/requeue/", RequeueAppointmentView.as_view(), name="requeue-appointment"),
     path('appointment/', include(router.urls))
 ]
 

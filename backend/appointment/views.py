@@ -26,6 +26,12 @@ from django.db import IntegrityError
 import pytz
 from dateutil.relativedelta import relativedelta  # <-- Add this
 from dateutil.relativedelta import MO, TU, WE, TH, FR, SA, SU
+from django.db.models import Max
+from .serializers import AppointmentSerializer, QueueSerializer
+from queueing.models import TemporaryStorageQueue
+from django.db.models import F
+from django.db import transaction
+
 
 class DoctorCreateReferralView(APIView):
     permission_classes = [isDoctor]
@@ -283,15 +289,271 @@ class UpcomingAppointments(APIView):
     def get(self, request):
         date_today = localdate() 
         current_time = now()
-        
         role = getattr(request.user, "role", None)
-        print(current_time, date_today)
-        if role == 'secretary' or request.user.id == 'LFG4YJ2P':         
+        print("Role:", role, "User:", request.user.id)
+
+        if role == 'secretary':
+            # Secretaries see ALL
             appointments_today = Appointment.objects.filter(
-                status = "Scheduled",
+                status="Scheduled",
                 appointment_date__date=date_today,
                 appointment_date__gte=current_time
             )
+
+        elif role == 'doctor':
+            # general doctor sees their own appointment
+            doctor = Doctor.objects.filter(user=request.user).first()
+            appointments_today = Appointment.objects.filter(
+                status="Scheduled",
+                appointment_date__date=date_today,
+                appointment_date__gte=current_time,
+                doctor=doctor
+            )
+
+        elif role == 'on-call-doctor':
+            # On-call doctor sees their own appointment
+            appointments_today = Appointment.objects.filter(
+                status="Scheduled",
+                appointment_date__date=date_today,
+                appointment_date__gte=current_time,
+                appointmentreferral__receiving_doctor=request.user
+            )
+
+        else:
+            appointments_today = Appointment.objects.none()
       
         serializer = AppointmentSerializer(appointments_today, many=True)
         return Response(serializer.data)
+
+
+
+
+def ensure_positions_initialized_for_date(queue_date):
+    """
+    Ensure every TemporaryStorageQueue for queue_date has a sequential non-zero position.
+    Positions will be assigned as 1..N in ascending order of queue_number if any position <= 0.
+    """
+    qs = TemporaryStorageQueue.objects.filter(queue_date=queue_date).order_by('queue_number')
+    # Initialization needed if any position is <= 0 or missing
+    if qs.filter(position__lte=0).exists():
+        with transaction.atomic():
+            locked = TemporaryStorageQueue.objects.select_for_update().filter(
+                queue_date=queue_date
+            ).order_by('queue_number')
+            pos = 1
+            for entry in locked:
+                if entry.position != pos:
+                    entry.position = pos
+                    entry.save(update_fields=['position'])
+                pos += 1
+
+def _patient_identifier(patient):
+    """Return a safe scalar identifier for a patient instance."""
+    if patient is None:
+        return None
+    return getattr(patient, 'pk', None) or getattr(patient, 'id', None) or getattr(patient, 'patient_id', None) or str(patient)
+
+def _patient_name(patient):
+    """Return a safe display name for a patient instance."""
+    if patient is None:
+        return ""
+    # prefer method
+    if callable(getattr(patient, "get_full_name", None)):
+        try:
+            return patient.get_full_name()
+        except Exception:
+            pass
+    for attr in ("full_name", "name", "display_name"):
+        val = getattr(patient, attr, None)
+        if val:
+            return val
+    return str(patient)
+
+class AcceptAppointmentView(APIView):
+    permission_classes = [isSecretary]
+
+    def post(self, request, appointment_id):
+        today = now().date()
+        try:
+            appointment = Appointment.objects.get(id=appointment_id)
+        except Appointment.DoesNotExist:
+            return Response({"error": "Appointment not found"}, status=status.HTTP_404_NOT_FOUND)
+        
+        already = TemporaryStorageQueue.objects.filter(
+            patient=appointment.patient,
+            queue_date=today
+        ).exclude(status__in=['Completed', 'Cancelled'])
+        
+        if already.exists():
+            return Response(
+                {"message": "Patient already in queue today"}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        priority_level = "Priority"
+        if hasattr(appointment, 'appointmentreferral') and getattr(appointment.appointmentreferral, 'reason', None):
+            reason = (appointment.appointmentreferral.reason or "").lower()
+            if "urgent" in reason or "priority" in reason:
+                priority_level = "Priority"
+
+        complaint_text = appointment.notes or "Appointment"
+
+        ensure_positions_initialized_for_date(today)
+
+        with transaction.atomic():
+            # Lock today's active rows
+            current_qs = TemporaryStorageQueue.objects.select_for_update().filter(
+                queue_date=today
+            ).exclude(status__in=['Completed', 'Cancelled']).order_by('position', 'queue_number')
+            max_q = current_qs.aggregate(Max('queue_number'))['queue_number__max'] or 0
+            new_queue_number = max_q + 1
+
+            if current_qs.exists():
+                first_entry = current_qs.first()
+
+                TemporaryStorageQueue.objects.filter(
+                    queue_date=today,
+                    position__gt=first_entry.position
+                ).update(position=F('position') + 1)
+                new_position = first_entry.position + 1
+            else:
+                new_position = 1
+            queue_entry = TemporaryStorageQueue.objects.create(
+                patient=appointment.patient,
+                priority_level=priority_level,
+                queue_number=new_queue_number,
+                complaint=complaint_text,
+                status="Waiting",
+                queue_date=today,
+                position=new_position
+            )
+
+            appointment.status = "Waiting"
+            appointment.save(update_fields=['status'])
+
+        ordered_qs = TemporaryStorageQueue.objects.filter(
+            queue_date=today
+        ).exclude(status__in=['Completed', 'Cancelled']).order_by('position', 'queue_number')
+
+        queue_list = []
+        for q in ordered_qs:
+            queue_list.append({
+                "position": q.position,
+                "queue_number": q.queue_number,
+                "patient_id": _patient_identifier(getattr(q, 'patient', None)),
+                "patient_name": _patient_name(getattr(q, 'patient', None)),
+                "priority_level": q.priority_level,
+                "status": q.status,
+            })
+
+        return Response({
+            "message": "Appointment accepted",
+            "new_queue_number": queue_entry.queue_number,
+            "new_position": queue_entry.position,
+            "queue_entry_id": queue_entry.id,
+            "ordered_queue": queue_list
+        }, status=status.HTTP_201_CREATED)
+
+
+class CancelAppointmentView(APIView):
+    def post(self, request, appointment_id):
+        try:
+            appointment = Appointment.objects.get(id=appointment_id)
+        except Appointment.DoesNotExist:
+            return Response({"error": "Appointment not found"}, status=404)
+
+        appointment.status = "Cancelled"
+        appointment.save()
+
+        return Response({"message": "Appointment cancelled"}, status=200)
+
+
+class RequeueAppointmentView(APIView):
+    """
+    For patients who arrive late (>30 mins) but are still allowed to be requeued.
+    """
+    def post(self, request, appointment_id):
+        try:
+            appointment = Appointment.objects.get(id=appointment_id)
+        except Appointment.DoesNotExist:
+            return Response({"error": "Appointment not found"}, status=404)
+
+        # Mark original appointment as cancelled
+        appointment.status = "Cancelled"
+        appointment.save()
+
+        # Add to queue as a walk-in (end of queue)
+        queue_entry = TemporaryStorageQueue.objects.create(
+            patient=appointment.patient,
+            complaint=appointment.notes or "General Illness",
+            status="Waiting"
+        )
+
+        return Response({
+            "message": "Late patient requeued at end of queue",
+            "queue": QueueSerializer(queue_entry).data
+        }, status=200)
+        
+from datetime import datetime
+from calendar import monthrange
+
+class QueueDebugMonthView(APIView):
+    """
+    Returns all TemporaryStorageQueue entries for a given month and year
+    as JSON response. Defaults to current month if not provided.
+    """
+    permission_classes = [IsMedicalStaff]
+    def get(self, request):
+        # Get month and year from query parameters, or default to today’s month & year
+        today = now().date()
+        month = request.query_params.get('month')
+        year = request.query_params.get('year')
+
+        try:
+            if month is not None:
+                month = int(month)
+                if not (1 <= month <= 12):
+                    raise ValueError
+            else:
+                month = today.month
+
+            if year is not None:
+                year = int(year)
+                # Optional: you may want to validate a range for year
+            else:
+                year = today.year
+        except ValueError:
+            return Response(
+                {"error": "Invalid month or year parameter"},
+                status=400
+            )
+
+        # Compute first day and last day of the month
+        first_day = datetime(year, month, 1).date()
+        last_day = datetime(year, month, monthrange(year, month)[1]).date()
+
+        # Filter queue entries by queue_date in that range
+        queue_entries = TemporaryStorageQueue.objects.filter(
+            queue_date__gte=first_day,
+            queue_date__lte=last_day
+        ).order_by('queue_number')
+
+        data = []
+        for entry in queue_entries:
+            data.append({
+                "id": entry.id,
+                "patient_id": entry.patient.patient_id,
+                "patient_name": f"{entry.patient.first_name} {entry.patient.last_name}",
+                "queue_number": entry.queue_number,
+                "priority_level": entry.priority_level,
+                "complaint": entry.complaint,
+                "status": entry.status,
+                "created_at": entry.created_at,
+                "queue_date": entry.queue_date,  # include the date if useful
+            })
+
+        return Response({
+            "month": month,
+            "year": year,
+            "entries": data
+        })

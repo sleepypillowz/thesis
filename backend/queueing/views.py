@@ -16,92 +16,75 @@ from patient.models import Diagnosis, Prescription
 from medicine.models import Medicine
 
 from user.permissions import IsMedicalStaff, isDoctor, isSecretary
-
+from django.utils.timezone import now, localdate
 
 # display patient registration queue
 class PatientRegistrationQueue(APIView):
     permission_classes = [isSecretary]
+    
     def get(self, request):
-        table_name = 'queueing_temporarystoragequeue'
         try:
-            # Fetch Priority Queue
-            priority_response = supabase.table(table_name).select(
-                "id, patient_id, status, created_at, priority_level, complaint", 'queue_number', 'queue_date'
-            ).eq('status', 'Waiting').eq('priority_level', 'Priority').order('created_at').execute()
-
-            # Fetch Regular Queue
-            regular_response = supabase.table(table_name).select(
-                "id, patient_id, status, created_at, priority_level, complaint",  'queue_number', 'queue_date'
-            ).eq('status', 'Waiting').eq('priority_level', 'Regular').order('created_at').execute()
-
-            # Access the data attribute directly
-            priority_patients = priority_response.data if hasattr(priority_response, 'data') else []
-            regular_patients = regular_response.data if hasattr(regular_response, 'data') else []
-
-            def get_next_patients(queue):   
-                current = queue[0] if len(queue) > 0 else None
-                next1 = queue[1] if len(queue) > 1 else None
-                next2 = queue[2] if len(queue) > 2 else None
+            today = localdate()
+            
+            # Fetch Priority Queue using Django ORM
+            priority_patients = TemporaryStorageQueue.objects.filter(
+                status='Waiting',
+                priority_level='Priority',
+                queue_date=today
+            ).order_by('position', 'queue_number').select_related('patient')
+            
+            # Fetch Regular Queue using Django ORM
+            regular_patients = TemporaryStorageQueue.objects.filter(
+                status='Waiting',
+                priority_level='Regular',
+                queue_date=today
+            ).order_by('position', 'queue_number').select_related('patient')
+            
+            def get_next_patients(queryset):   
+                patients = list(queryset)
+                current = patients[0] if len(patients) > 0 else None
+                next1 = patients[1] if len(patients) > 1 else None
+                next2 = patients[2] if len(patients) > 2 else None
                 return current, next1, next2
-
-            # Fetch patient details for the priority queue
-            priority_patient_ids = [queue["patient_id"] for queue in priority_patients]
-            priority_patients_details_response = supabase.table("patient_patient").select(
-                "patient_id, first_name, last_name, date_of_birth, phone_number"
-            ).in_("patient_id", priority_patient_ids).execute()
-
-            # Fetch patient details for the regular queue
-            regular_patient_ids = [queue["patient_id"] for queue in regular_patients]
-            regular_patients_details_response = supabase.table("patient_patient").select(
-                "patient_id, first_name, last_name, date_of_birth, phone_number"
-            ).in_("patient_id", regular_patient_ids).execute()
-
-            # Access patient data
-            priority_patients_data = priority_patients_details_response.data if hasattr(priority_patients_details_response, 'data') else []
-            regular_patients_data = regular_patients_details_response.data if hasattr(regular_patients_details_response, 'data') else []
-
-            # Merge patient data with queue data and add age using the get_age() method
-            for queue_item in priority_patients:
-                patient = next((patient for patient in priority_patients_data if patient["patient_id"] == queue_item["patient_id"]), None)
-                if patient:
-                    patient_obj = Patient.objects.get(patient_id=patient["patient_id"])  # Get the full patient object
-                    queue_item.update({
-                        "first_name": patient["first_name"],
-                        "last_name": patient["last_name"],
-                        "phone_number": patient["phone_number"],
-                        "date_of_birth": patient["date_of_birth"],
-                        "age": patient_obj.get_age()  # Using get_age() method here
-                    })
-
-            for queue_item in regular_patients:
-                patient = next((patient for patient in regular_patients_data if patient["patient_id"] == queue_item["patient_id"]), None)
-                if patient:
-                    patient_obj = Patient.objects.get(patient_id=patient["patient_id"])  # Get the full patient object
-                    queue_item.update({
-                        "first_name": patient["first_name"],
-                        "last_name": patient["last_name"],
-                        "phone_number": patient["phone_number"],
-                        "date_of_birth": patient["date_of_birth"],
-                        "age": patient_obj.get_age()  # Using get_age() method here
-                    })
-
+            
+            def format_patient_data(queue_item):
+                if not queue_item:
+                    return None
+                    
+                patient = queue_item.patient
+                return {
+                    "id": queue_item.id,
+                    "patient_id": patient.patient_id,
+                    "first_name": patient.first_name,
+                    "last_name": patient.last_name,
+                    "phone_number": patient.phone_number,
+                    "date_of_birth": patient.date_of_birth,
+                    "age": patient.get_age(),
+                    "priority_level": queue_item.priority_level,
+                    "complaint": queue_item.complaint,
+                    "status": queue_item.status,
+                    "queue_number": queue_item.queue_number,
+                    "position": queue_item.position,
+                    "created_at": queue_item.created_at
+                }
+            
             # Get the next patients
             priority_current, priority_next1, priority_next2 = get_next_patients(priority_patients)
             regular_current, regular_next1, regular_next2 = get_next_patients(regular_patients)
-
-            # Return the response with explicit renderer
-            return Response(
-                {
-                    "priority_current": priority_current,
-                    "priority_next1": priority_next1,
-                    "priority_next2": priority_next2,
-                    "regular_current": regular_current,
-                    "regular_next1": regular_next1,
-                    "regular_next2": regular_next2
-                },
-                status=status.HTTP_200_OK
-            )
-
+            
+            # Format the response
+            response_data = {
+                "priority_current": format_patient_data(priority_current),
+                "priority_next1": format_patient_data(priority_next1),
+                "priority_next2": format_patient_data(priority_next2),
+                "regular_current": format_patient_data(regular_current),
+                "regular_next1": format_patient_data(regular_next1),
+                "regular_next2": format_patient_data(regular_next2)
+            }
+            
+            # Return the response
+            return Response(response_data, status=status.HTTP_200_OK)
+            
         except Exception as e:
             print("Error in PatientRegistrationQueue GET:", e)
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
