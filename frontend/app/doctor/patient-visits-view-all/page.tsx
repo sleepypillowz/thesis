@@ -6,10 +6,8 @@ import {
   ClipboardList,
   Stethoscope,
   AlertTriangle,
-  CalendarCheck,
   Activity,
   ChevronDown,
-  Download,
 } from "lucide-react";
 import {
   Card,
@@ -75,8 +73,7 @@ export default function MonthlyVisitReports() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [expandedMonths, setExpandedMonths] = useState<Record<string, boolean>>({});
-  const [selectedMonthForExport, setSelectedMonthForExport] = useState<string | null>(null);
-  const reportRef = useRef<HTMLDivElement>(null);
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -244,15 +241,15 @@ export default function MonthlyVisitReports() {
   }
 
   // Calculate overall stats for header cards
-  const totalMonths = monthSummaries.length;
-  const totalVisits = monthSummaries.reduce((sum, m) => sum + m.totalVisits, 0);
+  const totalMonths = monthSummaries?.length;
+  const totalVisits = monthSummaries?.reduce((sum, m) => sum + m.totalVisits, 0);
   const avgVisits = totalMonths ? (totalVisits / totalMonths).toFixed(2) : "0.00";
-  const highPriority = monthSummaries.reduce(
+  const highPriority = monthSummaries?.reduce(
     (sum, m) => sum + (m.priorityDistribution["Priority"] || 0), 
     0
   );
   
-  const totalCompleted = monthSummaries.reduce(
+  const totalCompleted = monthSummaries?.reduce(
     (sum, m) => sum + (m.statusBreakdown["Completed"] || 0), 
     0
   );
@@ -313,7 +310,7 @@ export default function MonthlyVisitReports() {
 
         {/* Monthly Reports Accordion - LATEST FIRST */}
         <div className="space-y-4">
-          {monthSummaries.length > 0 ? monthSummaries.map((summary) => {
+          {monthSummaries?.length > 0 ? monthSummaries?.map((summary) => {
             const isExpanded = expandedMonths[summary.month];
             const monthName = new Date(summary.month + "-01").toLocaleDateString("en-US", {
               year: "numeric",
