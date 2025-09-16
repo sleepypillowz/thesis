@@ -5,16 +5,18 @@ from django.utils.dateparse import parse_datetime
 
 from .models import AppointmentReferral
 from patient.models import Patient
-from .serializers import AppointmentReferralSerializer
+from .serializers import AppointmentReferralSerializer, AppointmentSerializer
 from user.permissions import isDoctor, isSecretary
 
 from django.utils import timezone
+from datetime import date
+from django.utils.timezone import now, localdate
 from datetime import datetime, timedelta
 from .models import Appointment
 
 from user.models import Doctor, UserAccount, Schedule
 from user.models import UserAccount 
-from user.permissions import IsReferralParticipant
+from user.permissions import IsReferralParticipant, IsMedicalStaff
 
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
@@ -274,3 +276,22 @@ class AppointmentReferralViewSet(viewsets.ModelViewSet):
             return Response({'detail': 'Access denied.'}, status=status.HTTP_403_FORBIDDEN)
         serializer = PatientSerializer(referral.patient)
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
+class UpcomingAppointments(APIView):
+    permission_classes = [IsMedicalStaff]
+    
+    def get(self, request):
+        date_today = localdate() 
+        current_time = now()
+        
+        role = getattr(request.user, "role", None)
+        print(current_time, date_today)
+        if role == 'secretary' or request.user.id == 'LFG4YJ2P':         
+            appointments_today = Appointment.objects.filter(
+                status = "Scheduled",
+                appointment_date__date=date_today,
+                appointment_date__gte=current_time
+            )
+      
+        serializer = AppointmentSerializer(appointments_today, many=True)
+        return Response(serializer.data)

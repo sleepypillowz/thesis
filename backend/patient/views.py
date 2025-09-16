@@ -62,8 +62,6 @@ class PatientListView(APIView):
                     {"error": "Unauthorized role"}, 
                     status=status.HTTP_403_FORBIDDEN
                 )
-
-
             for patient in patients:
                 patient_id = patient.get('id', 'unknown')
                 queue_list = patient.get('queueing_temporarystoragequeue') or []
