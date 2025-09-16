@@ -86,8 +86,9 @@ export function LoginForm({
       if (is_superuser || role?.toLowerCase() === "admin") {
         window.location.href = "/admin";
       } else if (role?.toLowerCase() === "doctor") {
-        window.location.href =
-          id === "LFG4YJ2P" ? "/doctor" : "/oncall-doctors";
+        window.location.href = "/doctor";
+      } else if (role?.toLowerCase() === "on-call-doctor") {
+        window.location.href = "/oncall-doctors";
       } else if (role?.toLowerCase() === "secretary") {
         window.location.href = "/secretary";
       } else {

@@ -486,24 +486,51 @@ export default function ProfilePage() {
                           SPECIALIZATION
                         </h4>
                         {isEditing ? (
-                          <Input
-                            type="text"
-                            value={user.doctor_profile.specialization || ""}
-                            onChange={(e) =>
-                              setUser({
-                                ...user!,
-                                doctor_profile: {
-                                  ...user.doctor_profile,
-                                  specialization: e.target.value,
-                                },
-                              })
-                            }
-                            className="mt-1 w-full rounded-lg border px-3 py-2"
-                          />
+                          <div className="mt-1">
+                            <select
+                              value={user.doctor_profile.specialization || ""}
+                              onChange={(e) =>
+                                setUser({
+                                  ...user!,
+                                  doctor_profile: {
+                                    ...user.doctor_profile,
+                                    specialization: e.target.value,
+                                  },
+                                })
+                              }
+                              className="w-full rounded-lg border px-3 py-2"
+                            >
+                              <option value="">Select a specialization</option>
+                              <option value="Pediatrics">Pediatrics</option>
+                              <option value="Cardiologist">Cardiologist</option>
+                              <option value="General Doctor">General Doctor</option>
+                              <option value="other">Other (specify below)</option>
+                            </select>
+                            
+                            {user.doctor_profile.specialization === "other" && (
+                              <Input
+                                type="text"
+                                placeholder="Enter your specialization"
+                                value={user.doctor_profile.custom_specialization || ""}
+                                onChange={(e) =>
+                                  setUser({
+                                    ...user!,
+                                    doctor_profile: {
+                                      ...user.doctor_profile,
+                                      custom_specialization: e.target.value,
+                                    },
+                                  })
+                                }
+                                className="mt-2 w-full rounded-lg border px-3 py-2"
+                              />
+                            )}
+                          </div>
                         ) : (
                           <p className="mt-1">
-                            {user.doctor_profile.specialization ||
-                              "Not specified"}
+                            {user.doctor_profile.specialization === "other" 
+                              ? user.doctor_profile.custom_specialization || "Not specified"
+                              : user.doctor_profile.specialization || "Not specified"
+                            }
                           </p>
                         )}
                       </div>
