@@ -1,6 +1,13 @@
-import React from 'react';
-import { Document, Page, Text, View, StyleSheet, PDFDownloadLink } from '@react-pdf/renderer';
-import { Download } from 'lucide-react';
+import React from "react";
+import {
+  Document,
+  Page,
+  Text,
+  View,
+  StyleSheet,
+  PDFDownloadLink,
+} from "@react-pdf/renderer";
+import { Download } from "lucide-react";
 
 // TypeScript interfaces
 interface QueueEntry {
@@ -26,7 +33,9 @@ interface PDFExportProps {
 }
 
 // PDF Document Component
-const QueuePDFDocument: React.FC<{ queueData: QueueData }> = ({ queueData }) => {
+const QueuePDFDocument: React.FC<{ queueData: QueueData }> = ({
+  queueData,
+}) => {
   // Sort entries by queue_number (handle null values)
   const sortedEntries = [...queueData.entries].sort((a, b) => {
     if (a.queue_number === null) return 1;
@@ -35,18 +44,18 @@ const QueuePDFDocument: React.FC<{ queueData: QueueData }> = ({ queueData }) => 
   });
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      month: 'long',
-      day: 'numeric',
-      year: 'numeric'
+    return new Date(dateString).toLocaleDateString("en-US", {
+      month: "long",
+      day: "numeric",
+      year: "numeric",
     });
   };
 
   const formatTime = (dateString: string) => {
-    return new Date(dateString).toLocaleTimeString('en-US', {
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: true
+    return new Date(dateString).toLocaleTimeString("en-US", {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true,
     });
   };
 
@@ -57,17 +66,21 @@ const QueuePDFDocument: React.FC<{ queueData: QueueData }> = ({ queueData }) => 
         <View style={styles.header}>
           <Text style={styles.title}>Patient Queue Report</Text>
           <Text style={styles.subtitle}>
-            {new Date(queueData.year, queueData.month - 1).toLocaleDateString('en-US', { 
-              month: 'long', 
-              year: 'numeric' 
-            })}
+            {new Date(queueData.year, queueData.month - 1).toLocaleDateString(
+              "en-US",
+              {
+                month: "long",
+                year: "numeric",
+              }
+            )}
           </Text>
           <Text style={styles.generatedDate}>
-            Generated on: {new Date().toLocaleDateString('en-US', {
-              weekday: 'long',
-              year: 'numeric',
-              month: 'long',
-              day: 'numeric'
+            Generated on:{" "}
+            {new Date().toLocaleDateString("en-US", {
+              weekday: "long",
+              year: "numeric",
+              month: "long",
+              day: "numeric",
             })}
           </Text>
         </View>
@@ -80,13 +93,20 @@ const QueuePDFDocument: React.FC<{ queueData: QueueData }> = ({ queueData }) => 
           </View>
           <View style={styles.summaryBox}>
             <Text style={styles.summaryNumber}>
-              {sortedEntries.filter(entry => entry.priority_level === 'Priority').length}
+              {
+                sortedEntries.filter(
+                  (entry) => entry.priority_level === "Priority"
+                ).length
+              }
             </Text>
             <Text style={styles.summaryLabel}>Priority Cases</Text>
           </View>
           <View style={styles.summaryBox}>
             <Text style={styles.summaryNumber}>
-              {sortedEntries.filter(entry => entry.status === 'Waiting').length}
+              {
+                sortedEntries.filter((entry) => entry.status === "Waiting")
+                  .length
+              }
             </Text>
             <Text style={styles.summaryLabel}>Currently Waiting</Text>
           </View>
@@ -105,13 +125,16 @@ const QueuePDFDocument: React.FC<{ queueData: QueueData }> = ({ queueData }) => 
 
         {/* Table Body */}
         {sortedEntries.map((entry, index) => (
-          <View key={entry.patient_id} style={[
-            styles.tableRow, 
-            index % 2 === 0 ? styles.evenRow : styles.oddRow,
-            entry.priority_level === 'Priority' ? styles.priorityRow : {}
-          ]}>
+          <View
+            key={entry.patient_id}
+            style={[
+              styles.tableRow,
+              index % 2 === 0 ? styles.evenRow : styles.oddRow,
+              entry.priority_level === "Priority" ? styles.priorityRow : {},
+            ]}
+          >
             <Text style={[styles.tableCell, styles.queueCol]}>
-              {entry.queue_number || 'N/A'}
+              {entry.queue_number || "N/A"}
             </Text>
             <Text style={[styles.tableCell, styles.patientCol]}>
               {entry.patient_id}
@@ -119,8 +142,13 @@ const QueuePDFDocument: React.FC<{ queueData: QueueData }> = ({ queueData }) => 
             <Text style={[styles.tableCell, styles.nameCol]}>
               {entry.patient_name}
             </Text>
-            <Text style={[styles.tableCell, styles.priorityCol, 
-              entry.priority_level === 'Priority' ? styles.priorityText : {}]}>
+            <Text
+              style={[
+                styles.tableCell,
+                styles.priorityCol,
+                entry.priority_level === "Priority" ? styles.priorityText : {},
+              ]}
+            >
               {entry.priority_level}
             </Text>
             <Text style={[styles.tableCell, styles.complaintCol]}>
@@ -148,20 +176,25 @@ const QueuePDFDocument: React.FC<{ queueData: QueueData }> = ({ queueData }) => 
 };
 
 // Main Export Component
-const QueuePDFExport: React.FC<PDFExportProps> = ({ queueData, className = "" }) => {
-  const fileName = `queue-report-${queueData.year}-${String(queueData.month).padStart(2, '0')}.pdf`;
+const QueuePDFExport: React.FC<PDFExportProps> = ({
+  queueData,
+  className = "",
+}) => {
+  const fileName = `queue-report-${queueData.year}-${String(
+    queueData.month
+  ).padStart(2, "0")}.pdf`;
 
   return (
     <div className={className}>
       <PDFDownloadLink
         document={<QueuePDFDocument queueData={queueData} />}
         fileName={fileName}
-        className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 font-medium text-sm"
+        className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors duration-200 hover:bg-blue-700"
       >
-        {({ blob, url, loading, error }) => (
+        {({ loading }) => (
           <>
-            <Download className="w-4 h-4" />
-            {loading ? 'Generating PDF...' : 'Export Queue Report'}
+            <Download className="h-4 w-4" />
+            {loading ? "Generating PDF..." : "Export Queue Report"}
           </>
         )}
       </PDFDownloadLink>
@@ -172,112 +205,112 @@ const QueuePDFExport: React.FC<PDFExportProps> = ({ queueData, className = "" })
 // Styles
 const styles = StyleSheet.create({
   page: {
-    flexDirection: 'column',
-    backgroundColor: '#ffffff',
+    flexDirection: "column",
+    backgroundColor: "#ffffff",
     padding: 20,
     fontSize: 10,
   },
   header: {
     marginBottom: 20,
-    textAlign: 'center',
+    textAlign: "center",
     borderBottomWidth: 2,
-    borderBottomColor: '#3B82F6',
+    borderBottomColor: "#3B82F6",
     paddingBottom: 10,
   },
   title: {
     fontSize: 24,
-    fontWeight: 'bold',
-    color: '#1F2937',
+    fontWeight: "bold",
+    color: "#1F2937",
     marginBottom: 5,
   },
   subtitle: {
     fontSize: 14,
-    color: '#6B7280',
+    color: "#6B7280",
     marginBottom: 5,
   },
   generatedDate: {
     fontSize: 10,
-    color: '#9CA3AF',
+    color: "#9CA3AF",
   },
   summaryContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
+    flexDirection: "row",
+    justifyContent: "space-around",
     marginBottom: 20,
-    backgroundColor: '#F8FAFC',
+    backgroundColor: "#F8FAFC",
     padding: 15,
     borderRadius: 5,
   },
   summaryBox: {
-    alignItems: 'center',
+    alignItems: "center",
   },
   summaryNumber: {
     fontSize: 18,
-    fontWeight: 'bold',
-    color: '#3B82F6',
+    fontWeight: "bold",
+    color: "#3B82F6",
   },
   summaryLabel: {
     fontSize: 9,
-    color: '#6B7280',
+    color: "#6B7280",
     marginTop: 2,
   },
   tableHeader: {
-    flexDirection: 'row',
-    backgroundColor: '#3B82F6',
-    color: '#ffffff',
-    fontWeight: 'bold',
+    flexDirection: "row",
+    backgroundColor: "#3B82F6",
+    color: "#ffffff",
+    fontWeight: "bold",
     fontSize: 9,
   },
   tableRow: {
-    flexDirection: 'row',
+    flexDirection: "row",
     borderBottomWidth: 0.5,
-    borderBottomColor: '#E5E7EB',
+    borderBottomColor: "#E5E7EB",
     minHeight: 25,
-    alignItems: 'center',
+    alignItems: "center",
   },
   evenRow: {
-    backgroundColor: '#F9FAFB',
+    backgroundColor: "#F9FAFB",
   },
   oddRow: {
-    backgroundColor: '#ffffff',
+    backgroundColor: "#ffffff",
   },
   priorityRow: {
     borderLeftWidth: 3,
-    borderLeftColor: '#EF4444',
+    borderLeftColor: "#EF4444",
   },
   tableCell: {
     padding: 4,
     fontSize: 8,
-    color: '#374151',
+    color: "#374151",
   },
-  queueCol: { width: '10%', textAlign: 'center' },
-  patientCol: { width: '15%' },
-  nameCol: { width: '20%' },
-  priorityCol: { width: '12%', textAlign: 'center' },
-  complaintCol: { width: '18%' },
-  statusCol: { width: '15%' },
-  timeCol: { width: '10%', fontSize: 7 },
+  queueCol: { width: "10%", textAlign: "center" },
+  patientCol: { width: "15%" },
+  nameCol: { width: "20%" },
+  priorityCol: { width: "12%", textAlign: "center" },
+  complaintCol: { width: "18%" },
+  statusCol: { width: "15%" },
+  timeCol: { width: "10%", fontSize: 7 },
   priorityText: {
-    color: '#EF4444',
-    fontWeight: 'bold',
+    color: "#EF4444",
+    fontWeight: "bold",
   },
   footer: {
-    position: 'absolute',
+    position: "absolute",
     bottom: 20,
     left: 20,
     right: 20,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
     borderTopWidth: 1,
-    borderTopColor: '#E5E7EB',
+    borderTopColor: "#E5E7EB",
     paddingTop: 10,
   },
   footerText: {
     fontSize: 8,
-    color: '#6B7280',
+    color: "#6B7280",
   },
   footerPage: {
     fontSize: 8,
-    color: '#6B7280',
+    color: "#6B7280",
   },
 });
 

@@ -81,7 +81,7 @@ export function LoginForm({
         { headers: { Authorization: `Bearer ${access}` } }
       );
       if (!userRes.ok) throw new Error("Failed to fetch user");
-      const { id, role, is_superuser } = await userRes.json();
+      const { role, is_superuser } = await userRes.json();
 
       if (is_superuser || role?.toLowerCase() === "admin") {
         window.location.href = "/admin";

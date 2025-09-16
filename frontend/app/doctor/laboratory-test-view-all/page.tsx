@@ -3,8 +3,22 @@ import React, { useEffect, useState, useMemo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { FileText, Calendar, User, Upload, Download, AlertTriangle, ChevronDown } from "lucide-react";
-import { Document, Page, Text, View, StyleSheet, PDFDownloadLink } from '@react-pdf/renderer';
+import {
+  FileText,
+  Calendar,
+  User,
+  Upload,
+  Download,
+  ChevronDown,
+} from "lucide-react";
+import {
+  Document,
+  Page,
+  Text,
+  View,
+  StyleSheet,
+  PDFDownloadLink,
+} from "@react-pdf/renderer";
 
 interface LabResult {
   id: string;
@@ -14,115 +28,118 @@ interface LabResult {
 }
 
 // PDF Document Component for Lab Results
-const LabResultsPDFDocument: React.FC<{ labResults: LabResult[], periodLabel: string }> = ({ labResults, periodLabel }) => {
+const LabResultsPDFDocument: React.FC<{
+  labResults: LabResult[];
+  periodLabel: string;
+}> = ({ labResults, periodLabel }) => {
   const styles = StyleSheet.create({
     page: {
-      flexDirection: 'column',
-      backgroundColor: '#ffffff',
+      flexDirection: "column",
+      backgroundColor: "#ffffff",
       padding: 20,
       fontSize: 10,
     },
     header: {
       marginBottom: 20,
-      textAlign: 'center',
+      textAlign: "center",
       borderBottomWidth: 2,
-      borderBottomColor: '#3B82F6',
+      borderBottomColor: "#3B82F6",
       paddingBottom: 10,
     },
     title: {
       fontSize: 24,
-      fontWeight: 'bold',
-      color: '#1F2937',
+      fontWeight: "bold",
+      color: "#1F2937",
       marginBottom: 5,
     },
     subtitle: {
       fontSize: 14,
-      color: '#6B7280',
+      color: "#6B7280",
       marginBottom: 5,
     },
     generatedDate: {
       fontSize: 10,
-      color: '#9CA3AF',
+      color: "#9CA3AF",
     },
     summaryContainer: {
-      flexDirection: 'row',
-      justifyContent: 'space-around',
+      flexDirection: "row",
+      justifyContent: "space-around",
       marginBottom: 20,
-      backgroundColor: '#F8FAFC',
+      backgroundColor: "#F8FAFC",
       padding: 15,
       borderRadius: 5,
     },
     summaryBox: {
-      alignItems: 'center',
+      alignItems: "center",
     },
     summaryNumber: {
       fontSize: 18,
-      fontWeight: 'bold',
-      color: '#3B82F6',
+      fontWeight: "bold",
+      color: "#3B82F6",
     },
     summaryLabel: {
       fontSize: 9,
-      color: '#6B7280',
+      color: "#6B7280",
       marginTop: 2,
     },
     tableHeader: {
-      flexDirection: 'row',
-      backgroundColor: '#3B82F6',
-      color: '#ffffff',
-      fontWeight: 'bold',
+      flexDirection: "row",
+      backgroundColor: "#3B82F6",
+      color: "#ffffff",
+      fontWeight: "bold",
       fontSize: 9,
     },
     tableRow: {
-      flexDirection: 'row',
+      flexDirection: "row",
       borderBottomWidth: 0.5,
-      borderBottomColor: '#E5E7EB',
+      borderBottomColor: "#E5E7EB",
       minHeight: 25,
-      alignItems: 'center',
+      alignItems: "center",
     },
     evenRow: {
-      backgroundColor: '#F9FAFB',
+      backgroundColor: "#F9FAFB",
     },
     oddRow: {
-      backgroundColor: '#ffffff',
+      backgroundColor: "#ffffff",
     },
     tableCell: {
       padding: 4,
       fontSize: 8,
-      color: '#374151',
+      color: "#374151",
     },
-    idCol: { width: '20%' },
-    requestedCol: { width: '25%' },
-    submittedCol: { width: '25%' },
-    dateCol: { width: '20%' },
-    statusCol: { width: '10%', textAlign: 'center' },
+    idCol: { width: "20%" },
+    requestedCol: { width: "25%" },
+    submittedCol: { width: "25%" },
+    dateCol: { width: "20%" },
+    statusCol: { width: "10%", textAlign: "center" },
     footer: {
-      position: 'absolute',
+      position: "absolute",
       bottom: 20,
       left: 20,
       right: 20,
-      flexDirection: 'row',
-      justifyContent: 'space-between',
+      flexDirection: "row",
+      justifyContent: "space-between",
       borderTopWidth: 1,
-      borderTopColor: '#E5E7EB',
+      borderTopColor: "#E5E7EB",
       paddingTop: 10,
     },
     footerText: {
       fontSize: 8,
-      color: '#6B7280',
+      color: "#6B7280",
     },
     footerPage: {
       fontSize: 8,
-      color: '#6B7280',
+      color: "#6B7280",
     },
   });
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     });
   };
 
@@ -134,11 +151,12 @@ const LabResultsPDFDocument: React.FC<{ labResults: LabResult[], periodLabel: st
           <Text style={styles.title}>Lab Results Report</Text>
           <Text style={styles.subtitle}>{periodLabel}</Text>
           <Text style={styles.generatedDate}>
-            Generated on: {new Date().toLocaleDateString('en-US', {
-              weekday: 'long',
-              year: 'numeric',
-              month: 'long',
-              day: 'numeric'
+            Generated on:{" "}
+            {new Date().toLocaleDateString("en-US", {
+              weekday: "long",
+              year: "numeric",
+              month: "long",
+              day: "numeric",
             })}
           </Text>
         </View>
@@ -151,12 +169,14 @@ const LabResultsPDFDocument: React.FC<{ labResults: LabResult[], periodLabel: st
           </View>
           <View style={styles.summaryBox}>
             <Text style={styles.summaryNumber}>
-              {labResults.filter(result => {
-                const resultDate = new Date(result.uploaded_at);
-                const sevenDaysAgo = new Date();
-                sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-                return resultDate >= sevenDaysAgo;
-              }).length}
+              {
+                labResults.filter((result) => {
+                  const resultDate = new Date(result.uploaded_at);
+                  const sevenDaysAgo = new Date();
+                  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+                  return resultDate >= sevenDaysAgo;
+                }).length
+              }
             </Text>
             <Text style={styles.summaryLabel}>Recent (7 days)</Text>
           </View>
@@ -165,21 +185,26 @@ const LabResultsPDFDocument: React.FC<{ labResults: LabResult[], periodLabel: st
         {/* Table Header */}
         <View style={styles.tableHeader}>
           <Text style={[styles.tableCell, styles.idCol]}>Result ID</Text>
-          <Text style={[styles.tableCell, styles.requestedCol]}>Requested By</Text>
-          <Text style={[styles.tableCell, styles.submittedCol]}>Submitted By</Text>
+          <Text style={[styles.tableCell, styles.requestedCol]}>
+            Requested By
+          </Text>
+          <Text style={[styles.tableCell, styles.submittedCol]}>
+            Submitted By
+          </Text>
           <Text style={[styles.tableCell, styles.dateCol]}>Upload Date</Text>
           <Text style={[styles.tableCell, styles.statusCol]}>Status</Text>
         </View>
 
         {/* Table Body */}
         {labResults.map((result, index) => (
-          <View key={result.id} style={[
-            styles.tableRow,
-            index % 2 === 0 ? styles.evenRow : styles.oddRow
-          ]}>
-            <Text style={[styles.tableCell, styles.idCol]}>
-              {result.id}
-            </Text>
+          <View
+            key={result.id}
+            style={[
+              styles.tableRow,
+              index % 2 === 0 ? styles.evenRow : styles.oddRow,
+            ]}
+          >
+            <Text style={[styles.tableCell, styles.idCol]}>{result.id}</Text>
             <Text style={[styles.tableCell, styles.requestedCol]}>
               {result.requested_by}
             </Text>
@@ -189,9 +214,7 @@ const LabResultsPDFDocument: React.FC<{ labResults: LabResult[], periodLabel: st
             <Text style={[styles.tableCell, styles.dateCol]}>
               {formatDate(result.uploaded_at)}
             </Text>
-            <Text style={[styles.tableCell, styles.statusCol]}>
-              Completed
-            </Text>
+            <Text style={[styles.tableCell, styles.statusCol]}>Completed</Text>
           </View>
         ))}
 
@@ -208,19 +231,29 @@ const LabResultsPDFDocument: React.FC<{ labResults: LabResult[], periodLabel: st
 };
 
 // PDF Export Component
-const LabResultsPDFExport: React.FC<{ labResults: LabResult[], periodLabel: string }> = ({ labResults, periodLabel }) => {
-  const fileName = `lab-results-${periodLabel.toLowerCase().replace(/\s+/g, '-')}.pdf`;
+const LabResultsPDFExport: React.FC<{
+  labResults: LabResult[];
+  periodLabel: string;
+}> = ({ labResults, periodLabel }) => {
+  const fileName = `lab-results-${periodLabel
+    .toLowerCase()
+    .replace(/\s+/g, "-")}.pdf`;
 
   return (
     <PDFDownloadLink
-      document={<LabResultsPDFDocument labResults={labResults} periodLabel={periodLabel} />}
+      document={
+        <LabResultsPDFDocument
+          labResults={labResults}
+          periodLabel={periodLabel}
+        />
+      }
       fileName={fileName}
-      className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 font-medium text-sm"
+      className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors duration-200 hover:bg-blue-700"
     >
       {({ loading }) => (
         <>
-          <Download className="w-4 h-4" />
-          {loading ? 'Generating PDF...' : 'Export Lab Results'}
+          <Download className="h-4 w-4" />
+          {loading ? "Generating PDF..." : "Export Lab Results"}
         </>
       )}
     </PDFDownloadLink>
@@ -232,7 +265,9 @@ const LabResultsPage = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<"weekly" | "monthly">("monthly");
-  const [expandedMonths, setExpandedMonths] = useState<Record<string, boolean>>({});
+  const [expandedMonths, setExpandedMonths] = useState<Record<string, boolean>>(
+    {}
+  );
 
   useEffect(() => {
     const fetchLabResults = async () => {
@@ -264,7 +299,9 @@ const LabResultsPage = () => {
         const data = await response.json();
         setLabResults(data.lab_results || []);
       } catch (err) {
-        setError(err instanceof Error ? err.message : "An unknown error occurred");
+        setError(
+          err instanceof Error ? err.message : "An unknown error occurred"
+        );
       } finally {
         setLoading(false);
       }
@@ -279,7 +316,8 @@ const LabResultsPage = () => {
 
     // Create a copy and sort by date descending (most recent first)
     const sortedResults = [...labResults].sort(
-      (a, b) => new Date(b.uploaded_at).getTime() - new Date(a.uploaded_at).getTime()
+      (a, b) =>
+        new Date(b.uploaded_at).getTime() - new Date(a.uploaded_at).getTime()
     );
 
     sortedResults.forEach((result) => {
@@ -298,7 +336,9 @@ const LabResultsPage = () => {
 
     // Sort groups by month (most recent first)
     return Object.entries(groups)
-      .sort(([aKey], [bKey]) => new Date(bKey).getTime() - new Date(aKey).getTime())
+      .sort(
+        ([aKey], [bKey]) => new Date(bKey).getTime() - new Date(aKey).getTime()
+      )
       .map(([month, results]) => ({ month, results }));
   }, [labResults]);
 
@@ -330,8 +370,14 @@ const LabResultsPage = () => {
         return d >= startOfWeek && d <= endOfWeek;
       });
 
-      const startLabel = startOfWeek.toLocaleDateString("en-US", { month: "short", day: "numeric" });
-      const endLabel = endOfWeek.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+      const startLabel = startOfWeek.toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+      });
+      const endLabel = endOfWeek.toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+      });
 
       return {
         currentPeriodResults: current,
@@ -348,7 +394,10 @@ const LabResultsPage = () => {
         return d >= firstDay && d <= lastDay;
       });
 
-      const monthLabel = now.toLocaleDateString("en-US", { month: "long", year: "numeric" });
+      const monthLabel = now.toLocaleDateString("en-US", {
+        month: "long",
+        year: "numeric",
+      });
       return {
         currentPeriodResults: current,
         periodLabel: monthLabel,
@@ -358,7 +407,7 @@ const LabResultsPage = () => {
 
   // Accordion behavior: open clicked month exclusively; close if already open
   const toggleMonthExpansion = (month: string) => {
-    setExpandedMonths(prev => {
+    setExpandedMonths((prev) => {
       if (prev[month]) {
         // if already open, close it
         return {};
@@ -425,7 +474,8 @@ const LabResultsPage = () => {
             <div>
               <h1 className="text-3xl font-bold text-gray-900">Lab Results</h1>
               <p className="mt-1 text-gray-600">
-                Comprehensive analysis of laboratory test results and diagnostics
+                Comprehensive analysis of laboratory test results and
+                diagnostics
               </p>
             </div>
           </div>
@@ -504,12 +554,14 @@ const LabResultsPage = () => {
                     Recent (7 days)
                   </p>
                   <p className="text-2xl font-bold text-gray-900">
-                    {labResults.filter(result => {
-                      const resultDate = new Date(result.uploaded_at);
-                      const sevenDaysAgo = new Date();
-                      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-                      return resultDate >= sevenDaysAgo;
-                    }).length}
+                    {
+                      labResults.filter((result) => {
+                        const resultDate = new Date(result.uploaded_at);
+                        const sevenDaysAgo = new Date();
+                        sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+                        return resultDate >= sevenDaysAgo;
+                      }).length
+                    }
                   </p>
                   <p className="mt-1 text-xs text-gray-500">
                     Since{" "}
@@ -531,87 +583,92 @@ const LabResultsPage = () => {
 
         {/* Monthly Reports Accordion */}
         <div className="space-y-4">
-          {groupedResults.length > 0 ? groupedResults.map((group) => {
-            const isExpanded = !!expandedMonths[group.month];
+          {groupedResults.length > 0 ? (
+            groupedResults.map((group) => {
+              const isExpanded = !!expandedMonths[group.month];
 
-            return (
-              <Card key={group.month} className="border-0 bg-white shadow-sm overflow-hidden transition-all duration-300">
-                <button
-                  className="w-full text-left p-6 hover:bg-gray-50 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-200 rounded-t"
-                  onClick={() => toggleMonthExpansion(group.month)}
-                  aria-expanded={isExpanded}
+              return (
+                <Card
+                  key={group.month}
+                  className="overflow-hidden border-0 bg-white shadow-sm transition-all duration-300"
                 >
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-4">
-                      <h2 className="text-xl font-semibold text-gray-900">
-                        {group.month}
-                      </h2>
-                      <Badge className="px-3 py-1 bg-blue-50 text-blue-700 border-blue-200">
-                        {group.results.length} {group.results.length === 1 ? "Result" : "Results"}
-                      </Badge>
-                    </div>
-                    <ChevronDown
-                      className={`h-5 w-5 text-gray-400 transition-transform duration-300 ${
-                        isExpanded ? "rotate-180" : ""
-                      }`}
-                      aria-hidden="true"
-                    />
-                  </div>
-                </button>
-
-                {isExpanded && (
-                  <div className="p-6 border-t border-gray-100 animate-fadeIn">
-                    <div className="flex justify-between items-center mb-6">
-                      <h3 className="text-lg font-medium text-gray-900">Monthly Details</h3>
-                      <LabResultsPDFExport
-                        labResults={group.results}
-                        periodLabel={group.month}
+                  <button
+                    className="w-full rounded-t p-6 text-left transition-colors hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-200"
+                    onClick={() => toggleMonthExpansion(group.month)}
+                    aria-expanded={isExpanded}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-4">
+                        <h2 className="text-xl font-semibold text-gray-900">
+                          {group.month}
+                        </h2>
+                        <Badge className="border-blue-200 bg-blue-50 px-3 py-1 text-blue-700">
+                          {group.results.length}{" "}
+                          {group.results.length === 1 ? "Result" : "Results"}
+                        </Badge>
+                      </div>
+                      <ChevronDown
+                        className={`h-5 w-5 text-gray-400 transition-transform duration-300 ${
+                          isExpanded ? "rotate-180" : ""
+                        }`}
+                        aria-hidden="true"
                       />
                     </div>
+                  </button>
 
-                    <div className="overflow-x-auto rounded-lg border border-gray-200">
-                      <table className="min-w-full divide-y divide-gray-200">
-                        <thead className="bg-gray-50">
-                          <tr>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                              Result ID
-                            </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                              Requested By
-                            </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                              Submitted By
-                            </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                              Upload Date
-                            </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                              Status
-                            </th>
-                          </tr>
-                        </thead>
-                        <tbody className="divide-y divide-gray-200 bg-white">
-                          {group.results.map((result) => (
-                            <ResultRow
-                              key={result.id}
-                              result={result}
-                            />
-                          ))}
-                        </tbody>
-                      </table>
+                  {isExpanded && (
+                    <div className="animate-fadeIn border-t border-gray-100 p-6">
+                      <div className="mb-6 flex items-center justify-between">
+                        <h3 className="text-lg font-medium text-gray-900">
+                          Monthly Details
+                        </h3>
+                        <LabResultsPDFExport
+                          labResults={group.results}
+                          periodLabel={group.month}
+                        />
+                      </div>
+
+                      <div className="overflow-x-auto rounded-lg border border-gray-200">
+                        <table className="min-w-full divide-y divide-gray-200">
+                          <thead className="bg-gray-50">
+                            <tr>
+                              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                                Result ID
+                              </th>
+                              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                                Requested By
+                              </th>
+                              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                                Submitted By
+                              </th>
+                              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                                Upload Date
+                              </th>
+                              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                                Status
+                              </th>
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-gray-200 bg-white">
+                            {group.results.map((result) => (
+                              <ResultRow key={result.id} result={result} />
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
                     </div>
-                  </div>
-                )}
-              </Card>
-            );
-          }) : (
+                  )}
+                </Card>
+              );
+            })
+          ) : (
             <Card className="border-0 bg-white shadow-sm">
               <CardContent className="py-12 text-center">
-                <FileText className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">
+                <FileText className="mx-auto mb-4 h-12 w-12 text-gray-400" />
+                <h3 className="mb-2 text-lg font-medium text-gray-900">
                   No lab results available
                 </h3>
-                <p className="text-gray-600 max-w-md mx-auto">
+                <p className="mx-auto max-w-md text-gray-600">
                   Your lab results will appear here once they become available.
                 </p>
               </CardContent>
@@ -627,11 +684,11 @@ const LabResultsPage = () => {
 const ResultRow = ({ result }: { result: LabResult }) => {
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-US", {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     });
   };
 
