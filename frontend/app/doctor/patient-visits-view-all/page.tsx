@@ -2,8 +2,6 @@
 
 import { useEffect, useState, useRef } from "react";
 import axios from "axios";
-import jsPDF from "jspdf"; 
-import html2canvas from "html2canvas";
 import {
   ClipboardList,
   Stethoscope,
@@ -11,6 +9,7 @@ import {
   CalendarCheck,
   Activity,
   ChevronDown,
+  Download,
 } from "lucide-react";
 import {
   Card,
@@ -18,6 +17,7 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import QueuePDFExport from "@/components/pdf/QueuePDFExport";
 
 type PriorityLevel = "Priority" | "Regular" | "Emergency";
 type VisitStatus =
@@ -51,12 +51,31 @@ interface GroupedVisitsResponse {
   [month: string]: Visit[];
 }
 
+// Queue data interface for PDF export
+interface QueueEntry {
+  patient_id: string;
+  patient_name: string;
+  queue_number: number | null;
+  priority_level: string;
+  complaint: string;
+  status: string;
+  created_at: string;
+  queue_date: string;
+}
+
+interface QueueData {
+  month: number;
+  year: number;
+  entries: QueueEntry[];
+}
+
 export default function MonthlyVisitReports() {
   const [groupedVisits, setGroupedVisits] = useState<GroupedVisitsResponse>({});
   const [monthSummaries, setMonthSummaries] = useState<MonthSummary[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [expandedMonths, setExpandedMonths] = useState<Record<string, boolean>>({});
+  const [selectedMonthForExport, setSelectedMonthForExport] = useState<string | null>(null);
   const reportRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -106,7 +125,7 @@ export default function MonthlyVisitReports() {
         if (sortedMonths.length > 0) {
           setExpandedMonths({ [sortedMonths[0]]: true });
         }
-      } catch{
+      } catch (err) {
         setError("Failed to load visit data. Please try again later.");
       } finally {
         setLoading(false);
@@ -123,46 +142,27 @@ export default function MonthlyVisitReports() {
     }));
   };
 
-  const handleExportPDF = async () => {
-    if (!reportRef.current) return;
+  // Function to convert visits to queue data for PDF export
+  const getQueueDataForMonth = (month: string): QueueData => {
+    const visits = groupedVisits[month] || [];
+    const [year, monthNum] = month.split('-').map(Number);
     
-    try {
-      const input = reportRef.current;
-      const canvas = await html2canvas(input, {
-        scale: 2,
-        useCORS: true,
-        logging: false,
-        backgroundColor: "#ffffff"
-      });
-      
-      const imgData = canvas.toDataURL("image/png", 1.0);
-      const pdf = new jsPDF("p", "mm", "a4");
-      const pageWidth = pdf.internal.pageSize.getWidth();
-      const pageHeight = pdf.internal.pageSize.getHeight();
-      
-      const imgWidth = canvas.width;
-      const imgHeight = canvas.height;
-      
-      const ratio = imgWidth / imgHeight;
-      const pdfImgWidth = pageWidth;
-      const pdfImgHeight = pageWidth / ratio;
-      
-      let position = 0;
-      
-      pdf.addImage(imgData, 'PNG', 0, position, pdfImgWidth, pdfImgHeight);
-      position -= pageHeight;
-      
-      while (position > -imgHeight) {
-        pdf.addPage();
-        pdf.addImage(imgData, 'PNG', 0, position, pdfImgWidth, pdfImgHeight);
-        position -= pageHeight;
-      }
-      
-      pdf.save("Monthly_Visit_Report.pdf");
-    } catch (error) {
-      console.error("PDF export failed:", error);
-      alert("Failed to generate PDF. Please try again.");
-    }
+    const entries: QueueEntry[] = visits.map(visit => ({
+      patient_id: visit.id.toString(),
+      patient_name: visit.patient_name,
+      queue_number: visit.queue_number,
+      priority_level: visit.priority_level,
+      complaint: visit.complaint,
+      status: visit.status,
+      created_at: visit.visit_created_at,
+      queue_date: visit.visit_date,
+    }));
+    
+    return {
+      month: monthNum,
+      year,
+      entries,
+    };
   };
 
   if (loading) {
@@ -261,10 +261,7 @@ export default function MonthlyVisitReports() {
     : "0.00%";
 
   return (
-    <main 
-      className="min-h-screen bg-gradient-to-br from-slate-50 to-gray-100 p-6"
-      ref={reportRef}
-    >
+    <main className="min-h-screen bg-gradient-to-br from-slate-50 to-gray-100 p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header Section */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
@@ -281,13 +278,6 @@ export default function MonthlyVisitReports() {
               </p>
             </div>
           </div>
-          <button
-            onClick={handleExportPDF}
-            className="flex items-center justify-center px-4 py-2 bg-white border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors w-full md:w-auto"
-          >
-            <CalendarCheck className="mr-2 h-4 w-4" />
-            Export Full Report
-          </button>
         </div>
 
         {/* Stats Cards */}
@@ -360,6 +350,14 @@ export default function MonthlyVisitReports() {
 
                 {isExpanded && (
                   <div className="p-6 border-t border-gray-100 animate-fadeIn">
+                    <div className="flex justify-between items-center mb-6">
+                      <h3 className="text-lg font-medium text-gray-900">Monthly Details</h3>
+                      <QueuePDFExport 
+                        queueData={getQueueDataForMonth(summary.month)}
+                        className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 font-medium text-sm"
+                      />
+                    </div>
+                    
                     {/* Month Summary Metrics */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-6">
                       <MetricCard 
