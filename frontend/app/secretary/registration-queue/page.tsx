@@ -5,6 +5,12 @@ import { useRouter } from "next/navigation";
 import { Button, buttonVariants } from "@/components/ui/button";
 import userInfo from "@/hooks/userRole";
 
+import QueueTableToggle from "./queue-table-toggle";
+
+import { DashboardTable } from "@/components/ui/dashboard-table";
+import { columns } from "./columns";
+import { registrations } from "@/lib/placeholder-data";
+
 // PatientQueueItem interface
 export interface PatientQueueItem {
   patient_id: string;
@@ -195,8 +201,11 @@ export default function RegistrationQueue() {
   }
 
   return (
-    <div className="flex-1 px-8 py-8">
-      <h1 className="text-2xl font-bold">Patient Registration Queue</h1>
+    <div className="flex-1 space-y-6 px-8 py-8">
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-bold">Patient Registration Queue</h1>
+        <QueueTableToggle />
+      </div>
       <h2 className="text-xl font-semibold">Priority Queue</h2>
       <div className="flex flex-row justify-center gap-4">
         {/* Priority Queue Cards */}
@@ -266,6 +275,8 @@ export default function RegistrationQueue() {
 
         {renderPatientInfo(regularQueue.current)}
       </div>
+      <DashboardTable columns={columns} data={registrations ?? []} />
+
       {isModalOpen && selectedPatient && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="card">

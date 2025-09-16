@@ -3,6 +3,7 @@
 import { Badge } from "@/components/ui/badge";
 import { ColumnDef } from "@tanstack/react-table";
 import { Edit, EllipsisVertical, Eye } from "lucide-react";
+import { usePathname } from "next/navigation";
 import Link from "next/link";
 
 export type Patient = {
@@ -17,6 +18,23 @@ export type Patient = {
     complaint: string;
   }[];
 };
+
+function ActionsCell({ patientId }: { patientId: string }) {
+  const pathname = usePathname();
+  const basePath = pathname.includes("oncall-doctors")
+    ? "/oncall-doctors"
+    : "/doctors";
+
+  return (
+    <div className="flex flex-row space-x-1">
+      <Link href={`${basePath}/patient-information/${patientId}`}>
+        <Eye className="cursor-pointer text-green-500 hover:fill-current" />
+      </Link>
+      <Edit className="cursor-pointer text-blue-500 hover:fill-current" />
+      <EllipsisVertical className="cursor-pointer" />
+    </div>
+  );
+}
 
 export const PatientColumns: ColumnDef<Patient>[] = [
   {
@@ -40,7 +58,6 @@ export const PatientColumns: ColumnDef<Patient>[] = [
       );
     },
   },
-
   {
     accessorKey: "age",
     header: "Age",
@@ -53,9 +70,7 @@ export const PatientColumns: ColumnDef<Patient>[] = [
       if (!latestQueue?.created_at) return "-";
 
       const date = new Date(latestQueue.created_at);
-      const formatted = date.toISOString().split("T")[0];
-
-      return formatted;
+      return date.toISOString().split("T")[0];
     },
   },
   {
@@ -72,10 +87,7 @@ export const PatientColumns: ColumnDef<Patient>[] = [
     cell: ({ row }) => {
       const latestQueue = row.original.queue_data?.[0];
       const status = latestQueue ? latestQueue.status : null;
-
-      if (!status) {
-        return "-";
-      }
+      if (!status) return "-";
 
       const statusColor =
         status.toLowerCase() === "completed"
@@ -97,18 +109,6 @@ export const PatientColumns: ColumnDef<Patient>[] = [
   {
     id: "actions",
     header: "Actions",
-    cell: ({ row }) => {
-      const patientId = row.original.patient_id;
-
-      return (
-        <div className="flex flex-row space-x-1">
-          <Link href={`/oncall-doctors/patient-information/${patientId}`}>
-            <Eye className="cursor-pointer text-green-500 hover:fill-current" />
-          </Link>
-          <Edit className="cursor-pointer text-blue-500 hover:fill-current" />
-          <EllipsisVertical className="cursor-pointer" />
-        </div>
-      );
-    },
+    cell: ({ row }) => <ActionsCell patientId={row.original.patient_id} />,
   },
 ];
