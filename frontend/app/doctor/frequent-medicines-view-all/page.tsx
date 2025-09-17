@@ -49,7 +49,7 @@ export default function FrequentMedicinesViewAll() {
         if (!accessToken) {
           throw new Error("Authentication required");
         }
-
+        console.log('NEXT_PUBLIC_API_BASE=', process.env.NEXT_PUBLIC_API_BASE);
         const response = await axios.get(
           `${process.env.NEXT_PUBLIC_API_BASE}/patient/reports/frequent-medicines/`,
           {
