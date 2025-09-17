@@ -111,9 +111,6 @@ export default function TreatmentManagement() {
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = treatments.slice(indexOfFirstItem, indexOfLastItem);
-
-  // Change page
-  const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
   
   // Go to next page
   const nextPage = () => {
