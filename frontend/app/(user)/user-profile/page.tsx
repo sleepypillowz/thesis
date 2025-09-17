@@ -508,22 +508,23 @@ export default function ProfilePage() {
                               <option value="other">Other (specify below)</option>
                             </select>
                             
-                            {user.doctor_profile.specialization === "other" && (
-                              <Input
-                                type="text"
-                                placeholder="Enter your specialization"
-                                value={user.doctor_profile.custom_specialization || ""}
-                                onChange={(e) =>
-                                  setUser({
-                                    ...user!,
-                                    doctor_profile: {
-                                      ...user.doctor_profile,
-                                      custom_specialization: e.target.value,
-                                    },
-                                  })
-                                }
-                                className="mt-2 w-full rounded-lg border px-3 py-2"
-                              />
+                              {user.doctor_profile.specialization === "other" && (
+                                <Input
+                                  type="text"
+                                  placeholder="Enter your specialization"
+                                  value={user.doctor_profile.custom_specialization || ""}
+                                  onChange={(e) =>
+                                    setUser({
+                                      ...user!,
+                                      doctor_profile: {
+                                        ...user.doctor_profile,
+                                        specialization: user.doctor_profile?.specialization || "", // <-- always set to string
+                                        custom_specialization: e.target.value,
+                                      },
+                                    })
+                                  }
+                                  className="mt-2 w-full rounded-lg border px-3 py-2"
+                                />
                             )}
                           </div>
                         ) : (
