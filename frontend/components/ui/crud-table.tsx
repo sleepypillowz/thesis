@@ -80,7 +80,7 @@ export function CrudTable<
     setDraft(emptyDraft);
   };
 
-  const startEdit = (row: TData) => {
+  const startEdit = React.useCallback((row: TData) => {
     setEditingId(row.id ?? null);
     setDraft({
       id: row.id,
@@ -90,15 +90,15 @@ export function CrudTable<
       role: row.role,
       is_active: row.is_active ?? true,
     });
-  };
+  }, []);
 
-  const handleDelete = (row: TData) => {
+  const handleDelete = React.useCallback((row: TData) => {
     setTableData((prev) =>
       row.id != null
-        ? prev.filter((u) => u.id !== row.id)
-        : prev.filter((u) => u !== row)
+        ? prev?.filter((u) => u.id !== row.id)
+        : prev?.filter((u) => u !== row)
     );
-  };
+  }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -137,51 +137,51 @@ export function CrudTable<
   const allColumns = React.useMemo(() => {
     // Computed "name" column for search filtering (hidden from UI).
     // filterFn matches all tokens (case-insensitive), so "ali smi" matches "Alice Smith".
-    const nameColumn: ColumnDef<TData, string> = {
-      id: "name",
-      accessorFn: (row) => `${row.first_name} ${row.last_name}`.trim(),
-      header: "Name",
-      filterFn: (row, columnId, filterValue) => {
-        const value = String(filterValue || "")
-          .toLowerCase()
-          .trim();
-        if (!value) return true;
-        const tokens = value.split(/\s+/).filter(Boolean);
-        const full =
-          `${row.original.first_name} ${row.original.last_name}`.toLowerCase();
-        return tokens.every((t) => full.includes(t));
-      },
-    };
-
+  const nameColumn: ColumnDef<TData, string> = {
+    id: "name",
+    accessorFn: (row) => `${row.first_name} ${row.last_name}`.trim(),
+    header: "Name",
+    filterFn: (row, columnId, filterValue) => {
+      const value = String(filterValue || "")
+        .toLowerCase()
+        .trim();
+      if (!value) return true;
+      const tokens = value.split(/\s+/).filter(Boolean);
+      const full =
+        `${row.original.first_name} ${row.original.last_name}`.toLowerCase();
+      return tokens.every((t) => full.includes(t));
+    },
+  };
     // Actions column
-    const actionsColumn: ColumnDef<TData> = {
-      id: "actions",
-      header: "Actions",
-      cell: ({ row }) => (
-        <div className="flex gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => startEdit(row.original)}
-          >
-            Edit
-          </Button>
-          <Button
-            variant="destructive"
-            size="sm"
-            onClick={() => handleDelete(row.original)}
-          >
-            Delete
-          </Button>
-        </div>
-      ),
-    };
 
-    return [nameColumn, ...columns, actionsColumn] as ColumnDef<
-      TData,
-      TValue
-    >[];
-  }, [columns, handleDelete, startEdit]);
+  const actionsColumn: ColumnDef<TData> = {
+    id: "actions",
+    header: "Actions",
+    cell: ({ row }) => (
+      <div className="flex gap-2">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => startEdit(row.original)}
+        >
+          Edit
+        </Button>
+        <Button
+          variant="destructive"
+          size="sm"
+          onClick={() => handleDelete(row.original)}
+        >
+          Delete
+        </Button>
+      </div>
+    ),
+  };
+
+  return [nameColumn, ...columns, actionsColumn] as ColumnDef<
+    TData,
+    TValue
+  >[];
+}, [columns, handleDelete, startEdit]);
 
   const table = useReactTable({
     data: tableData,

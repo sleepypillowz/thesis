@@ -15,6 +15,7 @@ interface UserProfile {
   date_joined: string;
   doctor_profile?: {
     specialization: string;
+    custom_specialization?: string;
   };
 }
 
