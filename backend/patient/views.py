@@ -233,7 +233,7 @@ class Treatment(APIView):
 
     def get(self, request): 
         try:
-            # 1. Fetch all treatment records from Supabase.
+            # 1. Fetch all treatment records from Supabase in a single query
             treatment_response = supabase.table("queueing_treatment").select(
                 "id, treatment_notes, created_at, updated_at, patient_id, "
                 "patient_patient(*), "
@@ -246,31 +246,70 @@ class Treatment(APIView):
                                 status=status.HTTP_400_BAD_REQUEST)
 
             treatment_data = treatment_response.data
+            
+            # 2. Fetch all queue data in a single query
+            queue_response = supabase.table("queueing_temporarystoragequeue").select(
+                "id, priority_level, status, created_at, queue_number, complaint, patient_id"
+            ).execute()
+            
+            # Create a mapping of patient_id to their latest queue data
+            queue_map = {}
+            for queue_item in queue_response.data:
+                pid = queue_item["patient_id"]
+                # Keep only the most recent queue item for each patient
+                if pid not in queue_map or queue_item["created_at"] > queue_map[pid]["created_at"]:
+                    queue_map[pid] = queue_item
+            
+            # 3. Get all patient IDs from both treatments and queues
+            treatment_patient_ids = {item["patient_id"] for item in treatment_data}
+            queue_patient_ids = set(queue_map.keys())
+            all_patient_ids = treatment_patient_ids.union(queue_patient_ids)
+            
+            # 4. Fetch all patient details in a single query
+            patient_response = supabase.table("patient_patient").select(
+                "patient_id, first_name, middle_name, last_name"
+            ).in_("patient_id", list(all_patient_ids)).execute()
+            
+            # Create a mapping of patient_id to patient details
+            patient_map = {p["patient_id"]: p for p in patient_response.data}
+
             # Dictionary to group treatment records by patient_id.
             patient_treatments = {}
 
+            # Process patients with treatments
             for item in treatment_data:
                 pid = item["patient_id"]
-
-                # Retrieve the latest queue data for this patient.
-                queue_response = supabase.table("queueing_temporarystoragequeue").select(
-                    "id, priority_level, status, created_at, queue_number, complaint"
-                ).eq("patient_id", pid).order("created_at", desc=True).execute()
-                queue_data = queue_response.data[0] if queue_response.data else None
-
+                
+                # Get queue data from our pre-fetched map
+                queue_data = queue_map.get(pid)
+                
                 # Use the queue status if available.
-                # If the status is "draft", we consider that as "Ongoing for Treatment".
                 status_value = queue_data["status"] if queue_data and queue_data.get("status") else None
                 if status_value and status_value.lower() == "draft":
                     status_value = "Ongoing for Treatment"
                 elif not status_value:
                     status_value = "Unknown"
 
-                # Build patient info from the treatment record.
+                # Build patient info from the treatment record or patient map
+                patient_info = item.get("patient_patient", {}) or patient_map.get(pid, {})
                 patient_data = {
-                    **item.get("patient_patient", {}),
+                    **patient_info,
                     "queue_data": queue_data
                 }
+
+                # Extract diagnoses and prescriptions with proper error handling
+                diagnoses = []
+                prescriptions = []
+                
+                # Handle diagnoses
+                for d in item.get("queueing_treatment_diagnoses", []):
+                    if isinstance(d, dict) and "patient_diagnosis" in d and isinstance(d["patient_diagnosis"], dict):
+                        diagnoses.append(d["patient_diagnosis"])
+                
+                # Handle prescriptions
+                for p in item.get("queueing_treatment_prescriptions", []):
+                    if isinstance(p, dict) and "patient_prescription" in p and isinstance(p["patient_prescription"], dict):
+                        prescriptions.append(p["patient_prescription"])
 
                 # Build a treatment summary.
                 treatment_summary = {
@@ -278,21 +317,12 @@ class Treatment(APIView):
                     "treatment_notes": item["treatment_notes"],
                     "created_at": item["created_at"],
                     "updated_at": item["updated_at"],
-                    "diagnoses": [
-                        d["patient_diagnosis"]
-                        for d in item.get("queueing_treatment_diagnoses", [])
-                        if d.get("patient_diagnosis")
-                    ],
-                    "prescriptions": [
-                        p["patient_prescription"]
-                        for p in item.get("queueing_treatment_prescriptions", [])
-                        if p.get("patient_prescription")
-                    ],
+                    "diagnoses": diagnoses,
+                    "prescriptions": prescriptions,
                     "status": status_value,
                 }
 
                 # If patient doesn't exist in our dictionary yet, add them.
-                # Otherwise, update if this record is more recent.
                 if pid not in patient_treatments:
                     patient_treatments[pid] = {
                         "patient": patient_data,
@@ -305,55 +335,44 @@ class Treatment(APIView):
                         patient_treatments[pid]["latest_treatment"] = treatment_summary
                         patient_treatments[pid]["latest_treatment_id"] = treatment_summary["id"]
 
-            # 2. Now, include patients who have no treatment record.
-            queue_all_response = supabase.table("queueing_temporarystoragequeue").select(
-                "id, priority_level, status, created_at, queue_number, complaint, patient_id"
-            ).execute()
+            # 5. Add patients who have no treatment record but have queue data
+            for pid in (queue_patient_ids - treatment_patient_ids):
+                if pid in queue_map:
+                    q_item = queue_map[pid]
+                    
+                    # Get patient info from our pre-fetched map
+                    patient_info = patient_map.get(pid, {"patient_id": pid, "first_name": "", "middle_name": "", "last_name": ""})
+                    
+                    patient_data = {
+                        "patient_id": pid,
+                        "first_name": patient_info.get("first_name", ""),
+                        "middle_name": patient_info.get("middle_name", ""),
+                        "last_name": patient_info.get("last_name", ""),
+                        "queue_data": q_item
+                    }
+                    
+                    default_treatment_summary = {
+                        "id": None,
+                        "treatment_notes": "",
+                        "created_at": "",
+                        "updated_at": "",
+                        "diagnoses": [],
+                        "prescriptions": [],
+                        "status": "Ongoing for Treatment"
+                    }
 
-            if queue_all_response.data:
-                for q_item in queue_all_response.data:
-                    pid = q_item["patient_id"]
-                    if pid not in patient_treatments:
-                        # Fetch patient details from the "patient" table
-                        patient_response = supabase.table("patient_patient").select(
-                            "patient_id, first_name, middle_name, last_name"
-                        ).eq("patient_id", pid).execute()
-                        if patient_response.data:
-                            patient_info = patient_response.data[0]
-                        else:
-                            patient_info = {"patient_id": pid, "first_name": "", "middle_name": "", "last_name": ""}
+                    patient_treatments[pid] = {
+                        "patient": patient_data,
+                        "latest_treatment": default_treatment_summary,
+                        "latest_treatment_id": None
+                    }
 
-                        patient_data = {
-                            "patient_id": pid,
-                            "first_name": patient_info.get("first_name", ""),
-                            "middle_name": patient_info.get("middle_name", ""),
-                            "last_name": patient_info.get("last_name", ""),
-                            "queue_data": q_item
-                        }
-                        default_treatment_summary = {
-                            "id": None,
-                            "treatment_notes": "",
-                            "created_at": "",  # or "1970-01-01T00:00:00Z"
-                            "updated_at": "",
-                            "diagnoses": [],
-                            "prescriptions": [],
-                            "status": "Ongoing for Treatment"
-                        }
-
-                        patient_treatments[pid] = {
-                            "patient": patient_data,
-                            "latest_treatment": default_treatment_summary,
-                            "latest_treatment_id": None
-                        }
-
-
-            # 3. Convert our dictionary into a list and return it.
+            # 6. Convert our dictionary into a list and return it.
             transformed = list(patient_treatments.values())
             return Response(transformed, status=status.HTTP_200_OK)
 
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
 
 class PatientTreatmentListView(APIView):
     permission_classes = [IsMedicalStaff]
