@@ -10,7 +10,7 @@ from user.permissions import isDoctor, isSecretary
 
 from django.utils import timezone
 from datetime import date
-from django.utils.timezone import now, localdate
+from django.utils.timezone import now, localtime
 from datetime import datetime, timedelta
 from .models import Appointment
 
@@ -31,7 +31,7 @@ from .serializers import AppointmentSerializer, QueueSerializer
 from queueing.models import TemporaryStorageQueue
 from django.db.models import F
 from django.db import transaction
-
+import pytz
 
 class DoctorCreateReferralView(APIView):
     permission_classes = [isDoctor]
@@ -287,8 +287,10 @@ class UpcomingAppointments(APIView):
     permission_classes = [IsMedicalStaff]
     
     def get(self, request):
-        date_today = localdate() 
-        current_time = now()
+        manila = pytz.timezone("Asia/Manila")
+        current_time = localtime(now(), manila)   # Manila datetime
+        date_today = current_time.date()          # Manila date
+        print(date_today, current_time)
         role = getattr(request.user, "role", None)
         print("Role:", role, "User:", request.user.id)
 

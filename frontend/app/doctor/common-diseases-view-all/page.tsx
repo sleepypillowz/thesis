@@ -134,7 +134,7 @@ useEffect(() => {
   const toggleDiseaseExpansion = (diseaseKey: string) => {
     setExpandedDiseases(prev => ({
       ...prev,
-      [diseaseKey]: !prev[diseaseKey]
+      [diseaseKey]: !prev?.[diseaseKey]
     }));
   };
 
@@ -147,10 +147,10 @@ useEffect(() => {
   };
 
   // Calculate stats
-  const totalDiseases = commonDiseases.length;
-  const totalOccurrences = commonDiseases.reduce((sum, disease) => sum + disease.occurrences.length, 0);
+  const totalDiseases = commonDiseases?.length;
+  const totalOccurrences = commonDiseases?.reduce((sum, disease) => sum + disease.occurrences.length, 0);
   const Patients = new Set(
-    commonDiseases.flatMap(disease => 
+    commonDiseases?.flatMap(disease => 
       disease.occurrences.map(o => o.patient_name)
   )).size;
 
@@ -168,14 +168,14 @@ useEffect(() => {
         <Header />
         
         <StatsCards 
-          totalDiseases={totalDiseases}
-          totalOccurrences={totalOccurrences}
-          Patients={Patients}
+          totalDiseases={totalDiseases ?? 0}
+          totalOccurrences={totalOccurrences ?? 0}
+          Patients={Patients ?? 0}
         />
 
         <DiseaseAnalysisTable 
-          commonDiseases={commonDiseases}
-          expandedDiseases={expandedDiseases}
+          commonDiseases={commonDiseases ?? []}
+          expandedDiseases={expandedDiseases ?? {}}
           toggleDiseaseExpansion={toggleDiseaseExpansion}
           formatDate={formatDate}
         />

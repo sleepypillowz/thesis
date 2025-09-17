@@ -264,8 +264,8 @@ export default function Page() {
               </div>
 
               <div className="mt-6 space-y-3">
-                {appointments.length > 0 ? (
-                  appointments.map((appt, idx) => (
+                  {(appointments ?? []).length > 0 ? (
+                    (appointments ?? []).map((appt, idx) => (
                     <div
                       key={idx}
                       className="flex items-center justify-between rounded-lg border-2 p-4 transition-colors"

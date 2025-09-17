@@ -22,11 +22,11 @@ interface Doctor {
 
 export default function ArchivedDoctors() {
   const [archivedDoctors, setArchivedDoctors] = useState<Doctor[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string>('');
   const [restoreLoading, setRestoreLoading] = useState<Record<string, boolean>>({});
-  const [successMessage, setSuccessMessage] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
+  const [successMessage, setSuccessMessage] = useState<string>('');
+  const [errorMessage, setErrorMessage] = useState<string>('');
 
   const fetchArchivedDoctors = async () => {
     try {
@@ -56,8 +56,6 @@ export default function ArchivedDoctors() {
     if (!confirm('Are you sure you want to restore this doctor?')) return;
     
     setRestoreLoading(prev => ({ ...prev, [doctorId]: true }));
-    setErrorMessage('');
-    setSuccessMessage('');
   
     try {
       const token = localStorage.getItem('access');
@@ -130,7 +128,7 @@ export default function ArchivedDoctors() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {archivedDoctors.map((doctor) => (
+          {archivedDoctors?.map((doctor) => (
             <TableRow key={doctor.id}>
               <TableCell>{`${doctor.first_name} ${doctor.last_name}`}</TableCell>
               <TableCell>{doctor.email}</TableCell>
@@ -140,13 +138,13 @@ export default function ArchivedDoctors() {
                   onClick={() => handleRestore(doctor.id)}
                   variant="outline"
                   className={`transition-colors ${
-                    restoreLoading[doctor.id]
+                    restoreLoading?.[doctor.id]
                       ? 'cursor-not-allowed bg-gray-300 text-gray-500'
                       : 'bg-green-500 hover:bg-green-600 text-white'
                   }`}
-                  disabled={restoreLoading[doctor.id]}
+                  disabled={restoreLoading?.[doctor.id]}
                 >
-                  {restoreLoading[doctor.id] ? 'Restoring...' : 'Restore'}
+                  {restoreLoading?.[doctor.id] ? 'Restoring...' : 'Restore'}
                 </Button>
               </TableCell>
             </TableRow>

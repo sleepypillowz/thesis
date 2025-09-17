@@ -4,12 +4,11 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Button, buttonVariants } from "@/components/ui/button";
 import userInfo from "@/hooks/userRole";
-
 import QueueTableToggle from "./queue-table-toggle";
-
 import { DashboardTable } from "@/components/ui/dashboard-table";
 import { columns } from "./columns";
 import { registrations } from "@/lib/placeholder-data";
+import PatientRoutingModal from "@/components/pages/PatientRoutingModal";
 
 // PatientQueueItem interface
 export interface PatientQueueItem {
@@ -21,6 +20,8 @@ export interface PatientQueueItem {
   phone_number?: string;
   queue_number: number;
   status?: string;
+  priority_level?: string;
+  created_at?: string;
 }
 
 export default function RegistrationQueue() {
@@ -35,31 +36,31 @@ export default function RegistrationQueue() {
     next1: null as PatientQueueItem | null,
     next2: null as PatientQueueItem | null,
   });
-  const [selectedPatient, setSelectedPatient] =
-    useState<PatientQueueItem | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  
+  const [selectedPatient, setSelectedPatient] = useState<PatientQueueItem | null>(null);
+  const [isRoutingModalOpen, setIsRoutingModalOpen] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
-    const token = localStorage.getItem("access");
-    fetch(
-      `${process.env.NEXT_PUBLIC_API_BASE}/queueing/registration_queueing/`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          // Include the token in the Authorization header
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    )
-      .then((response) => {
+    const fetchQueueData = async () => {
+      try {
+        const token = localStorage.getItem("access");
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_BASE}/queueing/registration_queueing/`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
-        return response.json();
-      })
-      .then((data) => {
+        
+        const data = await response.json();
         console.log("API Response:", data);
 
         // Extract priority patients and sort by timestamp
@@ -67,14 +68,14 @@ export default function RegistrationQueue() {
           data.priority_current,
           data.priority_next1,
           data.priority_next2,
-        ].filter((p) => p !== null); // Remove null values
+        ].filter((p) => p !== null);
 
         // Extract regular patients and sort by timestamp
         const regularPatients = [
           data.regular_current,
           data.regular_next1,
           data.regular_next2,
-        ].filter((p) => p !== null); // Remove null values
+        ].filter((p) => p !== null);
 
         // Update priority queue state
         setPriorityQueue({
@@ -89,18 +90,24 @@ export default function RegistrationQueue() {
           next1: regularPatients[1] || null,
           next2: regularPatients[2] || null,
         });
+      } catch (error) {
+        console.error("Error fetching queue:", error);
+      }
+    };
 
-        console.log("Priority Queue:", priorityQueue);
-        console.log("Regular Queue:", regularQueue);
-      })
-      .catch((error) => console.error("Error fetching queue:", error));
-  }, [priorityQueue, regularQueue]);
+    fetchQueueData();
+    // Set up interval to refresh data every 30 seconds
+    const intervalId = setInterval(fetchQueueData, 30000);
+    
+    return () => clearInterval(intervalId);
+  }, []);
+
   const handleAccept = (queueItem: PatientQueueItem) => {
     setSelectedPatient(queueItem);
-    setIsModalOpen(true);
+    setIsRoutingModalOpen(true);
   };
 
-  const confirmAccept = async (patient_id: string) => {
+  const handleRoutePatient = async (patientId: string, action: string) => {
     try {
       const token = localStorage.getItem("access");
       const response = await fetch(
@@ -112,7 +119,8 @@ export default function RegistrationQueue() {
             Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
-            patient_id: patient_id, // ✅ Ensure you're sending the correct ID
+            patient_id: patientId,
+            action: action, // Changed from destination to action
           }),
         }
       );
@@ -120,51 +128,95 @@ export default function RegistrationQueue() {
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
-      router.push("/secretary/assessment-queue");
+      
+      // Close the modal
+      setIsRoutingModalOpen(false);
+      setSelectedPatient(null);
+      
+      // Refresh the queue data
+      const fetchResponse = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE}/queueing/registration_queueing/`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      
+      if (fetchResponse.ok) {
+        const data = await fetchResponse.json();
+        
+        // Update queues with new data
+        const priorityPatients = [
+          data.priority_current,
+          data.priority_next1,
+          data.priority_next2,
+        ].filter((p) => p !== null);
+
+        const regularPatients = [
+          data.regular_current,
+          data.regular_next1,
+          data.regular_next2,
+        ].filter((p) => p !== null);
+
+        setPriorityQueue({
+          current: priorityPatients[0] || null,
+          next1: priorityPatients[1] || null,
+          next2: priorityPatients[2] || null,
+        });
+
+        setRegularQueue({
+          current: regularPatients[0] || null,
+          next1: regularPatients[1] || null,
+          next2: regularPatients[2] || null,
+        });
+      }
     } catch (error) {
       console.error("❌ Error updating queue:", error);
     }
   };
 
-  const renderPatientInfo = (queueItem: PatientQueueItem | null) => {
+  const renderPatientInfo = (queueItem: PatientQueueItem | null, isPriority: boolean = false) => {
     if (!queueItem) return null;
+    
     return (
       <div className="flex justify-center pt-8">
-        <div className="card flex w-96 max-w-sm flex-col rounded-lg">
+        <div className="card flex w-96 max-w-sm flex-col rounded-lg p-6 bg-white shadow-md">
           <p className="mb-2 text-lg font-semibold tracking-tight">
             Patient Information
           </p>
-          <div className="flex">
-            <p>
-              <span>Name: </span>
+          <div className="flex justify-between mb-4">
+            <p className="text-sm">
+              <span className="font-medium">Name: </span>
               {queueItem.first_name} {queueItem.last_name}
             </p>
-            <p className="pl-8">
-              <span>Age: </span>
+            <p className="text-sm">
+              <span className="font-medium">Age: </span>
               {queueItem.age}
             </p>
           </div>
-          <hr className="mt-2" />
+          <hr className="my-2" />
           <p className="my-2 text-lg font-semibold tracking-tight">
             Additional Information
           </p>
-          <p>
-            <span>Phone number: </span>
+          <p className="text-sm mb-2">
+            <span className="font-medium">Phone number: </span>
             {queueItem.phone_number || "N/A"}
           </p>
-          <p>
-            <span>Reason: </span>
+          <p className="text-sm mb-4">
+            <span className="font-medium">Reason: </span>
             {queueItem.complaint || "N/A"}
           </p>
-          <div className="flex flex-col pt-6">
+          <div className="flex flex-col gap-3">
             <div className="flex justify-between">
               <button
                 onClick={() => handleAccept(queueItem)}
-                className={buttonVariants({ variant: "outline" })}
+                className={buttonVariants({ variant: "default" })}
               >
                 Accept
               </button>
-
               <button
                 className={buttonVariants({ variant: "outline" })}
                 onClick={() => router.push("/payments")}
@@ -196,9 +248,23 @@ export default function RegistrationQueue() {
       </div>
     );
   }
+  
   if (!userRole) {
     return <div>Loading...</div>;
   }
+
+  // Convert PatientQueueItem to Patient for the modal
+  const convertToModalPatient = (item: PatientQueueItem) => ({
+    id: parseInt(item.patient_id) || 0,
+    patient_id: item.patient_id,
+    patient_name: `${item.first_name} ${item.last_name}`,
+    queue_number: item.queue_number,
+    priority_level: item.priority_level || "Regular",
+    complaint: item.complaint,
+    status: item.status || "Waiting",
+    created_at: new Date().toISOString(),
+    queue_date: new Date().toISOString().split('T')[0],
+  });
 
   return (
     <div className="flex-1 space-y-6 px-8 py-8">
@@ -206,6 +272,7 @@ export default function RegistrationQueue() {
         <h1 className="text-2xl font-bold">Patient Registration Queue</h1>
         <QueueTableToggle />
       </div>
+      
       <h2 className="text-xl font-semibold">Priority Queue</h2>
       <div className="flex flex-row justify-center gap-4">
         {/* Priority Queue Cards */}
@@ -239,7 +306,7 @@ export default function RegistrationQueue() {
           <span>Next</span>
         </div>
 
-        {renderPatientInfo(priorityQueue.current)}
+        {renderPatientInfo(priorityQueue.current, true)}
       </div>
 
       <h2 className="text-xl font-semibold">Regular Queue</h2>
@@ -257,7 +324,6 @@ export default function RegistrationQueue() {
 
         <div className="card flex h-96 w-80 max-w-sm flex-col items-center justify-center">
           <p className="text-6xl font-bold">
-            {" "}
             {regularQueue.next1 ? `#${regularQueue.next1.queue_number}` : "N/A"}
           </p>
           <span>Queuing Number</span>
@@ -266,38 +332,27 @@ export default function RegistrationQueue() {
 
         <div className="card flex h-96 w-80 max-w-sm flex-col items-center justify-center">
           <p className="text-6xl font-bold">
-            {" "}
             {regularQueue.next2 ? `#${regularQueue.next2.queue_number}` : "N/A"}
           </p>
           <span>Queuing Number</span>
           <span>Next</span>
         </div>
 
-        {renderPatientInfo(regularQueue.current)}
+        {renderPatientInfo(regularQueue.current, false)}
       </div>
+      
       <DashboardTable columns={columns} data={registrations ?? []} />
-
-      {isModalOpen && selectedPatient && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="card">
-            <p className="text-lg font-semibold">
-              Are you sure you want to accept this patient?
-            </p>
-            <div className="mt-4 flex justify-end gap-4">
-              <Button variant="secondary" onClick={() => setIsModalOpen(false)}>
-                Cancel
-              </Button>
-              <Button
-                onClick={() =>
-                  selectedPatient && confirmAccept(selectedPatient.patient_id)
-                }
-              >
-                Accept
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
+      
+      {/* Patient Routing Modal */}
+      <PatientRoutingModal
+        isOpen={isRoutingModalOpen}
+        onClose={() => {
+          setIsRoutingModalOpen(false);
+          setSelectedPatient(null);
+        }}
+        patient={selectedPatient ? convertToModalPatient(selectedPatient) : null}
+        onRoutePatient={handleRoutePatient}
+      />
     </div>
   );
 }

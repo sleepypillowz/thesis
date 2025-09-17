@@ -19,8 +19,8 @@ interface Referral {
 
 export default function ReferralsPage() {
   const [referrals, setReferrals] = useState<Referral[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | undefined>(undefined);
   const router = useRouter();
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const [selectedReferral, setSelectedReferral] = useState<Referral | null>(null);
@@ -104,7 +104,7 @@ export default function ReferralsPage() {
 
       if (!res.ok) throw new Error("Update failed");
       const updatedReferral = await res.json();
-      setReferrals(prev => prev.map(ref => ref.id === updatedReferral.id ? updatedReferral : ref));
+      setReferrals(prev => prev?.map(ref => ref.id === updatedReferral.id ? updatedReferral : ref));
       setSelectedReferral(null);
     } catch (error) {
       console.error("Update error:", error);
@@ -120,7 +120,7 @@ export default function ReferralsPage() {
       );
       if (!res.ok) throw new Error("Cancel failed");
       const updatedReferral = await res.json();
-      setReferrals(prev => prev.map(ref => ref.id === id ? updatedReferral : ref));
+      setReferrals(prev => prev?.map(ref => ref.id === id ? updatedReferral : ref));
     } catch (error) {
       console.error(error);
     }
@@ -237,7 +237,7 @@ export default function ReferralsPage() {
         <p className="mt-2 text-gray-500">Manage your patient referrals and appointments</p>
       </div>
 
-      {referrals.length === 0 ? (
+      {referrals?.length === 0 ? (
         <div className="flex w-full flex-col items-center justify-center rounded-xl bg-white p-12 shadow-sm">
           <svg className="mb-4 h-24 w-24 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -246,7 +246,7 @@ export default function ReferralsPage() {
         </div>
       ) : (
         <div className="w-full space-y-6">
-          {referrals.map((referral) => {
+          {referrals?.map((referral) => {
             const createdAt = parseISO(referral.created_at || "");
             const appointmentAt = parseISO(referral.appointment_date || "");
             const formattedCreated = isValid(createdAt) ? format(createdAt, "MMMM d, yyyy") : "Unknown date";

@@ -23,7 +23,7 @@ function ActionsCell({ patientId }: { patientId: string }) {
   const pathname = usePathname();
   const basePath = pathname.includes("oncall-doctors")
     ? "/oncall-doctors"
-    : "/doctors";
+    : "/doctor";
 
   return (
     <div className="flex flex-row space-x-1">

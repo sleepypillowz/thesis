@@ -20,7 +20,7 @@ from sklearn.model_selection import train_test_split
 import lightgbm as lgb
 from lightgbm import LGBMRegressor
 from sklearn.metrics import mean_squared_error, r2_score, mean_absolute_percentage_error
-
+import math
 
 from patient.serializers import PatientRegistrationSerializer
 
@@ -262,7 +262,7 @@ class Predict(APIView):
                 'mse': mse,
                 'r2': r2,
                 'accuracy': accuracy,
-                'forecast_next_3_months': [float(x) for x in forecast]  # Ensure all floats
+                'forecast_next_3_months': [int(x) for x in forecast]  # Ensure all floats
             }
             
             # Remove any None values that might cause issues

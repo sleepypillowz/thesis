@@ -739,7 +739,8 @@ class AcceptButton(APIView):
     permission_classes = [IsMedicalStaff]
     def post(self, request):
         try:
-            print("📥 Received Data:", request.data)  # Log raw request data
+            action = request.data.get('action')
+            print(action)
             patient_id = request.data.get("patient_id")
             print("🔍 Looking for Patient ID:", patient_id)
 
@@ -752,10 +753,19 @@ class AcceptButton(APIView):
                 print("❌ Queue entry not found!")
                 return Response({"error": "Queue entry not found"}, status=status.HTTP_404_NOT_FOUND)
             
-            print("Found queue entry:", queue_entry)
-            # Update the status to "Queued for Assessment"
-            queue_entry.status = "Queued for Assessment"
-            queue_entry.save()
+            
+            if action == 'preliminary':
+                queue_entry.status = "Queued for Assessment"
+                queue_entry.save()
+            elif action == 'treatment':
+                queue_entry.status = "Queued for Treatment"
+                queue_entry.save()
+            elif action == 'lab':
+                queue_entry.status = "Ongoing for Laboratory"     
+                queue_entry.save()  
+            else:
+                return Response({"error": "Invalid action"}, status=status.HTTP_400_BAD_REQUEST)        
+            
 
             return Response({"message": "Status updated successfully", "status": queue_entry.status}, status=status.HTTP_200_OK)
 

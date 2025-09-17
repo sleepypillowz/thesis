@@ -44,6 +44,7 @@ class TemporaryStorageQueue(models.Model):
             ('Waiting', 'Waiting'),
             ('Queued for Assessment', 'Queued for Assessment'),
             ('Queued for Treatment', 'Queued for Treatment'),
+            ('Ongoing for Laboratory', 'Ongoing for Laboratory'),
             ('Ongoing for Treatment', 'Ongoing for Treatment'),
             ('Completed', 'Completed'),
         ],
