@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import userInfo from "@/hooks/userRole";
 import QueueTableToggle from "./queue-table-toggle";
 import { DashboardTable } from "@/components/ui/dashboard-table";
@@ -178,7 +178,7 @@ export default function RegistrationQueue() {
     }
   };
 
-  const renderPatientInfo = (queueItem: PatientQueueItem | null, isPriority: boolean = false) => {
+  const renderPatientInfo = (queueItem: PatientQueueItem | null ) => {
     if (!queueItem) return null;
     
     return (
