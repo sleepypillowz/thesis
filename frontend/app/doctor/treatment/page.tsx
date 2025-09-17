@@ -71,6 +71,8 @@ function getLatestTreatments(treatments: Treatment[]): Treatment[] {
 
 export default function TreatmentManagement() {
   const [treatments, setTreatments] = useState<Treatment[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(20); // Number of items per page
   const router = useRouter();
   const role = userRole();
 
@@ -103,6 +105,30 @@ export default function TreatmentManagement() {
     }
     fetchTreatments();
   }, []);
+
+  // Calculate pagination values
+  const totalPages = Math.ceil(treatments.length / itemsPerPage);
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = treatments.slice(indexOfFirstItem, indexOfLastItem);
+
+  // Change page
+  const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
+  
+  // Go to next page
+  const nextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+  
+  // Go to previous page
+  const prevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
   if (!role || role.role !== "doctor") {
     return (
       <div className="flex min-h-screen items-center justify-center text-xl font-semibold">
@@ -142,7 +168,7 @@ export default function TreatmentManagement() {
             </tr>
           </thead>
           <tbody>
-            {treatments.map((treatment) => (
+            {currentItems.map((treatment) => (
               <tr
                 key={`${treatment.patient.patient_id}-${treatment.id}`}
                 className="hover:bg-gray-50"
@@ -188,6 +214,34 @@ export default function TreatmentManagement() {
             ))}
           </tbody>
         </table>
+
+        {/* Pagination Controls - Left aligned with page info and buttons */}
+        <div className="mt-4 flex justify-end items-center space-x-4 ml-9">
+          {/* Page info */}
+          <div className="text-sm text-muted-foreground">
+            Page {currentPage} of {totalPages}
+          </div>
+          
+          {/* Navigation buttons */}
+          <div className="flex items-center space-x-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={prevPage}
+              disabled={currentPage === 1}
+            >
+              Previous
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={nextPage}
+              disabled={currentPage === totalPages}
+            >
+              Next
+            </Button>
+          </div>
+        </div>
       </div>
 
       {/* Add New Treatment Section */}
