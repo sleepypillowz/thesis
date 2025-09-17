@@ -263,8 +263,10 @@ class PatientVisitSerializer(serializers.ModelSerializer):
         ]
 
     def get_treatment_created_at(self, obj):
-        # Assuming the latest treatment corresponds to this queue
-        treatment = Treatment.objects.filter(patient=obj.patient).order_by('-created_at').first()
+        patient_id = obj.get('patient_id')
+        if not patient_id:
+            return None
+        treatment = Treatment.objects.filter(patient__patient_id=patient_id).order_by('-created_at').first()
         return treatment.created_at if treatment else None
 
 class PatientLabTestSerializer(serializers.ModelSerializer):
