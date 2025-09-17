@@ -121,7 +121,7 @@ export default function MonthlyVisitReports() {
         if (sortedMonths.length > 0) {
           setExpandedMonths({ [sortedMonths[0]]: true });
         }
-      } catch (err) {
+      } catch {
         setError("Failed to load visit data. Please try again later.");
       } finally {
         setLoading(false);

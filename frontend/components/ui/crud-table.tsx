@@ -181,7 +181,7 @@ export function CrudTable<
       TData,
       TValue
     >[];
-  }, [columns]);
+  }, [columns, handleDelete, startEdit]);
 
   const table = useReactTable({
     data: tableData,

@@ -75,7 +75,7 @@ const DoctorCard: React.FC<DoctorCardComponentProps> = ({
   onArchive,
 }) => {
   const [expanded, setExpanded] = useState(false);
-
+  
   const renderStars = () => {
     const stars = [];
     const fullStars = Math.floor(rating);

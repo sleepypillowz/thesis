@@ -34,13 +34,6 @@ const QueuePDFDocument: React.FC<{ queueData: QueueData }> = ({ queueData }) => 
     return a.queue_number - b.queue_number;
   });
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      month: 'long',
-      day: 'numeric',
-      year: 'numeric'
-    });
-  };
 
   const formatTime = (dateString: string) => {
     return new Date(dateString).toLocaleTimeString('en-US', {
@@ -158,7 +151,7 @@ const QueuePDFExport: React.FC<PDFExportProps> = ({ queueData, className = "" })
         fileName={fileName}
         className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 font-medium text-sm"
       >
-        {({ blob, url, loading, error }) => (
+        {({loading}) => (
           <>
             <Download className="w-4 h-4" />
             {loading ? 'Generating PDF...' : 'Export Queue Report'}

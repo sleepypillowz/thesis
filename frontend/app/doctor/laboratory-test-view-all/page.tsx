@@ -3,7 +3,7 @@ import React, { useEffect, useState, useMemo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { FileText, Calendar, User, Upload, Download, AlertTriangle, ChevronDown } from "lucide-react";
+import { FileText, Calendar, User, Upload, Download, ChevronDown } from "lucide-react";
 import { Document, Page, Text, View, StyleSheet, PDFDownloadLink } from '@react-pdf/renderer';
 
 interface LabResult {
