@@ -1048,27 +1048,12 @@ class MonthlyVisitsAPIView(APIView):
 
 class MonthlyPatientVisitsDetailedView(APIView):
     def get(self, request):
-        visits = TemporaryStorageQueue.objects.all().order_by('queue_date')
+        visits = TemporaryStorageQueue.objects.all().order_by("queue_date")
         serializer = PatientVisitSerializer(visits, many=True)
 
         grouped_visits = defaultdict(list)
-
         for visit in serializer.data:
-            visit_date = visit.get('visit_date')
-            treatment_created_at = visit.get('treatment_created_at')
-            visit_created_at = visit.get('visit_created_at')
-
-            try:
-                if treatment_created_at and visit_created_at:
-                    # Ensure both are strings before processing
-                    if isinstance(treatment_created_at, str) and isinstance(visit_created_at, str):
-                        treatment_dt = datetime.fromisoformat(treatment_created_at.replace("Z", "+00:00"))
-                        visit_dt = datetime.fromisoformat(visit_created_at.replace("Z", "+00:00"))
-                        if treatment_dt < visit_dt:
-                            continue  # skip invalid record
-            except Exception:
-                continue  # skip on any parsing error
-
+            visit_date = visit.get("visit_date")
             if visit_date:
                 month = visit_date[:7]
                 grouped_visits[month].append(visit)

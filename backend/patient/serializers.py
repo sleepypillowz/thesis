@@ -14,6 +14,7 @@ from medicine.serializers import MedicineSerializer
 
 from queueing.models import TemporaryStorageQueue, Treatment
 
+
 class PatientSerializer(serializers.Serializer):
     patient_id = serializers.CharField(max_length=8)
     first_name = serializers.CharField(max_length=200, allow_blank=True, required=False)
@@ -250,19 +251,31 @@ class PatientReportSerializer(serializers.Serializer):
     
 class PatientVisitSerializer(serializers.ModelSerializer):
     visit_date = serializers.DateField(source='queue_date')
-    patient_name = serializers.CharField(source='patient.first_name')
+    patient_name = serializers.SerializerMethodField()
     visit_created_at = serializers.DateTimeField(source='created_at')
-    treatment_created_at = serializers.DateTimeField(read_only=True)  # comes from annotate
+    treatment_created_at = serializers.SerializerMethodField()
 
     class Meta:
         model = TemporaryStorageQueue
         fields = [
             'id', 'patient_name', 'priority_level', 'status',
             'complaint', 'queue_number', 'visit_date',
-            'visit_created_at', 'treatment_created_at',
+            'visit_created_at', 'treatment_created_at', 
         ]
 
+    def get_treatment_created_at(self, obj):
+        # Get the latest treatment for this patient
+        treatment = Treatment.objects.filter(patient=obj.patient).order_by('-created_at').first()
+        if treatment:
+            return treatment.created_at
+        return None
+    def get_patient_name(self, obj):
+        patient = getattr(obj, "patient", None)
+        if not patient:
+            return None
+        return patient.get_full_name() if hasattr(patient, "get_full_name") else f"{patient.first_name} {patient.last_name}"
 
+    
 class PatientLabTestSerializer(serializers.ModelSerializer):
     requested_by = serializers.SerializerMethodField()
     submitted_by = serializers.SerializerMethodField()
