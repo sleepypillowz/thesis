@@ -252,7 +252,7 @@ class PatientVisitSerializer(serializers.ModelSerializer):
     visit_date = serializers.DateField(source='queue_date')
     patient_name = serializers.CharField(source='patient.first_name')
     visit_created_at = serializers.DateTimeField(source='created_at')
-    treatment_created_at = serializers.SerializerMethodField()
+    treatment_created_at = serializers.DateTimeField(read_only=True)  # comes from annotate
 
     class Meta:
         model = TemporaryStorageQueue
@@ -262,12 +262,6 @@ class PatientVisitSerializer(serializers.ModelSerializer):
             'visit_created_at', 'treatment_created_at',
         ]
 
-    def get_treatment_created_at(self, obj):
-        patient_id = obj.get('patient_id')
-        if not patient_id:
-            return None
-        treatment = Treatment.objects.filter(patient__patient_id=patient_id).order_by('-created_at').first()
-        return treatment.created_at if treatment else None
 
 class PatientLabTestSerializer(serializers.ModelSerializer):
     requested_by = serializers.SerializerMethodField()
