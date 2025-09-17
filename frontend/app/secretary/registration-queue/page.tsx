@@ -306,7 +306,7 @@ export default function RegistrationQueue() {
           <span>Next</span>
         </div>
 
-        {renderPatientInfo(priorityQueue.current, true)}
+        {renderPatientInfo(priorityQueue.current)}
       </div>
 
       <h2 className="text-xl font-semibold">Regular Queue</h2>
@@ -338,7 +338,7 @@ export default function RegistrationQueue() {
           <span>Next</span>
         </div>
 
-        {renderPatientInfo(regularQueue.current, false)}
+        {renderPatientInfo(regularQueue.current)}
       </div>
       
       <DashboardTable columns={columns} data={registrations ?? []} />
