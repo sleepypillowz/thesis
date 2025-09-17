@@ -1048,8 +1048,26 @@ class MonthlyVisitsAPIView(APIView):
 
 class MonthlyPatientVisitsDetailedView(APIView):
     def get(self, request):
-        visits = TemporaryStorageQueue.objects.all().order_by("queue_date")
-        serializer = PatientVisitSerializer(visits, many=True)
+        # Optimize query with select_related to prevent N+1 queries
+        visits = TemporaryStorageQueue.objects.select_related('patient').all().order_by("queue_date")
+        
+        # Get all patient IDs to fetch treatments in bulk
+        patient_ids = [visit.patient.patient_id for visit in visits if visit.patient]
+        
+        # Fetch treatments in bulk from Supabase
+        treatment_map = {}
+        if patient_ids:
+            treatment_response = supabase.table("queueing_treatment").select(
+                "id, created_at, patient_id"
+            ).in_("patient_id", patient_ids).execute()
+            
+            # Create a mapping of patient_id to latest treatment
+            for treatment in treatment_response.data:
+                patient_id = treatment['patient_id']
+                if patient_id not in treatment_map or treatment['created_at'] > treatment_map[patient_id]['created_at']:
+                    treatment_map[patient_id] = treatment
+        
+        serializer = PatientVisitSerializer(visits, many=True, context={'treatment_map': treatment_map})
 
         grouped_visits = defaultdict(list)
         for visit in serializer.data:
@@ -1057,7 +1075,7 @@ class MonthlyPatientVisitsDetailedView(APIView):
             if visit_date:
                 month = visit_date[:7]
                 grouped_visits[month].append(visit)
-
+                
         return Response(dict(grouped_visits))
 
     

@@ -264,17 +264,17 @@ class PatientVisitSerializer(serializers.ModelSerializer):
         ]
 
     def get_treatment_created_at(self, obj):
-        # Get the latest treatment for this patient
-        treatment = Treatment.objects.filter(patient=obj.patient).order_by('-created_at').first()
-        if treatment:
-            return treatment.created_at
+        # Get treatment data from the context (pre-fetched in bulk)
+        treatment_map = self.context.get('treatment_map', {})
+        if obj.patient and obj.patient.patient_id in treatment_map:
+            return treatment_map[obj.patient.patient_id]['created_at']
         return None
+        
     def get_patient_name(self, obj):
         patient = getattr(obj, "patient", None)
         if not patient:
             return None
         return patient.get_full_name() if hasattr(patient, "get_full_name") else f"{patient.first_name} {patient.last_name}"
-
     
 class PatientLabTestSerializer(serializers.ModelSerializer):
     requested_by = serializers.SerializerMethodField()
