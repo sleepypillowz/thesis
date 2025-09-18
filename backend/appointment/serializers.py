@@ -1,5 +1,7 @@
 # serializers.py
 from rest_framework import serializers
+
+from patient.models import Patient
 from .models import Appointment, AppointmentReferral
 from user.models import Doctor, UserAccount
 from patient.serializers import PatientSerializer
@@ -9,17 +11,44 @@ from queueing.models import TemporaryStorageQueue
 class BulkReferralListSerializer(serializers.ListSerializer):
     def create(self, validated_data):
         user = self.context['request'].user
-        instances = [
-            AppointmentReferral(referring_doctor=user, **item)
-            for item in validated_data
-        ]
+        instances = []
+        for item in validated_data:
+            # receiving_doctor is a UserAccount instance
+            receiving_doctor = item.pop('receiving_doctor')
+            instances.append(
+                AppointmentReferral(
+                    referring_doctor=user,
+                    receiving_doctor=receiving_doctor,
+                    **item
+                )
+            )
         return AppointmentReferral.objects.bulk_create(instances)
+class UserAccountSerializer(serializers.ModelSerializer):
+    full_name = serializers.CharField(source='get_full_name', read_only=True)
+
+    class Meta:
+        model = UserAccount
+        fields = ['id', 'full_name', 'email', 'role']
 
 
+class DoctorSerializer(serializers.ModelSerializer):
+    full_name = serializers.CharField(source='user.get_full_name')
+    email = serializers.CharField(source='user.email')
+    id = serializers.IntegerField(source='user.id')
+    role = serializers.IntegerField(source='user.role')   
+    class Meta:
+        model = Doctor
+        fields = ['id', 'full_name', 'specialization', 'role','email']
+        
 class AppointmentReferralSerializer(serializers.ModelSerializer):
-    referring_doctor = serializers.PrimaryKeyRelatedField(read_only=True)
-    receiving_doctor = serializers.PrimaryKeyRelatedField(
-        queryset=UserAccount.objects.filter(doctor__isnull=False)
+    referring_doctor = UserAccountSerializer(read_only=True)
+    receiving_doctor = serializers.SlugRelatedField(
+        slug_field='id',  # UserAccount ID
+        queryset=UserAccount.objects.filter(role__in=['doctor', 'on-call-doctor'])
+    )
+    patient = serializers.SlugRelatedField(
+        slug_field='patient_id',
+        queryset=Patient.objects.all()
     )
     appointment_date = serializers.DateTimeField(
         source='appointment.appointment_date',
@@ -36,9 +65,22 @@ class AppointmentReferralSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'referring_doctor']
         list_serializer_class = BulkReferralListSerializer
 
-    def create(self, validated_data):
-        validated_data['referring_doctor'] = self.context['request'].user
-        return super().create(validated_data)
+    def to_representation(self, instance):
+        ret = super().to_representation(instance)
+        # Display detailed doctor info if linked, fallback to basic user info
+        try:
+            doctor = instance.receiving_doctor.doctor
+            ret['receiving_doctor'] = {
+                "id": doctor.user.id,
+                "full_name": doctor.user.get_full_name(),
+                "email": doctor.user.email,
+                "role": doctor.user.role,
+                "specialization": doctor.specialization
+            }
+        except Doctor.DoesNotExist:
+            ret['receiving_doctor'] = UserAccountSerializer(instance.receiving_doctor).data
+        return ret
+
 
 
 class AppointmentSerializer(serializers.ModelSerializer):
@@ -102,14 +144,7 @@ class QueueSerializer(serializers.ModelSerializer):
         return str(patient)
 
 
-class DoctorSerializer(serializers.ModelSerializer):
-    full_name = serializers.CharField(source='user.get_full_name')
-    email = serializers.CharField(source='user.email')
-    id = serializers.IntegerField(source='user.id')
 
-    class Meta:
-        model = Doctor
-        fields = ['id', 'full_name', 'specialization', 'email']
 
 
 class DoctorAvailabilitySerializer(serializers.Serializer):

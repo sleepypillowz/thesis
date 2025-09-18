@@ -38,7 +38,7 @@ class DoctorCreateReferralView(APIView):
 
     def post(self, request):
         payload = request.data
-        
+        print(payload)
         # check if payload is bulk or dict
         is_bulk = isinstance(payload, list)
 
@@ -70,7 +70,7 @@ class DoctorSchedule(APIView):
     def get(self, request, doctor_id):
         try:
             # Step 1: Get UserAccount (using the provided user ID)
-            user = UserAccount.objects.get(id=doctor_id, role='doctor')
+            user = UserAccount.objects.get(id=doctor_id, role__in=['doctor', 'on-call-doctor']) 
             
             # Step 2: Get the Doctor instance linked to the UserAccount
             doctor = user.doctor  # Directly access via OneToOneField
