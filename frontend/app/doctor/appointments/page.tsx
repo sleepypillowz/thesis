@@ -312,16 +312,20 @@ export default function ReferralsPage() {
                       )}
                     </div>
 
-                    <div className="space-y-3">
-                      <div>
-                        <p className="text-sm text-gray-500">Referring Doctor</p>
-                        <p className="text-gray-700">{referral.referring_doctor}</p>
-                      </div>
-                      <div>
-                        <p className="text-sm text-gray-500">Receiving Doctor</p>
-                        <p className="text-gray-700">{referral.receiving_doctor}</p>
-                      </div>
-                    </div>
+                        <div className="space-y-3">
+                          <div>
+                            <p className="text-sm text-gray-500">Referring Doctor</p>
+                            <p className="text-gray-700">
+                              {referral.referring_doctor.full_name}
+                            </p>
+                          </div>
+                          <div>
+                            <p className="text-sm text-gray-500">Receiving Doctor</p>
+                            <p className="text-gray-700">
+                              {referral.receiving_doctor.full_name}
+                            </p>
+                          </div>
+                        </div>
 
                     {appointmentSection}
                   </div>
