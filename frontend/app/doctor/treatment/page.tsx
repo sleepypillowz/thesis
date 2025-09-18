@@ -197,7 +197,7 @@ export default function TreatmentManagement() {
                     className="rounded bg-yellow-500 px-3 py-1 text-white hover:bg-yellow-600"
                     onClick={() =>
                       router.push(
-                        `/doctor/patient-treatment-form/${treatment.patient.patient_id}/${treatment.patient.queue_data?.queue_number}`
+                        `/doctor/treatment-form/${treatment.patient.patient_id}/${treatment.patient.queue_data?.queue_number}`
                       )
                     }
                   >
