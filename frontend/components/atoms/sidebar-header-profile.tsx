@@ -37,10 +37,10 @@ export default function SidebarHeaderProfile() {
         </div>
         <div className="flex flex-col items-center justify-center">
           <span className="text-sm font-bold">
-            {name ?? <Skeleton className="mb-1 h-4 w-[80px]" />}
+            {name ?? <Skeleton className="mb-1 h-4 w-[80px] animate-pulse" />}
           </span>
           <span className="text-xs font-semibold uppercase text-muted-foreground">
-            {role ?? <Skeleton className="h-4 w-[60px]" />}
+            {role ?? <Skeleton className="h-4 w-[60px] animate-pulse" />}
           </span>
         </div>
       </div>
