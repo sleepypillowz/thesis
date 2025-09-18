@@ -10,6 +10,7 @@ import { DocumentFile } from "@/app/patient/documents/columns";
 import { Prescription } from "@/app/patient/prescriptions/columns";
 import { Calendar, Mail, UserPlus } from "lucide-react";
 import { NotificationType } from "@/components/molecules/header/notification";
+import { MedicalRecord } from "@/app/patient/medical-record/columns";
 
 export const registrations: Registration[] = [
   {
@@ -429,5 +430,26 @@ export const notifications: NotificationType[] = [
     time: "3 hours ago",
     icon: Calendar,
     color: "text-blue-500",
+  },
+];
+
+export const medicalRecords: MedicalRecord[] = [
+  {
+    date: "2025-09-18",
+    diagnosis: "Hypertension",
+    treatment: "Prescribed antihypertensive medication",
+    notes: "Patient advised to reduce salt intake and exercise regularly",
+  },
+  {
+    date: "2025-08-12",
+    diagnosis: "Type 2 Diabetes",
+    treatment: "Started on metformin",
+    notes: "Recommended dietary changes and follow-up in 3 months",
+  },
+  {
+    date: "2025-07-05",
+    diagnosis: "Seasonal Allergies",
+    treatment: "Antihistamines prescribed",
+    notes: "Patient instructed to monitor symptoms during pollen season",
   },
 ];
