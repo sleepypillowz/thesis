@@ -1,7 +1,6 @@
 import {
   LayoutDashboard,
   ClipboardPlus,
-  Calendar,
   ChartArea,
   Bandage,
   User,
@@ -66,11 +65,6 @@ const patient_items = [
     title: "Patient List",
     url: "/doctor/patient-list",
     icon: ClipboardPlus,
-  },
-  {
-    title: "Appointments",
-    url: "/doctor/appointments",
-    icon: Calendar,
   },
   {
     title: "Treatment",
