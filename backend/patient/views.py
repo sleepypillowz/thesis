@@ -613,6 +613,7 @@ class PatientRegister(APIView):
             } for entry in queue_entries]
 
             patient_serializer = PatientRegistrationSerializer(patient)
+            print(patient_serializer.data)
             return Response({
                 "message": "Patient re-admitted successfully.",
                 "patient": patient_serializer.data,
@@ -651,9 +652,8 @@ class PatientRegister(APIView):
                 last_name=validated_data['last_name'],
                 email=validated_data['email'],
                 phone_number=validated_data['phone_number'],
-                date_of_birth=datetime.strptime(
-                    validated_data['date_of_birth'], '%Y-%m-%d'
-                ).date(),
+                date_of_birth=validated_data['date_of_birth'],
+
                 gender=validated_data.get('gender', ''),
                 street_address=validated_data.get('street_address', ''),
                 barangay=validated_data.get('barangay', ''),
