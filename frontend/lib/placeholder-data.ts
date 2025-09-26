@@ -11,6 +11,7 @@ import { Prescription } from "@/app/patient/prescriptions/columns";
 import { Calendar, Mail, UserPlus } from "lucide-react";
 import { NotificationType } from "@/components/molecules/header/notification";
 import { MedicalRecord } from "@/app/patient/medical-record/columns";
+import { AppointmentRequest } from "@/components/pages/patient-portal/appointment-request-columns";
 
 export const registrations: Registration[] = [
   {
@@ -451,5 +452,16 @@ export const medicalRecords: MedicalRecord[] = [
     diagnosis: "Seasonal Allergies",
     treatment: "Antihistamines prescribed",
     notes: "Patient instructed to monitor symptoms during pollen season",
+  },
+];
+
+export const appointmentRequest: AppointmentRequest[] = [
+  {
+  name: "Juan Dela Cruz",
+  request: "Lab Test",
+  status: "Paid",
+  amount: "P500",
+  date: "October 10, 2025",
+  time: "10:00 AM",
   },
 ];
