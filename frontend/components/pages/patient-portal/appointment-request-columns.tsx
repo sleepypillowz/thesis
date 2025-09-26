@@ -14,7 +14,7 @@ import {
 import { Eye } from "lucide-react";
 import AppointmentConfirmation from "./appointment-confirmation";
 
-type AppointmentRequest = {
+export type AppointmentRequest = {
   name: string;
   request: string;
   status: string;
