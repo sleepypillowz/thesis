@@ -103,7 +103,6 @@ class PatientRegistrationSerializer(serializers.Serializer):
             ('Check-up', 'Check-up'),
             ('Other', 'Other'),
         ],
-        allow_blank=True,
         required=False
     )
     priority_level = serializers.ChoiceField(
@@ -112,23 +111,32 @@ class PatientRegistrationSerializer(serializers.Serializer):
     )
     queue_data = serializers.SerializerMethodField()
 
-    def create(self, validated_data):
-        # Remove any extra field(s) that are not part of the Patient model
-        validated_data.pop('agree_terms', None)
-        # Create and return a new Patient instance using the validated data
-        return Patient.objects.create(**validated_data)
+
+    def validate_email(self, value):
+        from user.models import UserAccount
+        if UserAccount.objects.filter(email=value).exists():
+            raise serializers.ValidationError("This email is already registered.")
+        return value
+
+    def validate(self, data):
+        if data.get("complaint") == "Other":
+            if not self.context["request"].data.get("other_complaint"):
+                raise serializers.ValidationError({
+                    "other_complaint": "This field is required if complaint is 'Other'."
+                })
+        return data
 
     def get_queue_data(self, obj):
-        """Fetch queue data for the patient."""
-        queue_info = obj.temporarystoragequeue.filter(status='Waiting').first()  # Adjust as per your model relations
-        if queue_info:
-            return {
-                'id': queue_info.id,
-                'priority_level': queue_info.priority_level,
-                'status': queue_info.status,
-                'created_at': queue_info.created_at,
-                'complaint': queue_info.complaint,
-            }
+        if hasattr(obj, "temporarystoragequeue"):
+            queue_info = obj.temporarystoragequeue.filter(status='Waiting').first()
+            if queue_info:
+                return {
+                    "id": queue_info.id,
+                    "priority_level": queue_info.priority_level,
+                    "status": queue_info.status,
+                    "created_at": queue_info.created_at,
+                    "complaint": queue_info.complaint,
+                }
         return None
 
 class DiagnosisSerializer(serializers.ModelSerializer):

@@ -6,8 +6,6 @@ from django.shortcuts import get_object_or_404
 from django.db.models.functions import Lower
 from django.utils.timezone import now
 
-
-
 from queueing.serializers import PreliminaryAssessmentBasicSerializer
 from .serializers import PatientSerializer, PatientRegistrationSerializer, LabRequestSerializer, LabResultSerializer, PatientVisitSerializer, PatientLabTestSerializer, CommonDiseasesSerializer
 from queueing.models import  PreliminaryAssessment, TemporaryStorageQueue
@@ -23,7 +21,6 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from backend.supabase_client import supabase
-import os
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -38,6 +35,9 @@ from django.db.models import Count, Sum
 from django.db.models.functions import TruncMonth
 from django.utils.dateparse import parse_date
 from collections import defaultdict
+
+# create user
+from user.models import UserAccount
 
 class PatientListView(APIView):
     permission_classes = [IsMedicalStaff]
@@ -554,11 +554,10 @@ class PatientRegister(APIView):
             ).order_by("created_at")
             if queue_entries.exists():
                 queue_entry = queue_entries.first()
-                print("priority to", queue_entry.priority_level)
                 return queue_entry.priority_level
             return "Regular"
 
-        # Function: generate queue number with daily reset + max 50 reset
+        # generate queue number with daily reset + max 50 reset
         def generate_queue_number():
             today = now().date()
             last_queue_number = TemporaryStorageQueue.objects.filter(
@@ -572,118 +571,224 @@ class PatientRegister(APIView):
             else:
                 return last_queue_number + 1
 
-        # RE-REGISTRATION (existing patient)
-        if request.data.get("patient_id"):
+
+        raw_complaint = request.data.get("complaint", "")
+        
+        if raw_complaint == "Other":
+            raw_complaint = request.data.get("other_complaint", "").strip()
+            
+        queue_number = generate_queue_number()
+        print("Assigned Queue Number:", queue_number)     
+        
+        if request.data.get('patient_id'):
             try:
-                patient = Patient.objects.get(
-                    patient_id=request.data["patient_id"]
+                patient = Patient.objects.get(patient_id=request.data['patient_id'])
+                priority_level = determine_priority()
+                
+                queue_entry = TemporaryStorageQueue.objects.create(
+                    patient=patient,
+                    priority_level=priority_level,
+                    queue_number=queue_number,
+                    complaint=raw_complaint,
+                    status='Waiting'
                 )
+                return Response({
+                    "message": "Patient added to queue successfully.",
+                    "queue_entry": {
+                        "id": queue_entry.id,
+                        "patient_id": patient.patient_id,
+                        "patient_name": f"{patient.first_name} {patient.last_name}",
+                        "priority_level": queue_entry.priority_level,
+                        "status": queue_entry.status,
+                        "queue_number": queue_entry.queue_number,
+                        "complaint": queue_entry.complaint
+                    }
+                }, status=status.HTTP_201_CREATED)
+
             except Patient.DoesNotExist:
                 return Response(
                     {"error": "Patient not found"},
                     status=status.HTTP_404_NOT_FOUND
                 )
+        else:
+            serializer = PatientRegistrationSerializer(data=request.data)
+            if not serializer.is_valid():
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            
+            validated_data = serializer.validated_data
+            print("🔄 Validated Data:", validated_data)
 
-            # Pull the raw complaint; if "Other", override with free text
-            raw_complaint = request.data.get("complaint", "")
-            if raw_complaint == "Other":
-                raw_complaint = request.data.get("other_complaint", "").strip()
+            if UserAccount.objects.filter(email=validated_data['email']).exists():
+                return Response({"error": "Email already registered."}, status=400)
 
-            priority_level = determine_priority()
-            queue_number = generate_queue_number()
-            print("🔥 Assigned Queue Number:", queue_number)
-
+            priority_level = request.data.get("priority_level", "Regular")
+            
             queue_entry = TemporaryStorageQueue.objects.create(
-                patient=patient,
+                temp_first_name=validated_data.get('first_name', ''),
+                temp_middle_name=validated_data.get('middle_name', ''),
+                temp_last_name=validated_data['last_name'],
+                temp_email=validated_data['email'],
+                temp_phone_number=validated_data['phone_number'],
+                temp_date_of_birth=validated_data['date_of_birth'],
+                temp_gender=validated_data.get('gender', ''),
+                temp_street_address=validated_data.get('street_address', ''),
+                temp_barangay=validated_data.get('barangay', ''),
+                temp_municipal_city=validated_data.get('municipal_city', ''),
+                
+                # Queue-specific fields
                 priority_level=priority_level,
                 queue_number=queue_number,
                 complaint=raw_complaint,
-                status='Waiting'
+                status='Waiting',
+                is_new_patient=True            
             )
-
-            queue_entries = TemporaryStorageQueue.objects.filter(
-                patient=patient
-            ).order_by("created_at")
-            queue_entries_data = [{
-                "id": entry.id,
-                "priority_level": entry.priority_level,
-                "status": entry.status,
-                "queue_number": entry.queue_number,
-                "complaint": entry.complaint
-            } for entry in queue_entries]
-
-            patient_serializer = PatientRegistrationSerializer(patient)
-            print(patient_serializer.data)
             return Response({
-                "message": "Patient re-admitted successfully.",
-                "patient": patient_serializer.data,
-                "queue_entries": queue_entries_data
-            }, status=status.HTTP_201_CREATED)
-
-        # NEW PATIENT REGISTRATION
-        serializer = PatientRegistrationSerializer(data=request.data)
-        if not serializer.is_valid():
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-        validated_data = serializer.validated_data
-        print("🔄 Validated Data:", validated_data)
-
-        # Normalize DOB string
-        if validated_data.get("date_of_birth"):
-            validated_data["date_of_birth"] = (
-                validated_data["date_of_birth"].strftime("%Y-%m-%d")
-            )
-
-        try:
-            # Extract the dropdown complaint
-            complaint_value = validated_data.get('complaint', '')
-            # If the user chose "Other", override with the free-text entry
-            if complaint_value == "Other":
-                complaint_value = request.data.get("other_complaint", "").strip()
-
-            # Determine queue number
-            queue_number = generate_queue_number()
-            print("🔥 Assigned Queue Number:", queue_number)
-
-            # Create Patient
-            patient = Patient.objects.create(
-                first_name=validated_data.get('first_name', ''),
-                middle_name=validated_data.get('middle_name', ''),
-                last_name=validated_data['last_name'],
-                email=validated_data['email'],
-                phone_number=validated_data['phone_number'],
-                date_of_birth=validated_data['date_of_birth'],
-
-                gender=validated_data.get('gender', ''),
-                street_address=validated_data.get('street_address', ''),
-                barangay=validated_data.get('barangay', ''),
-                municipal_city=validated_data.get('municipal_city', '')
-            )
-
-            # Enqueue
-            queue_entry = TemporaryStorageQueue.objects.create(
-                patient=patient,
-                priority_level=validated_data.get('priority_level', 'Regular'),
-                queue_number=queue_number,
-                complaint=complaint_value,
-                status='Waiting'
-            )
-
-            patient_serializer = PatientRegistrationSerializer(patient)
-            return Response({
-                "message": "Patient registered successfully.",
-                "patient": patient_serializer.data,
+                "message": "Patient registration pending acceptance.",
                 "queue_entry": {
                     "id": queue_entry.id,
+                    "temp_patient_name": f"{validated_data.get('first_name', '')} {validated_data['last_name']}",
                     "priority_level": queue_entry.priority_level,
                     "status": queue_entry.status,
                     "queue_number": queue_entry.queue_number,
-                    "complaint": queue_entry.complaint
+                    "complaint": queue_entry.complaint,
+                    "is_new_patient": True
                 }
             }, status=status.HTTP_201_CREATED)
+        # # existing patient
+        # if request.data.get("patient_id"):
+        #     try:
+        #         patient = Patient.objects.get(
+        #             patient_id=request.data["patient_id"]
+        #         )
+        #     except Patient.DoesNotExist:
+        #         return Response(
+        #             {"error": "Patient not found"},
+        #             status=status.HTTP_404_NOT_FOUND
+        #         )
+            
+        #     if not patient.user:
+        #         raw_dob = patient.date_of_birth
+        #         password = f"{patient.patient_id}{raw_dob.strftime('%Y%m%d')}"
 
-        except Exception as e:
-            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        #         user = UserAccount.objects.create_user(
+        #             email = patient.email,
+        #             password = password,
+        #             first_name = patient.first_name,
+        #             last_name = patient.last_name,
+        #             role='patient'
+        #         )
+        #         patient.user = user
+        #         patient.save()
+        #     # Pull the raw complaint; if "Other", override with free text
+        #     raw_complaint = request.data.get("complaint", "")
+        #     if raw_complaint == "Other":
+        #         raw_complaint = request.data.get("other_complaint", "").strip()
+
+        #     priority_level = determine_priority()
+        #     queue_number = generate_queue_number()
+        #     print("Assigned Queue Number:", queue_number)
+
+        #     queue_entry = TemporaryStorageQueue.objects.create(
+        #         patient=patient,
+        #         priority_level=priority_level,
+        #         queue_number=queue_number,
+        #         complaint=raw_complaint,
+        #         status='Waiting'
+        #     )
+
+        #     queue_entries = TemporaryStorageQueue.objects.filter(
+        #         patient=patient
+        #     ).order_by("created_at")
+        #     queue_entries_data = [
+        #         {
+        #         "id": entry.id,
+        #         "priority_level": entry.priority_level,
+        #         "status": entry.status,
+        #         "queue_number": entry.queue_number,
+        #         "complaint": entry.complaint
+        #         } 
+        #         for entry in queue_entries
+        #     ]
+        #     patient_serializer = PatientRegistrationSerializer(patient)
+        #     print(patient_serializer.data)
+        #     return Response({
+        #         "message": "Patient re-admitted successfully.",
+        #         "patient": patient_serializer.data,
+        #         "queue_entries": queue_entries_data
+        #     }, status=status.HTTP_201_CREATED)
+
+        # # new patient
+        # serializer = PatientRegistrationSerializer(data=request.data)
+        # if not serializer.is_valid():
+        #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+        # validated_data = serializer.validated_data
+        # print("🔄 Validated Data:", validated_data)
+        
+        # if UserAccount.objects.filter(email=validated_data['email']).exists():
+        #     return Response({"error": "Email already registered."}, status=400)
+
+        # try:
+            
+        #     raw_dob = validated_data['date_of_birth']
+        #     user = UserAccount.objects.create_user(
+        #         email = validated_data['email'],
+        #         password = 'temp-password',
+        #         first_name = validated_data.get('first_name', ''),
+        #         last_name = validated_data.get('last_name', ''),
+        #         role='patient'               
+        #     )
+        #     patient = Patient.objects.create(
+        #         first_name=validated_data.get('first_name', ''),
+        #         middle_name=validated_data.get('middle_name', ''),
+        #         last_name=validated_data['last_name'],
+        #         email=validated_data['email'],
+        #         phone_number=validated_data['phone_number'],
+        #         date_of_birth=validated_data['date_of_birth'],
+        #         gender=validated_data.get('gender', ''),
+        #         street_address=validated_data.get('street_address', ''),
+        #         barangay=validated_data.get('barangay', ''),
+        #         municipal_city=validated_data.get('municipal_city', ''),
+        #         user=user               
+        #     )
+            
+        #     password = f"{patient.patient_id}{raw_dob.strftime('%Y%m%d')}"
+        #     user.set_password(password)
+        #     user.save()
+        #     # Extract the dropdown complaint
+        #     complaint_value = validated_data.get('complaint', '')
+        #     # If the user chose "Other", override with the free-text entry
+        #     if complaint_value == "Other":
+        #         complaint_value = request.data.get("other_complaint", "").strip()
+
+        #     # Determine queue number
+        #     queue_number = generate_queue_number()
+        #     print("Assigned Queue Number:", queue_number)
+
+        #     # Enqueue
+        #     queue_entry = TemporaryStorageQueue.objects.create(
+        #         patient=patient,
+        #         priority_level=validated_data.get('priority_level', 'Regular'),
+        #         queue_number=queue_number,
+        #         complaint=complaint_value,
+        #         status='Waiting'
+        #     )
+
+        #     patient_serializer = PatientRegistrationSerializer(patient)
+        #     return Response({
+        #         "message": "Patient registered successfully.",
+        #         "patient": patient_serializer.data,
+        #         "queue_entry": {
+        #             "id": queue_entry.id,
+        #             "priority_level": queue_entry.priority_level,
+        #             "status": queue_entry.status,
+        #             "queue_number": queue_entry.queue_number,
+        #             "complaint": queue_entry.complaint
+        #         }
+        #     }, status=status.HTTP_201_CREATED)
+
+        # except Exception as e:
+        #     return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class SearchPatient(APIView):
@@ -756,38 +861,94 @@ class GetQueue(APIView):
 
 class AcceptButton(APIView):
     permission_classes = [IsMedicalStaff]
+    
     def post(self, request):
         try:
+            print("🔍 Raw request data:", request.data)
+            
             action = request.data.get('action')
-            print(action)
-            patient_id = request.data.get("patient_id")
-            print("🔍 Looking for Patient ID:", patient_id)
+            queue_entry_id = request.data.get("queue_entry_id")
+            
+            if not queue_entry_id:
+                print("❌ Missing queue_entry_id entirely")
+                return Response({"error": "Missing queue_entry_id in request."}, status=status.HTTP_400_BAD_REQUEST)
+            
+            if queue_entry_id == "null" or queue_entry_id == "undefined":
+                print("❌ queue_entry_id is string 'null' or 'undefined':", queue_entry_id)
+                return Response({"error": "Invalid queue_entry_id format."}, status=status.HTTP_400_BAD_REQUEST)
+            
+            print("✅ Action:", action)
+            print("✅ Queue Entry ID:", queue_entry_id, "Type:", type(queue_entry_id))
 
-            # Retrieve the latest queue entry for the given patient
-            queue_entry = TemporaryStorageQueue.objects.filter(
-                patient__patient_id=patient_id
-            ).order_by('-created_at').first()
+            # Try to convert to integer
+            try:
+                queue_entry_id_int = int(queue_entry_id)
+            except (ValueError, TypeError):
+                print("❌ Cannot convert queue_entry_id to integer:", queue_entry_id)
+                return Response({"error": "Invalid queue_entry_id format."}, status=status.HTTP_400_BAD_REQUEST)
             
-            if not queue_entry:
-                print("❌ Queue entry not found!")
-                return Response({"error": "Queue entry not found"}, status=status.HTTP_404_NOT_FOUND)
+            # Retrieve the queue entry
+            queue_entry = TemporaryStorageQueue.objects.get(id=queue_entry_id_int)
+            print("✅ Found queue entry:", queue_entry.id)
             
+            # If this is a new patient, create the Patient record first
+            if queue_entry.is_new_patient:
+                # Create UserAccount for the new patient
+                raw_dob = queue_entry.temp_date_of_birth
+                user = UserAccount.objects.create_user(
+                    email=queue_entry.temp_email,
+                    password='temp-password',  # Will be set properly below
+                    first_name=queue_entry.temp_first_name,
+                    last_name=queue_entry.temp_last_name,
+                    role='patient'               
+                )
+                
+                # Create Patient record
+                patient = Patient.objects.create(
+                    first_name=queue_entry.temp_first_name,
+                    middle_name=queue_entry.temp_middle_name,
+                    last_name=queue_entry.temp_last_name,
+                    email=queue_entry.temp_email,
+                    phone_number=queue_entry.temp_phone_number,
+                    date_of_birth=queue_entry.temp_date_of_birth,
+                    gender=queue_entry.temp_gender,
+                    street_address=queue_entry.temp_street_address,
+                    barangay=queue_entry.temp_barangay,
+                    municipal_city=queue_entry.temp_municipal_city,
+                    user=user               
+                )
+                
+                # Set proper password
+                password = f"{patient.patient_id}{raw_dob.strftime('%Y%m%d')}"
+                user.set_password(password)
+                user.save()
+                
+                # Link the queue entry to the newly created patient
+                queue_entry.patient = patient
+                queue_entry.is_new_patient = False  # Mark as processed
+                queue_entry.save()
             
+            # Update status based on action
             if action == 'preliminary':
                 queue_entry.status = "Queued for Assessment"
-                queue_entry.save()
             elif action == 'treatment':
                 queue_entry.status = "Queued for Treatment"
-                queue_entry.save()
             elif action == 'lab':
-                queue_entry.status = "Ongoing for Laboratory"     
-                queue_entry.save()  
+                queue_entry.status = "Ongoing for Laboratory"
             else:
-                return Response({"error": "Invalid action"}, status=status.HTTP_400_BAD_REQUEST)        
+                return Response({"error": "Invalid action"}, status=status.HTTP_400_BAD_REQUEST)
             
+            queue_entry.save()
 
-            return Response({"message": "Status updated successfully", "status": queue_entry.status}, status=status.HTTP_200_OK)
+            return Response({
+                "message": "Status updated successfully", 
+                "status": queue_entry.status,
+                "patient_created": queue_entry.is_new_patient  # False if already existed
+            }, status=status.HTTP_200_OK)
 
+        except TemporaryStorageQueue.DoesNotExist:
+            print("❌ Queue entry not found!")
+            return Response({"error": "Queue entry not found"}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
             print("❌ Error:", str(e))
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

@@ -91,6 +91,8 @@ export function LoginForm({
         window.location.href = "/oncall-doctors";
       } else if (role?.toLowerCase() === "secretary") {
         window.location.href = "/secretary";
+      } else if (role?.toLowerCase() === "patient") {
+        window.location.href = "/patient";
       } else {
         window.location.href = "/dashboard";
       }

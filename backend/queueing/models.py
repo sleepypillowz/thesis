@@ -21,12 +21,6 @@ class TemporaryStorageQueue(models.Model):
         ('Check-up', 'Check-up'),
         ('Other', 'Other'),
     ]
-
-    patient = models.ForeignKey(
-        Patient,
-        on_delete=models.CASCADE,
-        related_name='temporarystoragequeue'
-    )
     priority_level = models.CharField(
         max_length=10, choices=PRIORITY_CHOICES, default='Regular'
     )
@@ -53,6 +47,36 @@ class TemporaryStorageQueue(models.Model):
     queue_number = models.PositiveBigIntegerField(null=True, blank=True)
     queue_date = models.DateField(default=date.today)
     position = models.IntegerField(default=0, db_index=True)
+    
+    is_new_patient = models.BooleanField(default=False)
+
+    # Temporary patient data
+    temp_first_name = models.CharField(max_length=100, blank=True, null=True)
+    temp_middle_name = models.CharField(max_length=100, blank=True, null=True)
+    temp_last_name = models.CharField(max_length=100, blank=True, null=True)
+    temp_email = models.EmailField(blank=True, null=True)
+    temp_phone_number = models.CharField(max_length=15, blank=True, null=True)
+    temp_date_of_birth = models.DateField(blank=True, null=True)
+    temp_gender = models.CharField(max_length=10, blank=True, null=True)
+    temp_street_address = models.TextField(blank=True, null=True)
+    temp_barangay = models.CharField(max_length=100, blank=True, null=True)
+    temp_municipal_city = models.CharField(max_length=100, blank=True, null=True)
+    
+    patient = models.ForeignKey(
+        Patient,
+        on_delete=models.CASCADE,
+        related_name='temporarystoragequeue',
+        null=True,
+        blank=True
+    )
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="temp_patient_profile",
+        limit_choices_to={"role": "patient"},
+    )
 
     def save(self, *args, **kwargs):
         # Only auto-generate queue_number when it is not supplied
@@ -65,9 +89,23 @@ class TemporaryStorageQueue(models.Model):
             self.queue_number = max_q + 1
 
         super().save(*args, **kwargs)
+        
+    @property
+    def display_name(self):
+        if self.patient:
+            return self.patient.full_name
+        return f"{self.temp_first_name or ''} {self.temp_last_name or ''}".strip()
 
     def __str__(self):
-        return f"Patient {self.patient.patient_id} - Queue {self.queue_number} ({self.priority_level})"
+        if self.user and hasattr(self.user, "patient_profile"):
+            patient_id = self.user.patient_profile.patient_id
+            name = self.user.patient_profile.full_name
+        else:
+            patient_id = "TEMP"
+            name = f"{self.temp_first_name or ''} {self.temp_last_name or ''}".strip()
+
+        return f"Patient {name} ({patient_id}) - Queue {self.queue_number} ({self.priority_level})"
+
 
 
     

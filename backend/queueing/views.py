@@ -30,15 +30,15 @@ class PatientRegistrationQueue(APIView):
             priority_patients = TemporaryStorageQueue.objects.filter(
                 status='Waiting',
                 priority_level='Priority',
-                queue_date=today
-            ).order_by('position', 'queue_number').select_related('patient')
+                created_at__date=today
+            ).order_by('position', 'queue_number')
             
             # Fetch Regular Queue using Django ORM
             regular_patients = TemporaryStorageQueue.objects.filter(
                 status='Waiting',
                 priority_level='Regular',
-                queue_date=today
-            ).order_by('position', 'queue_number').select_related('patient')
+                created_at__date=today
+            ).order_by('position', 'queue_number')
             
             def get_next_patients(queryset):   
                 patients = list(queryset)
@@ -50,23 +50,42 @@ class PatientRegistrationQueue(APIView):
             def format_patient_data(queue_item):
                 if not queue_item:
                     return None
-                    
-                patient = queue_item.patient
+
+                # If it's a registered patient
+                if queue_item.user and hasattr(queue_item.user, "patient_profile"):
+                    patient = queue_item.user.patient_profile
+                    first_name = patient.first_name
+                    last_name = patient.last_name
+                    phone_number = patient.phone_number
+                    date_of_birth = patient.date_of_birth
+                    patient_id = patient.patient_id
+                    age = patient.get_age()
+                else:
+                    # Use temporary patient info
+                    first_name = queue_item.temp_first_name
+                    last_name = queue_item.temp_last_name
+                    phone_number = queue_item.temp_phone_number
+                    date_of_birth = queue_item.temp_date_of_birth
+                    patient_id = None
+                    age = None
+
                 return {
                     "id": queue_item.id,
-                    "patient_id": patient.patient_id,
-                    "first_name": patient.first_name,
-                    "last_name": patient.last_name,
-                    "phone_number": patient.phone_number,
-                    "date_of_birth": patient.date_of_birth,
-                    "age": patient.get_age(),
+                    "patient_id": patient_id,
+                    "first_name": first_name,
+                    "last_name": last_name,
+                    "phone_number": phone_number,
+                    "date_of_birth": date_of_birth,
+                    "age": age,
                     "priority_level": queue_item.priority_level,
                     "complaint": queue_item.complaint,
                     "status": queue_item.status,
                     "queue_number": queue_item.queue_number,
                     "position": queue_item.position,
-                    "created_at": queue_item.created_at
+                    "created_at": queue_item.created_at,
+                    "is_new_patient": not queue_item.user
                 }
+
             
             # Get the next patients
             priority_current, priority_next1, priority_next2 = get_next_patients(priority_patients)

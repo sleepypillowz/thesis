@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { X, User, Clock, AlertCircle, Activity, TestTube, Stethoscope } from 'lucide-react';
 
-// TypeScript interfaces
+// Updated interface to match what's actually being passed
 interface Patient {
-  id?: number;
-  patient_id: string;
+  id: number;
+  patient_id: string | null;
   patient_name: string;
-  queue_number: number | null;
+  queue_number: number;
   priority_level: string;
   complaint: string;
   status: string;
@@ -20,14 +20,13 @@ interface RoutingOption {
   description: string;
   icon: React.ReactNode;
   color: string;
-//   estimatedTime?: string;
 }
 
 interface PatientRoutingModalProps {
   isOpen: boolean;
   onClose: () => void;
   patient: Patient | null;
-  onRoutePatient: (patientId: string, destination: string) => void;
+  onRoutePatient: (patient: Patient | null, destination: string) => void; // ← FIXED
   className?: string;
 }
 
@@ -41,7 +40,6 @@ const PatientRoutingModal: React.FC<PatientRoutingModalProps> = ({
   const [selectedRoute, setSelectedRoute] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
-  // Routing options configuration
   const routingOptions: RoutingOption[] = [
     {
       id: 'preliminary',
@@ -49,7 +47,6 @@ const PatientRoutingModal: React.FC<PatientRoutingModalProps> = ({
       description: 'Initial evaluation and vital signs check',
       icon: <Stethoscope className="w-6 h-6" />,
       color: 'bg-blue-500 hover:bg-blue-600',
-    //   estimatedTime: '15-20 mins'
     },
     {
       id: 'treatment',
@@ -57,7 +54,6 @@ const PatientRoutingModal: React.FC<PatientRoutingModalProps> = ({
       description: 'Direct to treatment room for immediate care',
       icon: <Activity className="w-6 h-6" />,
       color: 'bg-green-500 hover:bg-green-600',
-    //   estimatedTime: '30-45 mins'
     },
     {
       id: 'lab',
@@ -65,30 +61,33 @@ const PatientRoutingModal: React.FC<PatientRoutingModalProps> = ({
       description: 'Laboratory testing and diagnostic procedures',
       icon: <TestTube className="w-6 h-6" />,
       color: 'bg-purple-500 hover:bg-purple-600',
-    //   estimatedTime: '20-30 mins'
     }
   ];
 
   const handleSubmit = async () => {
-    if (!selectedRoute || !patient) return;
+    console.log("🔍 Modal handleSubmit called");
+    console.log("🔍 Patient:", patient);
+    console.log("🔍 Selected route:", selectedRoute);
+    
+    if (!selectedRoute || !patient) {
+      console.error("❌ Missing patient or route");
+      return;
+    }
     
     setIsSubmitting(true);
     
     try {
-      // Simulate API call - replace with your actual implementation
       await new Promise(resolve => setTimeout(resolve, 1000));
       
-      onRoutePatient(patient.patient_id, selectedRoute);
+      onRoutePatient(patient, selectedRoute); // ← FIXED: pass entire patient object
       onClose();
       setSelectedRoute('');
     } catch (error) {
       console.error('Error routing patient:', error);
-      // Handle error - you might want to show a toast notification
     } finally {
       setIsSubmitting(false);
     }
   };
-
   const formatTime = (dateString: string) => {
     return new Date(dateString).toLocaleTimeString('en-US', {
       hour: '2-digit',

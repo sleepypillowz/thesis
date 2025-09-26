@@ -10,18 +10,20 @@ import { columns } from "./columns";
 import { registrations } from "@/lib/placeholder-data";
 import PatientRoutingModal from "@/components/pages/PatientRoutingModal";
 
-// PatientQueueItem interface
+// PatientQueueItem interface - UPDATED to match backend response
 export interface PatientQueueItem {
-  patient_id: string;
+  id: number;               // This is the queue_entry_id (779)
+  patient_id: string | null; // Can be null for new patients
   first_name: string;
   last_name: string;
-  age: number;
+  age: number | null;       // Can be null
   complaint: string;
   phone_number?: string;
   queue_number: number;
   status?: string;
   priority_level?: string;
   created_at?: string;
+  is_new_patient?: boolean; // Added to match backend
 }
 
 export default function RegistrationQueue() {
@@ -63,14 +65,14 @@ export default function RegistrationQueue() {
         const data = await response.json();
         console.log("API Response:", data);
 
-        // Extract priority patients and sort by timestamp
+        // Extract priority patients
         const priorityPatients = [
           data.priority_current,
           data.priority_next1,
           data.priority_next2,
         ].filter((p) => p !== null);
 
-        // Extract regular patients and sort by timestamp
+        // Extract regular patients
         const regularPatients = [
           data.regular_current,
           data.regular_next1,
@@ -96,20 +98,35 @@ export default function RegistrationQueue() {
     };
 
     fetchQueueData();
-    // Set up interval to refresh data every 30 seconds
     const intervalId = setInterval(fetchQueueData, 30000);
     
     return () => clearInterval(intervalId);
   }, []);
 
   const handleAccept = (queueItem: PatientQueueItem) => {
+    console.log("✅ Accepting patient with queue_entry_id:", queueItem.id);
     setSelectedPatient(queueItem);
     setIsRoutingModalOpen(true);
   };
 
-  const handleRoutePatient = async (patientId: string, action: string) => {
+  const handleRoutePatient = async (queueItem: PatientQueueItem | null, action: string) => {
+    // ADD NULL CHECK - This is the main fix
+    if (!queueItem) {
+      console.error("❌ Queue item is null. Cannot proceed.");
+      return;
+    }
+
     try {
+      console.log("📤 Sending request with queue_entry_id:", queueItem.id);
+      
       const token = localStorage.getItem("access");
+      const requestBody = {
+        queue_entry_id: queueItem.id, // This should be 779
+        action: action,
+      };
+      
+      console.log("📤 Request Body:", requestBody);
+
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_BASE}/patient/update-status/`,
         {
@@ -118,16 +135,18 @@ export default function RegistrationQueue() {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify({
-            patient_id: patientId,
-            action: action, // Changed from destination to action
-          }),
+          body: JSON.stringify(requestBody),
         }
       );
 
       if (!response.ok) {
+        const errorText = await response.text();
+        console.error("❌ Server error:", errorText);
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
+      
+      const responseData = await response.json();
+      console.log("✅ Success response:", responseData);
       
       // Close the modal
       setIsRoutingModalOpen(false);
@@ -178,7 +197,7 @@ export default function RegistrationQueue() {
     }
   };
 
-  const renderPatientInfo = (queueItem: PatientQueueItem | null ) => {
+  const renderPatientInfo = (queueItem: PatientQueueItem | null) => {
     if (!queueItem) return null;
     
     return (
@@ -194,7 +213,7 @@ export default function RegistrationQueue() {
             </p>
             <p className="text-sm">
               <span className="font-medium">Age: </span>
-              {queueItem.age}
+              {queueItem.age || "N/A"}
             </p>
           </div>
           <hr className="my-2" />
@@ -204,6 +223,10 @@ export default function RegistrationQueue() {
           <p className="text-sm mb-2">
             <span className="font-medium">Phone number: </span>
             {queueItem.phone_number || "N/A"}
+          </p>
+          <p className="text-sm mb-2">
+            <span className="font-medium">Queue ID: </span>
+            {queueItem.id}
           </p>
           <p className="text-sm mb-4">
             <span className="font-medium">Reason: </span>
@@ -252,19 +275,6 @@ export default function RegistrationQueue() {
   if (!userRole) {
     return <div>Loading...</div>;
   }
-
-  // Convert PatientQueueItem to Patient for the modal
-  const convertToModalPatient = (item: PatientQueueItem) => ({
-    id: parseInt(item.patient_id) || 0,
-    patient_id: item.patient_id,
-    patient_name: `${item.first_name} ${item.last_name}`,
-    queue_number: item.queue_number,
-    priority_level: item.priority_level || "Regular",
-    complaint: item.complaint,
-    status: item.status || "Waiting",
-    created_at: new Date().toISOString(),
-    queue_date: new Date().toISOString().split('T')[0],
-  });
 
   return (
     <div className="flex-1 space-y-6 px-8 py-8">
@@ -343,16 +353,18 @@ export default function RegistrationQueue() {
       
       <DashboardTable columns={columns} data={registrations ?? []} />
       
-      {/* Patient Routing Modal */}
+      {/* Patient Routing Modal - REMOVED THE CONVERSION FUNCTION */}
+      {/* Pass the original object directly */}
       <PatientRoutingModal
         isOpen={isRoutingModalOpen}
         onClose={() => {
           setIsRoutingModalOpen(false);
           setSelectedPatient(null);
         }}
-        patient={selectedPatient ? convertToModalPatient(selectedPatient) : null}
+        patient={selectedPatient}
         onRoutePatient={handleRoutePatient}
       />
+
     </div>
   );
 }

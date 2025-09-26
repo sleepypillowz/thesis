@@ -559,3 +559,19 @@ class QueueDebugMonthView(APIView):
             "year": year,
             "entries": data
         })
+
+from django.core.mail import send_mail
+from django.http import JsonResponse
+from django.views import View
+
+class TestEmailView(View):
+    permission_classes = [IsMedicalStaff]   
+    def get(self, request):
+        send_mail(
+            subject="This is from django",
+            message="Sample email",
+            from_email="ralphancheta000@gmail.com",
+            recipient_list=["me.joliveros@gmail.com"],
+            fail_silently=False,
+        )
+        return JsonResponse({"status": "Email sent!"})

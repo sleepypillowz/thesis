@@ -271,10 +271,28 @@ class Predict(APIView):
             results.append(result_item)
             
         return Response({'results': results})
+class MedicineCSVUploadView(APIView):
+    permission_classes = [IsMedicalStaff]   
         
-def interminent_prediction():
-    ...
-# # views.py
+    def post(self, request):
+        try:
+            # basahin yung CSV file sa backend mismo
+            df = pd.read_csv("medicine/medicines-malibiran.csv").rename(columns={
+                "Name": "name",
+                "Dosage Form": "dosage_form",
+                "Strength": "strength",
+                "Stock": "stocks",
+                "Expiration Date": "expiration_date",
+            })
+
+            # insert sa supabase
+            supabase.table("medicine_medicine").insert(df.to_dict(orient="records")).execute()
+
+            return Response({"message": "Medicines uploaded successfully"}, status=201)
+
+        except Exception as e:
+            return Response({"error": str(e)}, status=500)
+
 # import random
 # from datetime import date, timedelta
 
