@@ -183,7 +183,6 @@ export default function RegistrationQueue() {
       setSelectedPatient(null);
       
       // Refresh the queue data
-      const token = localStorage.getItem("access");
       const fetchResponse = await fetch(
         `${process.env.NEXT_PUBLIC_API_BASE}/queueing/registration_queueing/`,
         {
