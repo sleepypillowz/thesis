@@ -10,31 +10,31 @@ import { columns } from "./columns";
 import { registrations } from "@/lib/placeholder-data";
 import PatientRoutingModal from "@/components/pages/PatientRoutingModal";
 
-// PatientQueueItem interface - UPDATED to match backend response
+// PatientQueueItem interface - UPDATED with better age handling
 export interface PatientQueueItem {
-  id: number;               // This is the queue_entry_id (779)
-  patient_id: string | null; // Can be null for new patients
+  id: number;
+  patient_id: string | null;
   first_name: string;
   last_name: string;
-  age: number | null;       // Can be null
-  complaint: string;
+  age: number | null; // This matches the API response
   phone_number?: string;
+  date_of_birth?: string; // Added this field
+  complaint: string;
   queue_number: number;
   status?: string;
   priority_level?: string;
   created_at?: string;
-  is_new_patient?: boolean; // Added to match backend
+  is_new_patient?: boolean;
 }
 
-// Define the Patient interface that PatientRoutingModal expects
+// Patient interface for the modal
 interface Patient {
   patient_name: string;
   queue_date: string;
-  // Add other properties that PatientRoutingModal expects
   id?: number;
   first_name?: string;
   last_name?: string;
-  // Include any other required properties
+  age?: number | null; // Make sure this matches
 }
 
 export default function RegistrationQueue() {
@@ -64,8 +64,14 @@ export default function RegistrationQueue() {
       id: queueItem.id,
       first_name: queueItem.first_name,
       last_name: queueItem.last_name,
-      // Add any other properties that PatientRoutingModal might need
+      age: queueItem.age, // This will be number or null
     };
+  };
+
+  // Function to safely display age
+  const displayAge = (age: number | null | undefined): string => {
+    if (age === null || age === undefined) return "N/A";
+    return `${age}`;
   };
 
   useEffect(() => {
@@ -135,7 +141,6 @@ export default function RegistrationQueue() {
   };
 
   const handleRoutePatient = async (queueItem: PatientQueueItem | null, action: string) => {
-    // ADD NULL CHECK - This is the main fix
     if (!queueItem) {
       console.error("❌ Queue item is null. Cannot proceed.");
       return;
@@ -146,7 +151,7 @@ export default function RegistrationQueue() {
       
       const token = localStorage.getItem("access");
       const requestBody = {
-        queue_entry_id: queueItem.id, // This should be 779
+        queue_entry_id: queueItem.id,
         action: action,
       };
       
@@ -173,11 +178,12 @@ export default function RegistrationQueue() {
       const responseData = await response.json();
       console.log("✅ Success response:", responseData);
       
-      // Close the modal
+      // Close the modal and refresh data
       setIsRoutingModalOpen(false);
       setSelectedPatient(null);
       
       // Refresh the queue data
+      const token = localStorage.getItem("access");
       const fetchResponse = await fetch(
         `${process.env.NEXT_PUBLIC_API_BASE}/queueing/registration_queueing/`,
         {
@@ -192,7 +198,6 @@ export default function RegistrationQueue() {
       if (fetchResponse.ok) {
         const data = await fetchResponse.json();
         
-        // Update queues with new data
         const priorityPatients = [
           data.priority_current,
           data.priority_next1,
@@ -238,7 +243,7 @@ export default function RegistrationQueue() {
             </p>
             <p className="text-sm">
               <span className="font-medium">Age: </span>
-              {queueItem.age || "N/A"}
+              {displayAge(queueItem.age)}
             </p>
           </div>
           <hr className="my-2" />
@@ -378,7 +383,7 @@ export default function RegistrationQueue() {
       
       <DashboardTable columns={columns} data={registrations ?? []} />
       
-      {/* Patient Routing Modal - FIXED: Convert PatientQueueItem to Patient type */}
+      {/* Patient Routing Modal */}
       <PatientRoutingModal
         isOpen={isRoutingModalOpen}
         onClose={() => {
@@ -387,7 +392,6 @@ export default function RegistrationQueue() {
         }}
         patient={convertToPatient(selectedPatient)}
         onRoutePatient={(patient, action) => {
-          // Convert back to PatientQueueItem for the handler
           handleRoutePatient(selectedPatient, action);
         }}
       />
