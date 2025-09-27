@@ -10,15 +10,15 @@ import { columns } from "./columns";
 import { registrations } from "@/lib/placeholder-data";
 import PatientRoutingModal from "@/components/pages/PatientRoutingModal";
 
-// PatientQueueItem interface - UPDATED with better age handling
+// PatientQueueItem interface - UPDATED to match backend response
 export interface PatientQueueItem {
   id: number;
   patient_id: string | null;
   first_name: string;
   last_name: string;
-  age: number | null; // This matches the API response
+  age: number | null;
   phone_number?: string;
-  date_of_birth?: string; // Added this field
+  date_of_birth?: string;
   complaint: string;
   queue_number: number;
   status?: string;
@@ -27,14 +27,17 @@ export interface PatientQueueItem {
   is_new_patient?: boolean;
 }
 
-// Patient interface for the modal
+// Patient interface that matches exactly what PatientRoutingModal expects
 interface Patient {
+  id: number;
+  patient_id: string | null;
   patient_name: string;
+  queue_number: number;
+  priority_level: string;
+  complaint: string;
+  status: string;
+  created_at: string;
   queue_date: string;
-  id?: number;
-  first_name?: string;
-  last_name?: string;
-  age?: number | null; // Make sure this matches
 }
 
 export default function RegistrationQueue() {
@@ -54,17 +57,20 @@ export default function RegistrationQueue() {
   const [isRoutingModalOpen, setIsRoutingModalOpen] = useState(false);
   const router = useRouter();
 
-  // Function to convert PatientQueueItem to Patient
+  // Function to convert PatientQueueItem to Patient (matching the modal's expected type)
   const convertToPatient = (queueItem: PatientQueueItem | null): Patient | null => {
     if (!queueItem) return null;
     
     return {
-      patient_name: `${queueItem.first_name} ${queueItem.last_name}`,
-      queue_date: queueItem.created_at || new Date().toISOString(),
       id: queueItem.id,
-      first_name: queueItem.first_name,
-      last_name: queueItem.last_name,
-      age: queueItem.age, // This will be number or null
+      patient_id: queueItem.patient_id,
+      patient_name: `${queueItem.first_name} ${queueItem.last_name}`,
+      queue_number: queueItem.queue_number,
+      priority_level: queueItem.priority_level || "Regular",
+      complaint: queueItem.complaint,
+      status: queueItem.status || "Waiting",
+      created_at: queueItem.created_at || new Date().toISOString(),
+      queue_date: queueItem.created_at || new Date().toISOString(),
     };
   };
 
@@ -178,11 +184,11 @@ export default function RegistrationQueue() {
       const responseData = await response.json();
       console.log("✅ Success response:", responseData);
       
-      // Close the modal and refresh data
+      // Close the modal
       setIsRoutingModalOpen(false);
       setSelectedPatient(null);
       
-      // Refresh the queue data
+      // Refresh the queue data - FIXED: Use existing token variable
       const fetchResponse = await fetch(
         `${process.env.NEXT_PUBLIC_API_BASE}/queueing/registration_queueing/`,
         {
@@ -197,6 +203,7 @@ export default function RegistrationQueue() {
       if (fetchResponse.ok) {
         const data = await fetchResponse.json();
         
+        // Update queues with new data
         const priorityPatients = [
           data.priority_current,
           data.priority_next1,
@@ -391,6 +398,7 @@ export default function RegistrationQueue() {
         }}
         patient={convertToPatient(selectedPatient)}
         onRoutePatient={(patient, action) => {
+          // Pass the original selectedPatient (PatientQueueItem) to the handler
           handleRoutePatient(selectedPatient, action);
         }}
       />
