@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { format, differenceInCalendarDays, isValid } from "date-fns";
 import { parseISO } from "date-fns/parseISO";
@@ -33,7 +33,8 @@ export default function ReferralsPage() {
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const [selectedReferral, setSelectedReferral] = useState<Referral | null>(null);
 
-  const fetchReferrals = async () => {
+  // Wrap fetchReferrals in useCallback to avoid infinite re-renders
+  const fetchReferrals = useCallback(async () => {
     try {
       const token = localStorage.getItem("access");
       if (!token) {
@@ -55,11 +56,11 @@ export default function ReferralsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [router]); // Add router as dependency
 
   useEffect(() => {
     fetchReferrals();
-  }, []);  // only once
+  }, [fetchReferrals]); // Now fetchReferrals is stable due to useCallback
 
   useEffect(() => {
     const fetchCurrentUser = async () => {
@@ -330,15 +331,27 @@ export default function ReferralsPage() {
                     <div className="space-y-3">
                       <div>
                         <p className="text-sm text-gray-500">Referring Doctor</p>
-                        <p className="text-gray-700">{referral.referring_doctor.full_name}</p>
+                        <p className="text-gray-700">
+                          {typeof referral.referring_doctor === 'string' 
+                            ? referral.referring_doctor 
+                            : referral.referring_doctor.full_name}
+                        </p>
                       </div>
                       <div>
                         <p className="text-sm text-gray-500">Receiving Doctor</p>
-                        <p className="text-gray-700">{referral.receiving_doctor.full_name}</p>
+                        <p className="text-gray-700">
+                          {typeof referral.receiving_doctor === 'string'
+                            ? referral.receiving_doctor
+                            : referral.receiving_doctor.full_name}
+                        </p>
                       </div>
                     </div>
 
-                    {appointmentSection}
+                    {appointmentSection && (
+                      <div className="md:col-span-1">
+                        {appointmentSection}
+                      </div>
+                    )}
                   </div>
                 </div>
 
