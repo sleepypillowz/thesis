@@ -5,7 +5,7 @@ const nextConfig = {
     domains: [
       'localhost',
       '127.0.0.1',
-      'thesis-production-5658.up.railway.app',
+      'thesis-backend.up.railway.app',
     ],
     remotePatterns: [
       {
@@ -19,7 +19,7 @@ const nextConfig = {
   env: {
     NEXT_PUBLIC_API_BASE:
       process.env.NODE_ENV === 'production'
-        ? 'https://thesis-production-5658.up.railway.app'
+        ? 'https://thesis-backend.up.railway.app'
         : 'http://localhost:8000',
     NEXT_PUBLIC_USE_HTTPS:
       process.env.NODE_ENV === 'production' ? 'true' : 'false',

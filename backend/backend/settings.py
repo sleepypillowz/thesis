@@ -77,6 +77,7 @@ MIDDLEWARE = [
 # settings.py
 CORS_ALLOWED_ORIGINS = [
     "https://thesis-c1rq.vercel.app",
+    "https://thesis-backend.up.railway.app",
     "http://localhost:3000",
 
 ]
