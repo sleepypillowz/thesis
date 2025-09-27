@@ -4,12 +4,15 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { format, differenceInCalendarDays, isValid } from "date-fns";
 import { parseISO } from "date-fns/parseISO";
-
+interface Doctor {
+  full_name: string;
+  // Add other properties as needed
+}
 interface Referral {
   id: number;
   patient: string;
-  referring_doctor: string;
-  receiving_doctor: string;
+  referring_doctor: Doctor;
+  receiving_doctor: Doctor;  
   reason: string;
   notes?: string;
   status: "pending" | "scheduled" | "canceled" | string;

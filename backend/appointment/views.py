@@ -63,6 +63,7 @@ class ReferralViewList(APIView):
     def get(self, request):
         referrals = AppointmentReferral.objects.filter(status='pending')
         serializer = AppointmentReferralSerializer(referrals, many=True)
+        
         return Response(serializer.data)
 class DoctorSchedule(APIView):
     permission_classes = [isSecretary]

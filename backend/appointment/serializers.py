@@ -4,7 +4,6 @@ from rest_framework import serializers
 from patient.models import Patient
 from .models import Appointment, AppointmentReferral
 from user.models import Doctor, UserAccount
-from patient.serializers import PatientSerializer
 from queueing.models import TemporaryStorageQueue
 
 
@@ -67,15 +66,26 @@ class AppointmentReferralSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         ret = super().to_representation(instance)
-        # Display detailed doctor info if linked, fallback to basic user info
         try:
-            doctor = instance.receiving_doctor.doctor
+            receiving_doctor = instance.receiving_doctor.doctor
             ret['receiving_doctor'] = {
-                "id": doctor.user.id,
-                "full_name": doctor.user.get_full_name(),
-                "email": doctor.user.email,
-                "role": doctor.user.role,
-                "specialization": doctor.specialization
+                "id": receiving_doctor.user.id,
+                "full_name": receiving_doctor.user.get_full_name(),
+                "email": receiving_doctor.user.email,
+                "role": receiving_doctor.user.role,
+                "specialization": receiving_doctor.specialization
+            }
+        except Doctor.DoesNotExist:
+            ret['receiving_doctor'] = UserAccountSerializer(instance.receiving_doctor).data
+
+        try:
+            referring_doctor = instance.referring_doctor.doctor
+            ret['referring_doctor'] = {
+                "id": referring_doctor.user.id,
+                "full_name": referring_doctor.user.get_full_name(),
+                "email": referring_doctor.user.email,
+                "role": referring_doctor.user.role,
+                "specialization": referring_doctor.specialization
             }
         except Doctor.DoesNotExist:
             ret['receiving_doctor'] = UserAccountSerializer(instance.receiving_doctor).data
