@@ -26,6 +26,17 @@ export interface PatientQueueItem {
   is_new_patient?: boolean; // Added to match backend
 }
 
+// Define the Patient interface that PatientRoutingModal expects
+interface Patient {
+  patient_name: string;
+  queue_date: string;
+  // Add other properties that PatientRoutingModal expects
+  id?: number;
+  first_name?: string;
+  last_name?: string;
+  // Include any other required properties
+}
+
 export default function RegistrationQueue() {
   const [priorityQueue, setPriorityQueue] = useState({
     current: null as PatientQueueItem | null,
@@ -42,6 +53,20 @@ export default function RegistrationQueue() {
   const [selectedPatient, setSelectedPatient] = useState<PatientQueueItem | null>(null);
   const [isRoutingModalOpen, setIsRoutingModalOpen] = useState(false);
   const router = useRouter();
+
+  // Function to convert PatientQueueItem to Patient
+  const convertToPatient = (queueItem: PatientQueueItem | null): Patient | null => {
+    if (!queueItem) return null;
+    
+    return {
+      patient_name: `${queueItem.first_name} ${queueItem.last_name}`,
+      queue_date: queueItem.created_at || new Date().toISOString(),
+      id: queueItem.id,
+      first_name: queueItem.first_name,
+      last_name: queueItem.last_name,
+      // Add any other properties that PatientRoutingModal might need
+    };
+  };
 
   useEffect(() => {
     const fetchQueueData = async () => {
@@ -353,18 +378,19 @@ export default function RegistrationQueue() {
       
       <DashboardTable columns={columns} data={registrations ?? []} />
       
-      {/* Patient Routing Modal - REMOVED THE CONVERSION FUNCTION */}
-      {/* Pass the original object directly */}
+      {/* Patient Routing Modal - FIXED: Convert PatientQueueItem to Patient type */}
       <PatientRoutingModal
         isOpen={isRoutingModalOpen}
         onClose={() => {
           setIsRoutingModalOpen(false);
           setSelectedPatient(null);
         }}
-        patient={selectedPatient}
-        onRoutePatient={handleRoutePatient}
+        patient={convertToPatient(selectedPatient)}
+        onRoutePatient={(patient, action) => {
+          // Convert back to PatientQueueItem for the handler
+          handleRoutePatient(selectedPatient, action);
+        }}
       />
-
     </div>
   );
 }

@@ -90,6 +90,14 @@ class TemporaryStorageQueue(models.Model):
 
         super().save(*args, **kwargs)
         
+    def get_age(self):
+        if not self.date_of_birth:
+            return None
+        today = date.today()
+        return today.year - self.date_of_birth.year - (
+            (today.month, today.day) < (self.date_of_birth.month, self.date_of_birth.day)
+        )
+        
     @property
     def display_name(self):
         if self.patient:
