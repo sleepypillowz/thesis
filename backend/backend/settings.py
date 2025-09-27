@@ -89,9 +89,12 @@ ALLOWED_HOSTS = [
 ]
 
 CSRF_TRUSTED_ORIGINS = [
-    "http://localhost:3000",
-    "http://127.0.0.1:8000", 
-    "https://thesis-c1rq.vercel.app",
+    "http://localhost:3000",             # Local development
+    "http://127.0.0.1:8000",            # Local development
+    "https://thesis-c1rq.vercel.app",   # Production frontend
+    "https://meditrakk.up.railway.app", # Production frontend
+    "https://thesis-backend.up.railway.app",  # Production backend
+    
     
 ]
 CORS_ALLOW_ALL_ORIGINS = True
