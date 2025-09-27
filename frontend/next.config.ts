@@ -3,28 +3,27 @@ const nextConfig = {
   reactStrictMode: true,
   images: {
     domains: [
-      '127.0.0.1',
       'localhost',
-      'thesis-sg26.onrender.com'
+      '127.0.0.1',
+      'thesis-production-5658.up.railway.app',
     ],
-    
     remotePatterns: [
-      // DEV: both localhost and 127.0.0.1 on port 8000
-      { protocol: 'http',  hostname: '127.0.0.1', port: '8000', pathname: '/media/**' },
-      { protocol: 'http',  hostname: 'localhost',    port: '8000', pathname: '/media/**' },
-      // PROD: your Render backend
-      { protocol: 'https', hostname: 'thesis-sg26.onrender.com', pathname: '/media/**' },
+      {
+        protocol: 'https',
+        hostname: 'your-backend.railway.app',
+        pathname: '/media/**',
+      },
     ],
     formats: ['image/avif', 'image/webp'],
   },
   env: {
     NEXT_PUBLIC_API_BASE:
       process.env.NODE_ENV === 'production'
-        ? 'https://thesis-sg26.onrender.com'
+        ? 'https://thesis-production-5658.up.railway.app'
         : 'http://localhost:8000',
     NEXT_PUBLIC_USE_HTTPS:
-      process.env.NODE_ENV === 'production' ? 'true' : 'false'
-  }
+      process.env.NODE_ENV === 'production' ? 'true' : 'false',
+  },
 };
 
 export default nextConfig;
