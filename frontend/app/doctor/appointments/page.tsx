@@ -5,25 +5,34 @@ import { useRouter } from "next/navigation";
 import { format, differenceInCalendarDays, isValid } from "date-fns";
 import { parseISO } from "date-fns/parseISO";
 
-interface DoctorInfo {
+// Use a type alias that can be either an object or a string for maximum safety.
+type DoctorInfoType = {
   id: string;
   full_name: string;
   email?: string;
   role?: string;
   specialization?: string;
-}
+} | string; // This is the key change.
 
 interface Referral {
   id: number;
   patient: string;
-  referring_doctor: DoctorInfo;
-  receiving_doctor: DoctorInfo;
+  referring_doctor: DoctorInfoType; // Use the new type here
+  receiving_doctor: DoctorInfoType; // And here
   reason: string;
   notes?: string;
   status: "pending" | "scheduled" | "canceled" | string;
   created_at: string;
   appointment_date: string;
 }
+
+// Helper function to safely get the doctor's name
+const getDoctorName = (doctor: DoctorInfoType): string => {
+  if (typeof doctor === 'string') {
+    return doctor;
+  }
+  return doctor.full_name;
+};
 
 export default function ReferralsPage() {
   const [referrals, setReferrals] = useState<Referral[]>([]);
@@ -329,22 +338,18 @@ export default function ReferralsPage() {
                     </div>
 
                     <div className="space-y-3">
-                      <div>
-                        <p className="text-sm text-gray-500">Referring Doctor</p>
-                        <p className="text-gray-700">
-                          {typeof referral.referring_doctor === 'string' 
-                            ? referral.referring_doctor 
-                            : referral.referring_doctor.full_name}
-                        </p>
-                      </div>
-                      <div>
-                        <p className="text-sm text-gray-500">Receiving Doctor</p>
-                        <p className="text-gray-700">
-                          {typeof referral.receiving_doctor === 'string'
-                            ? referral.receiving_doctor
-                            : referral.receiving_doctor.full_name}
-                        </p>
-                      </div>
+<div>
+  <p className="text-sm text-gray-500">Referring Doctor</p>
+  <p className="text-gray-700">
+    {getDoctorName(referral.referring_doctor)} {/* This will now be safe */}
+  </p>
+</div>
+<div>
+  <p className="text-sm text-gray-500">Receiving Doctor</p>
+  <p className="text-gray-700">
+    {getDoctorName(referral.receiving_doctor)}
+  </p>
+</div>
                     </div>
 
                     {appointmentSection && (
