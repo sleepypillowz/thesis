@@ -71,12 +71,8 @@ class DoctorSchedule(APIView):
     def get(self, request, doctor_id):
         try:
             # Step 1: Get UserAccount (using the provided user ID)
-            user = UserAccount.objects.get(id=doctor_id, role__in=['doctor', 'on-call-doctor']) 
-            
-            # Step 2: Get the Doctor instance linked to the UserAccount
-            doctor = user.doctor  # Directly access via OneToOneField
-            
-            # Step 3: Get all schedules for this doctor
+            user = UserAccount.objects.get(id=doctor_id, role__in=['doctor', 'on-call-doctor'])
+            doctor = user.doctor_profile  # Access the related Doctor instance
             schedules = Schedule.objects.filter(doctor=doctor)
             
             # Step 4: Generate availability slots based on the schedules
@@ -163,7 +159,7 @@ class ScheduleAppointment(APIView):
             )
         try:
             referral = AppointmentReferral.objects.get(id=referral_id)
-            doctor = referral.receiving_doctor.doctor
+            doctor = referral.receiving_doctor.doctor_profile
             doctor_tz = pytz.timezone(doctor.timezone)
         except (AppointmentReferral.DoesNotExist, Doctor.DoesNotExist):
             return Response({"error": "Invalid referral"}, status=status.HTTP_404_NOT_FOUND)

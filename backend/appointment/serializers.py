@@ -66,29 +66,39 @@ class AppointmentReferralSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         ret = super().to_representation(instance)
-        try:
-            receiving_doctor = instance.receiving_doctor.doctor
-            ret['receiving_doctor'] = {
-                "id": receiving_doctor.user.id,
-                "full_name": receiving_doctor.user.get_full_name(),
-                "email": receiving_doctor.user.email,
-                "role": receiving_doctor.user.role,
-                "specialization": receiving_doctor.specialization
-            }
-        except Doctor.DoesNotExist:
-            ret['receiving_doctor'] = UserAccountSerializer(instance.receiving_doctor).data
 
-        try:
-            referring_doctor = instance.referring_doctor.doctor
-            ret['referring_doctor'] = {
-                "id": referring_doctor.user.id,
-                "full_name": referring_doctor.user.get_full_name(),
-                "email": referring_doctor.user.email,
-                "role": referring_doctor.user.role,
-                "specialization": referring_doctor.specialization
-            }
-        except Doctor.DoesNotExist:
-            ret['receiving_doctor'] = UserAccountSerializer(instance.receiving_doctor).data
+        # Handling receiving_doctor
+        if instance.receiving_doctor:
+            try:
+                doctor_profile = instance.receiving_doctor.doctor_profile
+                ret['receiving_doctor'] = {
+                    "id": doctor_profile.user.id,
+                    "full_name": doctor_profile.user.get_full_name(),
+                    "email": doctor_profile.user.email,
+                    "role": doctor_profile.user.role,
+                    "specialization": doctor_profile.specialization
+                }
+            except Doctor.DoesNotExist:
+                ret['receiving_doctor'] = UserAccountSerializer(instance.receiving_doctor).data
+        else:
+            ret['receiving_doctor'] = None
+
+        # Handling referring_doctor
+        if instance.referring_doctor:
+            try:
+                doctor_profile = instance.referring_doctor.doctor_profile
+                ret['referring_doctor'] = {
+                    "id": doctor_profile.user.id,
+                    "full_name": doctor_profile.user.get_full_name(),
+                    "email": doctor_profile.user.email,
+                    "role": doctor_profile.user.role,
+                    "specialization": doctor_profile.specialization
+                }
+            except Doctor.DoesNotExist:
+                ret['referring_doctor'] = UserAccountSerializer(instance.referring_doctor).data
+        else:
+            ret['referring_doctor'] = None
+
         return ret
 
 

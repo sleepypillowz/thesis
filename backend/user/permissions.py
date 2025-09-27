@@ -3,12 +3,12 @@ from rest_framework import permissions
 
 # all medical staff access
 class IsMedicalStaff(BasePermission):
+       
     def has_permission(self, request, view):
-        
+        print(f"User Role: {getattr(request.user, 'role', 'No role assigned')}")
         allowed_roles = ['doctor', 'secretary', 'on-call-doctor']
-        user_role = getattr(request.user, 'role').lower()
-        
-        return user_role in allowed_roles   
+        user_role = getattr(request.user, 'role', '').lower()
+        return user_role in allowed_roles
 
 # doctor access
 class isDoctor(BasePermission):

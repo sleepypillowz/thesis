@@ -48,13 +48,13 @@ class PatientListView(APIView):
             print(role)
             user_id = request.user.id
             print(user_id)
-            if role == "on-call-doctor" and user_id != "LFG4YJ2P" :
+            if role == "on-call-doctor" and user_id != "cooper-020006" :
                 response = supabase.table("queueing_treatment").select(
                     "patient_patient(*, queueing_temporarystoragequeue(id, status, created_at, priority_level, queue_number, complaint))"
                 ).eq("doctor_id",user_id).execute()
                 
                 patients = [t["patient_patient"] for t in response.data if "patient_patient" in t]
-            elif role in ["secretary", "admin"] or user_id == "LFG4YJ2P":
+            elif role in ["secretary", "admin"] or user_id == "cooper-020006":
                 response = (
                     supabase.table("patient_patient").select("*, queueing_temporarystoragequeue(id, status, created_at, priority_level, queue_number, complaint)").execute()
                 )
