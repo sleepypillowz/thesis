@@ -7,6 +7,7 @@ from rest_framework import serializers
 from queueing.models import TemporaryStorageQueue
 
 class TemporaryStorageQueueSerializer(serializers.ModelSerializer):
+    age = serializers.SerializerMethodField()
     priority_level = serializers.ChoiceField(
         choices=[('Regular', 'Regular'), ('Priority', 'Priority')],
         default='Regular'
@@ -26,11 +27,11 @@ class TemporaryStorageQueueSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = TemporaryStorageQueue
-        fields = [
-            'id', 'queue_number', 'patient', 'priority_level', 
-            'complaint', 'queue_data', 'created_at', 'status'
-        ]
+        fields = ['id', 'temp_first_name', 'temp_last_name', 'temp_phone_number', 'temp_date_of_birth', 'age', 'priority_level', 'complaint', 'status', 'queue_number', 'position', 'created_at', 'is_new_patient']
 
+    def get_age(self, obj):
+        return obj.get_age()
+    
     def get_queue_number(self, obj):
         queue = TemporaryStorageQueue.objects.filter(
             priority_level=obj.priority_level, status='Waiting'

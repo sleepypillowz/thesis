@@ -46,7 +46,6 @@ class PatientRegistrationQueue(APIView):
                 next1 = patients[1] if len(patients) > 1 else None
                 next2 = patients[2] if len(patients) > 2 else None
                 return current, next1, next2
-            
             def format_patient_data(queue_item):
                 if not queue_item:
                     return None
@@ -59,7 +58,13 @@ class PatientRegistrationQueue(APIView):
                     phone_number = patient.phone_number
                     date_of_birth = patient.date_of_birth
                     patient_id = patient.patient_id
-                    age = patient.get_age()
+                    
+                    # Calculate age properly
+                    if date_of_birth:
+                        today = date.today()
+                        age = today.year - date_of_birth.year - ((today.month, today.day) < (date_of_birth.month, date_of_birth.day))
+                    else:
+                        age = None
                 else:
                     # Use temporary patient info
                     first_name = queue_item.temp_first_name
@@ -67,7 +72,17 @@ class PatientRegistrationQueue(APIView):
                     phone_number = queue_item.temp_phone_number
                     date_of_birth = queue_item.temp_date_of_birth
                     patient_id = None
-                    age = None
+                    
+                    # Calculate age for temporary patient
+                    if date_of_birth:
+                        try:
+                            dob = date.fromisoformat(str(date_of_birth))
+                            today = date.today()
+                            age = today.year - dob.year - ((today.month, today.day) < (dob.month, dob.day))
+                        except (ValueError, TypeError):
+                            age = None
+                    else:
+                        age = None
 
                 return {
                     "id": queue_item.id,
@@ -76,7 +91,7 @@ class PatientRegistrationQueue(APIView):
                     "last_name": last_name,
                     "phone_number": phone_number,
                     "date_of_birth": date_of_birth,
-                    "age": age,
+                    "age": age,  # This will now be a number or None
                     "priority_level": queue_item.priority_level,
                     "complaint": queue_item.complaint,
                     "status": queue_item.status,

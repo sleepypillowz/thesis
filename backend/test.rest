@@ -37,8 +37,8 @@ POST http://localhost:8000/auth/jwt/create/
 Content-Type: application/json
 
 {
-  "email": "admin@gmail.com",
-  "password": "10200922"
+  "email": "secretaryaccount@gmail.com",
+  "password": "nVmTfEkCFeB3APi"
 }
 
 ### Login Doctor
@@ -53,7 +53,7 @@ Content-Type: application/json
 ### secretary request
 GET   http://localhost:8000/queueing/registration_queueing/
 Content-Type: application/json  
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzY1Nzg5NTM4LCJpYXQiOjE3NTgwMTM1MzgsImp0aSI6Ijk2NjMwMzhiNjRjYjQ0MzQ4OWMyYWY5NDBmZTI2OGY4IiwidXNlcl9pZCI6IkVFMkRZWFlZIiwiaXNfc3RhZmYiOmZhbHNlLCJpc19zdXBlcnVzZXIiOmZhbHNlLCJlbWFpbCI6InNlY3JldGFyeWFjY291bnRAZ21haWwuY29tIiwicm9sZSI6InNlY3JldGFyeSIsImZpcnN0X25hbWUiOiJMYXlsYSJ9.4gaHiiJGdkEK-KcJSx_727rR6exHW6Q3xQVnYqiCUxY
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzY2NzY2NDk5LCJpYXQiOjE3NTg5OTA0OTksImp0aSI6IjEyZGIwYTRhOTFiODRkNzJiZTgzOWY2ZDFmNThhYWM5IiwidXNlcl9pZCI6ImxhbmUtMDIwMDA4IiwiaXNfc3RhZmYiOmZhbHNlLCJpc19zdXBlcnVzZXIiOmZhbHNlLCJlbWFpbCI6InNlY3JldGFyeWFjY291bnRAZ21haWwuY29tIiwicm9sZSI6InNlY3JldGFyeSIsImZpcnN0X25hbWUiOiJQZW5ueSJ9.QsgzJ8zmsmgtvmbwT4k_YMowDOO1sCvrLjJd1DjfEfg
 ### secretary request
 GET    http://localhost:8000/medicine/predict/  
 Content-Type: application/json  
