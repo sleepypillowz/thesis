@@ -29,32 +29,26 @@ const statsData = [
   },
   {
     img: "/heart-rate.png",
-    title: "Blood Pressure",
-    value: 650,
+    title: "Current Diagnosis",
+    value: "Hypertension",
     footer: {
-      text: "07% Less",
-      trend: {
-        isPositive: false,
-      },
+      text: "Stable Condition",
     },
   },
   {
     img: "/glucose.png",
-    title: "Glucose Level",
-    value: "88-75",
+    title: "Upcoming Appointments",
+    value: "2",
     footer: {
-      text: "12% Higher",
-      trend: {
-        isPositive: false,
-      },
+      text: "Next: Jan 20, 2024",
     },
   },
   {
     img: "/blood-count.png",
-    title: "Blood Count",
-    value: "9,456/mL",
+    title: "Pulse Rate",
+    value: "72 bpm",
     footer: {
-      text: "22% Less",
+      text: "5% Lower",
       trend: {
         isPositive: true,
       },
@@ -100,7 +94,7 @@ function StatsCard({ img, title, value, footer }: StatsCardProps) {
             ></span>
           </>
         ) : null}
-        {footer.text} Then Last Month
+        {footer.text} {footer.trend ? "Then Last Month" : ""}
       </p>
     </div>
   );

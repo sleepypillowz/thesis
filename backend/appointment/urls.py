@@ -20,4 +20,4 @@ urlpatterns = [
 
     path('appointment/', include(router.urls))
 ]
-
+ 
