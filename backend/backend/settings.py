@@ -31,10 +31,9 @@ if not DEBUG:
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
     
-CORS_ALLOW_HEADERS = [
-    'authorization',
-    'content-type',
-]
+CORS_ALLOW_HEADERS = (
+    *default_headers,
+)
 CORS_ALLOW_CREDENTIALS = True
 
 INSTALLED_APPS = [
@@ -85,17 +84,17 @@ CORS_ALLOWED_ORIGINS = [
 ALLOWED_HOSTS = [
     "thesis-sg26.onrender.com",
     "thesis-c1rq.vercel.app",
-    'localhost'
+    'localhost',
+    'thesis-backend.up.railway.app',  # Also add your backend's own domain.
+    'meditrakk.up.railway.app'
 ]
 
 CSRF_TRUSTED_ORIGINS = [
-    "http://localhost:3000",             # Local development
-    "http://127.0.0.1:8000",            # Local development
-    "https://thesis-c1rq.vercel.app",   # Production frontend
-    "https://meditrakk.up.railway.app", # Production frontend
-    "https://thesis-backend.up.railway.app",  # Production backend
-    
-    
+    "http://localhost:3000",
+    "http://127.0.0.1:8000",
+    "https://thesis-c1rq.vercel.app",
+    "https://meditrakk.up.railway.app",
+    "https://thesis-backend.up.railway.app",
 ]
 CORS_ALLOW_ALL_ORIGINS = True
 
