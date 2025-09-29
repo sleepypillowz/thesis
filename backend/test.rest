@@ -23,7 +23,7 @@ Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzUwNDA4NzQyLCJpYXQiOjE3NDI2MzI3NDIsImp0aSI6IjY5Yjk3YWI3NDY2MjQ1MjJhYzNhZGM4NWFkOGIyMzI0IiwidXNlcl9pZCI6IjUiLCJpc19zdGFmZiI6dHJ1ZSwiaXNfc3VwZXJ1c2VyIjp0cnVlLCJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsInJvbGUiOiJhZG1pbiIsImZpcnN0X25hbWUiOiJBZG1pbiJ9.rx2coVwqmYNtT7indqtvkr4bp3qiwJ0WQSau7Zj9b4s
 
 ### Login to obtain JWT tokens
-POST http://localhost:8000/auth/jwt/create/
+POST https://thesis-backend.up.railway.app/auth/jwt/create/
 Content-Type: application/json
 
 {

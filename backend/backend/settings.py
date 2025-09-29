@@ -75,9 +75,11 @@ MIDDLEWARE = [
 ]
 # settings.py
 CORS_ALLOWED_ORIGINS = [
-    "https://thesis-c1rq.vercel.app",
     "https://meditrakk.up.railway.app",
+        
     "https://thesis-backend.up.railway.app",
+    "https://thesis-c1rq.vercel.app",
+
     "http://localhost:3000",
 
 ]
@@ -96,7 +98,6 @@ CSRF_TRUSTED_ORIGINS = [
     "https://meditrakk.up.railway.app",
     "https://thesis-backend.up.railway.app",
 ]
-CORS_ALLOW_ALL_ORIGINS = True
 
 CORS_ALLOW_HEADERS = list(default_headers) + [
     'authorization',
