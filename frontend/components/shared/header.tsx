@@ -1,6 +1,6 @@
-import DarkModeToggle from "@/components/molecules/header/dark-mode-toggle";
-import Notification from "@/components/molecules/header/notification";
-import ProfileDropdown from "@/components/molecules/header/profile-dropdown";
+import DarkModeToggle from "@/components/shared/header/dark-mode-toggle";
+import Notification from "@/components/shared/header/notification";
+import ProfileDropdown from "@/components/shared/header/profile-dropdown";
 
 const Header = () => {
   return (

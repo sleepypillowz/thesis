@@ -1,14 +1,14 @@
 "use client";
 import { useName } from "@/hooks/use-name";
-import { Skeleton } from "../ui/skeleton";
+import { Skeleton } from "@/components/ui/skeleton";
 
-import StatsCard from "@/components/organisms/admin-stats-cards";
-import { VisitorsChart } from "@/components/organisms/charts/visitors-chart";
-import { CommonDiseasesChart } from "@/components/organisms/charts/common-diseases-chart";
-import { CommonMedicinesChart } from "@/components/organisms/charts/common-medicine-chart";
-import { PatientColumns } from "./medical-records/patient-columns";
-import { DashboardTable } from "../ui/dashboard-table";
-import TitleCard from "../molecules/title-card";
+import StatsCard from "@/components/shared/pages/staff-dashboard/staff-stats-cards";
+import { VisitorsChart } from "@/components/shared/pages/staff-dashboard/visitors-chart";
+import { CommonDiseasesChart } from "@/components/shared/pages/staff-dashboard/common-diseases-chart";
+import { CommonMedicinesChart } from "@/components/shared/pages/staff-dashboard/common-medicine-chart";
+import { PatientColumns } from "@/components/shared/pages/medical-records/patient-columns";
+import { DashboardTable } from "@/components/ui/custom/dashboard-table";
+import TitleCard from "@/components/shared/title-card";
 import usePatients from "@/hooks/use-patients";
 
 export default function StaffDashboard() {

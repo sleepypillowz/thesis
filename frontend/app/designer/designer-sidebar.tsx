@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/sidebar";
 
 import Link from "next/link";
-import SidebarHeaderProfile from "@/components/atoms/sidebar-header-profile";
+import SidebarHeaderProfile from "@/components/shared/sidebar-header-profile";
 import {
   Collapsible,
   CollapsibleContent,

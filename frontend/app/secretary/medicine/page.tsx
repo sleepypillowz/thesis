@@ -1,4 +1,4 @@
-import Medicine from "@/components/pages/medicine";
+import Medicine from "@/components/shared/pages/medicine";
 
 export default function Page() {
   return <Medicine />;

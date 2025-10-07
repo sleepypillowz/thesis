@@ -1,5 +1,5 @@
 "use client";
-import { AdminStatChart } from "@/components/organisms/charts/admin-stat-chart";
+import { AdminStatChart } from "@/app/admin/admin-components/admin-stat-chart";
 import { Banknote, Scissors, User, UserRoundPlus } from "lucide-react";
 
 const data = [
@@ -13,7 +13,7 @@ const data = [
 
 export default function AdminStatCards() {
   return (
-    <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
       <AdminStatChart
         title="Appointments"
         total={650}

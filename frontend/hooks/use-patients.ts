@@ -3,7 +3,7 @@
 
 import { useEffect, useState } from "react";
 import { getPatients } from "@/lib/api/patients";
-import { Patient } from "@/components/pages/medical-records/patient-columns";
+import { Patient } from "@/components/shared/pages/medical-records/patient-columns";
 
 export default function usePatients() {
   const [patients, setPatients] = useState<Patient[]>([]);

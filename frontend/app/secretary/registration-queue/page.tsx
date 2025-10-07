@@ -7,7 +7,7 @@ import userInfo from "@/hooks/userRole";
 
 import QueueTableToggle from "./queue-table-toggle";
 
-import { DashboardTable } from "@/components/ui/dashboard-table";
+import { DashboardTable } from "@/components/ui/custom/dashboard-table";
 import { columns } from "./columns";
 import { registrations } from "@/lib/placeholder-data";
 

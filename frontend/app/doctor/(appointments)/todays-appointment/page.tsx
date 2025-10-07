@@ -1,6 +1,6 @@
 "use client";
-import { AppointmentColumns } from "@/components/molecules/tables/appointment-columns";
-import { PageTable } from "@/components/ui/page-table";
+import { AppointmentColumns } from "@/components/shared/appointment-columns";
+import { PageTable } from "@/components/ui/custom/page-table";
 import useAppointments from "@/hooks/use-appointments";
 
 export default function DemoPage() {

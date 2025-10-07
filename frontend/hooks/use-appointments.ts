@@ -3,7 +3,7 @@
 
 import { useEffect, useState } from "react";
 import { getAppointments } from "@/lib/api/appointments";
-import { Appointment } from "@/components/molecules/tables/appointment-columns";
+import { Appointment } from "@/components/shared/appointment-columns";
 
 export default function useAppointments() {
   const [appointments, setAppointments] = useState<Appointment[]>([]);

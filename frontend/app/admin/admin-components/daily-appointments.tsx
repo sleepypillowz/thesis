@@ -5,7 +5,7 @@ import {
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
-} from "@/components/ui/custom-pagination";
+} from "@/components/ui/custom/custom-pagination";
 
 export default function DailyAppointments() {
   return (

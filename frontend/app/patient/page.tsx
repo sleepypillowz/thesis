@@ -1,15 +1,15 @@
 "use client";
 
-import StatsCard from "@/components/organisms/patient-stats-cards";
-import { PerformanceHeartRateChart } from "@/app/patient/components/performance-heart-rate-chart";
-import { RestingHeartRateChart } from "@/app/patient/components/resting-heart-rate-chart";
+import StatsCard from "@/app/patient/patient-components/patient-stats-cards";
+import { PerformanceHeartRateChart } from "@/app/patient/patient-components/performance-heart-rate-chart";
+import { RestingHeartRateChart } from "@/app/patient/patient-components/resting-heart-rate-chart";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import Image from "next/image";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { prescriptions, appointments, documents } from "@/lib/placeholder-data";
 
-import { DashboardTable } from "@/components/ui/dashboard-table";
+import { DashboardTable } from "@/components/ui/custom/dashboard-table";
 import { columns } from "./(appointments)/columns";
 import { columns as PrescriptionsColumn } from "./prescriptions/columns";
 import { columns as DocumentsColumn } from "./documents/columns";

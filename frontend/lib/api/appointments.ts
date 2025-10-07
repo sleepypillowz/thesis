@@ -1,4 +1,4 @@
-import { Appointment } from "@/components/molecules/tables/appointment-columns";
+import { Appointment } from "@/components/shared/appointment-columns";
 
 export async function getAppointments(): Promise<Appointment[]> {
   const accessToken = localStorage.getItem("access");

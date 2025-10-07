@@ -1,8 +1,8 @@
 "use client";
 import { GridTable } from "@/components/ui/grid-table";
-import { DoctorColumns } from "@/components/molecules/tables/doctor-columns";
+import { DoctorColumns } from "@/components/shared/doctor-columns";
 import GridView from "./grid-view";
-import { SkeletonDataTable } from "@/components/atoms/custom-skeleton";
+import { SkeletonDataTable } from "@/components/shared/custom-skeleton";
 import { doctors } from "@/lib/placeholder-data";
 
 export default function DocList() {

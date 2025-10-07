@@ -1,4 +1,4 @@
-import { DashboardTable } from "@/components/ui/dashboard-table";
+import { DashboardTable } from "@/components/ui/custom/dashboard-table";
 import { AppointmentRequestColumns } from "./appointment-request-columns";
 import { appointmentRequest } from "@/lib/placeholder-data";
 

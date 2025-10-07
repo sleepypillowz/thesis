@@ -1,17 +1,17 @@
 // This file contains placeholder data that you'll be replacing with real data in the Data Fetching chapter:
 // https://nextjs.org/learn/dashboard-app/fetching-data
 
-import { Doctor } from "@/components/molecules/tables/doctor-columns";
-import { Operation } from "@/app/admin/components/operation-columns";
+import { Doctor } from "@/components/shared/doctor-columns";
+import { Operation } from "@/app/admin/admin-components/operation-columns";
 import { User } from "@/app/designer/columns";
 import { Registration } from "@/app/secretary/registration-queue/columns";
 import { Appointment } from "@/app/patient/(appointments)/columns";
 import { DocumentFile } from "@/app/patient/documents/columns";
 import { Prescription } from "@/app/patient/prescriptions/columns";
 import { Calendar, Mail, UserPlus } from "lucide-react";
-import { NotificationType } from "@/components/molecules/header/notification";
+import { NotificationType } from "@/components/shared/header/notification";
 import { MedicalRecord } from "@/app/patient/medical-record/columns";
-import { AppointmentRequest } from "@/components/pages/patient-portal/appointment-request-columns";
+import { AppointmentRequest } from "@/components/shared/pages/patient-portal/appointment-request-columns";
 
 export const registrations: Registration[] = [
   {

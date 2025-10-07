@@ -1,7 +1,7 @@
 "use client";
 import { columns } from "../columns";
 
-import { SkeletonDataTable } from "@/components/atoms/custom-skeleton";
+import { SkeletonDataTable } from "@/components/shared/custom-skeleton";
 import { CrudTable } from "@/components/ui/crud-table";
 import { users } from "@/lib/placeholder-data";
 

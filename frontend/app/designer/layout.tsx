@@ -4,7 +4,7 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import DesignerSidebar from "@/app/designer/designer-sidebar";
-import Header from "@/components/organisms/header";
+import Header from "@/components/shared/header";
 
 export default function Page({
   children,
