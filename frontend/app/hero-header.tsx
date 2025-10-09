@@ -11,7 +11,7 @@ const HeroHeader = () => {
   const navLinks = [
     { href: "/", label: "Home" },
     { href: "/services", label: "Services" },
-    { href: "/doctors-list", label: "Doctors" },
+    { href: "/doctor-list", label: "Doctors" },
     { href: "/about", label: "About" },
     { href: "/contact", label: "Contact" },
   ];

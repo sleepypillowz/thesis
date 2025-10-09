@@ -5,19 +5,17 @@ import GridView from "./grid-view";
 import { SkeletonDataTable } from "@/components/shared/custom-skeleton";
 import { doctors } from "@/lib/placeholder-data";
 
-export default function DocList() {
+export default function DoctorList() {
   if (doctors === undefined) {
     return <SkeletonDataTable />;
   }
 
   return (
-    <div className="xl:mx-48">
-      <GridTable
-        title="Doctors"
-        columns={DoctorColumns}
-        data={doctors ?? []}
-        GridComponent={<GridView />}
-      />
-    </div>
+    <GridTable
+      title="Doctors"
+      columns={DoctorColumns}
+      data={doctors ?? []}
+      GridComponent={<GridView />}
+    />
   );
 }
