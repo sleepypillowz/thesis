@@ -23,7 +23,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { SkeletonPageTable } from "@/components/atoms/custom-skeleton";
 
-import { parseISO, format, isValid, differenceInCalendarDays } from "date-fns";
+import { parseISO, format, isValid /* , differenceInCalendarDays */ } from "date-fns"; // Removed unused differenceInCalendarDays
 
 //////////////////////
 // Types for data
@@ -59,7 +59,7 @@ interface AppointmentRow {
 }
 
 //////////////////////
-// PageTable component (same as yours)
+// PageTable component
 //////////////////////
 
 interface PageTableProps<TData, TValue> {
@@ -68,7 +68,7 @@ interface PageTableProps<TData, TValue> {
   title?: string;
 }
 
-export function PageTable<TData, TValue>({
+function PageTable<TData, TValue>({
   columns,
   data,
   title,
@@ -82,7 +82,7 @@ export function PageTable<TData, TValue>({
 
   return (
     <div className="card m-6 space-y-6">
-      <h1 className="mr-4 font-bold">{title}</h1>
+      {title && <h1 className="mr-4 font-bold">{title}</h1>}
       <div className="overflow-hidden rounded-md border">
         <Table>
           <TableHeader className="bg-muted">
@@ -102,11 +102,11 @@ export function PageTable<TData, TValue>({
             ))}
           </TableHeader>
           <TableBody>
-            {table.getRowModel().rows?.length ? (
+            {table.getRowModel().rows.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
+                  data-state={row.getIsSelected() ? "selected" : undefined}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
@@ -154,7 +154,7 @@ export function PageTable<TData, TValue>({
 }
 
 //////////////////////
-// Page component: fetch + mapping + render with date-fns formatting
+// Default export page component
 //////////////////////
 
 export default function Page() {
@@ -211,13 +211,8 @@ export default function Page() {
         }
         const data: ReferralResponse[] = await res.json();
         const mapped: AppointmentRow[] = data.map((item) => {
-          // Format created date & appointment date using date-fns
-          const createdAt = parseISO(item.created_at);
           const appointmentAt = parseISO(item.appointment_date);
-
-          // Format created date if valid
-        const formattedDate = format(appointmentAt, "MMMM d, yyyy");
-
+          const formattedDate = format(appointmentAt, "MMMM d, yyyy");
           const formattedTime = isValid(appointmentAt)
             ? format(appointmentAt, "h:mm a")
             : "";
@@ -249,7 +244,7 @@ export default function Page() {
 
   return (
     <PageTable
-      title="Past Appointments"
+      title="Upcoming Appointments"
       columns={columns}
       data={appointmentsData}
     />
