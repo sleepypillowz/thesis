@@ -9,7 +9,14 @@ class IsMedicalStaff(BasePermission):
         allowed_roles = ['doctor', 'secretary', 'on-call-doctor']
         user_role = getattr(request.user, 'role', '').lower()
         return user_role in allowed_roles
-
+    
+class PatientMedicalStaff(BasePermission):
+       
+    def has_permission(self, request, view):
+        print(f"User Role: {getattr(request.user, 'role', 'No role assigned')}")
+        allowed_roles = ['doctor', 'secretary', 'on-call-doctor', 'patient']
+        user_role = getattr(request.user, 'role', '').lower()
+        return user_role in allowed_roles
 # doctor access
 class isDoctor(BasePermission):
     def has_permission(self, request, view):
@@ -53,6 +60,26 @@ class IsReferralParticipant(BasePermission):
             return obj.receiving_doctor == request.user
         
         if request.method in permissions.SAFE_METHODS:
+            # Allow patient to view their own referrals
+            return(
+                obj.referring_doctor == request.user or
+                obj.receiving_doctor == request.user or
+                (hasattr(request.user, 'patient_profile') and 
+                 obj.patient == request.user.patient_profile)
+            )
+            
+        if request.method in ['PUT', 'PATCH']:
+            return obj.referring_doctor == request.user
+
+        return False
+    
+class IsTreatmentParticipant(BasePermission):
+    def has_object_permission(self, request, view, obj):
+        if view.action == 'decline_referral':
+            return obj.receiving_doctor == request.user
+        
+        if request.method in permissions.SAFE_METHODS:
+            # Allow patient to view their own referrals
             return(
                 obj.referring_doctor == request.user or
                 obj.receiving_doctor == request.user
@@ -64,4 +91,9 @@ class IsReferralParticipant(BasePermission):
         return False
 class IsMe(BasePermission):
     def has_object_permission(self, request, view, obj):
-        return obj.id==request.user.id
+        if hasattr(obj, 'user'):
+            return obj.user and obj.user.id == request.user.id
+        # Or if your Patient model *is* your user model (rare):
+        return obj.id == request.user.id
+
+    

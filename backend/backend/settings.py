@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'rest_framework.authtoken',
     'djoser',
+    'channels',
 
     # installed apps
     'patient.apps.PatientConfig',
@@ -134,7 +135,40 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'backend.wsgi.application'
+
+# websocket
+# settings.py
+
+ASGI_APPLICATION = "backend.asgi.application"
+
+REDIS_URL = os.environ.get("REDIS_URL")
+
+if REDIS_URL:
+    # channels_redis accepts a URL string in the hosts list
+    CHANNEL_LAYERS = {
+        "default": {
+            "BACKEND": "channels_redis.core.RedisChannelLayer",
+            "CONFIG": {
+                "hosts": [REDIS_URL],
+            },
+        },
+    }
+else:
+    # fallback to separate host/port env vars or localhost for dev
+    CHANNEL_LAYERS = {
+        "default": {
+            "BACKEND": "channels_redis.core.RedisChannelLayer",
+            "CONFIG": {
+                "hosts": [
+                    (
+                        os.environ.get("REDIS_HOST", "127.0.0.1"),
+                        int(os.environ.get("REDIS_PORT", 6379)),
+                    )
+                ],
+            },
+        },
+    }
+
 
 
 # Database
@@ -143,14 +177,17 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 import os
 import dj_database_url
 
+import dj_database_url
+
 DATABASES = {
-    'default': dj_database_url.config(
-        default=os.environ.get('DATABASE_URL'),
-        conn_max_age=600,
+    "default": dj_database_url.config(
+        default=os.environ.get("DATABASE_URL"),
+        conn_max_age=int(os.environ.get("DB_CONN_MAX_AGE", 600)),
         conn_health_checks=True,
-        ssl_require=True  # <-- Add this line
+        ssl_require=os.environ.get("DB_SSL_REQUIRE", "True").lower() in ("1","true","yes"),
     )
 }
+
 
 
 

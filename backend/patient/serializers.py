@@ -13,6 +13,7 @@ from .models import Patient  # Adjust as needed
 from medicine.serializers import MedicineSerializer
 
 from queueing.models import TemporaryStorageQueue, Treatment
+from appointment.models import Appointment
 
 
 class PatientSerializer(serializers.Serializer):
@@ -328,3 +329,33 @@ class CommonDiseasesSerializer(serializers.ModelSerializer):
         if obj.doctor:
             return f"{obj.doctor.first_name} {obj.doctor.last_name}"
         return "Unassigned"
+
+
+# patient client side
+
+class PatientMedicalRecordSerializer(serializers.ModelSerializer):
+    patient = serializers.SlugRelatedField(
+        slug_field='patient_id',
+        queryset=Patient.objects.all()
+    )
+    diagnoses = DiagnosisSerializer(many=True, read_only=True) 
+    doctor_name = serializers.CharField(source="doctor.user.get_full_name", read_only=True)
+    complaint = serializers.SerializerMethodField()
+        
+    class Meta:
+        model = Treatment
+        fields = [
+            'patient', 
+            'doctor_name', 
+            'diagnoses', 
+            'created_at', 
+            'treatment_notes',
+            'complaint'
+        ]
+    def get_complaint(self, obj):
+        # Fetch the latest queue entry (if any) for the patient
+        queue = TemporaryStorageQueue.objects.filter(
+            patient=obj.patient
+        ).order_by('-created_at').first()
+
+        return queue.complaint if queue else None

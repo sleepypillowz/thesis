@@ -7,7 +7,7 @@ from django.db.models.functions import Lower
 from django.utils.timezone import now
 
 from queueing.serializers import PreliminaryAssessmentBasicSerializer
-from .serializers import PatientSerializer, PatientRegistrationSerializer, LabRequestSerializer, LabResultSerializer, PatientVisitSerializer, PatientLabTestSerializer, CommonDiseasesSerializer
+from .serializers import PatientMedicalRecordSerializer, PatientSerializer, PatientRegistrationSerializer, LabRequestSerializer, LabResultSerializer, PatientVisitSerializer, PatientLabTestSerializer, CommonDiseasesSerializer
 from queueing.models import  PreliminaryAssessment, TemporaryStorageQueue
 from queueing.models import Treatment as TreatmentModel
 
@@ -24,7 +24,8 @@ from backend.supabase_client import supabase
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from user.permissions import IsMedicalStaff, isDoctor, isSecretary, isAdmin
+from user.permissions import IsMe, IsMedicalStaff, isDoctor, isSecretary, isAdmin
+from rest_framework.permissions import IsAuthenticated
 
 from rest_framework import generics
 from .models import LabRequest, LabResult, Diagnosis
@@ -38,6 +39,10 @@ from collections import defaultdict
 
 # create user
 from user.models import UserAccount
+
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
+from queueing.utils import compute_queue_snapshot
 
 class PatientListView(APIView):
     permission_classes = [IsMedicalStaff]
@@ -893,6 +898,7 @@ class AcceptButton(APIView):
             
             # If this is a new patient, create the Patient record first
             if queue_entry.is_new_patient:
+                print("🆕 Creating new patient record...")
                 # Create UserAccount for the new patient
                 raw_dob = queue_entry.temp_date_of_birth
                 user = UserAccount.objects.create_user(
@@ -927,7 +933,8 @@ class AcceptButton(APIView):
                 queue_entry.patient = patient
                 queue_entry.is_new_patient = False  # Mark as processed
                 queue_entry.save()
-            
+                print("✅ New patient created: patient_id =", patient.patient_id)            
+                
             # Update status based on action
             if action == 'preliminary':
                 queue_entry.status = "Queued for Assessment"
@@ -939,20 +946,38 @@ class AcceptButton(APIView):
                 return Response({"error": "Invalid action"}, status=status.HTTP_400_BAD_REQUEST)
             
             queue_entry.save()
+            print("✅ Queue entry status updated to:", queue_entry.status)
+
+            # Broadcast updated snapshot
+            print("🔄 Computing queue snapshot...")
+            snapshot = compute_queue_snapshot()
+            print("📊 Queue snapshot computed:", snapshot)
+            
+            channel_layer = get_channel_layer()
+            print("📡 Broadcasting WebSocket update to 'registration_queue' group...")
+            
+            async_to_sync(channel_layer.group_send)(
+                "registration_queue",
+                {
+                    "type": "queue_update",
+                    "data": snapshot,
+                }
+            )
+            
+            print("✅ WebSocket broadcast completed")
 
             return Response({
-                "message": "Status updated successfully", 
+                "message": "Status updated successfully",
                 "status": queue_entry.status,
-                "patient_created": queue_entry.is_new_patient  # False if already existed
+                "patient_created": queue_entry.is_new_patient
             }, status=status.HTTP_200_OK)
 
         except TemporaryStorageQueue.DoesNotExist:
-            print("❌ Queue entry not found!")
+            print("❌ Queue entry not found with ID:", queue_entry_id)
             return Response({"error": "Queue entry not found"}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
-            print("❌ Error:", str(e))
+            print("❌ Error in POST Accept:", e)
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
 class SaveButton(APIView):
     permission_classes = [isDoctor]
     def post(self, request, *args, **kwargs):
@@ -1388,4 +1413,22 @@ class FrequentMedicationsView(generics.ListAPIView):
         queryset = self.get_queryset()
         return Response({"medicines": queryset}, status=status.HTTP_200_OK)
         
-    
+class PatientTreatmentRecordsView(APIView):
+    permission_classes = [IsAuthenticated, IsMe]
+
+    def get(self, request):
+        user = request.user
+
+        # Ensure the user is a patient
+        if not hasattr(user, 'patient_profile'):
+            return Response(
+                {"detail": "You are not authorized to access patient records."},
+                status=403
+            )
+
+        patient = user.patient_profile
+
+        # Get that patient's treatments
+        treatments = TreatmentModel.objects.filter(patient=patient).order_by('-created_at')
+        serializer = PatientMedicalRecordSerializer(treatments, many=True)
+        return Response(serializer.data)

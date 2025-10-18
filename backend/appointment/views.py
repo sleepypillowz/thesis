@@ -16,7 +16,7 @@ from .models import Appointment
 
 from user.models import Doctor, UserAccount, Schedule
 from user.models import UserAccount 
-from user.permissions import IsReferralParticipant, IsMedicalStaff
+from user.permissions import IsReferralParticipant, IsMedicalStaff, PatientMedicalStaff
 
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
@@ -238,52 +238,122 @@ class ScheduleAppointment(APIView):
         }, status=status.HTTP_201_CREATED)
         
 # only referral participants can access this
+
+
 class AppointmentReferralViewSet(viewsets.ModelViewSet):
-       
     serializer_class = AppointmentReferralSerializer
     permission_classes = [IsAuthenticated, IsReferralParticipant]
-    def get_queryset(self):
-        user = self.request.user
-        return AppointmentReferral.objects.filter(
-            Q(referring_doctor=user) | Q(receiving_doctor=user)
-        ).select_related('patient').order_by('-created_at')
 
-    
+    def get_queryset(self):
+        """
+        Base queryset: shows relevant referrals based on user type.
+        - Patients: only their referrals
+        - Doctors: referrals they sent or received
+        """
+        user = self.request.user
+        queryset = AppointmentReferral.objects.all()
+
+        if hasattr(user, 'patient_profile'):
+            # Patient: only referrals related to them
+            queryset = queryset.filter(patient=user.patient_profile)
+        else:
+            # Doctor: referrals where they are sender or receiver
+            queryset = queryset.filter(
+                Q(referring_doctor=user) | Q(receiving_doctor=user)
+            )
+
+        return queryset.select_related('patient', 'appointment').order_by('-created_at')
+
     def perform_create(self, serializer):
+        """Automatically sets the referring doctor to the logged-in user."""
         serializer.save(referring_doctor=self.request.user)
-    
+
     @action(detail=True, methods=['patch'], url_path='decline')
     def decline_referral(self, request, pk=None):
+        """
+        Allows the receiving doctor to decline a referral.
+        This also cancels the linked appointment (if it exists).
+        """
         referral = self.get_object()
         if referral.receiving_doctor != request.user:
             return Response(
                 {'detail': 'Only the receiving doctor can decline this referral.'},
                 status=status.HTTP_403_FORBIDDEN
             )
-        
-        appointment = getattr(referral, 'appointment', None)
 
+        appointment = getattr(referral, 'appointment', None)
         if appointment:
             appointment.status = 'cancelled'
             appointment.save()
-        
-        referral.status='cancelled'
+
+        referral.status = 'cancelled'
         referral.save()
         serializer = self.get_serializer(referral)
         return Response(serializer.data, status=status.HTTP_200_OK)
-    
+
     @action(detail=True, methods=['get'], url_path='patient-info')
     def get_patient_info(self, request, pk=None):
+        """
+        Allows the receiving doctor or the patient to view patient info.
+        Restricts unauthorized access.
+        """
         referral = self.get_object()
-        if referral.receiving_doctor != request.user:
+        if (
+            referral.receiving_doctor != request.user
+            and not (
+                hasattr(request.user, 'patient_profile')
+                and referral.patient == request.user.patient_profile
+            )
+        ):
             return Response({'detail': 'Access denied.'}, status=status.HTTP_403_FORBIDDEN)
+
         serializer = PatientSerializer(referral.patient)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=['get'], url_path='my-referrals')
+    def my_referrals(self, request):
+        """
+        Allows a patient to view all of their referrals.
+        """
+        if not hasattr(request.user, 'patient_profile'):
+            return Response(
+                {'detail': 'Only patients can access this endpoint.'},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        referrals = AppointmentReferral.objects.filter(
+            patient=request.user.patient_profile
+        ).select_related('referring_doctor', 'receiving_doctor', 'appointment')
+
+        serializer = self.get_serializer(referrals, many=True)
+        return Response(serializer.data)
+
+    @action(detail=False, methods=['get'], url_path='upcoming')
+    def upcoming_appointments(self, request):
+        now = timezone.now()
+        qs = self.get_queryset().filter(
+            appointment__appointment_date__gte=now,
+            status__in=['scheduled', 'pending']
+        )
+        serializer = self.get_serializer(qs, many=True)
+        return Response(serializer.data)
+
+    @action(detail=False, methods=['get'], url_path='past')
+    def past_appointments(self, request):
+        now = timezone.now()
+        qs = self.get_queryset().filter(
+            Q(appointment__appointment_date__lt=now) |
+            Q(status__in=['completed', 'canceled'])
+        )
+        serializer = self.get_serializer(qs, many=True)
+        return Response(serializer.data)
     
+# upcoming appointments in registration
 class UpcomingAppointments(APIView):
-    permission_classes = [IsMedicalStaff]
+    permission_classes = [PatientMedicalStaff]
     
     def get(self, request):
+        user = request.user
         manila = pytz.timezone("Asia/Manila")
         current_time = localtime(now(), manila)   # Manila datetime
         date_today = current_time.date()          # Manila date
@@ -300,7 +370,7 @@ class UpcomingAppointments(APIView):
             )
 
         elif role == 'doctor':
-            # general doctor sees their own appointment
+            # General doctor sees their own appointments
             doctor = Doctor.objects.filter(user=request.user).first()
             appointments_today = Appointment.objects.filter(
                 status="Scheduled",
@@ -308,23 +378,28 @@ class UpcomingAppointments(APIView):
                 appointment_date__gte=current_time,
                 doctor=doctor
             )
-
         elif role == 'on-call-doctor':
-            # On-call doctor sees their own appointment
+            # On-call doctor sees their own appointments (FIXED)
+            doctor = Doctor.objects.filter(user=request.user).first()
             appointments_today = Appointment.objects.filter(
                 status="Scheduled",
                 appointment_date__date=date_today,
                 appointment_date__gte=current_time,
-                appointmentreferral__receiving_doctor=request.user
+                doctor=doctor  # Changed from patient__user=user to doctor=doctor
             )
-
+        elif role == 'patient':
+            # Patient sees their own appointments
+            appointments_today = Appointment.objects.filter(
+                status="Scheduled",
+                appointment_date__date=date_today,
+                appointment_date__gte=current_time,
+                patient__user=user  # This is correct for patient role
+            )
         else:
             appointments_today = Appointment.objects.none()
       
         serializer = AppointmentSerializer(appointments_today, many=True)
         return Response(serializer.data)
-
-
 
 
 def ensure_positions_initialized_for_date(queue_date):

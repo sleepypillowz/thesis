@@ -84,7 +84,7 @@ export default function RegistrationQueue() {
     const fetchQueueData = async () => {
       try {
         const token = localStorage.getItem("access");
-        const response = await fetch(
+        const resp = await fetch(
           `${process.env.NEXT_PUBLIC_API_BASE}/queueing/registration_queueing/`,
           {
             method: "GET",
@@ -94,50 +94,90 @@ export default function RegistrationQueue() {
             },
           }
         );
-        
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
+        if (!resp.ok) {
+          throw new Error(`HTTP error! status: ${resp.status}`);
         }
+        const data = await resp.json();
         
-        const data = await response.json();
-        console.log("API Response:", data);
-
-        // Extract priority patients
-        const priorityPatients = [
-          data.priority_current,
-          data.priority_next1,
-          data.priority_next2,
-        ].filter((p) => p !== null);
-
-        // Extract regular patients
-        const regularPatients = [
-          data.regular_current,
-          data.regular_next1,
-          data.regular_next2,
-        ].filter((p) => p !== null);
-
-        // Update priority queue state
+        console.log("🔍 Initial queue data:", data);
+        
+        const pr = [data.priority_current, data.priority_next1, data.priority_next2].filter(p => p !== null);
+        const rg = [data.regular_current, data.regular_next1, data.regular_next2].filter(p => p !== null);
+        
         setPriorityQueue({
-          current: priorityPatients[0] || null,
-          next1: priorityPatients[1] || null,
-          next2: priorityPatients[2] || null,
+          current: pr[0] ?? null,
+          next1: pr[1] ?? null,
+          next2: pr[2] ?? null,
         });
-
-        // Update regular queue state
         setRegularQueue({
-          current: regularPatients[0] || null,
-          next1: regularPatients[1] || null,
-          next2: regularPatients[2] || null,
+          current: rg[0] ?? null,
+          next1: rg[1] ?? null,
+          next2: rg[2] ?? null,
         });
-      } catch (error) {
-        console.error("Error fetching queue:", error);
+      } catch (err) {
+        console.error("Error fetching queue:", err);
       }
     };
 
     fetchQueueData();
+
+    const protocol = window.location.protocol === "https:" ? "wss" : "ws";
+    const backendHost =
+      process.env.NODE_ENV === "production"
+        ? "thesis-backend.up.railway.app"
+        : "localhost:8000";
+
+    const socket = new WebSocket(`${protocol}://${backendHost}/ws/queue/registration/`);
+
+
+    socket.onopen = () => {
+      console.log("✅ WebSocket connected to registration queue");
+    };
+
+    socket.onmessage = (ev) => {
+      console.log("📨 Received WebSocket message:", ev.data);
+      try {
+        const msg = JSON.parse(ev.data);
+        console.log("🔄 Parsed WebSocket data:", msg);
+        
+        const pr = [msg.priority_current, msg.priority_next1, msg.priority_next2].filter(p => p !== null);
+        const rg = [msg.regular_current, msg.regular_next1, msg.regular_next2].filter(p => p !== null);
+        
+        console.log("🎯 Setting Priority Queue:", pr);
+        console.log("🎯 Setting Regular Queue:", rg);
+        
+        setPriorityQueue({
+          current: pr[0] ?? null,
+          next1: pr[1] ?? null,
+          next2: pr[2] ?? null,
+        });
+        setRegularQueue({
+          current: rg[0] ?? null,
+          next1: rg[1] ?? null,
+          next2: rg[2] ?? null,
+        });
+        
+        console.log("✅ Queue state updated via WebSocket");
+      } catch (err) {
+        console.error("❌ Error parsing WS message:", err);
+      }
+    };
+
+    socket.onclose = (ev) => {
+      console.warn("❌ WebSocket closed:", ev);
+    };
+
+    socket.onerror = (err) => {
+      console.error("💥 WebSocket error:", err);
+    };
+
+    // Fallback polling every 30 seconds
     const intervalId = setInterval(fetchQueueData, 30000);
-    
-    return () => clearInterval(intervalId);
+
+    return () => {
+      clearInterval(intervalId);
+      socket.close();
+    };
   }, []);
 
   const handleAccept = (queueItem: PatientQueueItem) => {
@@ -184,50 +224,13 @@ export default function RegistrationQueue() {
       const responseData = await response.json();
       console.log("✅ Success response:", responseData);
       
-      // Close the modal
+      // Close the modal - THAT'S IT!
+      // The WebSocket will automatically push the updated queue data
       setIsRoutingModalOpen(false);
       setSelectedPatient(null);
       
-      // Refresh the queue data - FIXED: Use existing token variable
-      const fetchResponse = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE}/queueing/registration_queueing/`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      // REMOVED: The manual GET request that was causing conflicts
       
-      if (fetchResponse.ok) {
-        const data = await fetchResponse.json();
-        
-        // Update queues with new data
-        const priorityPatients = [
-          data.priority_current,
-          data.priority_next1,
-          data.priority_next2,
-        ].filter((p) => p !== null);
-
-        const regularPatients = [
-          data.regular_current,
-          data.regular_next1,
-          data.regular_next2,
-        ].filter((p) => p !== null);
-
-        setPriorityQueue({
-          current: priorityPatients[0] || null,
-          next1: priorityPatients[1] || null,
-          next2: priorityPatients[2] || null,
-        });
-
-        setRegularQueue({
-          current: regularPatients[0] || null,
-          next1: regularPatients[1] || null,
-          next2: regularPatients[2] || null,
-        });
-      }
     } catch (error) {
       console.error("❌ Error updating queue:", error);
     }

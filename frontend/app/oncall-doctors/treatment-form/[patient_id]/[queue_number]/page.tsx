@@ -369,7 +369,7 @@ export default function TreatmentForm() {
       </div>
     );
   }
-  if (!role || role.role !== "doctor") {
+  if (!role || (role.role !== "doctor" && role.role !== "on-call-doctor")) {
     return (
       <div className="flex min-h-screen items-center justify-center text-xl font-semibold">
         Not Authorized

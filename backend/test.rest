@@ -28,7 +28,7 @@ Content-Type: application/json
 
 {
   "email": "zuma@gmail.com",
-  "password": "zuma-0200010119980220"
+  "password": "zuma-02000920070320"
 }
 ###
 
@@ -37,8 +37,8 @@ POST http://localhost:8000/auth/jwt/create/
 Content-Type: application/json
 
 {
-  "email": "secretaryaccount@gmail.com",
-  "password": "nVmTfEkCFeB3APi"
+  "email": "cardiologist@hospital.com",
+  "password": "securepassword123"
 }
 
 ### Login Doctor
@@ -51,7 +51,7 @@ Content-Type: application/json
 }
 
 ### secretary request
-GET   http://localhost:8000/queueing/registration_queueing/
+POST   http://localhost:8000/medicine/upload-csv/
 Content-Type: application/json  
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzY2NzY2NDk5LCJpYXQiOjE3NTg5OTA0OTksImp0aSI6IjEyZGIwYTRhOTFiODRkNzJiZTgzOWY2ZDFmNThhYWM5IiwidXNlcl9pZCI6ImxhbmUtMDIwMDA4IiwiaXNfc3RhZmYiOmZhbHNlLCJpc19zdXBlcnVzZXIiOmZhbHNlLCJlbWFpbCI6InNlY3JldGFyeWFjY291bnRAZ21haWwuY29tIiwicm9sZSI6InNlY3JldGFyeSIsImZpcnN0X25hbWUiOiJQZW5ueSJ9.QsgzJ8zmsmgtvmbwT4k_YMowDOO1sCvrLjJd1DjfEfg
 ### secretary request
@@ -59,10 +59,11 @@ GET    http://localhost:8000/medicine/predict/
 Content-Type: application/json  
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzU5NzU3NjYxLCJpYXQiOjE3NTE5ODE2NjEsImp0aSI6IjVmZDRkYzNlYzMwYzQzNjFhYmEwMDllOTM4ZTQ1ZTY1IiwidXNlcl9pZCI6IkVFMkRZWFlZIiwiaXNfc3RhZmYiOmZhbHNlLCJpc19zdXBlcnVzZXIiOmZhbHNlLCJlbWFpbCI6InNlY3JldGFyeWFjY291bnRAZ21haWwuY29tIiwicm9sZSI6InNlY3JldGFyeSIsImZpcnN0X25hbWUiOiJMYXlsYSJ9.3uv35HQBPiH6_MocJNdehvFq8LfblguBaiV2o5QTnGk 
 ### oncalldoctor request
-GET   http://localhost:8000/appointment/upcoming-appointments/
+GET http://localhost:8000/patients/records/
 Content-Type: application/json  
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzY1Nzg5NDgzLCJpYXQiOjE3NTgwMTM0ODMsImp0aSI6IjllOWM2Nzg0ZjkwMjQxNzM4ZDA3OWQyMWNhZmQ2NjQyIiwidXNlcl9pZCI6IkVaUUMyU1QwIiwiaXNfc3RhZmYiOmZhbHNlLCJpc19zdXBlcnVzZXIiOmZhbHNlLCJlbWFpbCI6ImNhcmRpb2xvZ2lzdEBob3NwaXRhbC5jb20iLCJyb2xlIjoib24tY2FsbC1kb2N0b3IiLCJmaXJzdF9uYW1lIjoiSm9obiJ9.98_1wJk6WDN2qwoG1cqSVxga9qidNCi9xdfIT9rXvAw
-### doctor request
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzY3OTM2NTUyLCJpYXQiOjE3NjAxNjA1NTIsImp0aSI6IjZhZjZiNmQwOTNmOTQ3NDdiMmNhZjdkMjZjNGZjZWRmIiwidXNlcl9pZCI6Inp1bWEtMDIwMDA5IiwiaXNfc3RhZmYiOmZhbHNlLCJpc19zdXBlcnVzZXIiOmZhbHNlLCJlbWFpbCI6Inp1bWFAZ21haWwuY29tIiwicm9sZSI6InBhdGllbnQiLCJmaXJzdF9uYW1lIjoiRGVtYmUifQ.iHcFyH4KuSMwbsj6HiNzHQuJNhtJBX88dPuwFwd8sbM
+###
+
 GET    http://localhost:8000/patients/
 Content-Type: application/json  
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzY2NzYyNzgwLCJpYXQiOjE3NTg5ODY3ODAsImp0aSI6IjkzZWUyMGM5NjQyOTQyZTNiZjMwZjMxODUwNDk2Nzk3IiwidXNlcl9pZCI6ImNvb3Blci0wMjAwMDYiLCJpc19zdGFmZiI6ZmFsc2UsImlzX3N1cGVydXNlciI6ZmFsc2UsImVtYWlsIjoiZ2VuZXJhbGRvY3RvckBob3NwaXRhbC5jb20iLCJyb2xlIjoiZG9jdG9yIiwiZmlyc3RfbmFtZSI6IlNoZWxkb24ifQ.FXzosAXxrW5S4DVyziKQq2Jl1VplXGtkcwHu3ImQ0ok

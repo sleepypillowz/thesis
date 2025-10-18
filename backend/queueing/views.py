@@ -15,113 +15,24 @@ from rest_framework import status
 from patient.models import Diagnosis, Prescription
 from medicine.models import Medicine
 
-from user.permissions import IsMedicalStaff, isDoctor, isSecretary
+from user.permissions import IsMedicalStaff, isDoctor, isSecretary, IsTreatmentParticipant
 from django.utils.timezone import now, localdate
 
+from appointment.models import AppointmentReferral, Appointment
 # display patient registration queue
+from .utils import compute_queue_snapshot
+
 class PatientRegistrationQueue(APIView):
     permission_classes = [isSecretary]
-    
+
     def get(self, request):
         try:
-            today = localdate()
-            
-            # Fetch Priority Queue using Django ORM
-            priority_patients = TemporaryStorageQueue.objects.filter(
-                status='Waiting',
-                priority_level='Priority',
-                created_at__date=today
-            ).order_by('position', 'queue_number')
-            
-            # Fetch Regular Queue using Django ORM
-            regular_patients = TemporaryStorageQueue.objects.filter(
-                status='Waiting',
-                priority_level='Regular',
-                created_at__date=today
-            ).order_by('position', 'queue_number')
-            
-            def get_next_patients(queryset):   
-                patients = list(queryset)
-                current = patients[0] if len(patients) > 0 else None
-                next1 = patients[1] if len(patients) > 1 else None
-                next2 = patients[2] if len(patients) > 2 else None
-                return current, next1, next2
-            def format_patient_data(queue_item):
-                if not queue_item:
-                    return None
-
-                # If it's a registered patient
-                if queue_item.user and hasattr(queue_item.user, "patient_profile"):
-                    patient = queue_item.user.patient_profile
-                    first_name = patient.first_name
-                    last_name = patient.last_name
-                    phone_number = patient.phone_number
-                    date_of_birth = patient.date_of_birth
-                    patient_id = patient.patient_id
-                    
-                    # Calculate age properly
-                    if date_of_birth:
-                        today = date.today()
-                        age = today.year - date_of_birth.year - ((today.month, today.day) < (date_of_birth.month, date_of_birth.day))
-                    else:
-                        age = None
-                else:
-                    # Use temporary patient info
-                    first_name = queue_item.temp_first_name
-                    last_name = queue_item.temp_last_name
-                    phone_number = queue_item.temp_phone_number
-                    date_of_birth = queue_item.temp_date_of_birth
-                    patient_id = None
-                    
-                    # Calculate age for temporary patient
-                    if date_of_birth:
-                        try:
-                            dob = date.fromisoformat(str(date_of_birth))
-                            today = date.today()
-                            age = today.year - dob.year - ((today.month, today.day) < (dob.month, dob.day))
-                        except (ValueError, TypeError):
-                            age = None
-                    else:
-                        age = None
-
-                return {
-                    "id": queue_item.id,
-                    "patient_id": patient_id,
-                    "first_name": first_name,
-                    "last_name": last_name,
-                    "phone_number": phone_number,
-                    "date_of_birth": date_of_birth,
-                    "age": age,  # This will now be a number or None
-                    "priority_level": queue_item.priority_level,
-                    "complaint": queue_item.complaint,
-                    "status": queue_item.status,
-                    "queue_number": queue_item.queue_number,
-                    "position": queue_item.position,
-                    "created_at": queue_item.created_at,
-                    "is_new_patient": not queue_item.user
-                }
-
-            
-            # Get the next patients
-            priority_current, priority_next1, priority_next2 = get_next_patients(priority_patients)
-            regular_current, regular_next1, regular_next2 = get_next_patients(regular_patients)
-            
-            # Format the response
-            response_data = {
-                "priority_current": format_patient_data(priority_current),
-                "priority_next1": format_patient_data(priority_next1),
-                "priority_next2": format_patient_data(priority_next2),
-                "regular_current": format_patient_data(regular_current),
-                "regular_next1": format_patient_data(regular_next1),
-                "regular_next2": format_patient_data(regular_next2)
-            }
-            
-            # Return the response
-            return Response(response_data, status=status.HTTP_200_OK)
-            
+            snapshot = compute_queue_snapshot()
+            return Response(snapshot, status=status.HTTP_200_OK)
         except Exception as e:
-            print("Error in PatientRegistrationQueue GET:", e)
+            print("Error in GET:", e)
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 # display patient assessment queue
 class PreliminaryAssessmentQueue(APIView):
@@ -365,26 +276,56 @@ class PreliminaryAssessmentForm(APIView):
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 class PatientTreatmentForm(APIView):
-    permission_classes = [isDoctor]
-    
-    def post(self, request, patient_id, queue_number):
-        patient = get_object_or_404(Patient, patient_id=patient_id)        
-        
-        treatment_notes = request.data.get("treatment_notes", "")
-        diagnoses_data = request.data.get("diagnoses", [])
-        prescriptions_data = request.data.get("prescriptions", [])
-        
+    permission_classes = [IsTreatmentParticipant]
 
+    def post(self, request, patient_id, queue_number):
+        patient = get_object_or_404(Patient, patient_id=patient_id)
+
+        # Create treatment record
         treatment = Treatment.objects.create(
             patient=patient,
-            treatment_notes=treatment_notes,
+            treatment_notes=request.data.get("treatment_notes", ""),
             doctor=request.user
         )
-        queue_entry = TemporaryStorageQueue.objects.get(patient=patient, queue_number=queue_number)
 
+        # Mark queue entry completed
+        queue_entry = get_object_or_404(
+            TemporaryStorageQueue,
+            patient=patient,
+            queue_number=queue_number
+        )
         queue_entry.status = 'Completed'
         queue_entry.save()
-        
+
+        # Update “active” referral, if any
+        referral = AppointmentReferral.objects.filter(
+            patient=patient,
+            status__in=['pending', 'scheduled']
+        ).order_by('-created_at').first()
+
+        if referral:
+            referral.status = 'completed'
+            referral.save()
+            # optional logging
+            print(f"Updated Referral id={referral.id} to completed for patient {patient_id}")
+        else:
+            print(f"No active referral found for patient {patient_id}")
+
+        # Update “active” appointment, if any
+        appointment = Appointment.objects.filter(
+            patient=patient,
+            status__in=['Scheduled', 'Waiting']
+        ).order_by('appointment_date').first()
+
+        if appointment:
+            appointment.status = 'Completed'
+            appointment.save()
+            print(f"Updated Appointment id={appointment.id} to Completed for patient {patient_id}")
+        else:
+            print(f"No active appointment found for patient {patient_id}")
+
+        # Process diagnoses
+        diagnoses_data = request.data.get("diagnoses", [])
         for diag in diagnoses_data:
             diagnosis, _ = Diagnosis.objects.get_or_create(
                 patient=patient,
@@ -393,38 +334,32 @@ class PatientTreatmentForm(APIView):
                 diagnosis_date=diag["diagnosis_date"]
             )
             treatment.diagnoses.add(diagnosis)
-            
+
+        # Process prescriptions
+        prescriptions_data = request.data.get("prescriptions", [])
         for presc in prescriptions_data:
-            print(f"Debug: Prescription data received: {presc}")
             try:
-                # Check if a unique medicine id was provided
-                if "medicine_id" in presc and presc["medicine_id"].strip() != "":
-                    # Convert the id to integer if it's coming as a string
+                # similar logic as your previous code
+                if "medicine_id" in presc and presc["medicine_id"]:
                     med_id = int(presc["medicine_id"])
-                    print(f"Debug: Looking for medicine with ID: {med_id}")
                     medicine = Medicine.objects.get(id=med_id)
                 else:
-                    # Standardize and debug the medicine name
-                    medicine_name = presc["medication"].strip()
-                    print(f"Debug: Looking for medicine by name: '{medicine_name}'")
-                    
-                    # Use case-insensitive filtering to avoid issues with casing/whitespace
-                    medicines = Medicine.objects.filter(name__iexact=medicine_name)
+                    name = presc["medication"].strip()
+                    medicines = Medicine.objects.filter(name__iexact=name)
                     if not medicines.exists():
-                        print(f"Debug: Medicine '{medicine_name}' not found!")
-                        return Response({"error": f"Medicine '{medicine_name}' not found!"}, status=status.HTTP_400_BAD_REQUEST)
-                    if medicines.count() > 1:
-                        print(f"Debug: Multiple records found for '{medicine_name}'. Count: {medicines.count()}. Using the first one.")
+                        return Response(
+                            {"error": f"Medicine '{name}' not found!"},
+                            status=status.HTTP_400_BAD_REQUEST
+                        )
                     medicine = medicines.first()
-                
-                print(f"Debug: Retrieved Medicine: {medicine.name} with expiration: {medicine.expiration_date}")
-                
-                # Check if the medicine is expired
+
+                # Check expiration
                 if medicine.expiration_date and medicine.expiration_date < date.today():
-                    print(f"Debug: Medicine {medicine.name} is expired! Expiration: {medicine.expiration_date}, Today's date: {date.today()}")
-                    return Response({"error": f"{medicine.name} is expired!"}, status=status.HTTP_400_BAD_REQUEST)
-                
-                # Attempt to create or retrieve a prescription
+                    return Response(
+                        {"error": f"{medicine.name} is expired!"},
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+
                 prescription, created = Prescription.objects.get_or_create(
                     patient=patient,
                     medication=medicine,
@@ -434,15 +369,12 @@ class PatientTreatmentForm(APIView):
                     start_date=presc["start_date"],
                     end_date=presc["end_date"]
                 )
-                if created:
-                    print(f"Debug: Created new prescription for medicine {medicine.name}.")
-                else:
-                    print(f"Debug: Existing prescription found for medicine {medicine.name}.")
-                
-                # Associate the prescription with the treatment
                 treatment.prescriptions.add(prescription)
             except Exception as e:
-                print(f"Debug: Exception occurred while processing prescription: {e}")
-                return Response({"error": "An error occurred while processing the prescription."}, status=status.HTTP_400_BAD_REQUEST)
+                print("Exception processing prescription:", e)
+                return Response(
+                    {"error": "An error occurred while processing the prescription."},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
 
         return Response({"message": "Treatment submitted successfully"}, status=status.HTTP_201_CREATED)
