@@ -6,12 +6,21 @@ import { useRouter } from "next/navigation";
 import { format, differenceInCalendarDays, isValid } from "date-fns";
 import { parseISO } from "date-fns/parseISO";
 
-// shape of referral object
+// Doctor interface to match API response
+interface DoctorInfo {
+  id: string;
+  full_name: string;
+  email?: string;
+  role?: string;
+  specialization?: string;
+}
+
+// shape of referral object - updated to match API
 interface Referral {
   id: number;
   patient: string;
-  referring_doctor: string;
-  receiving_doctor: string;
+  referring_doctor: DoctorInfo; // Changed from string to DoctorInfo
+  receiving_doctor: DoctorInfo; // Changed from string to DoctorInfo
   reason: string;
   notes?: string;
   status: "pending" | "scheduled" | "canceled" | string;
@@ -30,7 +39,7 @@ export default function ReferralsPage() {
     null
   );
 
-  // fetch referrrals from backend
+  // fetch referrals from backend
   useEffect(() => {
     const fetchReferrals = async () => {
       try {
@@ -425,30 +434,40 @@ export default function ReferralsPage() {
 
                     <div className="space-y-3">
                       <div>
-                        <p className="text-sm text-gray-500">
-                          Referring Doctor
-                        </p>
+                        <p className="text-sm text-gray-500">Referring Doctor</p>
                         <p className="text-gray-700">
-                          {referral.referring_doctor}
+                          {referral.referring_doctor.full_name}
                         </p>
+                        {referral.referring_doctor.specialization && (
+                          <p className="text-xs text-gray-500">
+                            {referral.referring_doctor.specialization}
+                          </p>
+                        )}
                       </div>
                       <div>
-                        <p className="text-sm text-gray-500">
-                          Receiving Doctor
-                        </p>
+                        <p className="text-sm text-gray-500">Receiving Doctor</p>
                         <p className="text-gray-700">
-                          {referral.receiving_doctor}
+                          {referral.receiving_doctor.full_name}
                         </p>
+                        {referral.receiving_doctor.specialization && (
+                          <p className="text-xs text-gray-500">
+                            {referral.receiving_doctor.specialization}
+                          </p>
+                        )}
                       </div>
                     </div>
 
-                    {appointmentSection}
+                    {appointmentSection && (
+                      <div className="md:col-span-1">
+                        {appointmentSection}
+                      </div>
+                    )}
                   </div>
                 </div>
 
                 {referral.status === "scheduled" && (
                   <div className="flex justify-end space-x-3 bg-gray-50 px-6 py-4">
-                    {currentUserId === "LFG4YJ2P" && (
+                    {currentUserId === "cooper-020006" && (
                       <button
                         onClick={() => handleEdit(referral)}
                         className="rounded-md border border-blue-600 px-4 py-2 text-sm font-medium text-blue-600 transition-colors hover:bg-blue-50"

@@ -1,10 +1,10 @@
 "use client";
 
-import OncallDoctorsRecentAppointment from "@/app/oncall-doctors/oncall-doctors-components/recent-appointment";
-import PatientGroup from "@/app/oncall-doctors/oncall-doctors-components/patient-group";
+import OncallDoctorsRecentAppointment from "@/components/organisms/tables/oncall-doctor/recent-appointment";
+import PatientGroup from "@/components/organisms/tables/oncall-doctor/patient-group";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import Image from "next/image";
-import TodoList from "@/app/oncall-doctors/oncall-doctors-components/todo-list";
+import TodoList from "@/components/organisms/tables/oncall-doctor/todo-list";
 import { useName } from "@/hooks/use-name";
 import { Skeleton } from "@/components/ui/skeleton";
 

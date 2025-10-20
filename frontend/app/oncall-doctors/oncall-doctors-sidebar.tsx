@@ -11,7 +11,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import Link from "next/link";
-import SidebarHeaderProfile from "@/components/shared/sidebar-header-profile";
+import SidebarHeaderProfile from "@/components/atoms/sidebar-header-profile";
 
 const menu_items = [
   {
@@ -25,13 +25,13 @@ const menu_items = [
     icon: Calendar,
   },
   {
-    title: "Doctor List",
+    title: "Doctors",
     url: "/oncall-doctors/doctor-list",
     icon: Heart,
   },
   {
-    title: "Patient List",
-    url: "/oncall-doctors/patient-list",
+    title: "Medical Records",
+    url: "/oncall-doctors/medical-records",
     icon: Users,
   },
 ];

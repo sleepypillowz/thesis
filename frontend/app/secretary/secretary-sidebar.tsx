@@ -29,7 +29,7 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import Link from "next/link";
-import SidebarHeaderProfile from "@/components/shared/sidebar-header-profile";
+import SidebarHeaderProfile from "@/components/atoms/sidebar-header-profile";
 
 const menu_items = [
   {
@@ -38,13 +38,13 @@ const menu_items = [
     icon: LayoutDashboard,
   },
   {
-    title: "Patient Registration",
-    url: "/secretary/patient-registration",
+    title: "Registration",
+    url: "/secretary/registration",
     icon: UserPlus,
   },
   {
-    title: "Lab Request",
-    url: "/secretary/lab-request",
+    title: "Doctors Request",
+    url: "/secretary/doctor-request",
     icon: BriefcaseMedical,
   },
   {
@@ -53,8 +53,8 @@ const menu_items = [
     icon: LayoutDashboard,
   },
   {
-    title: "Medicine List",
-    url: "/secretary/medicine-list",
+    title: "Medicine",
+    url: "/secretary/medicine",
     icon: Pill,
   },
   {
@@ -66,8 +66,8 @@ const menu_items = [
 
 const patient_items = [
   {
-    title: "Patient List",
-    url: "/secretary/patient-list",
+    title: "Medical Records",
+    url: "/secretary/medical-records",
     icon: ClipboardPlus,
   },
   {
@@ -81,7 +81,7 @@ const patient_items = [
     icon: Clock,
   },
   {
-    title: "Assessment Queue",
+    title: "Assessment",
     url: "/secretary/assessment-queue",
     icon: ClipboardPenLine,
   },

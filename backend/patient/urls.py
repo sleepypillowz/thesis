@@ -41,6 +41,7 @@ urlpatterns = [
     path("patient/reports/lab-results/monthly-details/", views.MonthlyLabTestView.as_view(), name="lab-results"),
     path("patient/reports/common-diseases/monthly-details/", views.CommonDiseasesView.as_view(), name="common-diseases-details"),
     path("patient/reports/frequent-medicines/", views.FrequentMedicationsView.as_view(), name="common-medicine"),
+    path('patients/records/', views.PatientTreatmentRecordsView.as_view(), name='patient-records'),
 
 
     # download file

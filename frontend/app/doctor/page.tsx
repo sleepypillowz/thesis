@@ -1,4 +1,4 @@
-import StaffDashboard from "@/components/shared/pages/staff-dashboard/page";
+import StaffDashboard from "@/components/pages/staff-dashboard";
 
 export default function Page() {
   return (

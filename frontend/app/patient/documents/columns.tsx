@@ -1,6 +1,6 @@
 "use client";
 
-import { Download } from "./download";
+import { Download } from "@/components/atoms/download";
 import { ColumnDef } from "@tanstack/react-table";
 
 export type DocumentFile = {

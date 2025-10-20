@@ -4,8 +4,8 @@ import random
 import string
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
-
-
+from django.utils.text import slugify
+from django.db.models import Max
 class UserAccountManager(BaseUserManager):
     def create_user(self, email, password=None, **kwargs):
         if not email:
@@ -23,8 +23,9 @@ class UserAccountManager(BaseUserManager):
         return self.create_user(email, password, **kwargs)
 
 class UserAccount(AbstractBaseUser, PermissionsMixin):
-    id = models.CharField(max_length=8, unique=True, primary_key=True, editable=False)
+    id = models.CharField(max_length=50, unique=True, primary_key=True, editable=False)
     ROLE_CHOICES = [
+        ('patient', 'Patient'),
         ('doctor', 'Doctor'),
         ('on-call-doctor', 'Oncall-Doctor'),
         ('secretary', 'Medical Secretary'),
@@ -52,20 +53,59 @@ class UserAccount(AbstractBaseUser, PermissionsMixin):
 @receiver(pre_save, sender=UserAccount)
 def create_user_id(sender, instance, **kwargs):
     if not instance.id:
-        instance.id = ''.join(random.choices(string.ascii_uppercase + string.digits, k=8))
-        
-class Doctor(models.Model):
+        prefix = "02000"
+        start_num = 100
+
+        # Get last used ID
+        last_user = UserAccount.objects.aggregate(max_id=Max("id"))
+        last_num = start_num
+        if last_user["max_id"]:
+            try:
+                last_num = int(last_user["max_id"].split(prefix)[-1]) + 1
+            except ValueError:
+                last_num += 1
+
+        # Build new ID using last_name
+        instance.id = f"{slugify(instance.last_name)}-{prefix}{last_num}"
+
+class BaseProfile(models.Model):
+    role_id = models.CharField(max_length=50, null=True, editable=False)
+
     user = models.OneToOneField(
         UserAccount,
         on_delete=models.CASCADE,
-        limit_choices_to={'role':'doctor'}
+        related_name="%(class)s_profile",  # doctor_profile, patient_profile, etc.
     )
-    timezone = models.CharField(max_length=50, default='UTC')  # <-- Add this
+
+    class Meta:
+        abstract = True
+
+    def save(self, *args, **kwargs):
+        # Always sync role_id with the user.id
+        if self.user:
+            self.role_id = self.user.id
+        super().save(*args, **kwargs)
+                
+class Doctor(BaseProfile):
+    timezone = models.CharField(max_length=50, default='UTC')
 
     specialization = models.CharField(max_length=255)
+    # license_number = models.CharField(max_length=255)
+    # years_of_experience = models.IntegerField(default=0)
+    # bio = models.TextField(blank=True)
     def __str__(self):
         return f"{self.user.get_full_name()} - {self.specialization}"
-    
+class Secretary(BaseProfile):
+    department = models.CharField(max_length=255, blank=True, null=True)
+
+    def __str__(self):
+        return f"Secretary: {self.user.get_full_name()}"
+
+class Admin(BaseProfile):
+    office = models.CharField(max_length=255, blank=True, null=True)
+
+    def __str__(self):
+        return f"Admin: {self.user.get_full_name()}"
 class Schedule(models.Model):
     DAYS_OF_WEEK = [
         ('Monday', 'Monday'),

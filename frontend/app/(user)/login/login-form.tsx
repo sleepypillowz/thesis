@@ -81,7 +81,7 @@ export function LoginForm({
         { headers: { Authorization: `Bearer ${access}` } }
       );
       if (!userRes.ok) throw new Error("Failed to fetch user");
-      const { role, is_superuser } = await userRes.json();
+      const {role, is_superuser } = await userRes.json();
 
       if (is_superuser || role?.toLowerCase() === "admin") {
         window.location.href = "/admin";
@@ -91,6 +91,8 @@ export function LoginForm({
         window.location.href = "/oncall-doctors";
       } else if (role?.toLowerCase() === "secretary") {
         window.location.href = "/secretary";
+      } else if (role?.toLowerCase() === "patient") {
+        window.location.href = "/patient";
       } else {
         window.location.href = "/dashboard";
       }

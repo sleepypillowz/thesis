@@ -16,6 +16,8 @@ urlpatterns = [
     path("appointment/<str:appointment_id>/accept/", views.AcceptAppointmentView.as_view(), name="accept-appointment"),
     # path("<uuid:appointment_id>/cancel/", CancelAppointmentView.as_view(), name="cancel-appointment"),
     # path("<uuid:appointment_id>/requeue/", RequeueAppointmentView.as_view(), name="requeue-appointment"),
+     path("send-test-email/", views.TestEmailView.as_view(), name="send-test-email"),
+
     path('appointment/', include(router.urls))
 ]
-
+ 

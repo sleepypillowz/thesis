@@ -13,6 +13,8 @@ from .models import Patient  # Adjust as needed
 from medicine.serializers import MedicineSerializer
 
 from queueing.models import TemporaryStorageQueue, Treatment
+from appointment.models import Appointment
+
 
 class PatientSerializer(serializers.Serializer):
     patient_id = serializers.CharField(max_length=8)
@@ -102,7 +104,6 @@ class PatientRegistrationSerializer(serializers.Serializer):
             ('Check-up', 'Check-up'),
             ('Other', 'Other'),
         ],
-        allow_blank=True,
         required=False
     )
     priority_level = serializers.ChoiceField(
@@ -111,23 +112,32 @@ class PatientRegistrationSerializer(serializers.Serializer):
     )
     queue_data = serializers.SerializerMethodField()
 
-    def create(self, validated_data):
-        # Remove any extra field(s) that are not part of the Patient model
-        validated_data.pop('agree_terms', None)
-        # Create and return a new Patient instance using the validated data
-        return Patient.objects.create(**validated_data)
+
+    def validate_email(self, value):
+        from user.models import UserAccount
+        if UserAccount.objects.filter(email=value).exists():
+            raise serializers.ValidationError("This email is already registered.")
+        return value
+
+    def validate(self, data):
+        if data.get("complaint") == "Other":
+            if not self.context["request"].data.get("other_complaint"):
+                raise serializers.ValidationError({
+                    "other_complaint": "This field is required if complaint is 'Other'."
+                })
+        return data
 
     def get_queue_data(self, obj):
-        """Fetch queue data for the patient."""
-        queue_info = obj.temporarystoragequeue.filter(status='Waiting').first()  # Adjust as per your model relations
-        if queue_info:
-            return {
-                'id': queue_info.id,
-                'priority_level': queue_info.priority_level,
-                'status': queue_info.status,
-                'created_at': queue_info.created_at,
-                'complaint': queue_info.complaint,
-            }
+        if hasattr(obj, "temporarystoragequeue"):
+            queue_info = obj.temporarystoragequeue.filter(status='Waiting').first()
+            if queue_info:
+                return {
+                    "id": queue_info.id,
+                    "priority_level": queue_info.priority_level,
+                    "status": queue_info.status,
+                    "created_at": queue_info.created_at,
+                    "complaint": queue_info.complaint,
+                }
         return None
 
 class DiagnosisSerializer(serializers.ModelSerializer):
@@ -250,7 +260,7 @@ class PatientReportSerializer(serializers.Serializer):
     
 class PatientVisitSerializer(serializers.ModelSerializer):
     visit_date = serializers.DateField(source='queue_date')
-    patient_name = serializers.CharField(source='patient.first_name')
+    patient_name = serializers.SerializerMethodField()
     visit_created_at = serializers.DateTimeField(source='created_at')
     treatment_created_at = serializers.SerializerMethodField()
 
@@ -259,14 +269,22 @@ class PatientVisitSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'patient_name', 'priority_level', 'status',
             'complaint', 'queue_number', 'visit_date',
-            'visit_created_at', 'treatment_created_at',
+            'visit_created_at', 'treatment_created_at', 
         ]
 
     def get_treatment_created_at(self, obj):
-        # Assuming the latest treatment corresponds to this queue
-        treatment = Treatment.objects.filter(patient=obj.patient).order_by('-created_at').first()
-        return treatment.created_at if treatment else None
-
+        # Get treatment data from the context (pre-fetched in bulk)
+        treatment_map = self.context.get('treatment_map', {})
+        if obj.patient and obj.patient.patient_id in treatment_map:
+            return treatment_map[obj.patient.patient_id]['created_at']
+        return None
+        
+    def get_patient_name(self, obj):
+        patient = getattr(obj, "patient", None)
+        if not patient:
+            return None
+        return patient.get_full_name() if hasattr(patient, "get_full_name") else f"{patient.first_name} {patient.last_name}"
+    
 class PatientLabTestSerializer(serializers.ModelSerializer):
     requested_by = serializers.SerializerMethodField()
     submitted_by = serializers.SerializerMethodField()
@@ -311,3 +329,33 @@ class CommonDiseasesSerializer(serializers.ModelSerializer):
         if obj.doctor:
             return f"{obj.doctor.first_name} {obj.doctor.last_name}"
         return "Unassigned"
+
+
+# patient client side
+
+class PatientMedicalRecordSerializer(serializers.ModelSerializer):
+    patient = serializers.SlugRelatedField(
+        slug_field='patient_id',
+        queryset=Patient.objects.all()
+    )
+    diagnoses = DiagnosisSerializer(many=True, read_only=True) 
+    doctor_name = serializers.CharField(source="doctor.user.get_full_name", read_only=True)
+    complaint = serializers.SerializerMethodField()
+        
+    class Meta:
+        model = Treatment
+        fields = [
+            'patient', 
+            'doctor_name', 
+            'diagnoses', 
+            'created_at', 
+            'treatment_notes',
+            'complaint'
+        ]
+    def get_complaint(self, obj):
+        # Fetch the latest queue entry (if any) for the patient
+        queue = TemporaryStorageQueue.objects.filter(
+            patient=obj.patient
+        ).order_by('-created_at').first()
+
+        return queue.complaint if queue else None

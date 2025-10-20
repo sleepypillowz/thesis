@@ -10,11 +10,19 @@ interface Appointment {
   appointment_date: string;
 }
 
+interface DoctorInfo {
+  id: string;
+  full_name: string;
+  email: string;
+  role: string;
+  specialization: string;
+}
+
 interface Referral {
   id: string;
-  referring_doctor: string;
+  referring_doctor: DoctorInfo;
   patient: string;
-  receiving_doctor: string;
+  receiving_doctor: DoctorInfo;
   reason: string;
   notes: string;
   status: string;
@@ -86,7 +94,7 @@ export default function ReferralScheduler() {
     setLoadingDoctor(true);
 
     fetch(
-      `${process.env.NEXT_PUBLIC_API_BASE}/appointment/doctor-schedule/${selectedReferral.receiving_doctor}`,
+      `${process.env.NEXT_PUBLIC_API_BASE}/appointment/doctor-schedule/${selectedReferral.receiving_doctor.id}`,
       {
         headers: {
           Authorization: token ? `Bearer ${token}` : "",
@@ -236,8 +244,8 @@ export default function ReferralScheduler() {
                       Patient ID: {referral.patient}
                     </p>
                     <p className="mt-2 text-sm">
-                      <span className="font-medium">Specialist ID:</span>{" "}
-                      {referral.receiving_doctor}
+                      <span className="font-medium">Specialist:</span>{" "}
+                      {referral.receiving_doctor.full_name} - {referral.receiving_doctor.specialization}
                     </p>
                     <p className="mt-2 text-sm">
                       <span className="font-medium">Reason:</span>{" "}

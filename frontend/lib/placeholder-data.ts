@@ -1,17 +1,15 @@
 // This file contains placeholder data that you'll be replacing with real data in the Data Fetching chapter:
 // https://nextjs.org/learn/dashboard-app/fetching-data
 
-import { Doctor } from "@/components/shared/doctor-columns";
-import { Operation } from "@/app/admin/admin-components/operation-columns";
+import { Doctor } from "@/components/molecules/tables/doctor-columns";
+import { Operation } from "@/app/admin/components/operation-columns";
 import { User } from "@/app/designer/columns";
 import { Registration } from "@/app/secretary/registration-queue/columns";
 import { Appointment } from "@/app/patient/(appointments)/columns";
 import { DocumentFile } from "@/app/patient/documents/columns";
 import { Prescription } from "@/app/patient/prescriptions/columns";
 import { Calendar, Mail, UserPlus } from "lucide-react";
-import { NotificationType } from "@/components/shared/header/notification";
-import { MedicalRecord } from "@/app/patient/medical-record/columns";
-import { AppointmentRequest } from "@/components/shared/pages/patient-portal/appointment-request-columns";
+import { NotificationType } from "@/components/molecules/header/notification";
 
 export const registrations: Registration[] = [
   {
@@ -431,37 +429,5 @@ export const notifications: NotificationType[] = [
     time: "3 hours ago",
     icon: Calendar,
     color: "text-blue-500",
-  },
-];
-
-export const medicalRecords: MedicalRecord[] = [
-  {
-    date: "2025-09-18",
-    diagnosis: "Hypertension",
-    treatment: "Prescribed antihypertensive medication",
-    notes: "Patient advised to reduce salt intake and exercise regularly",
-  },
-  {
-    date: "2025-08-12",
-    diagnosis: "Type 2 Diabetes",
-    treatment: "Started on metformin",
-    notes: "Recommended dietary changes and follow-up in 3 months",
-  },
-  {
-    date: "2025-07-05",
-    diagnosis: "Seasonal Allergies",
-    treatment: "Antihistamines prescribed",
-    notes: "Patient instructed to monitor symptoms during pollen season",
-  },
-];
-
-export const appointmentRequest: AppointmentRequest[] = [
-  {
-  name: "Juan Dela Cruz",
-  request: "Lab Test",
-  status: "Paid",
-  amount: "P500",
-  date: "October 10, 2025",
-  time: "10:00 AM",
   },
 ];

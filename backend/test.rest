@@ -1,30 +1,15 @@
 ### Register a new user
-POST http://127.0.0.1:8000/user/register/ 
+POST http://localhost:8000/user/users/ 
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzUwNDA4NzQyLCJpYXQiOjE3NDI2MzI3NDIsImp0aSI6IjY5Yjk3YWI3NDY2MjQ1MjJhYzNhZGM4NWFkOGIyMzI0IiwidXNlcl9pZCI6IjUiLCJpc19zdGFmZiI6dHJ1ZSwiaXNfc3VwZXJ1c2VyIjp0cnVlLCJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsInJvbGUiOiJhZG1pbiIsImZpcnN0X25hbWUiOiJBZG1pbiJ9.rx2coVwqmYNtT7indqtvkr4bp3qiwJ0WQSau7Zj9b4s
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzY2NjM0MDYxLCJpYXQiOjE3NTg4NTgwNjEsImp0aSI6ImZjOTJkYjUxMDAwNDRhYmE4ZjQ5Zjk4Zjk3MWVhOGRiIiwidXNlcl9pZCI6IjUiLCJpc19zdGFmZiI6dHJ1ZSwiaXNfc3VwZXJ1c2VyIjp0cnVlLCJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsInJvbGUiOiJhZG1pbiIsImZpcnN0X25hbWUiOiJBZG1pbiJ9.AbstOsDvLYhdjOMJv1156D3eCM3n9F7kNqnKc_wP5kw
 
 {
-  "email": "entddoctor@hospital.com",
-  "first_name": "John",
-  "last_name": "Smith",
-  "password": "securepassword456",
-  "re_password": "securepassword456",
-  "role": "doctor",
-  "doctor_profile": {
-      "specialization": "ENT",
-      "schedules": [
-          {
-              "day_of_week": "Wednesday",
-              "start_time": "08:30:00",
-              "end_time": "10:30:00"
-          },
-          {
-              "day_of_week": "Friday",
-              "start_time": "08:30:00",
-              "end_time": "10:30:00"
-          }
-      ]
-  }
+  "email": "secretaryaccount@gmail.com",
+  "first_name": "Penny",
+  "last_name": "Lane",
+  "password": "nVmTfEkCFeB3APi",
+  "re_password": "nVmTfEkCFeB3APi",
+  "role": "secretary"
 }
 ### admin request
 GET http://127.0.0.1:8000//api/patients/${patientId}
@@ -38,12 +23,12 @@ Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzUwNDA4NzQyLCJpYXQiOjE3NDI2MzI3NDIsImp0aSI6IjY5Yjk3YWI3NDY2MjQ1MjJhYzNhZGM4NWFkOGIyMzI0IiwidXNlcl9pZCI6IjUiLCJpc19zdGFmZiI6dHJ1ZSwiaXNfc3VwZXJ1c2VyIjp0cnVlLCJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsInJvbGUiOiJhZG1pbiIsImZpcnN0X25hbWUiOiJBZG1pbiJ9.rx2coVwqmYNtT7indqtvkr4bp3qiwJ0WQSau7Zj9b4s
 
 ### Login to obtain JWT tokens
-POST http://localhost:8000/auth/jwt/create/
+POST https://thesis-backend.up.railway.app/auth/jwt/create/
 Content-Type: application/json
 
 {
-  "email": "secretaryaccount@gmail.com",
-  "password": "nVmTfEkCFeB3APi"
+  "email": "zuma@gmail.com",
+  "password": "zuma-02000920070320"
 }
 ###
 
@@ -66,19 +51,24 @@ Content-Type: application/json
 }
 
 ### secretary request
-GET   http://localhost:8000/appointment/upcoming-appointments/
+POST   http://localhost:8000/medicine/upload-csv/
 Content-Type: application/json  
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzY1Nzg5NTM4LCJpYXQiOjE3NTgwMTM1MzgsImp0aSI6Ijk2NjMwMzhiNjRjYjQ0MzQ4OWMyYWY5NDBmZTI2OGY4IiwidXNlcl9pZCI6IkVFMkRZWFlZIiwiaXNfc3RhZmYiOmZhbHNlLCJpc19zdXBlcnVzZXIiOmZhbHNlLCJlbWFpbCI6InNlY3JldGFyeWFjY291bnRAZ21haWwuY29tIiwicm9sZSI6InNlY3JldGFyeSIsImZpcnN0X25hbWUiOiJMYXlsYSJ9.4gaHiiJGdkEK-KcJSx_727rR6exHW6Q3xQVnYqiCUxY
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzY2NzY2NDk5LCJpYXQiOjE3NTg5OTA0OTksImp0aSI6IjEyZGIwYTRhOTFiODRkNzJiZTgzOWY2ZDFmNThhYWM5IiwidXNlcl9pZCI6ImxhbmUtMDIwMDA4IiwiaXNfc3RhZmYiOmZhbHNlLCJpc19zdXBlcnVzZXIiOmZhbHNlLCJlbWFpbCI6InNlY3JldGFyeWFjY291bnRAZ21haWwuY29tIiwicm9sZSI6InNlY3JldGFyeSIsImZpcnN0X25hbWUiOiJQZW5ueSJ9.QsgzJ8zmsmgtvmbwT4k_YMowDOO1sCvrLjJd1DjfEfg
 ### secretary request
 GET    http://localhost:8000/medicine/predict/  
 Content-Type: application/json  
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzU5NzU3NjYxLCJpYXQiOjE3NTE5ODE2NjEsImp0aSI6IjVmZDRkYzNlYzMwYzQzNjFhYmEwMDllOTM4ZTQ1ZTY1IiwidXNlcl9pZCI6IkVFMkRZWFlZIiwiaXNfc3RhZmYiOmZhbHNlLCJpc19zdXBlcnVzZXIiOmZhbHNlLCJlbWFpbCI6InNlY3JldGFyeWFjY291bnRAZ21haWwuY29tIiwicm9sZSI6InNlY3JldGFyeSIsImZpcnN0X25hbWUiOiJMYXlsYSJ9.3uv35HQBPiH6_MocJNdehvFq8LfblguBaiV2o5QTnGk 
 ### oncalldoctor request
-GET   http://localhost:8000/appointment/upcoming-appointments/
+GET http://localhost:8000/patients/records/
 Content-Type: application/json  
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzY1Nzg5NDgzLCJpYXQiOjE3NTgwMTM0ODMsImp0aSI6IjllOWM2Nzg0ZjkwMjQxNzM4ZDA3OWQyMWNhZmQ2NjQyIiwidXNlcl9pZCI6IkVaUUMyU1QwIiwiaXNfc3RhZmYiOmZhbHNlLCJpc19zdXBlcnVzZXIiOmZhbHNlLCJlbWFpbCI6ImNhcmRpb2xvZ2lzdEBob3NwaXRhbC5jb20iLCJyb2xlIjoib24tY2FsbC1kb2N0b3IiLCJmaXJzdF9uYW1lIjoiSm9obiJ9.98_1wJk6WDN2qwoG1cqSVxga9qidNCi9xdfIT9rXvAw
-### doctor request
-GET   http://localhost:8000/queue/debug/
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzY3OTM2NTUyLCJpYXQiOjE3NjAxNjA1NTIsImp0aSI6IjZhZjZiNmQwOTNmOTQ3NDdiMmNhZjdkMjZjNGZjZWRmIiwidXNlcl9pZCI6Inp1bWEtMDIwMDA5IiwiaXNfc3RhZmYiOmZhbHNlLCJpc19zdXBlcnVzZXIiOmZhbHNlLCJlbWFpbCI6Inp1bWFAZ21haWwuY29tIiwicm9sZSI6InBhdGllbnQiLCJmaXJzdF9uYW1lIjoiRGVtYmUifQ.iHcFyH4KuSMwbsj6HiNzHQuJNhtJBX88dPuwFwd8sbM
+###
+
+GET    http://localhost:8000/patients/
 Content-Type: application/json  
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzY1NzcyNTkxLCJpYXQiOjE3NTc5OTY1OTEsImp0aSI6ImEwM2RjYTRhNGVhMjRlYWE5ZTFkZWNlZjcxYTdlODE1IiwidXNlcl9pZCI6IkxGRzRZSjJQIiwiaXNfc3RhZmYiOmZhbHNlLCJpc19zdXBlcnVzZXIiOmZhbHNlLCJlbWFpbCI6ImdlbmVyYWxkb2N0b3JAaG9zcGl0YWwuY29tIiwicm9sZSI6ImRvY3RvciIsImZpcnN0X25hbWUiOiJKYW5lcyJ9.lInkyM4tdnFsadc7t3fhNEHlYIkeeW40ikvP9pVNSEQ
-### lab result upload 
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzY2NzYyNzgwLCJpYXQiOjE3NTg5ODY3ODAsImp0aSI6IjkzZWUyMGM5NjQyOTQyZTNiZjMwZjMxODUwNDk2Nzk3IiwidXNlcl9pZCI6ImNvb3Blci0wMjAwMDYiLCJpc19zdGFmZiI6ZmFsc2UsImlzX3N1cGVydXNlciI6ZmFsc2UsImVtYWlsIjoiZ2VuZXJhbGRvY3RvckBob3NwaXRhbC5jb20iLCJyb2xlIjoiZG9jdG9yIiwiZmlyc3RfbmFtZSI6IlNoZWxkb24ifQ.FXzosAXxrW5S4DVyziKQq2Jl1VplXGtkcwHu3ImQ0ok
+### Admin
+
+GET    http://localhost:8000/send-test-email/
+Content-Type: application/json  
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzY2NjM0MDYxLCJpYXQiOjE3NTg4NTgwNjEsImp0aSI6ImZjOTJkYjUxMDAwNDRhYmE4ZjQ5Zjk4Zjk3MWVhOGRiIiwidXNlcl9pZCI6IjUiLCJpc19zdGFmZiI6dHJ1ZSwiaXNfc3VwZXJ1c2VyIjp0cnVlLCJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsInJvbGUiOiJhZG1pbiIsImZpcnN0X25hbWUiOiJBZG1pbiJ9.AbstOsDvLYhdjOMJv1156D3eCM3n9F7kNqnKc_wP5kw

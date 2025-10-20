@@ -97,10 +97,11 @@ export default function DoctorManagement() {
         email: currentDoctor.email,
         first_name: currentDoctor.first_name,
         last_name: currentDoctor.last_name,
-        doctor_profile: {
-          specialization: currentDoctor.doctor_profile.specialization,
-          schedules: currentDoctor.doctor_profile.schedules || [] // ensure schedules is an array
-        }
+          doctor_profile: {
+            specialization: currentDoctor.doctor_profile?.specialization || "",
+            schedules: currentDoctor.doctor_profile?.schedules || []
+          }
+
       });
     } else {
       reset({
@@ -463,7 +464,10 @@ export default function DoctorManagement() {
               <tr key={doctor.id} className="border-t">
                 <td className="p-4">{`${doctor.first_name} ${doctor.last_name}`}</td>
                 <td className="p-4">{doctor.email}</td>
-                <td className="p-4">{doctor.doctor_profile.specialization}</td>
+                <td className="p-4">
+                  {doctor.doctor_profile?.specialization || "Not set"}
+                </td>
+
                 <td className="p-4">
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>

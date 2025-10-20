@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Button } from "../components/ui/button";
 import { usePathname } from "next/navigation";
 import clsx from "clsx";
-import DarkModeToggle from "@/components/shared/header/dark-mode-toggle";
+import DarkModeToggle from "@/components/molecules/header/dark-mode-toggle";
 
 const HeroHeader = () => {
   const pathname = usePathname();
@@ -11,7 +11,7 @@ const HeroHeader = () => {
   const navLinks = [
     { href: "/", label: "Home" },
     { href: "/services", label: "Services" },
-    { href: "/doctor-list", label: "Doctors" },
+    { href: "/doctors-list", label: "Doctors" },
     { href: "/about", label: "About" },
     { href: "/contact", label: "Contact" },
   ];

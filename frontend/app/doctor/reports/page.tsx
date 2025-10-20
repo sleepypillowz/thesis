@@ -42,11 +42,10 @@ interface CommonMedicine {
   prescription_count: number;
 }
 
+
 export default function ReportDashboard() {
   const [isClient, setIsClient] = useState(false);
-  const [patientVisitsData, setPatientVisitsData] = useState<MonthlyVisit[]>(
-    []
-  );
+  const [patientVisitsData, setPatientVisitsData] = useState<MonthlyVisit[]>([]);
   const [labTestsData, setLabTestsData] = useState<MonthlyLabTest[]>([]);
   const [commonDiseases, setCommonDiseases] = useState<CommonDisease[]>([]);
   const [loadingVisits, setLoadingVisits] = useState(true);
@@ -68,9 +67,7 @@ export default function ReportDashboard() {
         const response = await axios.get<{ patients: unknown; count: number }>(
           `${process.env.NEXT_PUBLIC_API_BASE}/patient/reports/total-patients/`,
           {
-            headers: accessToken
-              ? { Authorization: `Bearer ${accessToken}` }
-              : {},
+            headers: accessToken ? { Authorization: `Bearer ${accessToken}` } : {},
           }
         );
         setCount(response.data.count);
@@ -97,7 +94,7 @@ export default function ReportDashboard() {
       }
 
       try {
-        const [visitsRes, labRes, diseaseRes, medRes] = await Promise.all([
+        const [visitsRes, labRes, diseaseRes, medRes ] = await Promise.all([
           axios.get<MonthlyVisit[]>(
             `${process.env.NEXT_PUBLIC_API_BASE}/patient/reports/monthly-visits/`,
             { headers: { Authorization: `Bearer ${accessToken}` } }
@@ -138,20 +135,12 @@ export default function ReportDashboard() {
 
   if (!isClient) return null;
 
-  const totalVisits = patientVisitsData.reduce(
-    (sum, entry) => sum + entry.count,
-    0
-  );
-  const totalLabTests = labTestsData.reduce(
-    (sum, entry) => sum + entry.count,
-    0
-  );
+  const totalVisits = patientVisitsData.reduce((sum, entry) => sum + entry.count, 0);
+  const totalLabTests = labTestsData.reduce((sum, entry) => sum + entry.count, 0);
 
   return (
     <div className="min-h-screen bg-gray-50 p-8">
-      <h1 className="mb-8 text-3xl font-bold text-gray-800">
-        Medical Reports Dashboard
-      </h1>
+      <h1 className="mb-8 text-3xl font-bold text-gray-800">Medical Reports Dashboard</h1>
 
       <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
         <div className="rounded-lg bg-white p-6 shadow-sm">
@@ -159,23 +148,17 @@ export default function ReportDashboard() {
           {error ? (
             <p className="text-red-500">{error}</p>
           ) : (
-            <p className="text-3xl font-bold">
-              {loadingPatients ? "Loading..." : count.toLocaleString()}
-            </p>
+            <p className="text-3xl font-bold">{loadingPatients ? "Loading..." : count.toLocaleString()}</p>
           )}
         </div>
 
         <div className="rounded-lg bg-white p-6 shadow-sm">
           <h3 className="text-gray-500">Monthly Visits</h3>
-          <p className="text-3xl font-bold">
-            {loadingVisits ? "Loading..." : totalVisits}
-          </p>
+          <p className="text-3xl font-bold">{loadingVisits ? "Loading..." : totalVisits}</p>
         </div>
         <div className="rounded-lg bg-white p-6 shadow-sm">
           <h3 className="text-gray-500">Lab Tests (Total)</h3>
-          <p className="text-3xl font-bold">
-            {loadingLabTests ? "Loading..." : totalLabTests}
-          </p>
+          <p className="text-3xl font-bold">{loadingLabTests ? "Loading..." : totalLabTests}</p>
         </div>
         <div className="rounded-lg bg-white p-6 shadow-sm">
           <h3 className="text-gray-500">Active Prescriptions</h3>
@@ -184,11 +167,9 @@ export default function ReportDashboard() {
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <div className="flex flex-col justify-between rounded-lg bg-white p-6 shadow-sm">
+        <div className="rounded-lg bg-white p-6 shadow-sm flex flex-col justify-between">
           <div>
-            <h2 className="mb-4 text-xl font-semibold">
-              Monthly Patient Visits
-            </h2>
+            <h2 className="mb-4 text-xl font-semibold">Monthly Patient Visits</h2>
             {loadingVisits ? (
               <p className="text-gray-500">Loading chart...</p>
             ) : (
@@ -203,16 +184,13 @@ export default function ReportDashboard() {
             )}
           </div>
           <div className="mt-4 text-right">
-            <Link
-              href="/doctor/patient-visits"
-              className="text-sm text-blue-600 hover:underline"
-            >
+            <Link href="/doctor/patient-visits-view-all" className="text-sm text-blue-600 hover:underline">
               View All
             </Link>
           </div>
         </div>
 
-        <div className="flex flex-col justify-between rounded-lg bg-white p-6 shadow-sm">
+        <div className="rounded-lg bg-white p-6 shadow-sm flex flex-col justify-between">
           <div>
             <h2 className="mb-4 text-xl font-semibold">Laboratory Tests</h2>
             {loadingLabTests ? (
@@ -229,16 +207,13 @@ export default function ReportDashboard() {
             )}
           </div>
           <div className="mt-4 text-right">
-            <Link
-              href="/doctor/laboratory-tests"
-              className="text-sm text-blue-600 hover:underline"
-            >
+            <Link href="/doctor/laboratory-test-view-all" className="text-sm text-blue-600 hover:underline">
               View All
             </Link>
           </div>
         </div>
 
-        <div className="flex flex-col justify-between rounded-lg bg-white p-6 shadow-sm">
+        <div className="rounded-lg bg-white p-6 shadow-sm flex flex-col justify-between">
           <div>
             <h2 className="mb-4 text-xl font-semibold">Common Diseases</h2>
             {loadingDiseases ? (
@@ -257,10 +232,7 @@ export default function ReportDashboard() {
                   label={({ name }: { name: string }) => capitalizeWords(name)}
                 >
                   {commonDiseases.map((entry, index) => (
-                    <Cell
-                      key={`cell-${index}`}
-                      fill={COLORS[index % COLORS.length]}
-                    />
+                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>
                 <Tooltip
@@ -273,15 +245,12 @@ export default function ReportDashboard() {
             )}
           </div>
           <div className="mt-4 text-right">
-            <Link
-              href="/doctor/common-diseases"
-              className="text-sm text-blue-600 hover:underline"
-            >
+            <Link href="/doctor/common-diseases-view-all" className="text-sm text-blue-600 hover:underline">
               View All
             </Link>
           </div>
         </div>
-        <div className="flex flex-col justify-between rounded-lg bg-white p-6 shadow-sm">
+        <div className="rounded-lg bg-white p-6 shadow-sm flex flex-col justify-between">
           <div>
             <h2 className="mb-4 text-xl font-semibold">Frequent Medications</h2>
             {loadingMedicines ? (
@@ -306,45 +275,36 @@ export default function ReportDashboard() {
             )}
           </div>
           <div className="mt-4 text-right">
-            <Link
-              href="/doctor/frequent-medicines"
+            <Link 
+              href="/doctor/frequent-medicines-view-all" 
               className="text-sm text-blue-600 hover:underline"
             >
               View All
             </Link>
           </div>
         </div>
+
       </div>
 
       <div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2">
-        <div className="flex flex-col justify-between rounded-lg bg-white p-6 shadow-sm">
+        <div className="rounded-lg bg-white p-6 shadow-sm flex flex-col justify-between">
           <div>
             <h2 className="mb-4 text-xl font-semibold">Patient Demographics</h2>
-            <div className="text-gray-500">
-              Age/Gender distribution chart placeholder
-            </div>
+            <div className="text-gray-500">Age/Gender distribution chart placeholder</div>
           </div>
           <div className="mt-4 text-right">
-            <Link
-              href="/reports/visits"
-              className="text-sm text-blue-600 hover:underline"
-            >
+            <Link href="/reports/visits" className="text-sm text-blue-600 hover:underline">
               View All
             </Link>
           </div>
         </div>
-        <div className="flex flex-col justify-between rounded-lg bg-white p-6 shadow-sm">
+        <div className="rounded-lg bg-white p-6 shadow-sm flex flex-col justify-between">
           <div>
             <h2 className="mb-4 text-xl font-semibold">Diagnosis Trends</h2>
-            <div className="text-gray-500">
-              Diagnosis patterns over time placeholder
-            </div>
+            <div className="text-gray-500">Diagnosis patterns over time placeholder</div>
           </div>
           <div className="mt-4 text-right">
-            <Link
-              href="/reports/visits"
-              className="text-sm text-blue-600 hover:underline"
-            >
+            <Link href="/reports/visits" className="text-sm text-blue-600 hover:underline">
               View All
             </Link>
           </div>

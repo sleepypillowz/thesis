@@ -1,28 +1,38 @@
 # MediTrakk
 
-**A Web-Based Hospital Management System for Efficient Patient Care and Medicine Tracking**
+[![Build Status](https://img.shields.io/your-build-status-badge.svg)](Your Build Status URL)
+[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![GitHub Stars](https://img.shields.io/github/stars/sleepypillowz/thesis.svg?style=social)](https://github.com/sleepypillowz/thesis)
+[![GitHub Forks](https://img.shields.io/github/forks/sleepypillowz/thesis.svg?style=social)](https://github.com/sleepypillowz/thesis)
+[![GitHub Issues](https://img.shields.io/github/issues/sleepypillowz/thesis)](https://github.com/sleepypillowz/thesis/issues)
+[![GitHub Pull Requests](https://img.shields.io/github/pulls/sleepypillowz/thesis)](https://github.com/sleepypillowz/thesis/pulls)
+
+**[Short, compelling project description.]**
 
 ![Project Screenshot](public/admin.png)
 
+## Table of Contents
+
+-   [About](#about)
+-   [Features](#features)
+-   [Getting Started](#getting-started)
+    -   [Installation](#installation)
+    -   [Usage](#usage)
+-   [Examples](#examples)
+-   [API Reference](#api-reference)
+-   [Contributing](#contributing)
+-   [License](#license)
+-   [Contact](#contact)
+
 ## About
 
-MediTrakk is a web-based hospital management system designed to streamline healthcare operations by centralizing patient records, medicine inventory, and treatment statistics in one secure and accessible platform. The system focuses on improving coordination between doctors and patients, ensuring that essential medical data is efficiently recorded, managed, and retrieved.
-
-The platform is built using Django for backend management and Next.js with TypeScript and Tailwind CSS for the frontend, offering a responsive and modern interface. The database is hosted on Supabase, providing reliable cloud storage and real-time updates.
+[Detailed project explanation.]
 
 ## Features
 
-* Patient Management Module – Stores and organizes patient information, medical history, and prescriptions for easy access and updates by doctors.
-
-* Appointment Scheduling System – Allows patients to conveniently book appointments online and lets doctors manage their daily schedules efficiently.
-
-* Medicine Inventory System – Monitors medicine stock levels, tracks expiration dates, and automates inventory updates to avoid shortages or waste.
-
-* Data Analytics Dashboard – Displays summarized reports and visual insights on patient demographics, medicine usage, and hospital statistics.
-
-* User Authentication and Role Management – Provides secure login for both patients and doctors, ensuring proper access control and data privacy.
-
-* Modern UI/UX Design – Utilizes Tailwind CSS and ShadCN components to create a clean, user-friendly, and fully responsive interface.
+*   Appointment
+*   Medicine Stocks
+*   Disease Graph
 
 ## Getting Started
 
@@ -47,3 +57,19 @@ python manage.py runserver
 cd frontend
 pnpm dev
 ```
+
+## Examples
+
+[More detailed examples.]
+## API Reference
+
+[Link to API docs or brief description.]
+## Contributing
+
+Please read CONTRIBUTING.md.
+## License
+
+MIT License - see LICENSE for details.
+## Contact
+
+[Your Name/Organization] - [Your Contact Info]

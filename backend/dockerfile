@@ -1,0 +1,15 @@
+
+FROM python:3.13-slim AS builder
+WORKDIR /app
+RUN apt-get update && apt-get install -y \
+     build-essential gcc libgomp1 libssl-dev libffi-dev \
+     && rm -rf /var/lib/apt/lists/*
+COPY requirements.txt .
+RUN pip install --prefix=/install --no-cache-dir -r requirements.txt
+
+FROM python:3.13-slim
+WORKDIR /app
+COPY --from=builder /install /usr/local
+COPY . .
+
+CMD ["sh", "-c", "python manage.py migrate --noinput && daphne -b 0.0.0.0 -p $PORT backend.asgi:application"]

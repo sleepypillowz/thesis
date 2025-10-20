@@ -1,6 +1,7 @@
 import {
   LayoutDashboard,
   ClipboardPlus,
+  Calendar,
   ChartArea,
   Bandage,
   User,
@@ -8,7 +9,6 @@ import {
   Pill,
   Clock,
   ChevronUp,
-  FileText,
 } from "lucide-react";
 
 import {
@@ -21,8 +21,6 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarMenuSub,
-  SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
 import {
   Collapsible,
@@ -30,7 +28,7 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import Link from "next/link";
-import SidebarHeaderProfile from "@/components/shared/sidebar-header-profile";
+import SidebarHeaderProfile from "@/components/atoms/sidebar-header-profile";
 
 const menu_items = [
   {
@@ -49,8 +47,8 @@ const menu_items = [
     icon: List,
   },
   {
-    title: "Medicine List",
-    url: "/doctor/medicine-list",
+    title: "Medicine",
+    url: "/doctor/medicine",
     icon: Pill,
   },
   {
@@ -62,9 +60,14 @@ const menu_items = [
 
 const patient_items = [
   {
-    title: "Patient List",
-    url: "/doctor/patient-list",
+    title: "Medical Records",
+    url: "/doctor/medical-records",
     icon: ClipboardPlus,
+  },
+  {
+    title: "Appointments",
+    url: "/doctor/appointments",
+    icon: Calendar,
   },
   {
     title: "Treatment",
@@ -75,21 +78,6 @@ const patient_items = [
     title: "Treatment Queue",
     url: "/doctor/treatment-queue",
     icon: Clock,
-  },
-];
-
-const appointment_items = [
-  {
-    title: "Today",
-    url: "/doctor/todays-appointment",
-  },
-  {
-    title: "Upcoming",
-    url: "/doctor/upcoming-appointment",
-  },
-  {
-    title: "Past",
-    url: "/doctor/past-appointment",
   },
 ];
 
@@ -132,33 +120,6 @@ export function AppSidebar() {
               <SidebarMenu>
                 <SidebarGroup>
                   <CollapsibleContent>
-                    {/* Appointments Collapsible */}
-                    <Collapsible className="group/collapsible">
-                      <SidebarMenuItem>
-                        <CollapsibleTrigger asChild>
-                          <SidebarMenuButton className="flex items-center justify-between">
-                            <div className="flex items-center">
-                              <FileText className="mr-2 h-4 w-4" />
-                              <span>Appointments</span>
-                            </div>
-                            <ChevronUp className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180" />
-                          </SidebarMenuButton>
-                        </CollapsibleTrigger>
-                        <CollapsibleContent>
-                          <SidebarMenuSub>
-                            {appointment_items.map((item) => (
-                              <SidebarMenuSubItem key={item.title}>
-                                <SidebarMenuButton asChild>
-                                  <Link href={item.url}>
-                                    <span>{item.title}</span>
-                                  </Link>
-                                </SidebarMenuButton>
-                              </SidebarMenuSubItem>
-                            ))}
-                          </SidebarMenuSub>
-                        </CollapsibleContent>
-                      </SidebarMenuItem>
-                    </Collapsible>
                     {patient_items.map((item) => (
                       <SidebarMenuItem key={item.title}>
                         <SidebarMenuButton asChild>

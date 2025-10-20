@@ -1,68 +1,134 @@
-"use client";
+import { Circle } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
-import { ArrowRight, Calendar } from "lucide-react";
-import Link from "next/link";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 
-export default function Timeline() {
-  const events = [
-    {
-      date: "February 2022",
-      title: "Application UI code in Tailwind CSS",
-      description:
-        "Get access to over 20+ pages including a dashboard layout, charts, kanban board, calendar, and pre-order E-commerce & Marketing pages.",
-      link: true,
-    },
-    {
-      date: "March 2022",
-      title: "Marketing UI design in Figma",
-      description:
-        "All of the pages and components are first designed in Figma and we keep a parity between the two versions even as we update the project.",
-    },
-    {
-      date: "April 2022",
-      title: "E-Commerce UI code in Tailwind CSS",
-      description:
-        "Get started with dozens of web components and interactive elements built on top of Tailwind CSS.",
-    },
-  ];
-
+export default function Page() {
   return (
-    <div className="card m-6">
-      <h1 className="mb-4 font-bold">Medical Records</h1>
-      {/* vertical line */}
-      <div className="absolute left-16 top-[149px] h-[310px] w-px bg-muted-foreground/30" />
+    <div className="m-6">
+      <div className="card space-y-6">
+        {/* Header with Legend */}
+        <div className="flex items-center justify-between">
+          <h1 className="font-bold text-2xl">Records</h1>
+          <div className="flex gap-4 text-sm">
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 rounded-full bg-red-500" />
+              <span className="text-muted-foreground">Urgent</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 rounded-full bg-yellow-500" />
+              <span className="text-muted-foreground">Pending</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 rounded-full bg-green-600" />
+              <span className="text-muted-foreground">Completed</span>
+            </div>
+          </div>
+        </div>
 
-      <ul className="space-y-10 pl-12">
-        {events.map((event, idx) => (
-          <li key={idx} className="relative">
-            {/* circle sits on line */}
-            <span className="absolute -left-[38px] top-1 h-3 w-3 rounded-full bg-muted-foreground" />
+        {/* Timeline Container */}
+        <div className="relative">
+          {/* Vertical Line - positioned to align with circles */}
+          <div className="absolute left-[calc(25%-12px)] top-0 bottom-0 w-0.5 bg-gray-200" />
 
-            <div>
-              <div className="flex flex-row items-center gap-2">
-                <Calendar className="h-4 w-4 text-primary" />
-                <time className="text-sm text-muted-foreground">
-                  {event.date}
-                </time>
+          {/* Timeline Items */}
+          <div className="space-y-8">
+            {/* Item 1 */}
+            <div className="grid grid-cols-4 gap-6 relative">
+              <div className="flex items-start justify-end gap-4 text-end pt-2">
+                <div className="flex flex-col text-sm">
+                  <span className="font-bold">06/30/2025</span>
+                  <span className="text-muted-foreground">8:00PM</span>
+                </div>
+                <div className="relative z-10">
+                  <Circle className="fill-current text-red-500 bg-white border-2 border-white" size={20} />
+                </div>
               </div>
 
-              <h3 className="font-semibold">{event.title}</h3>
-              <p className="text-sm text-muted-foreground">
-                {event.description}
-              </p>
-
-              {event.link && (
-                <Button variant="outline" size="sm" asChild className="mt-2">
-                  <Link href="#">
-                    Learn more <ArrowRight />
-                  </Link>
-                </Button>
-              )}
+              <div className="col-span-2 flex flex-col space-y-2 rounded-xl bg-muted p-4 border border-gray-200 hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 relative before:content-[''] before:absolute before:left-[-8px] before:top-5 before:border-t-[8px] before:border-t-transparent before:border-b-[8px] before:border-b-transparent before:border-r-[8px] before:border-r-gray-200 after:content-[''] after:absolute after:left-[-7px] after:top-5 after:border-t-[8px] after:border-t-transparent after:border-b-[8px] after:border-b-transparent after:border-r-[8px] after:border-r-muted">
+                <span className="text-sm font-bold flex items-center gap-2">
+                  <span className="text-lg">🩺</span>
+                  Therapy
+                </span>
+                <span className="text-sm text-muted-foreground">Therapy with Dr. K</span>
+              </div>
             </div>
-          </li>
-        ))}
-      </ul>
+
+            {/* Item 2 */}
+            <div className="grid grid-cols-4 gap-6 relative">
+              <div className="flex items-start justify-end gap-4 text-end pt-2">
+                <div className="flex flex-col text-sm">
+                  <span className="font-bold">06/28/2025</span>
+                  <span className="text-muted-foreground">2:00PM</span>
+                </div>
+                <div className="relative z-10">
+                  <Circle className="fill-current text-yellow-500 bg-white border-2 border-white" size={20} />
+                </div>
+              </div>
+
+              <div className="col-span-2 flex flex-col space-y-2 rounded-xl bg-muted p-4 border border-gray-200 hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 relative before:content-[''] before:absolute before:left-[-8px] before:top-5 before:border-t-[8px] before:border-t-transparent before:border-b-[8px] before:border-b-transparent before:border-r-[8px] before:border-r-gray-200 after:content-[''] after:absolute after:left-[-7px] after:top-5 after:border-t-[8px] after:border-t-transparent after:border-b-[8px] after:border-b-transparent after:border-r-[8px] after:border-r-muted">
+                <span className="text-sm font-bold flex items-center gap-2">
+                  <span className="text-lg">📋</span>
+                  X-Ray
+                </span>
+                <p className="text-sm text-muted-foreground">
+                  Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean
+                  commodo ligula eget dolor. Aenean massa. Cum sociis natoque
+                  penatibus et magnis dis parturient montes, nascetur ridiculus mus.
+                  Donec quam felis, ultricies nec, pellentesque eu, pretium quis,
+                  sem. Nulla consequat massa quis enim.
+                </p>
+              </div>
+            </div>
+
+            {/* Item 3 */}
+            <div className="grid grid-cols-4 gap-6 relative">
+              <div className="flex items-start justify-end gap-4 text-end pt-2">
+                <div className="flex flex-col text-sm">
+                  <span className="font-bold">06/28/2025</span>
+                  <span className="text-muted-foreground">2:00PM</span>
+                </div>
+                <div className="relative z-10">
+                  <Circle className="fill-current text-green-600 bg-white border-2 border-white" size={20} />
+                </div>
+              </div>
+
+              <div className="col-span-2 flex flex-col space-y-2 rounded-xl bg-muted p-4 border border-gray-200 hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 relative before:content-[''] before:absolute before:left-[-8px] before:top-5 before:border-t-[8px] before:border-t-transparent before:border-b-[8px] before:border-b-transparent before:border-r-[8px] before:border-r-gray-200 after:content-[''] after:absolute after:left-[-7px] after:top-5 after:border-t-[8px] after:border-t-transparent after:border-b-[8px] after:border-b-transparent after:border-r-[8px] after:border-r-muted">
+                <span className="text-sm font-bold flex items-center gap-2">
+                  <span className="text-lg">💬</span>
+                  Consultation
+                </span>
+                <span className="text-sm text-muted-foreground">Consultation with Dr. John Deo</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Pagination */}
+        <Pagination>
+          <PaginationContent>
+            <PaginationItem>
+              <PaginationPrevious href="#" />
+            </PaginationItem>
+            <PaginationItem>
+              <PaginationLink href="#">1</PaginationLink>
+            </PaginationItem>
+            <PaginationItem>
+              <PaginationEllipsis />
+            </PaginationItem>
+            <PaginationItem>
+              <PaginationNext href="#" />
+            </PaginationItem>
+          </PaginationContent>
+        </Pagination>
+      </div>
     </div>
   );
 }

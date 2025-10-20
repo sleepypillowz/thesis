@@ -31,10 +31,9 @@ if not DEBUG:
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
     
-CORS_ALLOW_HEADERS = [
-    'authorization',
-    'content-type',
-]
+CORS_ALLOW_HEADERS = (
+    *default_headers,
+)
 CORS_ALLOW_CREDENTIALS = True
 
 INSTALLED_APPS = [
@@ -51,6 +50,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'rest_framework.authtoken',
     'djoser',
+    'channels',
 
     # installed apps
     'patient.apps.PatientConfig',
@@ -76,22 +76,29 @@ MIDDLEWARE = [
 ]
 # settings.py
 CORS_ALLOWED_ORIGINS = [
+    "https://meditrakk.up.railway.app",
+        
+    "https://thesis-backend.railway.internal",
     "https://thesis-c1rq.vercel.app",
+
     "http://localhost:3000",
 
 ]
 ALLOWED_HOSTS = [
     "thesis-sg26.onrender.com",
     "thesis-c1rq.vercel.app",
-    'localhost'
+    'localhost',
+    'thesis-backend.railway.internal',  # Also add your backend's own domain.
+    'meditrakk.up.railway.app'
 ]
 
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:3000",
-    "http://127.0.0.1:8000", 
+    "http://127.0.0.1:8000",
     "https://thesis-c1rq.vercel.app",
+    "https://meditrakk.up.railway.app",
+    "https://thesis-backend.railway.internal",
 ]
-CORS_ALLOW_ALL_ORIGINS = True
 
 CORS_ALLOW_HEADERS = list(default_headers) + [
     'authorization',
@@ -128,7 +135,40 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'backend.wsgi.application'
+
+# websocket
+# settings.py
+
+ASGI_APPLICATION = "backend.asgi.application"
+
+REDIS_URL = os.environ.get("REDIS_URL")
+
+if REDIS_URL:
+    # channels_redis accepts a URL string in the hosts list
+    CHANNEL_LAYERS = {
+        "default": {
+            "BACKEND": "channels_redis.core.RedisChannelLayer",
+            "CONFIG": {
+                "hosts": [REDIS_URL],
+            },
+        },
+    }
+else:
+    # fallback to separate host/port env vars or localhost for dev
+    CHANNEL_LAYERS = {
+        "default": {
+            "BACKEND": "channels_redis.core.RedisChannelLayer",
+            "CONFIG": {
+                "hosts": [
+                    (
+                        os.environ.get("REDIS_HOST", "127.0.0.1"),
+                        int(os.environ.get("REDIS_PORT", 6379)),
+                    )
+                ],
+            },
+        },
+    }
+
 
 
 # Database
@@ -137,14 +177,17 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 import os
 import dj_database_url
 
+import dj_database_url
+
 DATABASES = {
-    'default': dj_database_url.config(
-        default=os.environ.get('DATABASE_URL'),
-        conn_max_age=600,
+    "default": dj_database_url.config(
+        default=os.environ.get("DATABASE_URL"),
+        conn_max_age=int(os.environ.get("DB_CONN_MAX_AGE", 600)),
         conn_health_checks=True,
-        ssl_require=True  # <-- Add this line
+        ssl_require=os.environ.get("DB_SSL_REQUIRE", "True").lower() in ("1","true","yes"),
     )
 }
+
 
 
 
@@ -243,3 +286,12 @@ MEDIA_ROOT = BASE_DIR / "media"
 MEDIA_URL = "/media/"
 
 AUTH_USER_MODEL = "user.UserAccount"
+
+# settings.py
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = "ralphancheta000@gmail.com"
+EMAIL_HOST_PASSWORD = "rshc xsyo mdwg svjc"  # NOT your real Gmail password
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
