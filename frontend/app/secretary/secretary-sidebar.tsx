@@ -38,13 +38,13 @@ const menu_items = [
     icon: LayoutDashboard,
   },
   {
-    title: "Registration",
-    url: "/secretary/registration",
+    title: "Patient Registration",
+    url: "/secretary/patient-registration",
     icon: UserPlus,
   },
   {
-    title: "Doctors Request",
-    url: "/secretary/doctor-request",
+    title: "Lab Request",
+    url: "/secretary/lab-request",
     icon: BriefcaseMedical,
   },
   {
@@ -53,8 +53,8 @@ const menu_items = [
     icon: LayoutDashboard,
   },
   {
-    title: "Medicine",
-    url: "/secretary/medicine",
+    title: "Medicine List",
+    url: "/secretary/medicine-list",
     icon: Pill,
   },
   {
@@ -66,8 +66,8 @@ const menu_items = [
 
 const patient_items = [
   {
-    title: "Medical Records",
-    url: "/secretary/medical-records",
+    title: "Patient List",
+    url: "/secretary/patient-list",
     icon: ClipboardPlus,
   },
   {
@@ -81,7 +81,7 @@ const patient_items = [
     icon: Clock,
   },
   {
-    title: "Assessment",
+    title: "Assessment Queue",
     url: "/secretary/assessment-queue",
     icon: ClipboardPenLine,
   },

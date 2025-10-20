@@ -2,11 +2,11 @@
 import { useName } from "@/hooks/use-name";
 import { Skeleton } from "@/components/ui/skeleton";
 
-import StatsCard from "@/components/shared/pages/staff-dashboard/staff-stats-cards";
+import StaffStatCards from "@/components/shared/pages/staff-dashboard/staff-stats-cards";
 import { VisitorsChart } from "@/components/shared/pages/staff-dashboard/visitors-chart";
 import { CommonDiseasesChart } from "@/components/shared/pages/staff-dashboard/common-diseases-chart";
 import { CommonMedicinesChart } from "@/components/shared/pages/staff-dashboard/common-medicine-chart";
-import { PatientColumns } from "@/components/shared/pages/medical-records/patient-columns";
+import { PatientColumns } from "@/components/shared/pages/patient-list/patient-columns";
 import { DashboardTable } from "@/components/ui/custom/dashboard-table";
 import TitleCard from "@/components/shared/title-card";
 import usePatients from "@/hooks/use-patients";
@@ -30,7 +30,7 @@ export default function StaffDashboard() {
         </p>
       </div>
 
-      <StatsCard />
+      <StaffStatCards />
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3 lg:gap-6">
         {/* Visitors chart spans 2 columns */}

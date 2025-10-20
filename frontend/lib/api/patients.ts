@@ -1,4 +1,4 @@
-import { Patient } from "@/components/shared/pages/medical-records/patient-columns";
+import { Patient } from "@/components/shared/pages/patient-list/patient-columns";
 
 export async function getPatients(): Promise<Patient[]> {
   const accessToken = localStorage.getItem("access");

@@ -49,8 +49,8 @@ const menu_items = [
     icon: List,
   },
   {
-    title: "Medicine",
-    url: "/doctor/medicine",
+    title: "Medicine List",
+    url: "/doctor/medicine-list",
     icon: Pill,
   },
   {
@@ -62,8 +62,8 @@ const menu_items = [
 
 const patient_items = [
   {
-    title: "Medical Records",
-    url: "/doctor/medical-records",
+    title: "Patient List",
+    url: "/doctor/patient-list",
     icon: ClipboardPlus,
   },
   {

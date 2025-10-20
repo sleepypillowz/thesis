@@ -25,13 +25,13 @@ const menu_items = [
     icon: Calendar,
   },
   {
-    title: "Doctors",
+    title: "Doctor List",
     url: "/oncall-doctors/doctor-list",
     icon: Heart,
   },
   {
-    title: "Medical Records",
-    url: "/oncall-doctors/medical-records",
+    title: "Patient List",
+    url: "/oncall-doctors/patient-list",
     icon: Users,
   },
 ];
