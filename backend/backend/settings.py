@@ -78,7 +78,7 @@ MIDDLEWARE = [
 CORS_ALLOWED_ORIGINS = [
     "https://meditrakk.up.railway.app",
         
-    "https://thesis-backend.up.railway.app",
+    "https://thesis-backend.railway.internal",
     "https://thesis-c1rq.vercel.app",
 
     "http://localhost:3000",
@@ -88,7 +88,7 @@ ALLOWED_HOSTS = [
     "thesis-sg26.onrender.com",
     "thesis-c1rq.vercel.app",
     'localhost',
-    'thesis-backend.up.railway.app',  # Also add your backend's own domain.
+    'thesis-backend.railway.internal',  # Also add your backend's own domain.
     'meditrakk.up.railway.app'
 ]
 
@@ -97,7 +97,7 @@ CSRF_TRUSTED_ORIGINS = [
     "http://127.0.0.1:8000",
     "https://thesis-c1rq.vercel.app",
     "https://meditrakk.up.railway.app",
-    "https://thesis-backend.up.railway.app",
+    "https://thesis-backend.railway.internal",
 ]
 
 CORS_ALLOW_HEADERS = list(default_headers) + [

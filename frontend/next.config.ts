@@ -13,12 +13,12 @@ const nextConfig: NextConfig = {
     domains: [
       'localhost',
       '127.0.0.1',
-      'thesis-backend.up.railway.app',
+      'thesis-backend.railway.internal',
     ],
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'thesis-backend.up.railway.app',
+        hostname: 'thesis-backend.railway.internal',
         pathname: '/media/**',
       },
     ],
@@ -28,7 +28,7 @@ const nextConfig: NextConfig = {
   env: {
     NEXT_PUBLIC_API_BASE:
       process.env.NODE_ENV === 'production'
-        ? 'https://thesis-backend.up.railway.app'
+        ? 'https://thesis-backend.railway.internal'
         : 'http://localhost:8000',
     NEXT_PUBLIC_USE_HTTPS:
       process.env.NODE_ENV === 'production' ? 'true' : 'false',
